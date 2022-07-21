@@ -1,0 +1,15 @@
+# Traefik Dashboard IngressRoute setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- resources/traefik-auth.middleware.basicauth.yaml 
+- resources/traefik-dashboard.ingressroute.yaml
+
+secretGenerator:
+- name: traefik-auth-secret
+  namespace: kube-system
+  files:
+  - secrets/users
+  options:
+    disableNameSuffixHash: true

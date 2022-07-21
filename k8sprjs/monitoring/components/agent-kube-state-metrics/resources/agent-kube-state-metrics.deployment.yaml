@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: agent-kube-state-metrics
+spec:
+  replicas: 1
+  template:
+    spec:
+      automountServiceAccountToken: true
+      containers:
+      - name: server
+        image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.5.0
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsUser: 65534
+        ports:
+        - containerPort: 8080
+          name: http-metrics
+        - containerPort: 8081
+          name: telemetry
+        resources:
+          requests:
+            cpu: 250m
+            memory: 64Mi
+          limits:
+            cpu: 500m
+            memory: 128Mi
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8081
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+      nodeSelector:
+        kubernetes.io/os: linux
+      serviceAccountName: agent-kube-state-metrics
+      tolerations:
+      - effect: NoExecute
+        operator: Exists

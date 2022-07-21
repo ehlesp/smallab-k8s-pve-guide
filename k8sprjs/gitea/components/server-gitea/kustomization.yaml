@@ -1,0 +1,25 @@
+# Gitea server setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+commonLabels:
+  app: server-gitea
+
+resources:
+- resources/data-server-gitea.persistentvolumeclaim.yaml
+- resources/repos-server-gitea.persistentvolumeclaim.yaml
+- resources/server-gitea.service.yaml
+- resources/server-gitea.statefulset.yaml
+
+replicas:
+- name: server-gitea
+  count: 1
+
+images:
+- name: gitea/gitea
+  newTag: 1.15.9
+
+configMapGenerator:
+- name: server-gitea
+  envs:
+  - configs/params.properties

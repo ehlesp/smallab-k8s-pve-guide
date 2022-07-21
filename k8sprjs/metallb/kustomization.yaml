@@ -1,0 +1,22 @@
+# MetalLB setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: metallb-system
+
+# This is the configuration valid for MetalLB v0.13.0 and onwards.
+# resources:
+# - github.com/metallb/metallb/config/native?ref=v0.13.3
+# - resources/l2-ip.l2advertisement.yaml
+# - resources/default-pool.ipaddresspool.yaml
+
+# WARNING! The configuration below works ONLY with MetalLB v0.12.z or EARLIER versions!!!
+resources:
+- github.com/metallb/metallb//manifests?ref=v0.11.0
+
+configMapGenerator:
+- name: config
+  files:
+  - configs/config
+  options:
+    disableNameSuffixHash: true

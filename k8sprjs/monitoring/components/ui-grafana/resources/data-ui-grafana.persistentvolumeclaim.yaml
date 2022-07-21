@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+
+metadata:
+  name: data-ui-grafana
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: local-path
+  volumeName: data-grafana
+  resources:
+    requests:
+      storage: 1.9G

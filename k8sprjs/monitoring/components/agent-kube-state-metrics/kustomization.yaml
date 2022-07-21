@@ -1,0 +1,23 @@
+# Kube State Metrics setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+commonLabels:
+  app.kubernetes.io/component: exporter
+  app.kubernetes.io/name: kube-state-metrics
+  app.kubernetes.io/version: 2.5.0
+
+resources:
+- resources/agent-kube-state-metrics.clusterrolebinding.yaml
+- resources/agent-kube-state-metrics.clusterrole.yaml
+- resources/agent-kube-state-metrics.deployment.yaml
+- resources/agent-kube-state-metrics.serviceaccount.yaml
+- resources/agent-kube-state-metrics.service.yaml
+
+replicas:
+- name: agent-kube-state-metrics
+  count: 1
+
+images:
+- name: registry.k8s.io/kube-state-metrics/kube-state-metrics
+  newTag: v2.5.0

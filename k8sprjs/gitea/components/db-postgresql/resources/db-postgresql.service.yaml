@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9187"
+  name: db-postgresql
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5432
+    protocol: TCP
+    name: server
+  - port: 9187
+    protocol: TCP
+    name: metrics

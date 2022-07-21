@@ -1,0 +1,19 @@
+# Gitea platform setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: gitea
+
+commonLabels:
+  platform: gitea
+
+namePrefix: gitea-
+
+resources:
+- resources/data-gitea.persistentvolume.yaml
+- resources/db-gitea.persistentvolume.yaml
+- resources/repos-gitea.persistentvolume.yaml
+- resources/gitea.namespace.yaml
+- components/cache-redis
+- components/db-postgresql
+- components/server-gitea

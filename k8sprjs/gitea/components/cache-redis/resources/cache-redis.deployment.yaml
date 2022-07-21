@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: cache-redis
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: server
+        image: redis:6.2-alpine
+        command:
+        - redis-server
+        - "/etc/redis/redis.conf"
+        - "--requirepass $(REDIS_PASSWORD)"
+        env:
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: cache-redis
+              key: redis-password
+        ports:
+        - containerPort: 6379
+        resources:
+          limits:
+            memory: 64Mi
+        volumeMounts:
+        - name: redis-config
+          subPath: redis.conf
+          mountPath: /etc/redis/redis.conf
+      - name: metrics
+        image: oliver006/redis_exporter:v1.32.0-alpine
+        env:
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: cache-redis
+              key: redis-password
+        resources:
+          limits:
+            memory: 32Mi
+        ports:
+        - containerPort: 9121
+      volumes:
+      - name: redis-config
+        configMap:
+          name: cache-redis
+          defaultMode: 0444
+          items:
+          - key: redis.conf
+            path: redis.conf
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - server-gitea
+              topologyKey: "kubernetes.io/hostname"

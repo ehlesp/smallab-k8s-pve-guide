@@ -1,0 +1,8 @@
+# Generic self-signed cluster-wide issuer for certificates
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+
+metadata:
+  name: cluster-issuer-selfsigned
+spec:
+  selfSigned: {}

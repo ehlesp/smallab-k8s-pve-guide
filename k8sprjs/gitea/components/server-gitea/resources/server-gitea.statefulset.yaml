@@ -1,0 +1,120 @@
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: server-gitea
+spec:
+  replicas: 1
+  serviceName: server-gitea
+  template:
+    spec:
+      containers:
+      - name: server
+        image: gitea/gitea:1.15.9
+        ports:
+        - containerPort: 3000
+          name: https
+        - containerPort: 22
+          name: ssh
+        env:
+        - name: GITEA__server__PROTOCOL
+          value: https
+        - name: GITEA__server__DOMAIN
+          value: gitea.deimos.cloud
+        - name: GITEA__server__HTTP_ADDR
+          value: 0.0.0.0
+        - name: GITEA__server__ROOT_URL
+          value: $(GITEA__server__PROTOCOL)://$(GITEA__server__DOMAIN)/
+        - name: GITEA__server__CERT_FILE
+          value: https/wildcard.deimos.cloud-tls.crt
+        - name: GITEA__server__KEY_FILE
+          value: https/wildcard.deimos.cloud-tls.key
+        - name: GITEA__repository__ROOT
+          value: /data/gitea/repos
+        - name: GITEA__metrics__ENABLED
+          value: "true"
+        - name: GITEA__database__DB_TYPE
+          value: postgres
+        - name: POSTGRESQL_HOST_FQDN
+          valueFrom:
+            configMapKeyRef:
+              name: server-gitea
+              key: db-postgresql-svc-fqdn
+        - name: GITEA__database__HOST
+          value: "$(POSTGRESQL_HOST_FQDN):5432"
+        - name: GITEA__database__NAME
+          valueFrom:
+            configMapKeyRef:
+              name: db-postgresql
+              key: postgresql-db-name
+        - name: GITEA__database__USER
+          valueFrom:
+            configMapKeyRef:
+              name: db-postgresql
+              key: gitea-username
+        - name: GITEA__database__PASSWD
+          valueFrom:
+            secretKeyRef:
+              name: db-postgresql
+              key: gitea-user-password
+        - name: GITEA__database__SSL_MODE
+          value: disable
+        - name: GITEA__cache__ENABLED
+          value: "true"
+        - name: GITEA__cache__ADAPTER
+          value: redis
+        - name: REDIS_HOST_FQDN
+          valueFrom:
+            configMapKeyRef:
+              name: server-gitea
+              key: cache-redis-svc-fqdn
+        - name: REDIS_HOST_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: cache-redis
+              key: redis-password
+        - name: GITEA__cache__HOST
+          value: "redis://:$(REDIS_HOST_PASSWORD)@$(REDIS_HOST_FQDN):6379/0?pool_size=100&idle_timeout=180s"
+        - name: GITEA__queue__TYPE
+          value: redis
+        - name: GITEA__queue__CONN_STR
+          value: "redis://:$(REDIS_HOST_PASSWORD)@$(REDIS_HOST_FQDN):6379/0"
+        - name: GITEA__session__PROVIDER
+          value: redis
+        - name: GITEA__session__PROVIDER_CONFIG
+          value: $(GITEA__cache__HOST)
+        - name: GITEA__session__COOKIE_SECURE
+          value: "true"
+        - name: GITEA__session__COOKIE_NAME
+          value: gitea_cookie
+        - name: GITEA__log__ROUTER_LOG_LEVEL
+          value: trace
+        resources:
+          limits:
+            memory: 256Mi
+        volumeMounts:
+        - name: data-storage
+          mountPath: /data
+        - name: certificate
+          subPath: wildcard.deimos.cloud-tls.crt
+          mountPath: /data/gitea/https/wildcard.deimos.cloud-tls.crt
+        - name: certificate
+          subPath: wildcard.deimos.cloud-tls.key
+          mountPath: /data/gitea/https/wildcard.deimos.cloud-tls.key
+        - name: repos-storage
+          mountPath: /data/gitea/repos
+      volumes:
+      - name: certificate
+        secret:
+          secretName: wildcard.deimos.cloud-tls
+          items:
+          - key: tls.crt
+            path: wildcard.deimos.cloud-tls.crt
+          - key: tls.key
+            path: wildcard.deimos.cloud-tls.key
+      - name: data-storage
+        persistentVolumeClaim:
+          claimName: data-server-gitea
+      - name: repos-storage
+        persistentVolumeClaim:
+          claimName: repos-server-gitea

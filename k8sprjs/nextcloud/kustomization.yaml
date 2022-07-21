@@ -1,0 +1,20 @@
+# Nextcloud platform setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: nextcloud
+
+commonLabels:
+  platform: nextcloud
+
+namePrefix: nxcd-
+
+resources:
+- resources/data-nextcloud.persistentvolume.yaml
+- resources/db-nextcloud.persistentvolume.yaml
+- resources/html-nextcloud.persistentvolume.yaml
+- resources/nextcloud.namespace.yaml
+- components/cache-redis
+- components/db-mariadb
+- components/server-nextcloud
+

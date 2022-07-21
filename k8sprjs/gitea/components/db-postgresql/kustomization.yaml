@@ -1,0 +1,34 @@
+# PostgreSQL setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+commonLabels:
+  app: db-postgresql
+
+resources:
+- resources/db-postgresql.persistentvolumeclaim.yaml
+- resources/db-postgresql.service.yaml
+- resources/db-postgresql.statefulset.yaml
+
+replicas:
+- name: db-postgresql
+  count: 1
+
+images:
+- name: postgres
+  newTag: 14.1-bullseye
+- name: wrouesnel/postgres_exporter
+  newTag: latest
+
+configMapGenerator:
+- name: db-postgresql
+  envs:
+  - configs/dbnames.properties
+  files:
+  - configs/initdb.sh
+  - configs/postgresql.conf
+
+secretGenerator:
+- name: db-postgresql
+  envs:
+  - secrets/dbusers.pwd

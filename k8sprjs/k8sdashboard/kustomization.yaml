@@ -1,0 +1,10 @@
+# Kubernetes Dashboard setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: kubernetes-dashboard
+
+resources:
+- https://raw.githubusercontent.com/kubernetes/dashboard/v2.4.0/aio/deploy/recommended.yaml
+- resources/admin-user.clusterrolebinding.cluster-admin.clusterrole.yaml
+- resources/admin-user.serviceaccount.yaml 

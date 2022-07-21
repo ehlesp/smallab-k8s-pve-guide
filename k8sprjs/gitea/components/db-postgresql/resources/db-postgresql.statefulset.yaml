@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: db-postgresql
+spec:
+  replicas: 1
+  serviceName: db-postgresql
+  template:
+    spec:
+      containers:
+      - name: server
+        image: postgres:14.1-bullseye
+        ports:
+        - containerPort: 5432
+        args:
+        - "-c"
+        - "config_file=/etc/postgresql/postgresql.conf"
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            configMapKeyRef:
+              name: db-postgresql
+              key: postgresql-superuser-name
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-postgresql
+              key: postgresql-superuser-password
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: db-postgresql
+              key: postgresql-db-name
+        - name: POSTGRESQL_GITEA_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: db-postgresql
+              key: gitea-username
+        - name: POSTGRESQL_GITEA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-postgresql
+              key: gitea-user-password
+        - name: POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: db-postgresql
+              key: prometheus-exporter-username
+        - name: POSTGRESQL_PROMETHEUS_EXPORTER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-postgresql
+              key: prometheus-exporter-password
+        resources:
+          limits:
+            memory: 320Mi
+        volumeMounts:
+        - name: postgresql-storage
+          mountPath: /var/lib/postgresql/data
+        - name: postgresql-config
+          subPath: postgresql.conf
+          mountPath: /etc/postgresql/postgresql.conf
+        - name: postgresql-config
+          subPath: initdb.sh
+          mountPath: /docker-entrypoint-initdb.d/initdb.sh
+      - name: metrics
+        image: wrouesnel/postgres_exporter:latest
+        ports:
+        - containerPort: 9187
+        env:
+        - name: DATA_SOURCE_USER
+          valueFrom:
+            configMapKeyRef:
+              name: db-postgresql
+              key: prometheus-exporter-username
+        - name: DATA_SOURCE_PASS
+          valueFrom:
+            secretKeyRef:
+              name: db-postgresql
+              key: prometheus-exporter-password
+        - name: DATA_SOURCE_URI
+          value: "localhost:5432/?sslmode=disable"
+        - name: PG_EXPORTER_AUTO_DISCOVER_DATABASES
+          value: 'true'
+        resources:
+          limits:
+            memory: 32Mi
+      volumes:
+      - name: postgresql-config
+        configMap:
+          name: db-postgresql
+          items:
+          - key: initdb.sh
+            path: initdb.sh
+          - key: postgresql.conf
+            path: postgresql.conf
+      - name: postgresql-storage
+        persistentVolumeClaim:
+          claimName: db-postgresql

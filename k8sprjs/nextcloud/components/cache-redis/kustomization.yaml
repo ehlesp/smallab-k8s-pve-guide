@@ -1,0 +1,30 @@
+# Redis setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+commonLabels:
+  app: cache-redis
+
+resources:
+- resources/cache-redis.deployment.yaml
+- resources/cache-redis.service.yaml
+
+replicas:
+- name: cache-redis
+  count: 1
+
+images:
+- name: redis
+  newTag: 6.2-alpine
+- name: oliver006/redis_exporter
+  newTag: v1.32.0-alpine
+
+configMapGenerator:
+- name: cache-redis
+  files:
+  - configs/redis.conf
+
+secretGenerator:
+- name: cache-redis
+  files:
+  - redis-password=secrets/redis.pwd

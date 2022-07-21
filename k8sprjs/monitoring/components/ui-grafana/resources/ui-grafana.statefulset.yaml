@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: ui-grafana
+spec:
+  replicas: 1
+  serviceName: ui-grafana
+  template:
+    spec:
+      securityContext:
+        fsGroup: 472
+        supplementalGroups:
+        - 0
+      containers:
+      - name: server
+        image: grafana/grafana:8.5.2
+        ports:
+        - containerPort: 3000
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          successThreshold: 1
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 2
+          httpGet:
+            path: /robots.txt
+            port: 3000
+            scheme: HTTP
+        livenessProbe:
+          failureThreshold: 3
+          successThreshold: 1
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 1
+          tcpSocket:
+            port: 3000
+        resources:
+          requests:
+            cpu: 250m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
+        volumeMounts:
+        - mountPath: /var/lib/grafana
+          name: ui-grafana-storage
+      volumes:
+        - name: ui-grafana-storage
+          persistentVolumeClaim:
+            claimName: data-ui-grafana

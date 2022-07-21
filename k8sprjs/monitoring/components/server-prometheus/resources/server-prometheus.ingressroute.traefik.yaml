@@ -1,0 +1,18 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+
+metadata:
+  name: server-prometheus
+spec:
+  entryPoints:
+    - websecure
+  tls:
+    secretName: wildcard.deimos.cloud-tls
+  routes:
+  - match: Host(`prometheus.deimos.cloud`) || Host(`prm.deimos.cloud`)
+    kind: Rule
+    services:
+    - name: mntr-server-prometheus
+      kind: Service
+      port: 443
+      scheme: http

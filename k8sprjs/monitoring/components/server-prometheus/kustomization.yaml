@@ -1,0 +1,26 @@
+# Prometheus server setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+commonLabels:
+  app: server-prometheus
+
+resources:
+- resources/data-server-prometheus.persistentvolumeclaim.yaml
+- resources/server-prometheus.ingressroute.traefik.yaml
+- resources/server-prometheus.service.yaml
+- resources/server-prometheus.statefulset.yaml
+
+replicas:
+- name: server-prometheus
+  count: 1
+
+images:
+- name: prom/prometheus
+  newTag: v2.35.0
+
+configMapGenerator:
+- name: server-prometheus
+  files:
+  - configs/prometheus.rules.yaml
+  - configs/prometheus.yaml

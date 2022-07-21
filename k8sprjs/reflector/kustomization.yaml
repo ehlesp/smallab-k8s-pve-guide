@@ -1,0 +1,8 @@
+# Reflector setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: kube-system
+
+resources:
+- https://github.com/emberstack/kubernetes-reflector/releases/latest/download/reflector.yaml

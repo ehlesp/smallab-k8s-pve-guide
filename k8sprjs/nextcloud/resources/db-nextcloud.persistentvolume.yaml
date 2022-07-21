@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: PersistentVolume
+
+metadata:
+  name: db-nextcloud
+spec:
+  capacity:
+    storage: 3.5G
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: local-path
+  persistentVolumeReclaimPolicy: Retain
+  local:
+    path: /mnt/nextcloud-ssd/db/k3smnt
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - k3sagent02

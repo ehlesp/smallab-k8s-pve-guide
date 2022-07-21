@@ -1,0 +1,34 @@
+# MariaDB setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+commonLabels:
+  app: db-mariadb
+
+resources:
+- resources/db-mariadb.persistentvolumeclaim.yaml
+- resources/db-mariadb.service.yaml
+- resources/db-mariadb.statefulset.yaml
+
+replicas:
+- name: db-mariadb
+  count: 1
+
+images:
+- name: mariadb
+  newTag: 10.6-focal
+- name: prom/mysqld-exporter
+  newTag: v0.13.0
+
+configMapGenerator:
+- name: db-mariadb
+  envs:
+  - configs/dbnames.properties
+  files:
+  - configs/initdb.sh
+  - configs/my.cnf
+
+secretGenerator:
+- name: db-mariadb
+  envs:
+  - secrets/dbusers.pwd

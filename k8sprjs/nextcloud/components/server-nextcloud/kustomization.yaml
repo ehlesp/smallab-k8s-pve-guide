@@ -1,0 +1,35 @@
+# Nextcloud server setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+commonLabels:
+  app: server-nextcloud
+
+resources:
+- resources/data-server-nextcloud.persistentvolumeclaim.yaml
+- resources/html-server-nextcloud.persistentvolumeclaim.yaml
+- resources/server-apache-nextcloud.service.yaml
+- resources/server-apache-nextcloud.statefulset.yaml
+
+replicas:
+- name: server-apache-nextcloud
+  count: 1
+
+images:
+- name: nextcloud
+  newTag: 22.2-apache
+- name: xperimental/nextcloud-exporter
+  newTag: 0.4.0-15-gbb88fb6
+
+configMapGenerator:
+- name: server-apache-nextcloud
+  envs:
+  - configs/params.properties
+  files:
+  - configs/000-default.conf
+  - configs/ports.conf
+
+secretGenerator:
+- name: server-nextcloud
+  files:
+  - nextcloud-admin-password=secrets/nextcloud-admin.pwd

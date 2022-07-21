@@ -1,0 +1,147 @@
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: server-nginx-nextcloud
+spec:
+  replicas: 1
+  serviceName: server-nginx-nextcloud
+  template:
+    spec:
+      containers:
+      - name: fpm
+        image: nextcloud:22.2-fpm-alpine
+        ports:
+        - containerPort: 9000
+        env:
+        - name: NEXTCLOUD_ADMIN_USER
+          valueFrom:
+            configMapKeyRef:
+              name: server-nginx-nextcloud
+              key: nextcloud-admin-username
+        - name: NEXTCLOUD_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: server-nextcloud
+              key: nextcloud-admin-password
+        - name: NEXTCLOUD_TRUSTED_DOMAINS
+          valueFrom:
+            configMapKeyRef:
+              name: server-nginx-nextcloud
+              key: nextcloud-trusted-domains
+        - name: MYSQL_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: server-nginx-nextcloud
+              key: db-mariadb-svc-cluster-ip
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: db-mariadb
+              key: nextcloud-db-name
+        - name: MYSQL_USER
+          valueFrom:
+            configMapKeyRef:
+              name: db-mariadb
+              key: nextcloud-username
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-mariadb
+              key: nextcloud-user-password
+        - name: REDIS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: server-nginx-nextcloud
+              key: cache-redis-svc-cluster-ip
+        - name: REDIS_HOST_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: cache-redis
+              key: redis-password
+        lifecycle:
+          postStart:
+            exec:
+              command: ["chown", "www-data", "/var/www/html/data"]
+        resources:
+          limits:
+            memory: 512Mi
+        volumeMounts:
+        - name: fpm-config
+          subPath: zz-docker.conf
+          mountPath: /usr/local/etc/php-fpm.d/zz-docker.conf
+        - name: html-storage
+          mountPath: /var/www/html
+        - name: data-storage
+          mountPath: /var/www/html/data
+      - name: server
+        image: nginx:1.21-alpine
+        ports:
+        - containerPort: 443
+        volumeMounts:
+        - name: certificates
+          subPath: wildcard.deimos.cloud-tls.crt
+          mountPath: /etc/nginx/cert/wildcard.deimos.cloud-tls.crt
+        - name: certificates
+          subPath: wildcard.deimos.cloud-tls.key
+          mountPath: /etc/nginx/cert/wildcard.deimos.cloud-tls.key
+        - name: nginx-config
+          subPath: dhparam.pem
+          mountPath: /etc/ssl/dhparam.pem
+        - name: nginx-config
+          subPath: nginx.conf
+          mountPath: /etc/nginx/nginx.conf
+        - name: html-storage
+          mountPath: /var/www/html
+        - name: data-storage
+          mountPath: /var/www/html/data
+      - name: metrics
+        image: xperimental/nextcloud-exporter:0.4.0-15-gbb88fb6
+        ports:
+        - containerPort: 9205
+        env:
+        - name: NEXTCLOUD_SERVER
+          value: "https://localhost"
+        - name: NEXTCLOUD_TLS_SKIP_VERIFY
+          value: "true"
+        - name: NEXTCLOUD_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: server-nginx-nextcloud
+              key: nextcloud-admin-username
+        - name: NEXTCLOUD_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: server-nextcloud
+              key: nextcloud-admin-password
+        resources:
+          limits:
+            memory: 32Mi
+      hostNetwork: true
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: server-nginx-nextcloud
+          defaultMode: 0444
+          items:
+          - key: dhparam.pem
+            path: dhparam.pem
+          - key: nginx.conf
+            path: nginx.conf
+          - key: zz-docker.conf
+            path: zz-docker.conf
+      - name: certificates
+        secret:
+          secretName: wildcard.deimos.cloud-tls
+          defaultMode: 0444
+          items:
+          - key: tls.crt
+            path: wildcard.deimos.cloud-tls.crt
+          - key: tls.key
+            path: wildcard.deimos.cloud-tls.key
+      - name: html-storage
+        persistentVolumeClaim:
+          claimName: html-server-nextcloud
+      - name: data-storage
+        persistentVolumeClaim:
+          claimName: data-server-nextcloud

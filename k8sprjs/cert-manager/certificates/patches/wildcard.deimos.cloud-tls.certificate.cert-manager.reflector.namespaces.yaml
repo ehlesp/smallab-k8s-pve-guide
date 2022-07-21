@@ -1,0 +1,12 @@
+# Certificate wildcard.deimos.cloud-tls patch for Reflector-managed namespaces
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
+  name: wildcard.deimos.cloud-tls
+  namespace: certificates
+spec:
+  secretTemplate:
+    annotations:
+      reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces: "kube-system,nextcloud,gitea,monitoring"
+      reflector.v1.k8s.emberstack.com/reflection-auto-namespaces: "kube-system,nextcloud,gitea,monitoring"

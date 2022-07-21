@@ -1,0 +1,18 @@
+# Certificates deployment
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- resources/certificates.namespace.yaml
+- resources/cluster-issuer-selfsigned.cluster-issuer.cert-manager.yaml
+- resources/wildcard.deimos.cloud-tls.certificate.cert-manager.yaml
+
+patches:
+- path: patches/wildcard.deimos.cloud-tls.certificate.cert-manager.reflector.namespaces.yaml
+  target:
+    group: cert-manager.io
+    version: v1
+    kind: Certificate
+    namespace: certificates
+    name: wildcard.deimos.cloud-tls
+

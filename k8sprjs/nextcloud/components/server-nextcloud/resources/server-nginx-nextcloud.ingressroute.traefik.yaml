@@ -1,0 +1,17 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+
+metadata:
+  name: server-nginx-nextcloud
+spec:
+  entryPoints:
+    - websecure
+  tls:
+    secretName: wildcard.deimos.cloud-tls
+  routes:
+  - match: Host(`nextcloud.deimos.cloud`) || Host(`nxc.deimos.cloud`)
+    kind: Rule
+    services:
+    - name: server-nginx-nextcloud
+      kind: Service
+      port: 443

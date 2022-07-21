@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: server-prometheus
+spec:
+  replicas: 1
+  serviceName: server-prometheus
+  template:
+    spec:
+      containers:
+      - name: server
+        image: prom/prometheus:v2.35.0
+        ports:
+        - containerPort: 9090
+          name: http
+        args:
+        - "--storage.tsdb.retention.time=12h"
+        - "--config.file=/etc/prometheus/prometheus.yaml"
+        - "--storage.tsdb.path=/prometheus"
+        resources:
+          requests:
+            cpu: 500m
+            memory: 256Mi
+          limits:
+            cpu: 1000m
+            memory: 512Mi
+        volumeMounts:
+        - name: server-prometheus-config
+          subPath: prometheus.yaml
+          mountPath: /etc/prometheus/prometheus.yaml
+        - name: server-prometheus-config
+          subPath: prometheus.rules.yaml
+          mountPath: /etc/prometheus/prometheus.rules.yaml
+        - name: server-prometheus-storage
+          mountPath: /prometheus
+      securityContext:
+        fsGroup: 65534
+        runAsUser: 65534
+        runAsGroup: 65534
+        runAsNonRoot: true
+      volumes:
+      - name: server-prometheus-config
+        configMap:
+          name: server-prometheus
+          defaultMode: 420
+          items:
+          - key: prometheus.yaml
+            path: prometheus.yaml
+          - key: prometheus.rules.yaml
+            path: prometheus.rules.yaml
+      - name: server-prometheus-storage
+        persistentVolumeClaim:
+          claimName: data-server-prometheus

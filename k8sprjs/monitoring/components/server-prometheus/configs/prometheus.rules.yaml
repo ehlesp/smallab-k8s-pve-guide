@@ -1,0 +1,10 @@
+groups:
+- name: example_alert_rule_unique_name
+  rules:
+  - alert: HighRequestLatency
+    expr: job:request_latency_seconds:mean5m{job="node-exporter"} > 0.5
+    for: 10m
+    labels:
+      severity: page
+    annotations:
+      summary: High request latency

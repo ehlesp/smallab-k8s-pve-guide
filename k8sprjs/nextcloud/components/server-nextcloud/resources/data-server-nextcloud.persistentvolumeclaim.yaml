@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+
+metadata:
+  name: data-server-nextcloud
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: local-path
+  volumeName: data-nextcloud
+  resources:
+    requests:
+      storage: 9.3G

@@ -1,0 +1,21 @@
+# Monitoring stack setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: monitoring
+
+commonLabels:
+  platform: monitoring
+
+namePrefix: mntr-
+
+resources:
+- resources/data-grafana.persistentvolume.yaml
+- resources/data-prometheus.persistentvolume.yaml
+- resources/monitoring.namespace.yaml
+- resources/monitoring.clusterrole.yaml
+- resources/monitoring.clusterrolebinding.yaml
+- components/agent-kube-state-metrics
+- components/agent-prometheus-node-exporter
+- components/server-prometheus
+- components/ui-grafana

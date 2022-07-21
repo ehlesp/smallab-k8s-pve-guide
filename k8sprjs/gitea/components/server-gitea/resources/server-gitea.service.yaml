@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: /metrics
+    prometheus.io/scheme: "https"
+    prometheus.io/port: "3000"
+  name: server-gitea
+spec:
+  type: LoadBalancer
+  loadBalancerIP: 192.168.1.43
+  ports:
+  - port: 443
+    targetPort: 3000
+    protocol: TCP
+    name: https
+  - port: 22
+    protocol: TCP
+    name: ssh

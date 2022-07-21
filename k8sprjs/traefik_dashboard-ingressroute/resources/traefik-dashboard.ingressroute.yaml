@@ -1,0 +1,19 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+
+metadata:
+  name: traefik-dashboard
+  namespace: kube-system
+spec:
+  entryPoints:
+    - websecure
+  tls:
+    secretName: wildcard.deimos.cloud-tls
+  routes:
+  - match: (Host(`192.168.1.41`) || Host(`traefik.deimos.cloud`) || Host(`tfk.deimos.cloud`)) && (PathPrefix(`/dashboard`) || PathPrefix(`/api`))
+    kind: Rule
+    services:
+    - name: api@internal
+      kind: TraefikService
+    middlewares:
+      - name: traefik-auth

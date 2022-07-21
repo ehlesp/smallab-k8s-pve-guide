@@ -1,0 +1,33 @@
+# Wilcard certificate for deimos.cloud
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
+  name: wildcard.deimos.cloud-tls
+  namespace: certificates
+spec:
+  secretName: wildcard.deimos.cloud-tls
+  secretTemplate:
+    annotations:
+      reflector.v1.k8s.emberstack.com/reflection-allowed: "true"
+      reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces: "kube-system"
+      reflector.v1.k8s.emberstack.com/reflection-auto-enabled: "true"
+      reflector.v1.k8s.emberstack.com/reflection-auto-namespaces: "kube-system"
+  duration: 8760h # No certificate should last more than a year
+  renewBefore: 720h # Certificates must be renewed some time before they expire (30 days)
+  isCA: false
+  subject:
+    organizations:
+    - "Deimos"
+  privateKey:
+    algorithm: ECDSA
+    size: 384
+    encoding: PKCS8
+    rotationPolicy: Always
+  dnsNames:
+  - "*.deimos.cloud"
+  - "deimos.cloud"
+  issuerRef:
+    name: cluster-issuer-selfsigned
+    kind: ClusterIssuer
+    group: cert-manager.io

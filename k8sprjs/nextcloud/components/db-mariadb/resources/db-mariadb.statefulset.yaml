@@ -1,0 +1,120 @@
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: db-mariadb
+spec:
+  replicas: 1
+  serviceName: db-mariadb
+  template:
+    spec:
+      containers:
+      - name: server
+        image: mariadb:10.6-focal
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: db-mariadb
+              key: nextcloud-db-name
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-mariadb
+              key: root-password
+        - name: MYSQL_USER
+          valueFrom:
+            configMapKeyRef:
+              name: db-mariadb
+              key: nextcloud-username
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-mariadb
+              key: nextcloud-user-password
+        - name: MARIADB_PROMETHEUS_EXPORTER_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: db-mariadb
+              key: prometheus-exporter-username
+        - name: MARIADB_PROMETHEUS_EXPORTER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-mariadb
+              key: prometheus-exporter-password
+        resources:
+          limits:
+            memory: 320Mi
+        volumeMounts:
+        - name: mariadb-config 
+          subPath: my.cnf
+          mountPath: /etc/mysql/my.cnf
+        - name: mariadb-config 
+          subPath: initdb.sh
+          mountPath: /docker-entrypoint-initdb.d/initdb.sh
+        - name: mariadb-storage
+          mountPath: /var/lib/mysql
+      - name: metrics
+        image: prom/mysqld-exporter:v0.13.0
+        ports:
+        - containerPort: 9104
+        args:
+        - --collect.info_schema.tables
+        - --collect.info_schema.innodb_tablespaces
+        - --collect.info_schema.innodb_metrics
+        - --collect.global_status
+        - --collect.global_variables
+        - --collect.slave_status
+        - --collect.info_schema.processlist
+        - --collect.perf_schema.tablelocks
+        - --collect.perf_schema.eventsstatements
+        - --collect.perf_schema.eventsstatementssum
+        - --collect.perf_schema.eventswaits
+        - --collect.auto_increment.columns
+        - --collect.binlog_size
+        - --collect.perf_schema.tableiowaits
+        - --collect.perf_schema.indexiowaits
+        - --collect.info_schema.userstats
+        - --collect.info_schema.clientstats
+        - --collect.info_schema.tablestats
+        - --collect.info_schema.schemastats
+        - --collect.perf_schema.file_events
+        - --collect.perf_schema.file_instances
+        - --collect.perf_schema.replication_group_member_stats
+        - --collect.perf_schema.replication_applier_status_by_worker
+        - --collect.slave_hosts
+        - --collect.info_schema.innodb_cmp
+        - --collect.info_schema.innodb_cmpmem
+        - --collect.info_schema.query_response_time
+        - --collect.engine_tokudb_status
+        - --collect.engine_innodb_status
+        env:
+        - name: MARIADB_PROMETHEUS_EXPORTER_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: db-mariadb
+              key: prometheus-exporter-username
+        - name: MARIADB_PROMETHEUS_EXPORTER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-mariadb
+              key: prometheus-exporter-password
+        - name: DATA_SOURCE_NAME
+          value: "$(MARIADB_PROMETHEUS_EXPORTER_USERNAME):$(MARIADB_PROMETHEUS_EXPORTER_PASSWORD)@(localhost:3306)/"
+        resources:
+          limits:
+            memory: 32Mi
+      volumes:
+      - name: mariadb-config
+        configMap:
+          name: db-mariadb
+          items:
+          - key: initdb.sh
+            path: initdb.sh
+          - key: my.cnf
+            path: my.cnf
+      - name: mariadb-storage
+        persistentVolumeClaim:
+          claimName: db-mariadb

@@ -1,0 +1,123 @@
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: server-apache-nextcloud
+spec:
+  replicas: 1
+  serviceName: server-apache-nextcloud
+  template:
+    spec:
+      containers:
+      - name: server
+        image: nextcloud:22.2-apache
+        ports:
+        - containerPort: 443
+        env:
+        - name: NEXTCLOUD_ADMIN_USER
+          valueFrom:
+            configMapKeyRef:
+              name: server-apache-nextcloud
+              key: nextcloud-admin-username
+        - name: NEXTCLOUD_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: server-nextcloud
+              key: nextcloud-admin-password
+        - name: NEXTCLOUD_TRUSTED_DOMAINS
+          valueFrom:
+            configMapKeyRef:
+              name: server-apache-nextcloud
+              key: nextcloud-trusted-domains
+        - name: MYSQL_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: server-apache-nextcloud
+              key: db-mariadb-svc-cluster-ip
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: db-mariadb
+              key: nextcloud-db-name
+        - name: MYSQL_USER
+          valueFrom:
+            configMapKeyRef:
+              name: db-mariadb
+              key: nextcloud-username
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-mariadb
+              key: nextcloud-user-password
+        - name: REDIS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: server-apache-nextcloud
+              key: cache-redis-svc-cluster-ip
+        - name: REDIS_HOST_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: cache-redis
+              key: redis-password
+        - name: APACHE_ULIMIT_MAX_FILES
+          value: 'ulimit -n 65536'
+        lifecycle:
+          postStart:
+            exec:
+              command:
+              - "sh"
+              - "-c"
+              - |
+                chown www-data:www-data /var/www/html/data
+        resources:
+          limits:
+            memory: 512Mi
+        volumeMounts:
+        - name: apache-config
+          subPath: ports.conf
+          mountPath: /etc/apache2/ports.conf
+        - name: apache-config
+          subPath: 000-default.conf
+          mountPath: /etc/apache2/sites-available/000-default.conf
+        - name: html-storage
+          mountPath: /var/www/html
+        - name: data-storage
+          mountPath: /var/www/html/data
+      - name: metrics
+        image: xperimental/nextcloud-exporter:0.4.0-15-gbb88fb6
+        ports:
+        - containerPort: 9205
+        env:
+        - name: NEXTCLOUD_SERVER
+          value: "https://localhost"
+        - name: NEXTCLOUD_TLS_SKIP_VERIFY
+          value: "true"
+        - name: NEXTCLOUD_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: server-apache-nextcloud
+              key: nextcloud-admin-username
+        - name: NEXTCLOUD_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: server-nextcloud
+              key: nextcloud-admin-password
+        resources:
+          limits:
+            memory: 32Mi
+      volumes:
+      - name: apache-config
+        configMap:
+          name: server-apache-nextcloud
+          defaultMode: 0644
+          items:
+          - key: ports.conf
+            path: ports.conf
+          - key: 000-default.conf
+            path: 000-default.conf
+      - name: html-storage
+        persistentVolumeClaim:
+          claimName: html-server-nextcloud
+      - name: data-storage
+        persistentVolumeClaim:
+          claimName: data-server-nextcloud
