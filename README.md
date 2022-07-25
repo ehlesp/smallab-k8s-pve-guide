@@ -1,10 +1,10 @@
 # Small homelab K8s cluster on Proxmox VE
 
-Would you like to practice with K8s/Kubernetes? Do you happen to have one spare computer at hand? Then this guide series may be right for you! In it I explain how to configure a server able to run a small Kubernetes cluster set up with just a few virtual machines.
+Would you like to practice with K8s/Kubernetes? Do you happen to have one spare computer at hand? Then this guide series may be right for you! In it I explain how to configure a server able to run a small Kubernetes cluster, set up with just a few virtual machines.
 
 The title says "small homelab", meaning that I've written the guides having in mind the sole low-end consumer computer I had (and still have) available for it. Don't get me wrong, by the way. The hardware contemplated is limited but capable for the proposed task. You'll see what I mean in the very first [**G001** guide](G001%20-%20Hardware%20setup.md), in which I explain my hardware setup in detail.
 
-You might be wondering, aren't already out there guides explaining how to build such a server? Well, not exactly. Most of the guides I've meet expect you to have a number of computers (Raspberry PIs usually) available to use as nodes of your K3s-based Kubernetes cluster. What I had was one basic computer, nothing more, but I could surmount easily my lack of extra computers with virtual machines.
+You might be wondering, aren't already out there guides explaining how to build such a server? Well, not exactly. Most of the guides I've seen expect you to have a number of computers (Raspberry PIs usually) available to use as nodes of your K3s-based Kubernetes cluster. What I had was one basic computer, nothing more, but I could surmount my lack of extra computers with virtual machines.
 
 On the other hand, most of those guides you'll find on internet use alternative tools (**k3sup** and **helm** come to mind) to handle the installation and configuration of those nodes. I wanted to go down the hard path first, building a Kubernetes cluster from scratch as close to the standard `kubectl` way as possible, so using those tools was out of the question. Still, some of those guides served me as reference in some cases, and you'll find some of them linked as references at the bottom of some of my guides.
 
@@ -46,3 +46,7 @@ After setting up the Kubernetes cluster, the idea is to deploy in it the followi
 - Kubernetes cluster monitoring stack: set of monitoring modules including [Prometheus](https://prometheus.io/), [Grafana](https://grafana.com/grafana/) and a couple of other related services.
 
 Also, the whole system will have some backup procedures applied to it.
+
+## Table of contents
+
+All the guides and their main sections are easily accessible through the [Table Of Contents](G000%20-%20Table%20Of%20Contents.md) of this guide series.
