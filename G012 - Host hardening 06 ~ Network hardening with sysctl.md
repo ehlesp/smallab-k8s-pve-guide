@@ -69,7 +69,7 @@ $ sudo sysctl -a | less
 
 ### _Some `sysctl` values are managed by the Proxmox VE firewall_
 
-Be aware that the Proxmox VE firewall handles a bunch of sysctl `net` parameters. The ones listed in the Proxmox VE official documentation, [in the firewall's host specific configuration section](https://pve.deimos.cloud:8006/pve-docs/chapter-pve-firewall.html#pve_firewall_host_specific_configuration), are the following ones.
+Be aware that the Proxmox VE firewall handles a bunch of sysctl `net` parameters. The ones listed in the Proxmox VE Firewall official documentation, [in the firewall's **Host Specific Configuration** segment under the **Configuration Files** section](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_configuration_files), are the following ones.
 
 - `nf_conntrack_allow_invalid`: to allow packets with the state INVALID on the connection tracking (conntrack). I haven't found any other reference to this parameter beyond the Proxmox VE-related documentation, so maybe its not a `sysctl` value, although it certaingly looks like it.
 
