@@ -96,7 +96,11 @@ Deploying Kubernetes Dashboard is rather simple, although you also need to setup
 
 ### _Getting the administrator user's secret token_
 
-To log in your Kubernetes Dashboard with the administrator user also created in the deployment, you'll need to use it's secret token for authenticating in the app. You can get this token with the `kubectl` command.
+To log in your Kubernetes Dashboard with the administrator user also created in the deployment, you'll need to use it's secret token for authenticating in the app. You can get this token with the `kubectl` command, but in a different way depending on what version of Kubernetes you're working.
+
+#### **On v1.23 and older.**
+
+Execute the following.
 
 ~~~bash
 $ kubectl -n kubernetes-dashboard describe secret admin-user-token
@@ -109,7 +113,7 @@ Name:         admin-user-token-qb2t5
 Namespace:    kubernetes-dashboard
 Labels:       <none>
 Annotations:  kubernetes.io/service-account.name: admin-user
-              kubernetes.io/service-account.uid: bc9adea8-4b16-37d0-8097-7c0d5068dc5a
+            kubernetes.io/service-account.uid: bc9adea8-4b16-37d0-8097-7c0d5068dc5a
 
 Type:  kubernetes.io/service-account-token
 
@@ -127,6 +131,17 @@ To get only the token line, execute the same `kubectl` command but piped with `g
 ~~~bash
 $ kubectl -n kubernetes-dashboard describe secret admin-user-token | grep '^token'
 ~~~
+
+#### **On v1.24+**
+
+Execute the command below.
+
+~~~bash
+$ kubectl -n kubernetes-dashboard create token admin-user
+eyJhbGciOiJSUzI1NiIsImtpZCI6ImtxNzh0bmk3cDAzVU4zXzFnMVgwZXVSR3c0U1FnNVZ3OUtSdDBSTkw2WmsifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlcm5ldGVzLWRhc2hib2FyZCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJhZG1pbi11c2VyLXRva2VuLXFiMnQ1Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImFkbWluLXVzZXIiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiI4MjU4Mjc4ZC02YjBmLTQwZDItOTI1Yy1kMzEwMmY3MTkxYzQiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6a3ViZXJuZXRlcy1kYXNoYm9hcmQ6YWRtaW4tdXNlciJ9.PG-4qfeT3C6vFfwhdGDoXVmjDEU7TJDTftcmIa2kQO0HtWM8ZN45wDGk4ZSWUR5mO5HlXpYORiGkKHq6GNPFRr_qCo4tKIONyZbgXtV98P6OpOIrfDTJCwxjFf0aqOmEs1N3BqViFs3MgBRCLElx98rD6AXehdxPADXlAksnaypKKx6q1WFgNmOTHfC9WrpQzX-qoo8CbRRCuSyTagm3qkpa5hV5RjyKjE7IaOqQGwFOSbTqMy6eghTYSufC-uUxcOWw3OPVa9QzINOn9_tioxj7tH7rpw_eOHzUW_-Cr_HE89DygnuZAqQEsWxBLfYcrBKtnMhxn49E22SyCaJldA
+~~~
+
+See how the command outputs your admin-user's secret token string directly. Remember to copy and save it somewhere safe such as a password manager.
 
 ## Testing Kubernetes Dashboard
 

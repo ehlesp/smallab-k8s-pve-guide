@@ -6,9 +6,9 @@ Your Proxmox VE system is now configured well enough for you to start creating i
 
 ### _Obtaining the latest Debian ISO image_
 
-First, you'll need to download the Debian ISO image . At the time of writing this, the latest version is [**11.1.0 Bullseye**](https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-11.1.0-amd64-netinst.iso).
+First, you'll need to download the Debian ISO image. At the time of writing this, the latest version is [**11.1.0 Bullseye**](https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-11.1.0-amd64-netinst.iso).
 
-You'll find the _net install_ version of the ISO for the latest Debian version right at the Debian project's webpage.
+You'll find the _net install_ version of the ISO for the latest Debian version right at the [Debian project's webpage](https://www.debian.org/).
 
 ![Debian project main's webpage](images/g020/debian_netinstall_iso_download.png "Debian project's main webpage")
 
@@ -515,7 +515,7 @@ At this point, your new VM has the minimal virtual hardware setup you need for i
     ![CD/DVD Drive empty on VM's Hardware tab](images/g020/debian_vm_install_os_vm_hardware_tab_cdrom_updated.png "CD/DVD Drive empty on VM's Hardware tab")
 
     > **BEWARE!**  
-    > This doesn't mean that the change has been applied to the still running VM. Usually changes like these will require a complete reboot of the VM.
+    > This doesn't mean that the change has been applied to the still running VM. Usually, changes like these will require a reboot of the VM.
 
 42. Now that the VM's CD/DVD Drive is configured to be empty, you can go back to the noVNC shell and press on `Enter` to finish the Debian installation. If everything goes as it should, the VM will reboot into the GRUB screen of your newly installed Debian system.
 

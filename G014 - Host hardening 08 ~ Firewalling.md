@@ -582,7 +582,7 @@ Let's imagine you just booted up your Proxmox VE system and then you connect thr
 0 6 PVEFW-HOST-IN 16/Nov/2021:10:17:17 +0100 policy DROP: IN=vmbr0 PHYSIN=enp2s0 MAC=ae:b7:cd:26:7f:d2:54:5e:96:4b:2c:cf:08:00 SRC=192.168.1.2 DST=192.168.1.107 LEN=60 TOS=0x00 PREC=0x00 TTL=128 ID=64488 PROTO=ICMP TYPE=8 CODE=0 ID=1 SEQ=2
 ~~~
 
-The typical log line if formatted with the following schema:
+The typical log line is formatted with the following schema:
 
 ~~~bash
 VMID LOGID CHAIN TIMESTAMP POLICY: PACKET_DETAILS

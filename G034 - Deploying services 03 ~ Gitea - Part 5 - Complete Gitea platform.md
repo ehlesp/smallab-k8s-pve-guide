@@ -989,10 +989,6 @@ Last resource you must declare is the Kustomize project that puts together all t
     $ watch kubectl -n gitea get pv,pvc,cm,secret,deployment,replicaset,statefulset,pod,svc
     ~~~
 
-    > **BEWARE!**  
-    > Reflector may take a while (from seconds to minutes, up to around half an hour in my experience) to _reflect_ your certificate's `wildcard.deimos.cloud-tls` secret into the `gitea` namespace. This will leave the `gitea-server-gitea-0` pod stuck with a `ContainerCreating` status, waiting to have that `Secret` resource available.  
-    > _On the other hand_, you could delete and then reapply your certificate's Kustomize project, which would make Reflector clone the `wildcard.deimos.cloud-tls` secret to all the namespaces it has configured.
-
     Below, you can see how the output from the `kubectl` command above could look.
 
     ~~~bash

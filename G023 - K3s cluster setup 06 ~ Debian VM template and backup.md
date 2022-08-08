@@ -6,7 +6,7 @@ Now that you have a Debian VM configured, you can turn it into a VM template. Th
 
 To do this conversion, browse to your Proxmox VE web console and follow the steps below.
 
-1. First, stop your VM by clicking on the `Shutdown` button, which should work now that the Qemu guest agent is working.
+1. First, stop your VM by clicking on the `Shutdown` button.
 
     ![VM's Shutdown button](images/g023/pve_vm_shutdown_button.png "VM's Shutdown button")
 

@@ -8,10 +8,10 @@
 
 ## Guides
 
-### [**G001** - Hardware setup](G001%20-%20Hardware%20setup#g001-hardware-setup)
+### [**G001** - Hardware setup](G001%20-%20Hardware%20setup.md#g001-hardware-setup)
 
 - [_The reference hardware setup_](G001%20-%20Hardware%20setup.md#the-reference-hardware-setup)
-- [_References_](G001%20-%20Hardware%20setup#references)
+- [_References_](G001%20-%20Hardware%20setup.md#references)
 
 ### [**G002** - Proxmox VE installation](G002%20-%20Proxmox%20VE%20installation.md#g002-proxmox-ve-installation)
 

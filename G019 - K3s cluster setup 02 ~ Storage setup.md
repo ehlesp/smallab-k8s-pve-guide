@@ -269,7 +269,7 @@ Now you'll enable as directories the two LVs you've just created and mounted bef
     You'll get the whole list of storage types supported by Proxmox VE, although in our small setup we're limited to use just the first three.
 
     > **NOTE**  
-    > Technically, you could also use NFS, but since its not in the scope of this guide series I won't consider it an option for our build.
+    > Technically, you could also use NFS but, since its not in the scope of this guide series, I won't consider it an option for our build.
 
 2. Click on `Directory` and you'll get to the window below.
 

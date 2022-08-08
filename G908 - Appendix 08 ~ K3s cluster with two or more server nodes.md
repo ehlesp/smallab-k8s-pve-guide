@@ -82,7 +82,8 @@ The `/etc/rancher/k3s.config.d/config.yaml` file for the first server node (`k3s
 cluster-domain: "deimos.cluster.io"
 tls-san:
     - "k3sserver01.deimos.cloud"
-flannel-iface: "ens19.1"
+flannel-backend: host-gw
+flannel-iface: "ens19"
 bind-address: "0.0.0.0"
 https-listen-port: 6443
 advertise-address: "10.0.0.1"
@@ -93,7 +94,7 @@ node-taint:
     - "k3s-controlplane=true:NoExecute"
 log: "/var/log/k3s.log"
 disable:
-    - coredns
+    - metrics-server
     - servicelb
 protect-kernel-defaults: true
 secrets-encryption: true
@@ -125,7 +126,8 @@ The `/etc/rancher/k3s.config.d/config.yaml` file for the second server has few, 
 cluster-domain: "deimos.cluster.io"
 tls-san:
     - "k3sserver02.deimos.cloud"
-flannel-iface: "ens19.1"
+flannel-backend: host-gw
+flannel-iface: "ens19"
 bind-address: "0.0.0.0"
 https-listen-port: 6443
 advertise-address: "10.0.0.2"
@@ -136,7 +138,7 @@ node-taint:
     - "k3s-controlplane=true:NoExecute"
 log: "/var/log/k3s.log"
 disable:
-    - coredns
+    - metrics-server
     - servicelb
 protect-kernel-defaults: true
 secrets-encryption: true

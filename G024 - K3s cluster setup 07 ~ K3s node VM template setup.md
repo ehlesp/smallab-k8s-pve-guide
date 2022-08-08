@@ -411,7 +411,7 @@ In the installation of the K3s cluster, which you'll do later in the [**G025** g
 3. Save the `90_k3s_kubelet_demands.conf` file and apply the changes, then reboot the VM.
 
     ~~~bash
-    $ sudo sysctl -p
+    $ sudo sysctl -p /etc/sysctl.d/90_k3s_kubelet_demands.conf
     $ sudo reboot
     ~~~
 
