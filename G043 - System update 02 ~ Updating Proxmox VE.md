@@ -74,7 +74,7 @@ Upgrading to a newer minor version is a significant change to the system, specia
 
 ### _Checking the activities on UrBackup_
 
-Check in your UrBackup server's web interface, in the `Activities` tab, if there are backup tasks running. If there are, wait for them to finish before you proceed with the rest of this update procedure.
+Check in your UrBackup server's web interface, in the `Activities` tab, if there are backup tasks running. If so, wait for them to finish before you proceed with the rest of this update procedure.
 
 ### _Careful with the backup jobs in Proxmox VE_
 

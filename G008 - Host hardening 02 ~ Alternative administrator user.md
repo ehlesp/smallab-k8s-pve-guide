@@ -195,6 +195,12 @@ The `mgrsys` user you created earlier exists within the Debian 11 OS, but not in
 
     The new `mgrsys` user will have access to the same tabs and options as `root`, thanks of being part of a PVE group with full administrative rights.
 
+### _TFA has its own section in Proxmox VE **v7.2-z**_
+
+There's no `TFA` button any more in the `Permissions > Users` section at the `Datacenter` level of the `v7.2-z` releases (and maybe also in the previous `v7.1-z` ones). Instead, you can manage all two factor tokens from its own separate section under `Permissions > Two Factor`.
+
+![Datacenter Permissions Two Factor section](images/g008/datacenter_permissions_two_factor_section_v7.2-z.png "Datacenter Permissions Two Factor section")
+
 ## Relevant system paths
 
 ### _Directories_

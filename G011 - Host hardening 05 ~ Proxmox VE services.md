@@ -312,6 +312,10 @@ ZFS requires a lot of RAM we cannot afford in such a small server as the one use
     $ sudo systemctl disable --now zfs-mount.service zfs-share.service zfs-volume-wait.service zfs-zed.service zfs-import.target zfs-volumes.target zfs.target ceph-fuse.target ceph.target
     ~~~
 
+    > **BEWARE!**  
+    > If you're working on a Proxmox VE `v7.2-z` or later (and maybe also in a previous `v7.1-z` release), you'll have to **mask** the `ceph.target` service instead of disabling it. Otherwise, it'll start running again after a reboot. Mask it with the following command.  
+    > `sudo systemctl mask --now ceph.target`
+
 2. Reboot the system.
 
     ~~~bash
@@ -322,7 +326,7 @@ ZFS requires a lot of RAM we cannot afford in such a small server as the one use
 
 > **BEWARE!**  
 > Disabling the `zfs` services **won't remove** the ZFS tab found in the PVE web console at the `pve` node level, under the `Disks` section.  
-Also, Ceph wasn't really installed on your system, something notified by the PVE web console at the `Datacenter > Ceph` section, although Proxmox VE is installed with a couple of Ceph-related services.
+> Also, Ceph wasn't really installed on your system, something notified by the PVE web console at the `Datacenter > Ceph` section, although Proxmox VE is installed with a couple of Ceph-related services.
 
 ## Disabling the SPICE proxy
 

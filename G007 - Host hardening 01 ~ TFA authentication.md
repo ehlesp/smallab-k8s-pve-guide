@@ -299,6 +299,12 @@ The screen you've just reached lists the authentication realms currently availab
 
     Notice how, in the TFA column, the `pam` realm shows the string `oath`. This means that TFA is enforced in that realm with a **OATH/TOTP** token system. From now on, any user in that realm will be required to give a TOTP code, apart from their username and password, to access the PVE web console.
 
+### _In Proxmox VE **v7.2-z**, `Authentication` is now `Realms`_
+
+In the `v7.2-z` releases (and maybe also in the `v7.1-z` ones) of Proxmox VE have the `Permissions > Authentication` section, found at the `Datacenter` level, renamed to the more adequate `Permissions > Realms`.
+
+![Authentication section under Permissions is now called Realms](images/g007/datacenter-realms-v7.2-z.png "Authentication section under Permissions is now called Realms")
+
 ## Incompatibility of PVE web console login with TFA enforced local shell access
 
 At the beginning of this guide, I explicitly stated that I wouldn't enable the TFA token system for the local shell login. This is due to a incompatibility existing between the Proxmox VE web console login and the modification required in the underlying Debian system's `pam` configuration.
@@ -342,7 +348,7 @@ Since this is not documented anywhere as far as I've seen, let me illustrate you
 
 This conflict is not really that surprising. Proxmox VE web console needs some privileged access to its underlying Debian system, and adding the TFA restriction in the `pam` configuration for local authorization messes up with it.
 
-Probably, this is just a problem of limiting the TFA restriction to the users and groups that should have it enforced. Still, this problem is not documented anywhere and messing with the system's PAM configuration is risky. Therefore it's better to leave it as it is, although being aware that the local access to the physical server doesn't have TFA enabled.
+Probably, this is just a problem of limiting the TFA restriction to the users and groups that should have it enforced. Still, this problem is not documented anywhere and messing with the system's PAM configuration is risky. Therefore it's better to leave it as it is, although being aware that the local access to the physical server **doesn't** have TFA enabled.
 
 > **BEWARE!**  
 > This problem not only happens in the **7.0-14** version of Proxmox Virtual Environment, but also in previous versions too.
