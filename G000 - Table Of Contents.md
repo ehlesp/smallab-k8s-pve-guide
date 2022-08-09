@@ -6,6 +6,10 @@
 - [_Intended audience_](README.md#intended-audience)
 - [_Goals_](README.md#goals)
 
+## [**LICENSE**](LICENSE.md)
+
+- [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International Public License](LICENSE.md#creative-commons-attribution-noncommercial-sharealike-40-international-public-license)
+
 ## Guides
 
 ### [**G001** - Hardware setup](G001%20-%20Hardware%20setup.md#g001-hardware-setup)
