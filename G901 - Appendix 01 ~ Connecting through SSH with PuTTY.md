@@ -108,3 +108,7 @@
 - [Newline](https://en.wikipedia.org/wiki/Newline).
 - [Why does Linux use LF as the newline character?](https://unix.stackexchange.com/questions/411811/why-does-linux-use-lf-as-the-newline-character)
 - [Difference between CR LF, LF and CR line break types?](https://stackoverflow.com/questions/1552749/difference-between-cr-lf-lf-and-cr-line-break-types)
+
+## Navigation
+
+[<< Previous (**G045. System update 04**)](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G902. Appendix 02**) >>](G902%20-%20Appendix%2002%20~%20Vim%20vimrc%20configuration.md)

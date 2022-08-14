@@ -50,3 +50,7 @@ Also, the whole system will have some backup procedures applied to it.
 ## Table of contents
 
 All the guides and their main sections are easily accessible through the [Table Of Contents](G000%20-%20Table%20Of%20Contents.md) of this guide series.
+
+## Navigation
+
+[+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G001. Hardware setup**) >>](G001%20-%20Hardware%20setup.md)

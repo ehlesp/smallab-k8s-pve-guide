@@ -364,3 +364,7 @@ On the other hand, notice how I avoided touching any `sysctl` configuration file
 - [Unable to run bpf program as non root](https://stackoverflow.com/questions/65949586/unable-to-run-bpf-program-as-non-root)
 - [Disable unprivileged BPF](https://gitlab.tails.boum.org/tails/tails/-/issues/11827)
 - [Tweaked.io. The GNU/Linux Kernel](http://www.tweaked.io/guide/kernel/)
+
+## Navigation
+
+[<< Previous (**G014. Host hardening 08**)](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G016. Host optimization 02**) >>](G016%20-%20Host%20optimization%2002%20~%20Disabling%20transparent%20hugepages.md)

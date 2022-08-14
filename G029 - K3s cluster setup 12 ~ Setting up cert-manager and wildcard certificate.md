@@ -472,3 +472,7 @@ You can find the Kustomize projects for the cert-manager and Reflector deploymen
 - [Kubed on GitHub](https://github.com/kubeops/kubed)
 - [Faq cert-manager. Syncing Secrets Across Namespaces](https://cert-manager.io/docs/faq/kubed/)
 - [Sharing secret across namespaces](https://stackoverflow.com/questions/46297949/sharing-secret-across-namespaces)
+
+## Navigation
+
+[<< Previous (**G028. K3s cluster setup 11**)](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G030. K3s cluster setup 13**) >>](G030%20-%20K3s%20cluster%20setup%2013%20~%20Deploying%20the%20Kubernetes%20Dashboard.md)

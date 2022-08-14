@@ -1210,3 +1210,7 @@ You can find the Kustomize project for this Gitea platform deployment in the fol
 - [Running Gitea on a Virtual Cloud Server](https://ralph.blog.imixs.com/2021/02/26/running-gitea-on-a-virtual-cloud-server/)
 - [Setup a Self-Hosted Git Service with Gitea](https://dev.to/ruanbekker/setup-a-self-hosted-git-service-with-gitea-11ce)
 - [gitea support HA mode for redis & postgres](https://gitanswer.com/gitea-support-ha-mode-for-redis-postgres-go-906452007)
+
+## Navigation
+
+[<< Previous (**G034. Deploying services 03. Gitea Part 4**)](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%204%20-%20Gitea%20server.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G035. Deploying services 04. Monitoring stack Part 1**) >>](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md)

@@ -1395,3 +1395,7 @@ You can find the Kustomize project for this Monitoring stack deployment in the f
 - [Grafana fundamentals](https://grafana.com/tutorials/grafana-fundamentals/)
 - [Prometheus data source](https://grafana.com/docs/grafana/v8.5/datasources/prometheus/)
 - [Grafana dashboards](https://grafana.com/grafana/dashboards/)
+
+## Navigation
+
+[<< Previous (**G035. Deploying services 04. Monitoring stack Part 5**)](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G036. Host and K3s cluster**) >>](G036%20-%20Host%20and%20K3s%20cluster%20~%20Monitoring%20and%20diagnosis.md)

@@ -285,3 +285,7 @@ My usual reminder. This component is part of a bigger project yet to be complete
 - [How to Setup Prometheus Node Exporter on Kubernetes](https://devopscube.com/node-exporter-kubernetes/)
 - [Prometheus Node Exporter yamls from "How to Setup" guide](https://github.com/bibinwilson/kubernetes-node-exporter)
 - [Prometheus Node Exporter's Docker image](https://hub.docker.com/r/prom/node-exporter)
+
+## Navigation
+
+[<< Previous (**G035. Deploying services 04. Monitoring stack Part 2**)](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%202%20-%20Kube%20State%20Metrics%20service.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G035. Deploying services 04. Monitoring stack Part 4**) >>](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%204%20-%20Prometheus%20server.md)

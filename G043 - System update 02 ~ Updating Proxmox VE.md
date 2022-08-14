@@ -192,3 +192,7 @@ Also, don't forget to reenable the `Start at boot` feature found in the `Options
 - [Proxmox. Press Releases](https://www.proxmox.com/en/news/press-releases)
 - [Proxmox Virtual Environment 7.2 released](https://www.proxmox.com/en/news/press-releases/proxmox-virtual-environment-7-2-available)
 - [Proxmox Virtual Environment 7.1 released](https://www.proxmox.com/en/news/press-releases/proxmox-virtual-environment-7-1-released)
+
+## Navigation
+
+[<< Previous (**G042. System update 01**)](G042%20-%20System%20update%2001%20~%20Considerations.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G044. System update 03**) >>](G044%20-%20System%20update%2003%20~%20Updating%20VMs%20and%20UrBackup.md)

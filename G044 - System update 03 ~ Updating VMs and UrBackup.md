@@ -287,3 +287,7 @@ After applying the updates, check the versions of your server and clients [as yo
 - [UrBackup 2.5.z branch news thread on official forum](https://forums.urbackup.org/t/server-2-5-25-client-2-5-19-updated/11448)
 - [UrBackup Server web folder](https://beta.urbackup.org/Server/)
 - [UrBackup Client web folder](https://beta.urbackup.org/Client/)
+
+## Navigation
+
+[<< Previous (**G043. System update 02**)](G043%20-%20System%20update%2002%20~%20Updating%20Proxmox%20VE.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G045. System update 04**) >>](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md)

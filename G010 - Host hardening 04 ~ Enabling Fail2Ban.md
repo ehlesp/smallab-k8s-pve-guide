@@ -332,3 +332,7 @@ Notice how it has detected 8 matches: those matches are authentication failures 
 - [Proxmox VE wiki. Protecting the web interface with fail2ban](https://pve.proxmox.com/wiki/Fail2ban)
 - [fail2ban conf file](https://unix.stackexchange.com/questions/456756/fail2ban-conf-file)
 - [Fail2ban on Debian Buster - the right way to configure?](https://serverfault.com/questions/997099/fail2ban-on-debian-buster-the-right-way-to-configure)
+
+## Navigation
+
+[<< Previous (**G009. Host hardening 03**)](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G011. Host hardening 05**) >>](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md)

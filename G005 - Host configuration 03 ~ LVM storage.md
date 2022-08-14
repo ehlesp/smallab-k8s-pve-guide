@@ -817,3 +817,7 @@ With all these steps you've got an independent space in your SSD storage unit, m
 - [Thin Provisioning in LVM2](https://www.theurbanpenguin.com/thin-provisioning-lvm2/)
 - [How to Manage and Use LVM (Logical Volume Management) in Ubuntu](https://www.howtogeek.com/howto/40702/how-to-manage-and-use-lvm-logical-volume-management-in-ubuntu/)
 - [`pvcreate` error : Can’t open /dev/sdx exclusively. Mounted filesystem?](https://www.thegeekdiary.com/lvm-error-cant-open-devsdx-exclusively-mounted-filesystem/)
+
+## Navigation
+
+[<< Previous (**G004. Host configuration 02**)](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G006. Host configuration 04**) >>](G006%20-%20Host%20configuration%2004%20~%20Removing%20subscription%20warning.md)

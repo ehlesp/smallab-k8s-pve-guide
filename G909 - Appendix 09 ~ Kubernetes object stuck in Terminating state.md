@@ -95,3 +95,7 @@ This procedure will effectively unstick the namespace and allow to the `kubectl 
 ## References
 
 - [How to fix — Kubernetes namespace deleting stuck in Terminating state](https://craignewtondev.medium.com/how-to-fix-kubernetes-namespace-deleting-stuck-in-terminating-state-5ed75792647e)
+
+## Navigation
+
+[<< Previous (**G908. Appendix 08**)](G908%20-%20Appendix%2008%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G910. Appendix 10**) >>](G910%20-%20Appendix%2010%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md)

@@ -212,3 +212,7 @@ Restoring the backup of a VM or VM template is not much more complex than creati
 
 - [CommonMark (Markdown) Spec](https://spec.commonmark.org/)
 - [Proxmox VE documentation. Backup and Restore](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_vzdump)
+
+## Navigation
+
+[<< Previous (**G022. K3s cluster setup 05**)](G022%20-%20K3s%20cluster%20setup%2005%20~%20Connecting%20the%20VM%20to%20the%20NUT%20server.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G024. K3s cluster setup 07**) >>](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md)

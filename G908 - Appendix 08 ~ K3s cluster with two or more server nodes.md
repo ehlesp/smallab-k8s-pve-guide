@@ -207,3 +207,7 @@ The procedure for your second K3s server node will be as follows.
 ## Regarding the K3s agent nodes
 
 The agent nodes are installed with exactly the same `config.yaml` file and command you already saw in the [**G025** guide](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md). The only thing you might consider to change is to make each of your agent nodes point to different server nodes (the `server` parameter in their `config.yaml` file). Since the server nodes are always synchronized, it shouldn't matter to which one each agent is connected to.
+
+## Navigation
+
+[<< Previous (**G907. Appendix 07**)](G907%20-%20Appendix%2007%20~%20Resizing%20a%20root%20LVM%20volume.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G909. Appendix 09**) >>](G909%20-%20Appendix%2009%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md)

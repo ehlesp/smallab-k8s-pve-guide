@@ -357,3 +357,7 @@ You can find the Kustomize project for this metrics-server deployment in the fol
 - [Query on kubernetes metrics-server metrics values](https://stackoverflow.com/questions/55684789/query-on-kubernetes-metrics-server-metrics-values)
 - [Kubernetes Pod Created with hostNetwork](https://docs.datadoghq.com/security_platform/default_rules/kubernetes-pod-created-with-hostnetwork/)
 - [Taints and Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
+
+## Navigation
+
+[<< Previous (**G027. K3s cluster setup 10**)](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G029. K3s cluster setup 12**) >>](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20wildcard%20certificate.md)

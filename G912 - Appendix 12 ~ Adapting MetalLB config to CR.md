@@ -169,3 +169,7 @@ Thankfully, someone else used an equivalent metallb setup and shared [in this ar
 - [Heads up: breaking changes in 0.13.2](https://github.com/metallb/metallb/issues/1473)
 - [CR Converstion tool, failed to generate resources: invalid aggregation length 24](https://github.com/metallb/metallb/issues/1495)
 - [Problem with Kustomize installation resource for Metallb 0.13.z native bgp implementation](https://github.com/metallb/metallb/issues/1524)
+
+## Navigation
+
+[<< Previous (**G911. Appendix 11**)](G911%20-%20Appendix%2011%20~%20Alternative%20Nextcloud%20web%20server%20setups.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md)

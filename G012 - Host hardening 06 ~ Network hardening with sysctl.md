@@ -329,3 +329,7 @@ Chrony is a daemon that keeps your system's clock synchronized with an external 
 
 - [chronyd on debian could not open IPv6 NTP socket](https://serverfault.com/questions/992844/chronyd-on-debian-could-not-open-ipv6-ntp-socket)
 - [Steps to configure Chrony as NTP Server & Client (CentOS/RHEL 8)](https://www.golinuxcloud.com/configure-chrony-ntp-server-client-force-sync/)
+
+## Navigation
+
+[<< Previous (**G011. Host hardening 05**)](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G013. Host hardening 07**) >>](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md)

@@ -1529,3 +1529,7 @@ Notice the `STATUS` column. All the pods that appear `Terminated` there are in f
 
 - [YAML Ain't Markup Language](http://yaml.org/)
 - [YAML Tutorial](https://www.tutorialspoint.com/yaml/index.htm)
+
+## Navigation
+
+[<< Previous (**G024. K3s cluster setup 07**)](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G026. K3s cluster setup 09**) >>](G026%20-%20K3s%20cluster%20setup%2009%20~%20Setting%20up%20a%20kubectl%20client%20for%20remote%20access.md)

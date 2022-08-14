@@ -1572,3 +1572,7 @@ You have to make the final changes at the `kustomization.yaml` file of this Next
 - [Mozilla SSL Configuration Generator](https://ssl-config.mozilla.org/)
 - [Setup SSL on NGINX and configure for best security](https://www.ssltrust.com.au/help/setup-guides/setup-ssl-nginx-configure-best-security)
 - [How To Create a Self-Signed SSL Certificate for Nginx in Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-create-a-self-signed-ssl-certificate-for-nginx-in-ubuntu-20-04-1)
+
+## Navigation
+
+[<< Previous (**G910. Appendix 10**)](G910%20-%20Appendix%2010%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G912. Appendix 12**) >>](G912%20-%20Appendix%2012%20~%20Adapting%20MetalLB%20config%20to%20CR.md)

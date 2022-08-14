@@ -569,3 +569,7 @@ Notice how PVE has already enabled the bootable hardware devices (hard disk, CD/
 - [PVE admin guide. Qemu/KVM Virtual Machines ~ Memory options](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#qm_memory)
 - [PVE admin guide. Qemu/KVM Virtual Machines ~ Network Device options](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#qm_network_device)
 - [Best practices on setting up Proxmox on a new server](https://www.reddit.com/r/Proxmox/comments/oz81qq/best_practices_on_setting_up_proxmox_on_a_new/)
+
+## Navigation
+
+[<< Previous (**G019. K3s cluster setup 02**)](G019%20-%20K3s%20cluster%20setup%2002%20~%20Storage%20setup.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G021. K3s cluster setup 04**) >>](G021%20-%20K3s%20cluster%20setup%2004%20~%20Debian%20VM%20configuration.md)

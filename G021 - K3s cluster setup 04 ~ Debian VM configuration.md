@@ -960,3 +960,7 @@ In the [**G013** guide](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%
 ### _Microcode packages on VMs_
 
 - [What if you have a microcode package installed on the VM?](https://www.reddit.com/r/debian/comments/bqk2z0/is_it_necessary_to_install_intelmicrocode_to/eo5zt6i?utm_source=share&utm_medium=web2x&context=3)
+
+## Navigation
+
+[<< Previous (**G020. K3s cluster setup 03**)](G020%20-%20K3s%20cluster%20setup%2003%20~%20Debian%20VM%20creation.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G022. K3s cluster setup 05**) >>](G022%20-%20K3s%20cluster%20setup%2005%20~%20Connecting%20the%20VM%20to%20the%20NUT%20server.md)

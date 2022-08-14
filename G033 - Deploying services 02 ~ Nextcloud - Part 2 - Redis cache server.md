@@ -500,3 +500,7 @@ Although you technically can deploy this Redis Kustomize project, wait until you
 - [Rancher Official Doc - Deploying Redis Cluster on Top of Kubernetes](https://rancher.com/blog/2019/deploying-redis-cluster/)
 - [Running Redis on Multi-Node Kubernetes Cluster in 5 Minutes](https://collabnix.com/running-redis-on-kubernetes-cluster-in-5-minutes/)
 - [Redis sentinel vs clustering](https://stackoverflow.com/questions/31143072/redis-sentinel-vs-clustering)
+
+## Navigation
+
+[<< Previous (**G033. Deploying services 02. Nextcloud Part 1**)](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%201%20-%20Outlining%20setup%2C%20arranging%20storage%20and%20choosing%20service%20IPs.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G033. Deploying services 02. Nextcloud Part 3**) >>](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%203%20-%20MariaDB%20database%20server.md)

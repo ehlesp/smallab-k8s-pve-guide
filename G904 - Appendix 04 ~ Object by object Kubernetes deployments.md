@@ -43,7 +43,7 @@ Error from server (NotFound): error when deleting "https://github.com/jetstack/c
 ...
 ~~~
 
-What has happened here? The yaml manifest for cert-manager is heavy: for the `1.4.0` version it weights almost 2 MiB. This implies that either it defines many Kubernetes objects or that they are complex, or both. Also, it might be that some of those objects are Kubernetes secrets that require strong encryption. Regardless, what is obvious is, if you have seen those errors above, your K3s cluster nodes are lacking in capacity. To fix this, you can go to Proxmox VE and increase the CPU and RAM capabilities of your VMs, then try to execute again the deployment and hope for the best. As a reference, my humble four-single-threaded-cores CPU, running the same five K3s nodes used in the guide series, was able to deploy cert-manager just by increasing the number of cores available to **each VM** to the maximum possible, four.
+What has happened here? The yaml manifest for cert-manager is heavy: for the `1.4.0` version it weights almost 2 MiB. This implies that either it defines many Kubernetes objects or that they are complex, or both. Also, it might be that some of those objects are Kubernetes secrets that require strong encryption. Regardless, what is obvious is that, if you have seen those errors above, your K3s cluster nodes are lacking in capacity. To fix this, you can go to Proxmox VE and increase the CPU and RAM capabilities of your VMs, then try to execute again the deployment and hope for the best. As a reference, my humble four-single-threaded-cores CPU, running the same five K3s nodes used in the guide series, was able to deploy cert-manager just by increasing the number of cores available to **each VM** to the maximum possible, four.
 
 ### _Object-by-object deployment_
 
@@ -123,3 +123,7 @@ Bear in mind that I haven't tried this rather cumbersome method. You should alwa
 ### _Splitting text file with `csplit` using delimiter_
 
 - [Split one file into multiple files based on delimiter](https://stackoverflow.com/questions/11313852/split-one-file-into-multiple-files-based-on-delimiter)
+
+## Navigation
+
+[<< Previous (**G903. Appendix 03**)](G903%20-%20Appendiz%2003%20~%20Customization%20of%20the%20motd%20file.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G905. Appendix 05**) >>](G905%20-%20Appendix%2005%20~%20Cloning%20storage%20drives%20with%20Clonezilla.md)

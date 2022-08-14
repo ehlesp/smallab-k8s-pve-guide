@@ -190,3 +190,7 @@ You've seen the LVM side of the story, but you can get more information about th
 - [Red Hat Enterprise Linux 8. Configuring and managing logical volumes. Chapter 4. Configuring LVM logical volumes](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_and_managing_logical_volumes/assembly_configuring-lvm-volumes-configuring-and-managing-logical-volumes)
 - [How to Extend/Reduce LVM’s (Logical Volume Management) in Linux – Part II](https://www.tecmint.com/extend-and-reduce-lvms-in-linux/)
 - [Linux Man Pages - lvchange (8)](https://www.systutorials.com/docs/linux/man/8-lvchange/)
+
+## Navigation
+
+[<< Previous (**G905. Appendix 05**)](G905%20-%20Appendix%2005%20~%20Cloning%20storage%20drives%20with%20Clonezilla.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G907. Appendix 07**) >>](G907%20-%20Appendix%2007%20~%20Resizing%20a%20root%20LVM%20volume.md)

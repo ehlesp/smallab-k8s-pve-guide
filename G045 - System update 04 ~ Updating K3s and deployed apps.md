@@ -373,3 +373,7 @@ In the output above you can see several changes.
 ### _Kubernetes_
 
 - [Kubelet Configuration (v1beta1)](https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/)
+
+## Navigation
+
+[<< Previous (**G044. System update 03**)](G044%20-%20System%20update%2003%20~%20Updating%20VMs%20and%20UrBackup.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G901. Appendix 01**) >>](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md)

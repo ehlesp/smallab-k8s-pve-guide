@@ -757,3 +757,7 @@ You may consider to schedule in Proxmox VE a job to backup this VM, as you did i
 - [UrBackup_simple_make_web_via_ssl_https](https://github.com/Dmitrius7/UrBackup_simple_make_web_via_ssl_https)
 - [Connect clients with a HTTPS CONNECT web proxy](http://blog.urbackup.org/299/connect-clients-with-a-https-connect-web-proxy)
 - [Backup server for the raspberry pi](http://blog.urbackup.org/87/backup-server-for-the-raspberry-pi)
+
+## Navigation
+
+[<< Previous (**G039. Backups 03**)](G039%20-%20Backups%2003%20~%20Proxmox%20VE%20backup%20job.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G041. Backups 05. UrBackup 02**) >>](G041%20-%20Backups%2005%20~%20UrBackup%2002%20-%20Clients%20setup%20and%20configuring%20file%20backups.md)

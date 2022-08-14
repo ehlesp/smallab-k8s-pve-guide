@@ -197,3 +197,7 @@ Remember that the `k3smnt` folder was originally completely owned by the `root` 
 ### _Kubernetes_
 
 - [Official Doc - Get a Shell to a Running Container](https://kubernetes.io/docs/tasks/debug-application-cluster/get-shell-running-container/)
+
+## Navigation
+
+[<< Previous (**G035. Deploying services 04. Monitoring stack Part 6**)](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G037. Backups 01**) >>](G037%20-%20Backups%2001%20~%20Considerations.md)

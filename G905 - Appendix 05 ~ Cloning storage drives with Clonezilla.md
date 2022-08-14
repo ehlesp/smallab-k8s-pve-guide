@@ -389,3 +389,7 @@ There are several other tools available, free and paid, that can do the same job
 - [Clonezilla](https://clonezilla.org/)
 - [Clonezilla Live on USB](https://clonezilla.org/liveusb.php)
 - [Rescuezilla](https://rescuezilla.com/)
+
+## Navigation
+
+[<< Previous (**G904. Appendix 04**)](G904%20-%20Appendix%2004%20~%20Object%20by%20object%20Kubernetes%20deployments.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G906. Appendix 06**) >>](G906%20-%20Appendix%2006%20~%20Handling%20VM%20or%20VM%20template%20volumes.md)

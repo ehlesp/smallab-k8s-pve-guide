@@ -907,3 +907,7 @@ This PostgreSQL setup is missing the persistent volume it needs to store data an
 - [Extension library module `pg_stat_statements`](https://www.postgresql.org/docs/14/pgstatstatements.html)
 - [Postgis pg_stat_statements errors](https://stackoverflow.com/questions/68185097/postgis-pg-stat-statements-errors)
 - [pg_stat_statements enabled, but the table does not exist](https://stackoverflow.com/questions/31021174/pg-stat-statements-enabled-but-the-table-does-not-exist)
+
+## Navigation
+
+[<< Previous (**G034. Deploying services 03. Gitea Part 2**)](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%202%20-%20Redis%20cache%20server.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G034. Deploying services 03. Gitea Part 4**) >>](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%204%20-%20Gitea%20server.md)

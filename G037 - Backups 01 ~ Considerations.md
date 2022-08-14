@@ -59,3 +59,7 @@ It's not a trivial matter at all to decide when to do backups. This depends a lo
 - [Clonezilla](https://clonezilla.org/)
 - [UrBackup](https://www.urbackup.org/)
 - [Velero](https://velero.io/)
+
+## Navigation
+
+[<< Previous (**G036. Host and K3s cluster**)](G036%20-%20Host%20and%20K3s%20cluster%20~%20Monitoring%20and%20diagnosis.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G038. Backups 02**) >>](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md)

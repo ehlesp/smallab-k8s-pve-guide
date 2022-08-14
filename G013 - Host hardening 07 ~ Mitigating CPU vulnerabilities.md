@@ -88,3 +88,7 @@ To mitigate these bugs, you can install the proper microcode `apt` package for y
 - [Meltdown and Spectre](https://meltdownattack.com/)
 - [Microcode on Debian Wiki](https://wiki.debian.org/Microcode)
 - [Debian Wiki. SourcesList](https://wiki.debian.org/SourcesList)
+
+## Navigation
+
+[<< Previous (**G012. Host hardening 06**)](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G014. Host hardening 08**) >>](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md)

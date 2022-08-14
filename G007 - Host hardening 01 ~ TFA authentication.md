@@ -395,3 +395,7 @@ Probably, this is just a problem of limiting the TFA restriction to the users an
 - [Configurar y usar Linux-PAM](https://likegeeks.com/es/linux-pam/)
 - [Autenticación PAM – Redes PYMES](https://blog.desdelinux.net/autenticacion-pam-redes-pymes/)
 - [Cómo configurar y usar PAM en Linux](https://es.linux-console.net/?p=141)
+
+## Navigation
+
+[<< Previous (**G006. Host configuration 04**)](G006%20-%20Host%20configuration%2004%20~%20Removing%20subscription%20warning.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G008. Host hardening 02**) >>](G008%20-%20Host%20hardening%2002%20~%20Alternative%20administrator%20user.md)

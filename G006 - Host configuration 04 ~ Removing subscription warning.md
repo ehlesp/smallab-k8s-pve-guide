@@ -84,3 +84,7 @@ This fix is known to work on any version starting from Proxmox VE **5.1** up to 
 ## References
 
 - [Remove Proxmox Subscription Notice (Including 5.1+ & 6.2-12+)](https://johnscs.com/remove-proxmox51-subscription-notice/)
+
+## Navigation
+
+[<< Previous (**G005. Host configuration 03**)](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G007. Host hardening 01**) >>](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md)

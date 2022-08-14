@@ -426,3 +426,7 @@ This Grafana instance cannot be deployed on its own because is missing several e
 - [Grafana docker image](https://hub.docker.com/r/grafana/grafana)
 - [Grafana on GitHub](https://github.com/grafana/grafana)
 - [Reliable Kubernetes on a Raspberry Pi Cluster: Monitoring](https://medium.com/codex/reliable-kubernetes-on-a-raspberry-pi-cluster-monitoring-a771b497d4d3)
+
+## Navigation
+
+[<< Previous (**G035. Deploying services 04. Monitoring stack Part 4**)](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%204%20-%20Prometheus%20server.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G035. Deploying services 04. Monitoring stack Part 6**) >>](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md)

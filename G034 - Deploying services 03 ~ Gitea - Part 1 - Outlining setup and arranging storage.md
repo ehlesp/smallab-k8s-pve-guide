@@ -384,3 +384,7 @@ On each part of this guide, I'll show you which are the FQDNs for each service. 
 ### _CoreDNS_
 
 - [CoreDNS official site](https://coredns.io/)
+
+## Navigation
+
+[<< Previous (**G033. Deploying services 02. Nextcloud Part 5**)](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G034. Deploying services 03. Gitea Part 2**) >>](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%202%20-%20Redis%20cache%20server.md)

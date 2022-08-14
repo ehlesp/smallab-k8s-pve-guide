@@ -198,3 +198,7 @@ You can handle your bridges through your Proxmox VE web console, but that's a ra
 - [Mini Container Series Part 5](https://hechao.li/2020/07/01/Mini-Container-Series-Part-5-Network-Isolation/)
 - [Linux: bridges, VLANs and RSTP](https://serverfault.com/questions/824621/linux-bridges-vlans-and-rstp)
 - [Bridging Ethernet Connections (as of Ubuntu 16.04)](https://help.ubuntu.com/community/NetworkConnectionBridge)
+
+## Navigation
+
+[<< Previous (**G016. Host optimization 02**)](G016%20-%20Host%20optimization%2002%20~%20Disabling%20transparent%20hugepages.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G018. K3s cluster setup 01**) >>](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md)

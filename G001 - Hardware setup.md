@@ -52,3 +52,7 @@ So, although a hardware setup like this won't allow you to use things usually fo
 - [Intel Pentium J2900](https://ark.intel.com/content/www/us/en/ark/products/78868/intel-pentium-processor-j2900-2m-cache-up-to-2-67-ghz.html)
 - [Intel® HD Graphics for Intel Atom® Processor Z3700 Series](https://ark.intel.com/content/www/us/en/ark/products/78868/intel-pentium-processor-j2900-2m-cache-up-to-2-67-ghz.html#tab-blade-1-0-4)
 - [APC Back-UPS ES 700](https://www.apc.com/shop/es/es/products/Back-UPS-700-de-bajo-consumo-de-APC-230-V-CEE-7-7/P-BE700G-SP)
+
+## Navigation
+
+[<< Previous (**README**)](README.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G002. Proxmox VE installation**) >>](G002%20-%20Proxmox%20VE%20installation.md)

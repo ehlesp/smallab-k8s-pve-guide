@@ -391,3 +391,7 @@ If you feel curious about what else you can do with NUT, there's a pdf document 
 - [UPS Server on Raspberry Pi](https://www.reddit.com/r/homelab/comments/5ssb5h/ups_server_on_raspberry_pi/)
 - [Configuring NUT for the Eaton 3S UPS on Ubuntu Linux](https://srackham.wordpress.com/2013/02/27/configuring-nut-for-the-eaton-3s-ups-on-ubuntu-linux/)
 - [UPS HowTo](https://tldp.org/HOWTO/UPS-HOWTO/)
+
+## Navigation
+
+[<< Previous (**G003. Host configuration 01**)](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources%2C%20updates%20and%20extra%20tools.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G005. Host configuration 03**) >>](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md)

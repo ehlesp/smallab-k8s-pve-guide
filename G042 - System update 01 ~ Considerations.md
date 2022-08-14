@@ -51,3 +51,7 @@ For me, a good order is going always from the bottom up:
    1. The apps deployed in the K3s cluster.
 
 And what if one layer doesn't have any updates pending? Easy, you just skip it in that particular update cycle.
+
+## Navigation
+
+[<< Previous (**G041. Backups 05. UrBackup 02**)](G041%20-%20Backups%2005%20~%20UrBackup%2002%20-%20Clients%20setup%20and%20configuring%20file%20backups.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G043. System update 02**) >>](G043%20-%20System%20update%2002%20~%20Updating%20Proxmox%20VE.md)

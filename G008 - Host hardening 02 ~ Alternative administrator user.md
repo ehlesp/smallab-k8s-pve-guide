@@ -228,3 +228,7 @@ There's no `TFA` button any more in the `Permissions > Users` section at the `Da
 ### _PAM_
 
 - [PAM, Pluggable Authentication Module](https://en.wikipedia.org/wiki/Pluggable_authentication_module)
+
+## Navigation
+
+[<< Previous (**G007. Host hardening 01**)](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G009. Host hardening 03**) >>](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md)

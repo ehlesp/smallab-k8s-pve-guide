@@ -813,3 +813,7 @@ This Prometheus server cannot be deployed on its own because is missing several 
 - [Kubernetes monitoring with Prometheus, the ultimate guide](https://sysdig.com/blog/kubernetes-monitoring-prometheus/)
 - [Kubernetes Monitoring with Prometheus: AlertManager, Grafana, PushGateway (part 2)](https://sysdig.com/blog/kubernetes-monitoring-with-prometheus-alertmanager-grafana-pushgateway-part-2/)
 - [prometheus: Unable to create mmap-ed active query log](https://github.com/aws/eks-charts/issues/21)
+
+## Navigation
+
+[<< Previous (**G035. Deploying services 04. Monitoring stack Part 3**)](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%203%20-%20Prometheus%20Node%20Exporter%20service.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G035. Deploying services 04. Monitoring stack Part 5**) >>](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana.md)

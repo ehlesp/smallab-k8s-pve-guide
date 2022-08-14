@@ -759,3 +759,7 @@ Know that the connection tracking subsystem uses four different internal tables:
 - [CONNTRACK(8)](https://manpages.debian.org/bullseye/conntrack/conntrack.8.en.html)
 - [Package: conntrack (1:1.4.6-2)](https://packages.debian.org/bullseye/conntrack)
 - [Matching connection tracking stateful metainformation](https://wiki.nftables.org/wiki-nftables/index.php/Matching_connection_tracking_stateful_metainformation)
+
+## Navigation
+
+[<< Previous (**G013. Host hardening 07**)](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G015. Host optimization 01**) >>](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md)

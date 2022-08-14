@@ -126,3 +126,7 @@ Go back to the web console and, again, in the `System > Network` screen of your 
 - [Open vSwitch in Proxmox VE wiki](https://pve.proxmox.com/wiki/Open_vSwitch)
 - [Proxmox VE with Open vSwitch](https://www.networkshinobi.com/proxmox-ve-with-open-vswitch/)
 - [Proxmox – KimSufi, OVH, SoYouStart – IPv6 – Host Multiple Containers and Virtual Machines on a Single KimSufi Server using IPv6 and ProxMox](https://www.kiloroot.com/proxmox-kimsufi-ovh-soyoustart-ipv6-host-multiple-containers-and-virtual-machines-on-a-single-kimsufi-server-using-ipv6-and-proxmox/)
+
+## Navigation
+
+[<< Previous (**G909. Appendix 09**)](G909%20-%20Appendix%2009%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G911. Appendix 11**) >>](G911%20-%20Appendix%2011%20~%20Alternative%20Nextcloud%20web%20server%20setups.md)

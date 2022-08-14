@@ -259,3 +259,7 @@ This procedure is, as it is, also valid to extend any non-root LVM volumes.
 - [CentOS / RHEL : How to extend Physical Volume in LVM by extending the Disk Partition used](https://www.thegeekdiary.com/centos-rhel-how-to-extend-physical-volume-in-lvm-by-extending-the-disk-partition-used/)
 - [How to Increase the size of a Linux LVM by expanding the virtual machine disk](https://www.rootusers.com/how-to-increase-the-size-of-a-linux-lvm-by-expanding-the-virtual-machine-disk/)
 - [LVM Resize – How to Increase an LVM Partition](https://www.rootusers.com/lvm-resize-how-to-increase-an-lvm-partition/)
+
+## Navigation
+
+[<< Previous (**G906. Appendix 06**)](G906%20-%20Appendix%2006%20~%20Handling%20VM%20or%20VM%20template%20volumes.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G908. Appendix 08**) >>](G908%20-%20Appendix%2008%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md)

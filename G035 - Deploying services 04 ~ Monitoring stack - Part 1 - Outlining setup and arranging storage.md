@@ -687,3 +687,7 @@ After a time, your monitoring services may end being close to fill up their stor
 - [Prometheus Node Exporter](https://github.com/prometheus/node_exporter)
 - [Kube State Metrics](https://github.com/kubernetes/kube-state-metrics)
 - [Grafana](https://grafana.com/grafana/)
+
+## Navigation
+
+[<< Previous (**G034. Deploying services 03. Gitea Part 5**)](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%205%20-%20Complete%20Gitea%20platform.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G035. Deploying services 04. Monitoring stack Part 2**) >>](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%202%20-%20Kube%20State%20Metrics%20service.md)

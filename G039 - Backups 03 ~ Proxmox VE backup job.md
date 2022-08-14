@@ -466,3 +466,7 @@ So, if you wanted, you could connect through SSH with a tool like WinSCP and cop
 
 - [Wiki. Backup and Restore](https://pve.proxmox.com/wiki/Backup_and_Restore)
 - [Administrator Guide. Backup and Restore](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_vzdump)
+
+## Navigation
+
+[<< Previous (**G038. Backups 02**)](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G040. Backups 04. UrBackup 01**) >>](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md)

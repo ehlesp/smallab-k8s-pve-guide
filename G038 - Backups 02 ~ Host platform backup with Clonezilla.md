@@ -96,3 +96,7 @@ Be aware that Clonezilla can also make images of partitions, so you could consid
 ## References
 
 - [Clonezilla](https://clonezilla.org/)
+
+## Navigation
+
+[<< Previous (**G037. Backups 01**)](G037%20-%20Backups%2001%20~%20Considerations.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G039. Backups 03**) >>](G039%20-%20Backups%2003%20~%20Proxmox%20VE%20backup%20job.md)

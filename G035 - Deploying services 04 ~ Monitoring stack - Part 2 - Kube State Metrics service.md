@@ -649,3 +649,7 @@ My usual reminder. This component is part of a bigger project yet to be complete
 - [The Guide To Kube-State-Metrics](https://www.densify.com/kubernetes-tools/kube-state-metrics)
 - [How To Setup Kube State Metrics on Kubernetes](https://devopscube.com/setup-kube-state-metrics/)
 - [Kube state metrics kubernetes deployment configs](https://github.com/devopscube/kube-state-metrics-configs)
+
+## Navigation
+
+[<< Previous (**G035. Deploying services 04. Monitoring stack Part 1**)](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G035. Deploying services 04. Monitoring stack Part 3**) >>](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%203%20-%20Prometheus%20Node%20Exporter%20service.md)

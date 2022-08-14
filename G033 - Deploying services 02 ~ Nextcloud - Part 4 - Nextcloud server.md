@@ -919,3 +919,7 @@ There's a particular thing that I've left out of this guide, and is the configur
 - [SSLSessionCache](https://cwiki.apache.org/confluence/display/httpd/SSLSessionCache)
 - [XAMPP - Session Cache is not configured [hint: SSLSessionCache]](https://stackoverflow.com/questions/16644064/xampp-session-cache-is-not-configured-hint-sslsessioncache)
 - [SSLSessionCache: ‘shmcb’ session cache not supported](https://bobcares.com/blog/sslsessioncache-shmcb-session-cache-not-supported/)
+
+## Navigation
+
+[<< Previous (**G033. Deploying services 02. Nextcloud Part 3**)](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%203%20-%20MariaDB%20database%20server.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G033. Deploying services 02. Nextcloud Part 5**) >>](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md)

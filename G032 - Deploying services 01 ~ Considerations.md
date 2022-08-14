@@ -15,3 +15,7 @@ Your K3s Kubernetes cluster is not running "empty", it already has a fair number
 ## Don't fill your setup up to the brim
 
 Just because you still have free RAM or a not so high CPU usage, it doesn't mean that you can keep on deploying more services in your setup. You must leave some room for possible usage spikes, and for the underlying platforms running everything (Proxmox VE and K3s) which also need resources to run. This way you can also run sporadic tasks like backup jobs or updates when required.
+
+## Navigation
+
+[<< Previous (**G031. K3s cluster setup 14**)](G031%20-%20K3s%20cluster%20setup%2014%20~%20Enabling%20the%20Traefik%20dashboard.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G033. Deploying services 02. Nextcloud Part 1**) >>](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%201%20-%20Outlining%20setup%2C%20arranging%20storage%20and%20choosing%20service%20IPs.md)

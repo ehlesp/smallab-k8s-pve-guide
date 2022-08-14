@@ -460,3 +460,7 @@ You can also modify this file manually to adjust your `Datacenter` tier's storag
 - [Promox configuration overview](https://imgur.com/a/OFHyxiU)
 - [How to add storage to Proxmox](https://nubcakes.net/index.php/2019/03/05/how-to-add-storage-to-proxmox/)
 - [Advice on storage structure](https://www.reddit.com/r/Proxmox/comments/bdss9x/advice_on_storage_structure/el0nxl5/)
+
+## Navigation
+
+[<< Previous (**G018. K3s cluster setup 01**)](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G020. K3s cluster setup 03**) >>](G020%20-%20K3s%20cluster%20setup%2003%20~%20Debian%20VM%20creation.md)

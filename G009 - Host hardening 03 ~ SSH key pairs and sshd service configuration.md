@@ -528,3 +528,7 @@ Overall, be aware of the services or tasks in your server that require ssh conne
 
 - [Don't disable root ssh login to PVE as I did, you'll get locked out of containers](https://www.reddit.com/r/Proxmox/comments/dkozht/dont_disable_root_ssh_login_to_pve_as_i_did_youll/)
 - [Disable root login](https://forum.proxmox.com/threads/disable-root-login.10512/)
+
+## Navigation
+
+[<< Previous (**G008. Host hardening 02**)](G008%20-%20Host%20hardening%2002%20~%20Alternative%20administrator%20user.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G010. Host hardening 04**) >>](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md)

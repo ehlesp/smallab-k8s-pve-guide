@@ -437,3 +437,7 @@ You can use the arrows or the Page Up/Down keys to browse in the left-side menu 
 - [Lm_sensors - Linux hardware monitoring](https://hwmon.wiki.kernel.org/lm_sensors)
 - [The lm-sensors package on GitHub](https://github.com/lm-sensors/lm-sensors)
 - [The Stress Terminal UI: s-tui on GitHub](https://github.com/amanusk/s-tui)
+
+## Navigation
+
+[<< Previous (**G002. Proxmox VE installation**)](G002%20-%20Proxmox%20VE%20installation.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G004. Host configuration 02**) >>](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md)

@@ -240,3 +240,7 @@ Since from now on you're going to deal with Kubernetes configuration files, you'
 - [Install and Set Up `kubectl` on Linux](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
 - [K3s cluster access](https://rancher.com/docs/k3s/latest/en/cluster-access/)
 - [Kubeval](https://www.kubeval.com/)
+
+## Navigation
+
+[<< Previous (**G025. K3s cluster setup 08**)](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G027. K3s cluster setup 10**) >>](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md)

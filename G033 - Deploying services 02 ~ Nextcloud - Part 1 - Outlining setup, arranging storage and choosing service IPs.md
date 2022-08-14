@@ -406,3 +406,7 @@ See that I've also chosen IP for the Nextcloud server. With the internal cluster
 - `/dev/sdc1`
 - `/etc/fstab`
 - `/etc/fstab.bkp`
+
+## Navigation
+
+[<< Previous (**G032. Deploying services 01**)](G032%20-%20Deploying%20services%2001%20~%20Considerations.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G033. Deploying services 02. Nextcloud Part 2**) >>](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Redis%20cache%20server.md)

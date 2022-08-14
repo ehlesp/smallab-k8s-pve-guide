@@ -259,3 +259,7 @@ You can find the Kustomize project for this MetaLB deployment in the following a
 - [Kustomize Tutorial: Creating a Kubernetes app out of multiple pieces](https://www.mirantis.com/blog/introduction-to-kustomize-part-1-creating-a-kubernetes-app-out-of-multiple-pieces/)
 - [Modify your Kubernetes manifests with Kustomize](https://opensource.com/article/21/6/kustomize-kubernetes)
 - [Kustomize Best Practices](https://www.openanalytics.eu/blog/2021/02/23/kustomize-best-practices/)
+
+## Navigation
+
+[<< Previous (**G026. K3s cluster setup 09**)](G026%20-%20K3s%20cluster%20setup%2009%20~%20Setting%20up%20a%20kubectl%20client%20for%20remote%20access.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G028. K3s cluster setup 11**) >>](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md)

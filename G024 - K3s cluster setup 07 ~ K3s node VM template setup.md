@@ -503,3 +503,7 @@ With this flag enabled, Proxmox VE disables the `remove` and `remove disk` opera
 ### _K3s configuration_
 
 - [K3s CIS Hardening Guide. Ensure `protect-kernel-defaults` is set](https://rancher.com/docs/k3s/latest/en/security/hardening_guide/#ensure-protect-kernel-defaults-is-set)
+
+## Navigation
+
+[<< Previous (**G023. K3s cluster setup 06**)](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G025. K3s cluster setup 08**) >>](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md)
