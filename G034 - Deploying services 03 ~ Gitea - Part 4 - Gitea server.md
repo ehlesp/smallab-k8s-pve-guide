@@ -1,4 +1,4 @@
-# G034 - Deploying services 03 ~ Gitea - Part 4 - Gitea server.md
+# G034 - Deploying services 03 ~ Gitea - Part 4 - Gitea server
 
 The last component to setup in its own Kustomize project is the Gitea server itself.
 
