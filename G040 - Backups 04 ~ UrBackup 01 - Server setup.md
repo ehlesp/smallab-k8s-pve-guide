@@ -1,4 +1,4 @@
-# G040 - Backups 04 ~ UrBackup 01 - Server and agents setup
+# G040 - Backups 04 ~ UrBackup 01 - Server setup
 
 With [UrBackup](https://www.urbackup.org/) you can program backups of concrete directories rather than whole systems, as you've seen in the two previous guides. But first you need to deploy an UrBackup server and install the corresponding UrBackup clients in the target systems which, in this case, will be your K3s node VMs.
 
