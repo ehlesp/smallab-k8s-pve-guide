@@ -172,4 +172,4 @@ Thankfully, someone else used an equivalent metallb setup and shared [in this ar
 
 ## Navigation
 
-[<< Previous (**G911. Appendix 11**)](G911%20-%20Appendix%2011%20~%20Alternative%20Nextcloud%20web%20server%20setups.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md)
+[<< Previous (**G911. Appendix 11**)](G911%20-%20Appendix%2011%20~%20Alternative%20Nextcloud%20web%20server%20setups.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G913. Appendix 13**) >>](G913%20-%20Appendix%2013%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md)

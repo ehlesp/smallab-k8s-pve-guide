@@ -644,3 +644,7 @@
 ### [**G912** - Appendix 12 ~ Adapting MetalLB config to CR](G912%20-%20Appendix%2012%20~%20Adapting%20MetalLB%20config%20to%20CR.md#g912-appendix-12-adapting-metallb-config-to-cr)
 
 - [_References_](G912%20-%20Appendix%2012%20~%20Adapting%20MetalLB%20config%20to%20CR.md#references)
+
+### [**G913** - Appendix 13 ~ Checking the K8s API endpoints' status](G913%20-%20Appendix%2013%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md)
+
+- [_References_](G913%20-%20Appendix%2013%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md#references)
