@@ -236,6 +236,7 @@
 - [_K3s Agent nodes setup_](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#k3s-agent-nodes-setup)
 - [_Enabling bash autocompletion for `kubectl`_](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#enabling-bash-autocompletion-for-kubectl)
 - [_Enabling the `k3s.log` file's rotation_](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#enabling-the-k3slog-files-rotation)
+- [_Enabling the `containerd.log` file's rotation_](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#enabling-the-containerdlog-files-rotation)
 - [_K3s relevant paths_](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#k3s-relevant-paths)
 - [_Starting up and shutting down the K3s cluster nodes_](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#starting-up-and-shutting-down-the-k3s-cluster-nodes)
 - [_Relevant system paths_](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#relevant-system-paths)
@@ -567,6 +568,14 @@
 - [_Examining your K3s Kubernetes cluster_](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md#examining-your-k3s-kubernetes-cluster)
 - [_Updating apps and K3s_](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md#updating-apps-and-k3s)
 - [_References_](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md#references)
+
+### [**G046** - Cleaning the system](G046%20-%20Cleaning%20the%20system.md#g046-cleaning-the-system)
+
+- [_Checking your storage status_](G046%20-%20Cleaning%20the%20system.md#checking-your-storage-status)
+- [_Cleaning procedures_](G046%20-%20Cleaning%20the%20system.md#cleaning-procedures)
+- [_Reminder about the `apt` updates_](G046%20-%20Cleaning%20the%20system.md#reminder-about-the-apt-updates)
+- [_Relevant system paths_](G046%20-%20Cleaning%20the%20system.md#relevant-system-paths)
+- [_References_](G046%20-%20Cleaning%20the%20system.md#references)
 
 ## Appendixes
 

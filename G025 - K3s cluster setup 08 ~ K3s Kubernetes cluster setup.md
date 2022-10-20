@@ -1116,7 +1116,7 @@ To make the use of the `kubectl` command a bit easier, you can enable the bash a
 
 ## Enabling the `k3s.log` file's rotation
 
-Your `k3s.service` is configured to log in the `/var/log/k3s.log` file in **all** your nodes. The problem you have now is that this file, like any other log file, will grow over time and you'll have to empty it regularly. Instead of doing this manually, you can make the system take care of it automatically by using logrotate. Apply the following procedure in **all** your cluster nodes.
+Your `k3s.service` is configured to log in the `/var/log/k3s.log` file in **all** your nodes. The problem you have now is that this file, like any other log file, will grow over time and you'll have to empty it regularly. Instead of doing this manually, you can make the system take care of it automatically by using the `logrotate` service. Apply the following procedure in **all** your cluster nodes.
 
 1. Create the file `/etc/logrotate.d/k3s`.
 
@@ -1197,6 +1197,36 @@ Your `k3s.service` is configured to log in the `/var/log/k3s.log` file in **all*
     ~~~
 
     Notice the final line which says that the `log does not need rotating`. This means that, if you execute the same `logrotate` command but without the `-d` parameter, it won't rotate the log at this moment.
+
+## Enabling the `containerd.log` file's rotation
+
+There's another log in the K3s setup that for which you need also to configure its rotation, the file `/var/lib/rancher/k3s/agent/containerd/containerd.log`. Notice that it's an agent node log file, so you'll find it in all your nodes. It's logrotate configuration is essentially the same one applied for the `k3s.log`, and you should also apply this in **all** your cluster nodes.
+
+1. Create the file `/etc/logrotate.d/k3s-containerd`.
+
+    ~~~bash
+    $ sudo touch /etc/logrotate.d/k3s-containerd
+    ~~~
+
+2. Edit the `k3s-containerd` file by adding the following configuration block to it.
+
+    ~~~bash
+    /var/lib/rancher/k3s/agent/containerd/containerd.log {
+        daily
+        rotate 5
+        missingok
+        notifempty
+        dateext
+        compress
+        delaycompress
+    }
+    ~~~
+
+3. Test this new configuration.
+
+    ~~~bash
+    $ sudo logrotate -d /etc/logrotate.d/k3s-containerd
+    ~~~
 
 ## K3s relevant paths
 
@@ -1384,6 +1414,7 @@ Notice the `STATUS` column. All the pods that appear `Terminated` there are in f
 - `/home/mgrsys/.ssh`
 - `/var/lib/rancher/k3s`
 - `/var/lib/rancher/k3s/agent`
+- `/var/lib/rancher/k3s/agent/containerd`
 - `/var/lib/rancher/k3s/data`
 - `/var/lib/rancher/k3s/server`
 - `/var/lib/rancher/k3s/server/manifests`
@@ -1405,6 +1436,7 @@ Notice the `STATUS` column. All the pods that appear `Terminated` there are in f
 - `/home/mgrsys/.ssh/authorized_keys`
 - `/home/mgrsys/.ssh/id_rsa`
 - `/home/mgrsys/.ssh/id_rsa.pub`
+- `/var/lib/rancher/k3s/agent/containerd/containerd.log`
 - `/var/lib/rancher/k3s/server/token`
 - `/var/lib/rancher/k3s/server/tls/server-ca.crt`
 - `/var/log/k3s.log`

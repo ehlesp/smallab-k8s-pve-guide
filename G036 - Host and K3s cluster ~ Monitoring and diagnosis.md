@@ -27,7 +27,7 @@ I'll remind you here all the tools you have to monitor the usage of resources in
 
 ## Checking the logs
 
-Logs are specially useful when you need to diagnose issues in a system. I'll highlight the most relevant logs you should have in your setup at this point.
+Logs are specially useful when you need to diagnose issues in a system. I'll highlight the most relevant logs you'll have in your setup at this point.
 
 - The Proxmox VE host is a Debian system, so its logs are all found in the `/var/log` directory. From all the files you can find there, pay particular attention to the following ones.
     - `daemon.log`: usually you'll only see daemons or system services related lines in this file, but don't forget it when you have to deal with hard-to-determine issues.
@@ -39,6 +39,7 @@ Logs are specially useful when you need to diagnose issues in a system. I'll hig
 
 - The VMs you've setup as K3s nodes they're all Debian systems, so their logs are under the `/var/log` path.
     - `daemon.log`: as in the Proxmox VE host, here you'll see daemon or system services log lines and, among them, lines related to the K3s service such as logs informing about containers.
+    - `k3s.log`: where the K3s service dumps its logs. You already configured its automated rotation with logrotate back in the [**G025** guide](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#enabling-the-k3slog-files-rotation).
     - `kern.log`: again, like in your Proxmox VE host, in this file you can find logs related to devices running in a VM. Be aware that the containers you run in your K3s nodes will have their own virtual network devices, and those will appear in this log.
     - `containers`: in a node that runs workloads, like your K3s agent ones, this folder holds the logs of the containers currently running in the virtual machine. More precisely, they are symbolic links to the actual log files found under the path `/var/log/pods`, where they're grouped in folders.
     - `pods`: folder where the logs of the Kubernetes containers are kept. The logs are in folders organized in the following manner.

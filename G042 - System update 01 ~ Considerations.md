@@ -1,6 +1,6 @@
 # G042 - System update 01 ~ Considerations
 
-The last concept I'll tackle in this guide series is the update of the system's software components. As usual, the system I'm referring to is the whole setup you've been building up through all the previous guides. Updating this system is not technically difficult, in particular when using the most straighforward (and many times the only proper) method. Yet you need to be careful when doing it, something which demands knowing your system well.
+Another important concept you need to know about is the update of the system's software components. As usual, the system I'm referring to is the whole setup you've been building up through all the previous guides. Updating this system is not technically difficult, in particular when using the most straighforward (and many times the only proper) method. Yet you need to be careful when doing it, something which demands knowing your system well.
 
 ## What to update. Identifying your system's software layers
 

@@ -111,4 +111,4 @@
 
 ## Navigation
 
-[<< Previous (**G045. System update 04**)](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G902. Appendix 02**) >>](G902%20-%20Appendix%2002%20~%20Vim%20vimrc%20configuration.md)
+[<< Previous (**G046. Cleaning the system**)](G046%20-%20Cleaning%20the%20system.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G902. Appendix 02**) >>](G902%20-%20Appendix%2002%20~%20Vim%20vimrc%20configuration.md)
