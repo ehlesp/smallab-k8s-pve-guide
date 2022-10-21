@@ -390,10 +390,10 @@ Since the Nextcloud server stores data, it's more adequate to deploy it as a `St
         - `lifecycle.postStart.exec.command`: this defines a command meant to be executed right after the container has started. In this case, a number of them are required for Nextcloud to run properly.
             - The `sh` command is the shell that will execute the command.
             - The `-c` line is an option for the `sh` command to make it read and execute the following strings as commands.
-            - `|` is the yaml code to indicate that a [literal scalar](https://yaml.org/spec/1.2.2/#23-scalars) begins that includes the following lines. Thanks to this capacity, you can just put each command line one below the other without need of linking them with `&&`.
+            - `|` is the yaml code to indicate that a [literal scalar](https://yaml.org/spec/1.2.2/#23-scalars) begins that includes the following lines. Thanks to this feature, you can just put each command line one below another without concatenating them with `&&`.
             - The `chown` command line ensures that the folder where Nextcloud stores all the user data is owned by `www-data`, which is the user that runs the Nextcloud service in the container.
-            - The `apt-get` commands are needed to ensure the install the latest version of the `openrc` command in the container.
-            - The `start-stop-daemon` command starts a `cron` service that your Nextcloud server will use to run its background tasks.
+            - The `apt-get` commands are for installing the latest version of the `openrc` command in the container.
+            - The `start-stop-daemon` command starts a `cron` service that your Nextcloud server will use to run its background jobs.
 
               > **BEWARE!**  
               > The `apt-get` and `start-stop-daemon` command lines only work with the Debian-based images of Nextcloud, not the Alpine ones. With Alpine images you have to replace those command lines with the following ones.  
