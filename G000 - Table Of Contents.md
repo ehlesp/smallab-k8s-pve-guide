@@ -356,7 +356,7 @@
 
 - [_Preparing pending Nextcloud platform elements_](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md#preparing-pending-nextcloud-platform-elements)
 - [_Kustomize project for Nextcloud platform_](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md#kustomize-project-for-nextcloud-platform)
-- [_Logging in your Nextcloud platform_](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md#logging-in-your-nextcloud-platform)
+- [_Logging and checking the background jobs configuration on your Nextcloud platform_](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md#logging-and-checking-the-background-jobs-configuration-on-your-nextcloud-platform)
 - [_Security considerations in Nextcloud_](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md#security-considerations-in-nextcloud)
 - [_Nextcloud platform's Kustomize project attached to this guide series_](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md#nextcloud-platforms-kustomize-project-attached-to-this-guide-series)
 - [_Relevant system paths_](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md#relevant-system-paths)

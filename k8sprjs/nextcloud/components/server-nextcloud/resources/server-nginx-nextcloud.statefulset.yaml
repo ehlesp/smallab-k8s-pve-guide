@@ -62,7 +62,13 @@ spec:
         lifecycle:
           postStart:
             exec:
-              command: ["chown", "www-data", "/var/www/html/data"]
+              command:
+              - "sh"
+              - "-c"
+              - |
+                chown www-data:www-data /var/www/html/data
+                apk add openrc
+                start-stop-daemon --background /cron.sh
         resources:
           limits:
             memory: 512Mi

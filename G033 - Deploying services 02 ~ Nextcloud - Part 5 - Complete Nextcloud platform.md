@@ -1008,6 +1008,9 @@ With every required component declared or configured, now you need to put everyt
                   - -c
                   - |
                     chown www-data:www-data /var/www/html/data
+                    apt-get update
+                    apt-get install -y openrc
+                    start-stop-daemon --start --background --pidfile /cron.pid --exec /cron.sh
             name: server
             ports:
             - containerPort: 443
@@ -1193,7 +1196,7 @@ wildcard.deimos.cloud-tls          kubernetes.io/tls                     3      
 
 See how, from all the secrets existing in the `nextcloud` namespace, the `wildcard.deimos.cloud-tls` one is the most recent of them. This secret in the `certificates` namespace will be older.
 
-## Logging in your Nextcloud platform
+## Logging and checking the background jobs configuration on your Nextcloud platform
 
 Give some minutes to MariaDB and Nextcloud to initialize themselves properly. Then, open a browser and navigate to your Nexcloud platform's main URL, which in my case are `nextcloud.deimos.cloud` and `nxc.deimos.cloud`. Of course, if you haven't made available any URLs for Nextcloud in your network, you'll have to browse to the IP of the Nextcloud service, in this case `192.168.1.42`.
 
@@ -1208,6 +1211,20 @@ Remember, you can login here with the username and password of the administrator
 Click the welcome screen away and you'll see the dashboard itself.
 
 ![Nextcloud dashboard](images/g033/nextcloud_dashboard.png "Nextcloud dashboard")
+
+Now that you're in, you need to check a particular setting of your Nextcloud instance. So click on your user's avatar, at the top right of the page, then click on `Settings` in the resulting menu.
+
+![Nextcloud user avatar menu](images/g033/nextcloud_avatar_menu_settings_highlight.png "Nextcloud user avatar menu")
+
+You'll reach an administrative page where you can find the options that affect only your current user, the ones under the `Personal` title, and others related to the whole Nextcloud instance, those under the `Administration` moniker, which only an administrator user can see.
+
+![Nextcloud settings](images/g033/nextcloud_settings_basic_settings_highlighted.png "Nextcloud settings")
+
+Click on the highlighted `Basic settings` link to get to the page shown next.
+
+![Nextcloud Basic settings](images/g033/nextcloud_basic_settings_cron_highlighted.png "Nextcloud Basic settings")
+
+Ensure that the option enabled in the `Background jobs` section is the **`Cron (Recommended)`** one. This way, Nextcloud will use the cron service you declared as a `lifecycle.postStart` command in its `StatefulSet`, right in the [previous part of this Nextcloud guide](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#nextcloud-server-stateful-resource), to execute its background tasks.
 
 ## Security considerations in Nextcloud
 

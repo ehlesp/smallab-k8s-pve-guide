@@ -141,6 +141,9 @@ The Nextcloud server you configured in the guide is directly reachable through a
                   - "-c"
                   - |
                     chown www-data:www-data /var/www/html/data
+                    apt-get update
+                    apt-get install -y openrc
+                    start-stop-daemon --start --background --pidfile /cron.pid --exec /cron.sh
             resources:
               limits:
                 memory: 512Mi
@@ -343,12 +346,15 @@ I haven't tested this myself, but I can give you a hint about how to enable HTTP
               - "-c"
               - |
                 chown www-data:www-data /var/www/html/data;
+                apt-get update
+                apt-get install -y openrc
+                start-stop-daemon --start --background --pidfile /cron.pid --exec /cron.sh
                 a2dismod mpm_prefork;
                 a2enmod mpm_worker http2;
                 apachectl restart
         ~~~
 
-        I've based this yaml portion on the container declaration for the Nextcloud server used in the Nextcloud platform guide. This is why you see the `chown` command too.
+        I've based this yaml portion on the container declaration for the Nextcloud server used in the Nextcloud platform guide. This is why you see the `chown`, `apt-get` and `start-stop-daemon` commands too.
 
     - If you have experience building your own Docker images, another procedure would be creating your own version of the Nextcloud Apache image in which you configure the modules as needed to support HTTP/2.
 
@@ -789,7 +795,13 @@ The Nexcloud server setup you'll see here will have its own IP through the Metal
             lifecycle:
               postStart:
                 exec:
-                  command: ["chown", "www-data", "/var/www/html/data"]
+                  command:
+                  - "sh"
+                  - "-c"
+                  - |
+                    chown www-data:www-data /var/www/html/data
+                    apk add openrc
+                    start-stop-daemon --background /cron.sh
             resources:
               limits:
                 memory: 512Mi
@@ -884,7 +896,9 @@ The Nexcloud server setup you'll see here will have its own IP through the Metal
             - `MYSQL_HOST` and `MYSQL_DATABASE`: the IP of the MariaDB service and the database instance's name Nextcloud has to use.
             - `MYSQL_USER` and `MYSQL_PASSWORD`: the user Nextcloud has to use to connect to its own database on the MariaDB server.
             - `REDIS_HOST` and `REDIS_HOST_PASSWORD`: the IP to the Redis service and the password require to authenticate in that server.
-        - `lifecycle.postStart.exec.command`: this defines a command meant to be executed right after the container has started. In this case, a `chown` is executed because the folder in which Nextcloud has to store the user data happens to be owned by `root` but it needs to be owned by `www-data`, which is the user that runs the Nextcloud service in the container.
+
+        - `lifecycle.postStart.exec.command`: as with the Debian image, the Nextcloud's Alpine variant also requires to execute the same commands right after starting, although these commands are changed to the proper ones for an Alpine system. Go back to the [G033 guide](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#nextcloud-server-stateful-resource) and see the **BEWARE!** note about this particular.
+
         - `volumeMounts` section: mounts a configuration file and two storage volumes.
             - `/usr/local/etc/php-fpm.d/zz-docker.conf`: the path for the extra configuration file for the PHP FPM engine executing Nextcloud.
             - `/var/www/html`: the path where Nextcloud is installed.
@@ -892,6 +906,7 @@ The Nexcloud server setup you'll see here will have its own IP through the Metal
 
     - `server` container: runs the Nginx server.
         - The `image` is an Alpine Linux variant running [the latest 1.21 version of Nginx](https://hub.docker.com/_/nginx).
+
         - `volumeMounts` section: it has several files mounted and also the same volumes used in the Nextcloud FPM container.
             - `wildcard.deimos.cloud-tls.crt` and `wildcard.deimos.cloud-tls.key`: the files that make up the certificate and both must be in the `/etc/nginx/cert` path, since is the one set in the `nginx.conf` file for them.
             - `/etc/ssl/dhparam.pem`: the file with parameters for SSL encryption.
@@ -900,6 +915,7 @@ The Nexcloud server setup you'll see here will have its own IP through the Metal
 
     - `metrics` container: runs the Prometheus metrics exporter of Nextcloud.
         - The `image` for this Prometheus exporter is set to be [the latest one available](https://hub.docker.com/r/xperimental/nextcloud-exporter), and probably runs on a Debian system but its not specified.
+
         - `env` section:
             - `NEXTCLOUD_SERVER`: since this container runs on the same pod as the Nextcloud server, it's set as `localhost`.
             - `NEXTCLOUD_TLS_SKIP_VERIFY`: since the certificate is self-signed and this service is running on the same pod, there's little need of checking the certificate when this service connects to Nextcloud.
@@ -1293,7 +1309,13 @@ You need to declare slightly different `Service` and `StatefulSet` resources tha
             lifecycle:
               postStart:
                 exec:
-                  command: ["chown", "www-data", "/var/www/html/data"]
+                  command:
+                  - "sh"
+                  - "-c"
+                  - |
+                    chown www-data:www-data /var/www/html/data
+                    apk add openrc
+                    start-stop-daemon --background /cron.sh
             resources:
               limits:
                 memory: 512Mi
