@@ -640,7 +640,7 @@ The last step regarding the storage setup is to create an extra folder serving a
 2. Check the `k3smnt` folder with `tree`.
 
     ~~~bash
-    $ tree -F /mnt/prometheus-ssd
+    $ tree -F /mnt/monitoring-ssd/
     /mnt/monitoring-ssd
     └── prometheus-data/
         ├── k3smnt/
