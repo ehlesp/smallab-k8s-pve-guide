@@ -536,7 +536,7 @@ As I already indicated before, the Kubernetes engine handles automatically the p
 In other words, the Kubernetes engine can only launch (when it deems necessary) the image garbage collector if disk usage has reached or gone over the `imageGCLowThresholdPercent` limit, and when the usage hits or surpasses the `imageGCHighThresholdPercent` threshold the Kubernetes engine will always execute this cleaning process. The garbage collector always starts deleting from the oldest images and keeps going on until it hits the `imageGCLowThresholdPercent` limit.
 
 > **BEWARE!**  
-> When the official documentation talks about _disk usage_, it's not especified if they mean "total disk usage as reported by the filesystem" or something more nuanced as "disk usage of container images from the filesystem's storage total capacity". In this guide I'll assume the former.
+> When the official documentation talks about _disk usage_, it's not specified if they mean "total disk usage as reported by the filesystem" or something more nuanced as "disk usage of container images from the filesystem's storage total capacity". In this guide I'll assume the former.
 
 To estimate a new value for the parameters, also take into account the other reasons that increase disk usage, such as logs or temporal files being written in the system. From this point of view, the defaults look very reasonable. Yet, if you are sure you want to change the values, do the following.
 
@@ -599,7 +599,7 @@ $ sudo apt autoremove
 
 ## Relevant system paths
 
-### _Folders on the Proxmox VE host_
+### _Folders in the Proxmox VE host_
 
 - `/boot`
 - `/tmp`
@@ -609,24 +609,24 @@ $ sudo apt autoremove
 - `/var/tmp`
 - `/var/spool`
 
-### _Files on the Proxmox VE host_
+### _Files in the Proxmox VE host_
 
 - `/etc/systemd/journald.conf`
 
-### _Folders on the VMs/K3s nodes_
+### _Folders in the K3s node VMs_
 
 - `/boot`
 - `/tmp`
 - `/var/cache`
 - `/var/lib/rancher/k3s/agent/containerd`
 - `/var/log`
-- `/var/log/containers/`
+- `/var/log/containers`
 - `/var/log/journal`
-- `/var/log/pods/`
+- `/var/log/pods`
 - `/var/tmp`
 - `/var/spool`
 
-### _Files on the VMs/K3s nodes_
+### _Files in the K3s node VMs_
 
 - `/etc/rancher/k3s.config.d/kubelet.config`
 - `/etc/systemd/journald.conf`

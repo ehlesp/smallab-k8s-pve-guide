@@ -50,7 +50,7 @@ If you need to undo the change explained before, you have three options to rever
 2. Restoring the backup file you created of the file within the `proxmox-widget-toolkit` directory.
 
     ~~~bash
-    $ mv proxmoxlib.js.bkp proxmoxlib.js
+    $ mv proxmoxlib.js.orig proxmoxlib.js
     ~~~
 
 3. Reinstall the proxmox-widget-toolkit package from the repository

@@ -4,9 +4,9 @@ After installing Proxmox VE with (almost) default settings, the storage is still
 
 As a reference, I'll use in this guide my own server's storage setup.
 
-- One internal, 1 GiB, SSD drive, linked to a SATA 2 port.
-- One internal, 1 GiB, HDD drive, linked to a SATA 2 port .
-- One external, 2 GiB, HDD drive, linked to a USB 3 port.
+- One internal, 1 TiB, SSD drive, linked to a SATA 2 port.
+- One internal, 1 TiB, HDD drive, linked to a SATA 2 port .
+- One external, 2 TiB, HDD drive, linked to a USB 3 port.
 
 Also, remember that...
 

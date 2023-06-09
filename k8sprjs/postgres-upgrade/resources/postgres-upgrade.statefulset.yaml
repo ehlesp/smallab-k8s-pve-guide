@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: postgres-upgrade
+spec:
+  replicas: 1
+  serviceName: postgres-upgrade
+  template:
+    spec:
+      containers:
+      - name: server
+        image: tianon/postgres-upgrade:14-to-15
+        ports:
+        - containerPort: 50432
+        resources:
+          limits:
+            memory: 512Mi
+        env:
+        - name: PGDATAOLD
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-upgrade
+              key: postgresql-db-data-old-path
+        - name: PGDATANEW
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-upgrade
+              key: postgresql-db-data-new-path
+        volumeMounts:
+        - name: postgresql-storage
+          mountPath: /var/lib/postgresql/data
+        - name: postgresql-config
+          subPath: postgresql.conf
+          mountPath: /etc/postgresql/postgresql.conf
+      volumes:
+      - name: postgresql-config
+        configMap:
+          name: postgres-upgrade
+          items:
+          - key: postgresql.conf
+            path: postgresql.conf
+      - name: postgresql-storage
+        persistentVolumeClaim:
+          claimName: postgres-upgrade

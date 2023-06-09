@@ -657,3 +657,26 @@
 ### [**G913** - Appendix 13 ~ Checking the K8s API endpoints' status](G913%20-%20Appendix%2013%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md)
 
 - [_References_](G913%20-%20Appendix%2013%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md#references)
+
+### [**G914** - Appendix 14 ~ Post-update manual maintenance tasks for Nextcloud](G914%20-%20Appendix%2014%20~%20Post-update%20manual%20maintenance%20tasks%20for%20Nextcloud.md)
+
+- [_Concerns_](G914%20-%20Appendix%2014%20~%20Post-update%20manual%20maintenance%20tasks%20for%20Nextcloud.md#concerns)
+- [_Procedure_](G914%20-%20Appendix%2014%20~%20Post-update%20manual%20maintenance%20tasks%20for%20Nextcloud.md#procedure)
+- [_References_](G914%20-%20Appendix%2014%20~%20Post-update%20manual%20maintenance%20tasks%20for%20Nextcloud.md#references)
+
+### [**G915** - Appendix 15 ~ Updating MariaDB to a newer major version](G915%20-%20Appendix%2015%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md)
+
+- [_Concerns_](G915%20-%20Appendix%2015%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#concerns)
+- [_Enabling the update procedure_](G915%20-%20Appendix%2015%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#enabling-the-update-procedure)
+- [_References_](G915%20-%20Appendix%2015%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#references)
+
+### [**G916** - Appendix 16 ~ Updating PostgreSQL to a newer major version](G916%20-%20Appendix%2016%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md)
+
+- [_Concerns_](G916%20-%20Appendix%2016%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#concerns)
+- [_Upgrade procedure (for Gitea's PostgreSQL instance)_](G916%20-%20Appendix%2016%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#upgrade-procedure-for-giteas-postgresql-instance)
+- [_Kustomize project only for updating PostgreSQL included in this guide series_](G916%20-%20Appendix%2016%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#kustomize-project-only-for-updating-postgresql-included-in-this-guide-series)
+- [_References_](G916%20-%20Appendix%2016%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#references)
+
+## Navigation
+
+[<< Previous (**README**)](README.md) | [Next (**G001** - Hardware setup) >>](G001%20-%20Hardware%20setup.md)

@@ -11,7 +11,7 @@ I'll remind you here all the tools you have to monitor the usage of resources in
 - Don't forget shell commands like `htop`, `df` or `free` that will give you a different point of view of the resources usages from a "closer" distance of your host or VMs. For instance, in the nodes of your K3s cluster, you'll see with `htop` many lines related to the K3s service running in them and also about the containerd service that executes your Kubernetes containers.
 
 - To see how your Kubernetes nodes and pods fare about CPU and RAM usage, either you can:
-    - Use the `kubectl top` command from your `kubectl` client system. For instance, you could see the usages of your Nexcloud platform's pods.
+    - Use the `kubectl top` command from your `kubectl` client system. For instance, you could see the usages of your Nextcloud platform's pods.
 
         ~~~bash
         $ kubectl top pod -n nextcloud 

@@ -297,7 +297,7 @@ The new light volumes have to be formatted as ext4 filesystems and mounted.
     /dev/mapper/gitea--hdd-gitea--repos /mnt/gitea-hdd/repos ext4 defaults,nofail 0 0
     ~~~
 
-### _Storage mount points for Nextcloud containers_
+### _Storage mount points for Gitea containers_
 
 With the LVs mounted, you can create within them the `k3smnt` folders that will act as mounting points for the Gitea containers' persistent volumes.
 

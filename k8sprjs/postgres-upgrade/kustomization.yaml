@@ -1,0 +1,29 @@
+# PostgreSQL upgrade setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: postgres-upgrade
+
+commonLabels:
+  app: postgres-upgrade
+
+resources:
+- resources/postgres-upgrade.namespace.yaml
+- resources/postgres-upgrade.persistentvolumeclaim.yaml
+- resources/postgres-upgrade.persistentvolume.yaml
+- resources/postgres-upgrade.statefulset.yaml
+
+replicas:
+- name: postgres-upgrade
+  count: 1
+
+images:
+- name: tianon/postgres-upgrade
+  newTag: 14-to-15
+
+configMapGenerator:
+- name: postgres-upgrade
+  envs:
+  - configs/dbdatapaths.properties
+  files:
+  - configs/postgresql.conf
