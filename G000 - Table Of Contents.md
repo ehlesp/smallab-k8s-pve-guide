@@ -673,8 +673,9 @@
 ### [**G916** - Appendix 16 ~ Updating PostgreSQL to a newer major version](G916%20-%20Appendix%2016%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md)
 
 - [_Concerns_](G916%20-%20Appendix%2016%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#concerns)
-- [_Upgrade procedure (for Gitea's PostgreSQL instance)_](G916%20-%20Appendix%2016%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#upgrade-procedure-for-giteas-postgresql-instance)
+- [_Upgrade procedure (for Gitea's PostgreSQL instance)_](G916%20-%20Appendix%2016%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#upgrade-procedure-for-gitea-s-postgresql-instance)
 - [_Kustomize project only for updating PostgreSQL included in this guide series_](G916%20-%20Appendix%2016%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#kustomize-project-only-for-updating-postgresql-included-in-this-guide-series)
+- [Relevant system paths](G916%20-%20Appendix%2016%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#relevant-system-paths)
 - [_References_](G916%20-%20Appendix%2016%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#references)
 
 ## Navigation
