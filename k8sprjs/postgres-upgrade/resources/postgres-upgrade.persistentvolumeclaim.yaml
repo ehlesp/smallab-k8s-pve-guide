@@ -10,4 +10,4 @@ spec:
   volumeName: postgres-upgrade
   resources:
     requests:
-      storage: 26G
+      storage: 3.5G
