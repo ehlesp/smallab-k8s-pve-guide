@@ -20,13 +20,13 @@ Since the hardware I'm using in this guide series is rather limited, instead of 
 [**Nextcloud**](https://nextcloud.com/) is a software for file syncing and sharing, so it's main requirement will always be storage room for saving data. Still, it has some [recommended system requirements](https://docs.nextcloud.com/server/21/admin_manual/installation/system_requirements.html) to work properly.
 
 - Database: MySQL 8.0+ or MariaDB 10.2+.
-- Webserver: Apache 2.4 with mod_php or php-fpm.
+- Web server: Apache 2.4 with mod_php or php-fpm.
 - PHP Runtime: 8.0.
 - RAM: 512 MiB.
 
 ### _Gitea_
 
-[**Gitea**](https://gitea.io/) is a lightweight self-hosted git service, so its main requirement will be storage space but [also the following](https://gogs.io/docs/installation).
+[**Gitea**](https://gitea.io/) is a lightweight self-hosted git service, so its main requirement will be storage space.
 
 - Database: MySQL (>= 5.7), PostgreSQL (>= 10), SQLite3.
 - Git version >= 1.8.3.
@@ -74,10 +74,10 @@ If your hardware setup has more RAM and cores than mine, you can consider either
 - [Nextcloud](https://nextcloud.com/)
 - [Nextcloud system requirements](https://docs.nextcloud.com/server/21/admin_manual/installation/system_requirements.html)
 
-### _Gogs_
+### _Gitea_
 
-- [Gogs](https://gogs.io/)
-- [Gogs installation](https://gogs.io/docs/installation)
+- [Gitea](https://gitea.io/)
+- [Gitea. Docs. Installation](https://docs.gitea.com/category/installation)
 
 ### _Prometheus_
 

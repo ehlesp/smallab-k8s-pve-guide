@@ -36,7 +36,7 @@ go version go1.16.8
 
 ### _K3s' most recent version_
 
-The fastest way to see what's the most recent version of the K3s software is by going to the [K3s GitHub page](https://github.com/k3s-io/k3s) and see there which is the latest **stable** release. When I'm writting this, is the `v1.24.2+k3s2` release. Then, you should take a look to the [K3s GitHub releases page](https://github.com/k3s-io/k3s/releases) to locate any potentially breaking change between your current version and the one you want to update to. This implies reading the release information of all the versions in between.
+The fastest way to see what's the most recent version of the K3s software is by going to the [K3s GitHub page](https://github.com/k3s-io/k3s) and see there which is the latest **stable** release. When I'm writing this, is the `v1.24.2+k3s2` release. Then, you should take a look to the [K3s GitHub releases page](https://github.com/k3s-io/k3s/releases) to locate any potentially breaking change between your current version and the one you want to update to. This implies reading the release information of all the versions in between.
 
 Is also good to know which one is the latest stable release of the standard Kubernetes software. Do this by simply consulting this check [this `stable.txt` file](https://dl.k8s.io/release/stable.txt) found in the Kubernetes GitHub site. It says `v1.24.3` at the moment of typing this, meaning that K3s is just one debug version behind the official distribution.
 
@@ -301,7 +301,7 @@ Essentially, this basic procedure is just about applying the same installer comm
     $ wget -qO - https://get.k3s.io | INSTALL_K3S_VERSION="v1.24.3+k3s1" sh -s - server
     ~~~
 
-    Notice that I haven't told you to stop the k3s service running in the node. The installer already takes care of everthing. Also be aware that, although the k3s service may restart, the pods running in the cluster won't be killed or restarted.
+    Notice that I haven't told you to stop the k3s service running in the node. The installer already takes care of everything. Also be aware that, although the k3s service may restart, the pods running in the cluster won't be killed or restarted.
 
 6. Now execute the installer in your **AGENT** nodes (`k3sagent01` and `k3sagent02`):
 

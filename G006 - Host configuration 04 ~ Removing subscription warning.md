@@ -1,6 +1,6 @@
 # G006 - Host configuration 04 ~ Removing subscription warning
 
-Everytime you login into the Proxmox VE web console, you are met with the following warning.
+Every time you login into the Proxmox VE web console, you are met with the following warning.
 
 ![Proxmox VE subscription warning](images/g006/proxmox_ve_subscription_warning.png "Proxmox VE subscription warning")
 

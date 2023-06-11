@@ -82,7 +82,7 @@ Logs are specially useful when you need to diagnose issues in a system. I'll hig
     $ kubectl logs -n nextcloud nxcd-server-apache-nextcloud-0 server | less
     ~~~
 
-    See how after indicating the `nexcloud` namespace, I've specified the pod's name (`nxcd-server-apache-nextcloud-0`) and then the concrete container (`server`). I've also piped the output to `less` for getting the log paginated. This log is the same one stored in the corresponding `/var/log/pod` path which, at the moment of writing this, was `/var/log/pod/nextcloud_nxcd-server-apache-nextcloud-0_4e3a16c7-f5e1-42bf-b852-ccaaccd5557d/server/0.log`.
+    See how after indicating the `nextcloud` namespace, I've specified the pod's name (`nxcd-server-apache-nextcloud-0`) and then the concrete container (`server`). I've also piped the output to `less` for getting the log paginated. This log is the same one stored in the corresponding `/var/log/pod` path which, at the moment of writing this, was `/var/log/pod/nextcloud_nxcd-server-apache-nextcloud-0_4e3a16c7-f5e1-42bf-b852-ccaaccd5557d/server/0.log`.
 
 ## Shell access into your containers
 

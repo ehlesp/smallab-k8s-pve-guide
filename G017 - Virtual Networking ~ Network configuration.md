@@ -10,7 +10,7 @@ The setup of your Proxmox VE standalone system is kept at the node level. To see
 
 In the capture above you can see the setup on my own Proxmox VE host, which has three network interfaces:
 
-- `enp2s0` : is my host's real ethernet NIC.
+- `enp2s0` : is my host's real Ethernet NIC.
 
 - `vmbr0` : is the Linux bridge generated in the installation of Proxmox VE. It holds the IP of this host, and "owns" the `enp2s0` NIC. If you remember, all this was set up [back in the Proxmox VE installation](G002%20-%20Proxmox%20VE%20installation.md).
 

@@ -4,7 +4,7 @@ The hard disks attached to a VM or a VM template are, in fact, VM disk images. I
 
 ## Installing the `libguestfs-tools` package
 
-The Proxmox VE web console only gives you a very limited range of actions, like creation or size enlargement, to perform over any VM's hard disks. Also, there's in your system the `qemu-img` command to manipulate these images, but it's also kind of limited. A much more powerful commands toolset for handling VM disk images is the one provided by the `libguestfs-tools` package.
+The Proxmox VE web console only gives you a very limited range of actions, like creation or size enlargement, to perform over any VM's hard disks. Also, there's in your system the `qemu-img` command to manipulate these images, but it's also kind of limited. A much more powerful command toolkit for handling VM disk images is the one provided by the `libguestfs-tools` package.
 
 1. You don't have it installed in your Proxmox VE host, so open a shell in it and install the package with `apt`.
 
@@ -65,7 +65,7 @@ So, where in your system is the VM disk image of your VM template?
 
     In this case, just 1.98 GiB are actually in use in the thinpool and, at this point, only the `base-100-disk-0` volume is present there.
 
-    And what about the columns `Path` and the `DMPath` of the `lvs` ouput? They're the paths to the handler files used by the system to manage the light volumes. You can see them with the `ls` command, except the ones used for the `base-100-disk-0` volume. Since this volume is not active (remember the `k` flag in the `Attr` column), you won't find the corresponding files present in the system.
+    And what about the columns `Path` and the `DMPath` of the `lvs` output? They're the paths to the handler files used by the system to manage the light volumes. You can see them with the `ls` command, except the ones used for the `base-100-disk-0` volume. Since this volume is not active (remember the `k` flag in the `Attr` column), you won't find the corresponding files present in the system.
 
     In conclusion, with the storage structure you have setup in your system, mostly based on LVM thinpools, all your hard disk volumes will be **virtual** volumes within LVM **thinpools**. In the case of your VM template's sole hard disk, the concrete LVM location is as follows:
 

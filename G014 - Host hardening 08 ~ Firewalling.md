@@ -84,7 +84,7 @@ If you've followed the guides, you should get a list of listening sockets like t
 
 - Service `pvedaemon` listening on localhost (`127.0.0.1`) interface at port `85`: exposes the whole Proxmox VE API.
 
-- Service `sshd` listening on the host real network ethernet interface (`192.168.1.107`) at port `22`: ssh daemon service.
+- Service `sshd` listening on the host real network Ethernet interface (`192.168.1.107`) at port `22`: ssh daemon service.
 
 - Service `master` listening on localhost (`127.0.0.1`) interface at port `25`: postmaster mail service providing mailing within the system itself.
 
@@ -176,7 +176,7 @@ But not only new parameters are enabled, some already existing ones are changed.
 
 ![Linux bridge at pve node network](images/g014/pve_node_system_network_bridge.png "Linux bridge at pve node network")
 
-In the capture above, you can see how this Linux bridge uses the real ethernet network card `enp2s0` as port to have access to the network. This bridge is necessary for later being able to provide network connectivity to the VMs you'll create in later guides. But keep on reading this guide to see how to apply firewalling at the bridge level with **ebtables**.
+In the capture above, you can see how this Linux bridge uses the real Ethernet network card `enp2s0` as port to have access to the network. This bridge is necessary for later being able to provide network connectivity to the VMs you'll create in later guides. But keep on reading this guide to see how to apply firewalling at the bridge level with **ebtables**.
 
 ## Firewalling with `ebtables`
 

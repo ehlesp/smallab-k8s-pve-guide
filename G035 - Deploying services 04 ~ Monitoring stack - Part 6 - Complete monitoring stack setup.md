@@ -12,7 +12,7 @@ $ mkdir -p $HOME/k8sprjs/monitoring/resources
 
 ### _Persistent volumes_
 
-You have to enable the two storage volumes you configured in [the first part of this guide](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md) as persitent volume resources. Do the following.
+You have to enable the two storage volumes you configured in [the first part of this guide](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md) as persistent volume resources. Do the following.
 
 1. Generate two new yaml files under the `resources` folder, one per persistent volume.
 

@@ -124,7 +124,7 @@ Know that the cert-manager's kubectl plugin has other several commands available
 
 In Kubernetes, a certificate has an associated _secret_ object which is what truly contains the encrypted key. This is a problem in the sense that **secret and configmap objects are not shared among namespaces**. For instance, if you created a certificate in the `cert-manager` namespace, you wouldn't be able to use it directly (meaning, its associated secret) in the `kube-system` namespace. You need to replicate, or sync, the secret somehow in all the namespaces you want to use it.
 
-### _Solving the problem of syncing secrets clusterwide_
+### _Solving the problem of syncing secrets cluster wide_
 
 What can you do to sync secrets among namespaces in your K3s cluster? There are some options to solve this problem.
 
@@ -132,13 +132,13 @@ What can you do to sync secrets among namespaces in your K3s cluster? There are 
 
 - Other procedure is creating one certificate and then cloning it on each namespace. The problem is that, although initially the certificates' secrets would be the same, right after the first renovation, those secrets would change and stop being in sync. This would force you to "sync" them (that is, overwriting the cloned secrets with the one you want to have in common) manually, something you can imagine is rather cumbersome.
 
-- [In this GitHub page](https://github.com/zakkg3/ClusterSecret) there's a definition for a Kubernetes object called **ClusterSecret**. As it's name implies, this object is designed to be a secret shared clusterwide. It's a very interesting and valid option, but it has been designed with only secret objects in mind, and also implies some manual tinkering on your certificates' secrets.
+- [In this GitHub page](https://github.com/zakkg3/ClusterSecret) there's a definition for a Kubernetes object called **ClusterSecret**. As it's name implies, this object is designed to be a secret shared cluster wide. It's a very interesting and valid option, but it has been designed with only secret objects in mind, and also implies some manual tinkering on your certificates' secrets.
 
-- The ideal option is to have an addon capable of handling certificates clusterwide properly. And no, cert-manager is not capable of doing this, but [in its documentation](https://cert-manager.io/docs/faq/kubed/) they recommend using an addon called [**kubed**](https://github.com/kubeops/kubed): "_Kubed can keep ConfigMaps and Secrets synchronized across namespaces and/or clusters_". Although it sounds that it could fit our case, this addon presents two problems:
+- The ideal option is to have an addon capable of handling certificates cluster wide properly. And no, cert-manager is not capable of doing this, but [in its documentation](https://cert-manager.io/docs/faq/kubed/) they recommend using an addon called [**kubed**](https://github.com/kubeops/kubed): "_Kubed can keep ConfigMaps and Secrets synchronized across namespaces and/or clusters_". Although it sounds that it could fit our case, this addon presents two problems:
     - Kubed doesn't handle the cert-manager certificates themselves, you would still be forced to tinker with their corresponding secrets so they can be handled properly by kubed.
     - Kubed [needs Helm to be installed](https://appscode.com/products/kubed/v0.12.0/setup/install/), no matter what. This is not a problem per se (it would only imply installing Helm in your kubectl client system), but in this guide series I want to stick with `kubectl` since it's the standard basic way of managing any Kubernetes cluster.
 
-- There's another addon, called [Reflector](https://github.com/EmberStack/kubernetes-reflector), which not only handles "mirroring" of **secrets and configmaps** among different namespaces present in a cluster, but also has an extension that explicitly manages the secrets of cert-manager certificates **automatically**. Furthermore, it has a manifest file deployable with `kubectl`. Hence why I've chosen this addon to make your domain's certificate available clusterwide.
+- There's another addon, called [Reflector](https://github.com/EmberStack/kubernetes-reflector), which not only handles "mirroring" of **secrets and configmaps** among different namespaces present in a cluster, but also has an extension that explicitly manages the secrets of cert-manager certificates **automatically**. Furthermore, it has a manifest file deployable with `kubectl`. Hence why I've chosen this addon to make your domain's certificate available cluster wide.
 
 ### _Deploying Reflector_
 
@@ -298,7 +298,7 @@ You have the tools deployed in your cluster, now you can create a wildcard certi
         > **BEWARE!**  
         > Reflector won't notices the changes done to the annotations in the certificate resource itself. It's only aware of what's specified in the directly related secret generated from this certificate. In upcoming guides I'll show you how to deal with changes in these annotations so Reflector does its thing as expected.
 
-    - The parameter `spec.isCA` allows you to turn a certificate into a Certificate Authority. When the value is `true`, you can use this certificate to sign other certificates issued by other issuers that rely on this CA's secret. In this case is left as `false` for not complicating things further at this point. You can find an example of how to boostrap an issuer with a self-signed CA [in this cert-manager page](https://cert-manager.io/docs/configuration/selfsigned/#bootstrapping-ca-issuers).
+    - The parameter `spec.isCA` allows you to turn a certificate into a Certificate Authority. When the value is `true`, you can use this certificate to sign other certificates issued by other issuers that rely on this CA's secret. In this case is left as `false` for not complicating things further at this point. You can find an example of how to bootstrap an issuer with a self-signed CA [in this cert-manager page](https://cert-manager.io/docs/configuration/selfsigned/#bootstrapping-ca-issuers).
 
     - In the `spec.privateKey` section, be careful of always having `rotationPolicy` set as `Always`. This makes cert-manager regenerate the certificate's secret rather than reusing the current one. This policy about private key rotation is also [described in the cert-manager documentation](https://cert-manager.io/docs/usage/certificate/#configuring-private-key-rotation).
 

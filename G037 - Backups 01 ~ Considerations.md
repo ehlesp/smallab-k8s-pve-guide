@@ -27,7 +27,7 @@ Knowing the data layers your system has is one step, the following one is to ide
 
 - **Application and user data**: the same technical particularity that makes impossible to make backups within your K3s cluster with velero, allows for doing them in a external manner. With [UrBackup](https://www.urbackup.org/) you can have an agent on each of your K3s cluster nodes, and make them access the folders in which you mounted the persistent volumes of your applications. Those agents are clients for a UrBackup server, run on a different VM, where you can store the backups of those volumes.
 
-- **Backups**: the backups themselves usually are just files, so they can be treated as such. The backups you make with Clonezilla or UrBackup could be copied in other storages to improve their chances against faulty drives, data corruption, ramsonware, etc. The ones made within Proxmox VE are also just files, but they're not as easily accesible since they're kept within your Proxmox VE system. Still, you could get them with a remote access tool like WinSCP and copy them like with any other file.
+- **Backups**: the backups themselves usually are just files, so they can be treated as such. The backups you make with Clonezilla or UrBackup could be copied in other storages to improve their chances against faulty drives, data corruption, ransomware, etc. The ones made within Proxmox VE are also just files, but they're not as easily accesible since they're kept within your Proxmox VE system. Still, you could get them with a remote access tool like WinSCP and copy them like with any other file.
 
 ## Where to store the backups. Backup storage
 
@@ -50,7 +50,7 @@ It's not a trivial matter at all to decide when to do backups. This depends a lo
 
 - _Your backups get old_: a backup done a year ago doesn't have the same value as one made this week. This depends a lot on what kind of data a backup stores. For instance, configuration files don't tend to change a lot over time, but old versions could help you solving current problems in your system. On the other hand, user data usually changes frequently, so you'll want your backups as recent as possible. Still, old versions of that information can be required to be kept to attend technical or, more commonly, legal issues.
 
-- _Your backups grow in number_: you'll accumulate an ever growing number of backups, so you'll eventually run out of storage space for them. You need to figure out the purging policy that fits your needs. For instance, you could replace all the daily backups done within the week with the last one from sunday, all the weeklies with the one made the last day of the month, etc.
+- _Your backups grow in number_: you'll accumulate an ever growing number of backups, so you'll eventually run out of storage space for them. You need to figure out the purging policy that fits your needs. For instance, you could replace all the daily backups done within the week with the last one from Sunday, all the weeklies with the one made the last day of the month, etc.
 
 - _Your backups grow in size_: you need to be aware that certain backups will get bigger in size over time, usually the ones holding user data. This is something you'll also need to factor in your backup purging policies, while also forcing you to plan when to get more storage depending on your backup size growth factor.
 

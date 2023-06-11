@@ -123,7 +123,7 @@ Next, I'll show you the procedure to execute the `occ` command in the container 
     Check indices of the oc_properties table.
     ~~~
 
-5. After the `occ` command finishes, you can go back to your Nextcloud web console and refresh the `Administration settings > Overview` blade to check if the related warning has dissapeared.
+5. After the `occ` command finishes, you can go back to your Nextcloud web console and refresh the `Administration settings > Overview` blade to check if the related warning has disappeared.
 
 6. When you finish applying all the pending `occ` fixes, don't forget to `exit` from the container.
 

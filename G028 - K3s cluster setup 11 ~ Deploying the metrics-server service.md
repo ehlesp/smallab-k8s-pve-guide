@@ -142,7 +142,7 @@ As you did with MetalLB in the [**G027** guide](G027%20-%20K3s%20cluster%20setup
             - --metric-resolution=15s
     ~~~
 
-    See how the yaml manifest contains the neccesary information to identify the resource to be patched, up to the container's name, and only the values to add or modify.
+    See how the yaml manifest contains the necessary information to identify the resource to be patched, up to the container's name, and only the values to add or modify.
 
     - The `tolerations` section has been taken directly [from the Deployment object K3s uses](https://github.com/k3s-io/k3s/blob/master/manifests/metrics-server/metrics-server-deployment.yaml) to deploy metrics-server. These [tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) will make the metrics-server pod to be scheduled or not (`effect: "NoSchedule"`) in nodes that are tainted with those keys. For instance, remember that the server node is tainted with `"k3s-controlplane=true:NoExecute"` which restricts what pods can run on it, also excluding the metrics-server one.
 

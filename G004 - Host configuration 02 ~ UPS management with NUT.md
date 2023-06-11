@@ -52,7 +52,7 @@ Assuming your UPS unit has the required USB cable, here's how to proceed with it
 
     Don't worry about this during the `apt` installation, it's happening because you still have to configure NUT.
 
-4. You need to configure NUT properly so it can manage your UPS unit. There are several files to change, let's start editing `/etc/nut/nut.conf`. But before you change it, firt make a backup of it.
+4. You need to configure NUT properly so it can manage your UPS unit. There are several files to change, let's start editing `/etc/nut/nut.conf`. But before you change it, first make a backup of it.
 
     ~~~bash
     $ cd /etc/nut
@@ -108,7 +108,7 @@ Assuming your UPS unit has the required USB cable, here's how to proceed with it
     Using subdriver: APC HID 0.96
     ~~~
 
-    The command tells you what components it's using and, in the last line, also indicates you what driver NUT used to connect to your particular UPS. In this guide's example, you can see it's using the correct APC subdriver.
+    The command tells you what components it's using and, in the last line, also indicates you what driver NUT used to connect to your particular UPS. In this guide's example, you can see it's using the correct APC "subdriver".
 
 7. Next, let's configure the NUT daemon, so edit the file `/etc/nut/upsd.conf`. Again, make a backup first.
 
@@ -382,8 +382,8 @@ If you feel curious about what else you can do with NUT, there's a pdf document 
 - [NUT User manual (chunked)](https://networkupstools.org/docs/user-manual.chunked/index.html)
 - [NUT documentation and scripts](http://rogerprice.org/NUT/)
 - [NUT config examples document on GitHub](https://github.com/networkupstools/ConfigExamples/releases/tag/book-2.0-20210521-nut-2.7.4)
-- [Monitorización de un SAI con GNU/Debian Linux](http://index-of.co.uk/SISTEMAS-OPERATIVOS/NUT%20Debian%20UPS%20Monitor.pdf) (in spanish)
-- [Instalar y configurar NUT por SNMP](https://blog.ichasco.com/instalar-y-configurar-nut-por-snmp/) (in spanish)
+- [Monitorización de un SAI con GNU/Debian Linux](http://index-of.co.uk/SISTEMAS-OPERATIVOS/NUT%20Debian%20UPS%20Monitor.pdf) (in Spanish)
+- [Instalar y configurar NUT por SNMP](https://blog.ichasco.com/instalar-y-configurar-nut-por-snmp/) (in Spanish)
 - [Monitoring a UPS with nut on Debian or Ubuntu Linux](https://blog.shadypixel.com/monitoring-a-ups-with-nut-on-debian-or-ubuntu-linux/)
 - [Can't get upsmon service started to monitor (and respond to) remote UPS](https://serverfault.com/questions/865147/cant-get-upsmon-service-started-to-monitor-and-respond-to-remote-ups)
 - [Configure UPS monitor using NUT on Debian](https://mn3m.info/posts/configure-ups-monitor-using-nut-on-debian/)

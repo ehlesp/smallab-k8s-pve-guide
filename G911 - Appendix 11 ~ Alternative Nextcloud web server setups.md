@@ -659,7 +659,7 @@ The Nexcloud server setup you'll see here will have its own IP through the Metal
     }
     ~~~
 
-    This is the configuration file for the Nginx server, based mostly on the one found [in the Nexcloud documentation](https://docs.nextcloud.com/server/stable/admin_manual/installation/nginx.html). To know the meaning of all of its parameters, check its [official documentation](https://nginx.org/en/docs/) and, in particular, the [core functionality section](https://nginx.org/en/docs/ngx_core_module.html). Regardless, notice the following.
+    This is the configuration file for the Nginx server, based mostly on the one found [in the Nextcloud documentation](https://docs.nextcloud.com/server/stable/admin_manual/installation/nginx.html). To know the meaning of all of its parameters, check its [official documentation](https://nginx.org/en/docs/) and, in particular, the [core functionality section](https://nginx.org/en/docs/ngx_core_module.html). Regardless, notice the following.
 
     - The `error_log` and the `http.access_log` parameters point to `/dev/stdout`, so those Nginx logs can be seen as logs of the container in which this web server will run.
 

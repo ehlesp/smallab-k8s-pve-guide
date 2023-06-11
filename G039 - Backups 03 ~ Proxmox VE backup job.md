@@ -20,7 +20,7 @@ You might think, I already do Clonezilla backups regularly, so why doing these?
 
 Since a VM backup copies the entire virtual machine, the VM must be stopped so the backup process can be executed on it. Of course, this implies that your K3s Kubernetes cluster won't be available for as long as the backup takes to finish. Bear in mind that this unavailability is not symmetric (so to speak):
 
-- When the backup job starts executing the backup of the K3s master/server node of your Kubernestes cluster, the entire K3s cluster will be down (you won't be able to reach it with `kubectl`). The other two nodes, the agent ones will keep running but waiting for their server to come back.
+- When the backup job starts executing the backup of the K3s master/server node of your Kubernetes cluster, the entire K3s cluster will be down (you won't be able to reach it with `kubectl`). The other two nodes, the agent ones will keep running but waiting for their server to come back.
 
 - When the backup executed is on one of the K3s agent nodes, the K3s cluster will be available to your `kubectl` commands, but anything running in the stopped agent node will be down until the backup finishes.
 
@@ -89,7 +89,7 @@ Scheduling backup jobs is a rather simple matter on Proxmox VE. Just log in the 
         - `Suspend`: does essentially the same as `Snapshot`, but the official documentation recommends using `Snapshot` mode rather than this one.
         - `Stop`: executes an orderly shutdown of the VM, then makes the backup. After finishing the backup, it restarts the affected VM. This mode provides the highest data consistency in the resulting backup.
         > **BEWARE!**  
-        > The behaviour of these backup modes for containers is very similar but not totally equivalent to how they work for VMs. Check the Proxmox VE help to see the differences.
+        > The behavior of these backup modes for containers is very similar but not totally equivalent to how they work for VMs. Check the Proxmox VE help to see the differences.
 
     - `Enable`: default is checked. Enables or disables the backup job.
 
@@ -130,7 +130,7 @@ Scheduling backup jobs is a rather simple matter on Proxmox VE. Just log in the 
     > A backup job processes these retention options in a certain order. First goes the `Keep Last` option, then `Hourly`, `Daily`, etc. In other words, each option is a level of restriction that supersedes the previous one.  
     For example, if you set the job to keep the `Last` 30 backups, but also to keep only the ones from the last 5 hours, the `Hourly` restriction will apply to the 30 backups left by the `Last` rule.
 
-    Also notice also the warning found almost at the window's bottom. It tells you that, if you don't specify anything in this tab, the retention policy applied in this backup job will be the one specified in the backup storage, or the one set in some `vzdump.conf` configuration file suppossedly found in "the node" (which one if you've chosen the option `All` and you have a Proxmox VE cluster with several of them?).
+    Also notice also the warning found almost at the window's bottom. It tells you that, if you don't specify anything in this tab, the retention policy applied in this backup job will be the one specified in the backup storage, or the one set in some `vzdump.conf` configuration file supposedly found in "the node" (which one if you've chosen the option `All` and you have a Proxmox VE cluster with several of them?).
 
 7. After learning what the `Retention` tab is, let's set a retention policy for this backup job.
 
@@ -192,7 +192,7 @@ Now that you got your first backup job ready, know that you don't have to wait f
 
     This is a security error that, translated, tells you that only the `root` user can set retention policies on the backup jobs. You might wonder then if your `mgrsys` user doesn't already have all the administrative permissions. I've checked and yes, it has them all, so what to do then? Worry not and keep reading!
 
-6. The easiest and most obvious way to overcome that issue is just login as `root` in the Proxmox VE web console, then browsing straigth back to the `Datacenter > Backup` page.
+6. The easiest and most obvious way to overcome that issue is just login as `root` in the Proxmox VE web console, then browsing straight back to the `Datacenter > Backup` page.
 
     ![Datacenter Backup page as root](images/g039/pve_dc_backup_page_as_root.png "Datacenter Backup page as root")
 
@@ -235,7 +235,7 @@ Now that you got your first backup job ready, know that you don't have to wait f
     It includes a table which summarizes the job's results, including backup sizes and partial and total processing time, and also the execution logs for each VM's backup headed by the command used in them.
 
     > **BEWARE!**  
-    > Your email service may treat this message as spam (as it happened to me with Gmail, for instance) so, if you don't see it in your inbox, remember to check in the spam section.
+    > Your email service may treat this message as spam (as it happened to me with GMail, for instance) so, if you don't see it in your inbox, remember to check in the spam section.
 
     So, how long does this backup job takes? As you can see in the captures, in my case it took around 8 minutes and a bit more but, of course, there wasn't that much data to backup to begin with. Also, in a more capable hardware, this time might be reduced significantly.
 
@@ -387,7 +387,7 @@ Let's say that, for some reason, you want or need to restore the `k3sagent02` VM
 You might wonder why the web console doesn't block the `Restore` action in the first place. Well, since nothing is broken, we have to take this as just one of the many idiosyncrasies within the Proxmox VE software, and hope that they improve this and other things in future releases.
 
 > **BEWARE!**  
-> This is just a note for reference. This behaviour has been detected in the `7.0-14+1` version of Proxmox VE, a detail visible in some of the snapshots shown in this guide.
+> This is just a note for reference. This behavior has been detected in the `7.0-14+1` version of Proxmox VE, a detail visible in some of the snapshots shown in this guide.
 
 ## Location of the backup files in the Proxmox VE system
 

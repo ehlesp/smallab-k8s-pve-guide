@@ -3,7 +3,7 @@
 The MetalLB software, from its `0.13.0` version onwards, has stopped supporting configmaps as a valid method of configuration. You can see the announcement in this [Backward Compatibility note on the official MetalLB page](https://metallb.universe.tf/#backward-compatibility). This means that the configmap-based configuration set in the [**G027** guide](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md) is now completely invalid for MetalLB version `0.13.0` and beyond. In the note, they offer a convertion tool for transforming configmaps to CRs (Custom Resources), which are now the only supported way of configuring MetalLB. But this approach presents with a couple of problems for the setup used in this guide series.
 
 - The tool is executed with docker, but that's a tool not contemplated in this guide.
-- There are issues with the convertion tool, [as reported in this issue thread](https://github.com/metallb/metallb/issues/1473) or [this other one](https://github.com/metallb/metallb/issues/1495).
+- There are issues with the conversion tool, [as reported in this issue thread](https://github.com/metallb/metallb/issues/1473) or [this other one](https://github.com/metallb/metallb/issues/1495).
 
 Thankfully, someone else used an equivalent metallb setup and shared [in this article](https://tech.aufomm.com/convert-metallb-configinline-to-crs-for-layer-2-protocol/) the converted configuration. Based on this, I've prepared the following modification to the MetalLB kustomize project created in the [**G027** guide](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md).
 

@@ -68,7 +68,7 @@ Being aware of this oddity, let's begin with the procedure.
     - `Please select the snapshot mechanism to be used for backups`: I've chosen `5` to disable the snapshot mechanism because, in my tests, it has proven to be rather problematic. In particular:
         - The option 1 requires the installation of an extra DattoDB software.
         - The option 2 uses the snapshot capabilities of LVM but, from what I've found out about it, this method can have relevant performance issues.
-        - The option 4 is the one I've tested. It creates creates temporary `.snapshot` files within the snapshooted filesystem but, in my case, the file would fill up the targeted storage completely, always provoking a failure in the snapshot process.
+        - The option 4 is the one I've tested. It creates creates temporary `.snapshot` files within the snapshot filesystem but, in my case, the file would fill up the targeted storage completely, always provoking a failure in the snapshot process.
 
 4. With all the clients installed, browse to your UrBackup server's web interface. In the `Status` page, you should see all the clients autodetected already.
 
@@ -182,7 +182,7 @@ This log file doesn't have a default rotation configuration enabled, so let's cr
       log does not need rotating (log has already been rotated)
     ~~~
 
-    If this command doesn't returns you any erros, the configuration should be fine.
+    If this command doesn't returns you any errors, the configuration should be fine.
 
 ## UrBackup client uninstaller
 
@@ -240,7 +240,7 @@ I'll show you how to do this by scheduling the backup of the relevant paths in t
     drwxr-xr-x  3 root root 4096 Jan 25 17:53 monitoring-ssd
     ~~~
 
-    The `k3sagent01` has directories related to gitea and prometheus. Let's do a deeper `ls` to remind us of what was inside them.
+    The `k3sagent01` has directories related to Gitea and Prometheus. Let's do a deeper `ls` to remind us of what was inside them.
 
     ~~~bash
     $ ls -al /mnt/*
@@ -477,7 +477,7 @@ There are many parameters to adjust in your UrBackup server, and you've already 
 
     ![UrBackup server Settings General Client tab](images/g041/urbackup_server_settings_general_client.png "UrBackup server Settings General Client tab")
 
-    These options configure certain behaviours of the server that affect the client program.
+    These options configure certain behaviors of the server that affect the client program.
 
     - `Delay after system startup`: when the server discovers a client, how much time in minutes must the server wait to start a backup in that client. Being aware that your clients are all K3s nodes, you'll prefer to give them some time to properly start all their services before doing anything. So, here I'd put at least `5` or even `10` minutes.
 

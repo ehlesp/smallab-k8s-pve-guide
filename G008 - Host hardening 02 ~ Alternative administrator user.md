@@ -42,7 +42,7 @@ So, you'll need to perform a number of steps to create a new administrative user
     ~~~
 
     > **BEWARE!**  
-    > Use a criteria for naming your users, and make those names personalized. This way you'll have a better chance to detect any extrange behaviour related to your users in the system's logs. For instance, you could follow a pattern like `[role][initials]` or `[role][name][surname]`.
+    > Use a criteria for naming your users, and make those names personalized. This way you'll have a better chance to detect any strange behavior related to your users in the system's logs. For instance, you could follow a pattern like `[role][initials]` or `[role][name][surname]`.
 
     The command will ask you the password for the new user first, and then a few informative details like the user's full name. The output will be something like this.
 
@@ -115,7 +115,7 @@ After you've checked that your new administrator user can connect through ssh, m
     [sudo] password for mgrsys:
     ~~~
 
-If `sudo` is working for your new user, the first time you use the command it'll show you a warning about the responsability of using it and then it'll require the user's password.
+If `sudo` is working for your new user, the first time you use the command it'll show you a warning about the responsibility of using it and then it'll require the user's password.
 
 ### _Creating a system administrator group in Proxmox VE_
 

@@ -138,7 +138,7 @@ Let's declare a `gitea` namespace where to put all the components of your Gitea 
 
 ### _Updating wildcard certificate's Reflector-managed namespaces_
 
-Now you need to configure the Secret of your wilcard certificate in the `gitea` namespace. Remember that, [in the last part of the Nextcloud platform guide](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md#updating-wildcard-certificates-reflector-managed-namespaces), you saw how to configure a patch to modify the original resource with any extra namespaces you require. So here you'll just modify that patch to add the `gitea` namespace to the list.
+Now you need to configure the Secret of your wildcard certificate in the `gitea` namespace. Remember that, [in the last part of the Nextcloud platform guide](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md#updating-wildcard-certificates-reflector-managed-namespaces), you saw how to configure a patch to modify the original resource with any extra namespaces you require. So here you'll just modify that patch to add the `gitea` namespace to the list.
 
 1. You'll have to edit the `wildcard.deimos.cloud-tls.certificate.cert-manager.reflector.namespaces.yaml` file found in the `certificates/patches` directory of your `cert-manager` Kustomize project. It's full path on this guide is `$HOME/k8sprjs/cert-manager/certificates/patches/wildcard.deimos.cloud-tls.certificate.cert-manager.reflector.namespaces.yaml`. In it, only add the `gitea` namespace to the `reflector` annotations there. The file should end looking like below.
 

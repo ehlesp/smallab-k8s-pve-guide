@@ -172,7 +172,7 @@ You have the new storage drives available in your VM, but you still have to conf
     $ sudo vgcreate nextcloud-hdd /dev/sdc1
     ~~~
 
-    See how I named each VG related to nextcloud and the kind of underlying drive used. Then, with `pvs` you can see how each PV is now assigned to their respective VG.
+    See how I named each VG related to Nextcloud and the kind of underlying drive used. Then, with `pvs` you can see how each PV is now assigned to their respective VG.
 
     ~~~bash
     $ sudo pvs

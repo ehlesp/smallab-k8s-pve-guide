@@ -59,7 +59,7 @@ For the system updated in this guide, the jump is significant since, at the time
 - [Proxmox Virtual Environment 7.2 released](https://www.proxmox.com/en/news/press-releases/proxmox-virtual-environment-7-2-available)
 - [Proxmox Virtual Environment 7.1 released](https://www.proxmox.com/en/news/press-releases/proxmox-virtual-environment-7-1-released)
 
-Since these are minor version updates part of the same major 7.x family, updating this Proxmox VE 7.0 system will be quite straigthforward.
+Since these are minor version updates part of the same major 7.x family, updating this Proxmox VE 7.0 system will be quite straightforward.
 
 > **NOTE**  
 > You might think at this point why I didn't follow my own advice and updated frequently this Proxmox VE system, and all the other software running in it. Think that writing this collection of guides has taken a long time, and I needed to keep the same versions till the end to ensure coherence among the guides. To give you some perspective, know that I started an early version of this guide series with a Proxmox VE **6.x**. So yeah, quite a bit of time.

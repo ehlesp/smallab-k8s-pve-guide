@@ -48,7 +48,7 @@ Overall, I've got enough hardware to run a small **standalone Proxmox VE node**.
 
 Proxmox VE 7.0 is provided as an ISO image file, which you have to either burn in a CD or DVD or write in a USB drive. Since my computer has no DVD drive anymore, I'll show you the USB path. Proxmox provides some instructions about how to do it from a Linux, MacOS or Windows environment. [Check them out right here](https://pve.proxmox.com/pve-docs/chapter-pve-installation.html#installation_prepare_media)!
 
-I'll do it from a Windows 10 system, using [**Rufus**](https://rufus.ie/) to write the Proxmox VE ISO into an USB pendrive.
+I'll do it from a Windows 10 system, using [**Rufus**](https://rufus.ie/) to write the Proxmox VE ISO into an USB pen drive.
 
 #### **Writing the Proxmox VE ISO from a Windows 10 system with Rufus**
 
@@ -125,17 +125,17 @@ The Proxmox site has two guides explaining the Proxmox VE installer, which I've 
 
 6. Here you'll meet the very first thing you'll have to configure, **where you want to install Proxmox VE**.
 
-    ![Target harddisk](images/g002/Installer-04_target_harddisk.png "Target harddisk")
+    ![Target Harddisk](images/g002/Installer-04_target_harddisk.png "Target Harddisk")
 
     The screenshot above is from a VirtualBox machine, in which I had set up three virtual storage drives as stand-ins for the drives in the real computer.
 
-    ![Target harddisk list](images/g002/Installer-04_target_harddisk_list.png "Target harddisk list")
+    ![Target Harddisk list](images/g002/Installer-04_target_harddisk_list.png "Target Harddisk list")
 
     In the Target Harddisk list you have to choose on which storage drive you want to install Proxmox VE, and you want it in the SSD drive. So, assuming the SSD is the first device in the list, choose `/dev/sda` but **don't click** on the **Next** button yet!
 
 7. With the `/dev/sda` device chosen as target harddisk, push the **Options** button, there's something else to configure there.
 
-    ![Target harddisk options](images/g002/Installer-05_target_harddisk_options.png "Target harddisk options")
+    ![Target Harddisk options](images/g002/Installer-05_target_harddisk_options.png "Target Harddisk options")
 
     There you'll see that you can change the filesystem, and also edit a few parameters.
 
@@ -149,7 +149,7 @@ The Proxmox site has two guides explaining the Proxmox VE installer, which I've 
 
     - `maxroot`, `minfree` and `maxvz` are left empty, to let the installer handle them with whatever defaults it uses.
 
-    ![Target harddisk options adjusted](images/g002/Installer-05_target_harddisk_options_adjusted.png "Target harddisk options adjusted")
+    ![Target Harddisk options adjusted](images/g002/Installer-05_target_harddisk_options_adjusted.png "Target Harddisk options adjusted")
 
     When you have everything ready in this screen, click on **Next**.
 
@@ -175,7 +175,7 @@ The Proxmox site has two guides explaining the Proxmox VE installer, which I've 
 
     Be careful of which network controller you choose as `management interface`. Choosing the wrong one could make your Proxmox VE system unreachable remotely.
 
-11. The **summary** screen will show you the configuration you've choosen.
+11. The **summary** screen will show you the configuration you've chosen.
 
     ![Summary screen](images/g002/Installer-10_summary.png "Summary screen")
 
@@ -185,7 +185,7 @@ The Proxmox site has two guides explaining the Proxmox VE installer, which I've 
 
     ![Progress screen partitioning](images/g002/Installer-11_progress_screen.png "Progress screen partitioning")
 
-    With an SSD as the target harddisk, the installation process will go really fast.
+    With an SSD as the target hard disk, the installation process will go really fast.
 
     ![Progress screen installing](images/g002/Installer-12_progress_screen_installing.png "Progress screen installing")
 

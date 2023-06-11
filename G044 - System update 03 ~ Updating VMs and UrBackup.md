@@ -8,7 +8,7 @@ Like you did with Proxmox VE, you need to know the version of Debian you're curr
 
 ### _Debian current version_
 
-To see what version of Debian you're currently running in your VMs, there are a number of ways doing it from the command line. The most useful ones are the following.
+To see what version of Debian you're currently running in your VMs, there are a number of ways to do it from the command line. The most useful ones are the following.
 
 1. Opening the file `/etc/debian_version`.
 
@@ -193,7 +193,7 @@ Notice that the last two methods show the same values as before, which makes sen
 
 ## Updating the UrBackup software
 
-Usually, it shouldn't be a problem that the dependencies the UrBackup software has on Debian get updated. Still, the issue is perfectly possible and this circumstance would force you to upgrade the UrBackup software, although only if there's such update UrBackup available.
+Usually, it shouldn't be a problem that the dependencies the UrBackup software has on Debian get updated. Still, the issue is perfectly possible and this circumstance would force you to upgrade the UrBackup software, although only if there's such update available.
 
 On the other hand, those dependencies may limit when you can update your UrBackup software. This means that, although you could have available a new upgrade for the UrBackup server or client, they might require a newer version of their dependencies that is not available in your current Debian major release. Of course, you could fully upgrade your Debian to a new major version, i.e., going from Debian 11.y to Debian 12.y, and that would be it, but sometimes you can't even do this for some odd reason.
 
@@ -207,13 +207,13 @@ I've indicated this when dealing with the Debian updates, but it applies just th
 
 ### _Consider doing a backup of the UrBackup server_
 
-If you have storage space for it, make a backup of the VM manually (unless you already have it scheduled in Proxmox VE). After you've done the update correctly, you can always remove that backup later.
+If you have storage space for it, make a backup of the VM either manually or by schedule. After you've done the update correctly, you can always remove that backup later.
 
 ### _Checking the version of UrBackup_
 
 #### **Server version**
 
-To check the version of your UrBackup server is very simple, since you can see it right in the login, at the page's bottom bar.
+To check your UrBackup server's version is very simple, since you can see it right in the login, at the page's bottom bar.
 
 ![UrBackup server version](images/g044/urbackup_server_version.png "UrBackup server version")
 

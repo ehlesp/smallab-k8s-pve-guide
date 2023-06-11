@@ -227,7 +227,7 @@ Nowadays IPv6 is still not really in use, and less in internal private networks 
     #ListenAddress ::
     ~~~
 
-    Notice that I've also put a concrete IP in the `ListenAddress` parameter, making the ssh daemon (called `sshd`) to listen only on the interface that corresponds to that IP. In this case, the IP corresponds with the physical ethernet network card that is in use in the host. By default, the `sshd` process listens in all available interfaces in the host, when set with the default `ListenAddress 0.0.0.0` setting.
+    Notice that I've also put a concrete IP in the `ListenAddress` parameter, making the ssh daemon (called `sshd`) to listen only on the interface that corresponds to that IP. In this case, the IP corresponds with the physical Ethernet network card that is in use in the host. By default, the `sshd` process listens in all available interfaces in the host, when set with the default `ListenAddress 0.0.0.0` setting.
 
 2. Save the the change and restart the `ssh` service.
 
@@ -302,7 +302,7 @@ Still, given that we're working on a standalone node, we can assume that a stand
     | Verification code:
     ~~~
 
-    Notice the **Access denied** line between the two `Keyboard-interactive authentication prompts`. No matter that you input the correct TOTP verification code everytime, the server will reject your request. On the other hand, if you try to connect authenticating with a ssh key pair, you'll see a different message.
+    Notice the **Access denied** line between the two `Keyboard-interactive authentication prompts`. No matter that you input the correct TOTP verification code every time, the server will reject your request. On the other hand, if you try to connect authenticating with a ssh key pair, you'll see a different message.
 
     ~~~bash
     Using username "root".
@@ -440,7 +440,7 @@ You cannot log as `root` through ssh, because you've already disabled that possi
 There are many other possible adjustments that can be done in the `sshd` service configuration, but some of them can conflict with how Proxmox VE runs. So, beware of the following changes.
 
 - **Adjusting the `MaxStartups` value**.  
-    When some user tries to connect to your server, that stablishes a new unauthenticated or _startup_ connection. Those users trying to connect can be automated processes running in your server, so be mindful of making this value just big enough for your needs.
+    When some user tries to connect to your server, that establishes a new unauthenticated or _startup_ connection. Those users trying to connect can be automated processes running in your server, so be mindful of making this value just big enough for your needs.
 
 - **Adjusting the `MaxSessions` value**.  
     This parameter indicates how many sessions can be opened from a shared ssh connection. It could happen that some procedure requires to open two or more extra sessions branched out from its original ssh connection, so be careful of not making this value too small or unnecessarily big.

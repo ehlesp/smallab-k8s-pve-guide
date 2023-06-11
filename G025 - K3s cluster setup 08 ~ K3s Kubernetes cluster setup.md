@@ -24,17 +24,17 @@ I'll assume the most simple scenario, which is a single local network behind one
 #### **IP range for VM templates**
 
 - Main network card: between `192.168.1.11` and `192.168.1.20`.
-- Secondary netword card: any address beyond `10.0.0.20`.
+- Secondary network card: any address beyond `10.0.0.20`.
 
 #### **IP range for K3s SERVER nodes**
 
 - Main network card: between `192.168.1.21` and `192.168.1.30`.
-- Secondary netword card: between `10.0.0.1` and `10.0.0.10`.
+- Secondary network card: between `10.0.0.1` and `10.0.0.10`.
 
 #### **IP range for K3s AGENT nodes**
 
 - Main network card: between `192.168.1.31` and `192.168.1.40`.
-- Secondary netword card: between `10.0.0.11` and `10.0.0.20`.
+- Secondary network card: between `10.0.0.11` and `10.0.0.20`.
 
 This is just a suggestion, although I'll use it to illustrate the setup of the K3s cluster.
 
@@ -82,7 +82,7 @@ Again, my hostname schema and ID assignments are just suggestions. Put the names
 
 ### _VM as K3s server node_
 
-K3s server nodes can run workloads (apps and services), but it's more appropiate to use them just for managing the cluster. Acting just as a server is a heavy duty job, even in a small setup such as the one you're building with this guide series. So, you can start assigning your `k3sserver01` node low hardware specs and increase them later depending on how well the node runs. Still, be aware that if the server node has a bad performance, the whole cluster won't run properly either. In my case I left this VM with rather low capabilities to begin with.
+K3s server nodes can run workloads (apps and services), but it's more appropriate to use them just for managing the cluster. Acting just as a server is a heavy duty job, even in a small setup such as the one you're building with this guide series. So, you can start assigning your `k3sserver01` node low hardware specs and increase them later depending on how well the node runs. Still, be aware that if the server node has a bad performance, the whole cluster won't run properly either. In my case I left this VM with rather low capabilities to begin with.
 
 - **Memory**: 1.00/1.50 GiB of RAM.
 - **Processors**: 2 vCPUs.
@@ -116,7 +116,7 @@ Now that you have the new VMs created, you might think that you can start creati
 
 ### _Customizing the hostname_
 
-As it happened when you set up the k3s node VM template, these two new VMs you've created both have the same hostname inherited from the VM template. You need to change it, as you did before, but customizing it to the role each node will play in the K3s cluster. So, if you apply the naming scheme I showed you back at the beggining of this guide, the hostname value for each VM will be as follows.
+As it happened when you set up the k3s node VM template, these two new VMs you've created both have the same hostname inherited from the VM template. You need to change it, as you did before, but customizing it to the role each node will play in the K3s cluster. So, if you apply the naming scheme I showed you back at the beginning of this guide, the hostname value for each VM will be as follows.
 
 - The K3s server VM will be called `k3sserver01`.
 - The other VM will run as an agent, so it'll be named `k3sagent01`.
@@ -154,7 +154,7 @@ Remember that to see the change applied, you have to exit your current shell ses
 
 ### _Changing the second network card's IP address_
 
-The second network card of the new VMs has the same IP address that was configured in the template, something you must correct or the networking with this card won't work. Following the pattern I stablished before, the IPs I'm going to set for this VMs are the next.
+The second network card of the new VMs has the same IP address that was configured in the template, something you must correct or the networking with this card won't work. Following the pattern I established before, the IPs I'm going to set for this VMs are the next.
 
 - K3s **server** node 1: `10.0.0.1`
 - K3s **agent** node 1: `10.0.0.11`
@@ -312,7 +312,7 @@ $ tar czvf .ssh.tgz .ssh/
 $ tar czvf .google_authenticator.tgz .google_authenticator
 ~~~
 
-When you have exported these `.tgz` files (with a tool like WinSCP, for instance) to the second agent node, remove the ones already present and then uncompress the `.tgz` files.
+When you have exported these `.tgz` files (with a tool like WinSCP, for instance) to the second agent node, remove the ones already present and then decompress the `.tgz` files.
 
 ~~~bash
 $ cd
@@ -337,7 +337,7 @@ In a **default** installation of a K3s cluster, the ports you need to have open 
 
 - On SERVER nodes:
     - TCP `2379-2380`: necessary when using HA with embedded etcd database engines. These are not used in a one-server-node setup.
-    - TCP `6443`: this is for connecting to the Kubernestes API server, necessary for cluster management tasks.
+    - TCP `6443`: this is for connecting to the Kubernetes API server, necessary for cluster management tasks.
     - TCP `10250`: required to access to Kubelet metrics.
 
 - On AGENT nodes:
@@ -744,7 +744,7 @@ As I've already told you before, the `/etc/rancher/k3s/config.yaml` file is the 
 
     - `node-external-ip`: the public or external IP where the node also advertises itself and through which it offers its services.
 
-    - `node-taint`: a taint is a way used in Kubernetes to mark nodes and other objects with certain caracteristics. In this case, with the `k3s-controlplane=true:NoExecute` taint applied, this node will only do control-plane work. Therefore, it won't run any normal workloads, not even deployments for embedded services like Traefik.
+    - `node-taint`: a taint is a way used in Kubernetes to mark nodes and other objects with certain characteristics. In this case, with the `k3s-controlplane=true:NoExecute` taint applied, this node will only do control-plane work. Therefore, it won't run any normal workloads, not even deployments for embedded services like Traefik.
 
     - `log`: the K3s service logs by default in the `/var/log/daemon.log` and the `/var/log/syslog` files. Putting here another file path makes the K3s service to write its log lines there, which helps uncluttering your VM's other log files.
 

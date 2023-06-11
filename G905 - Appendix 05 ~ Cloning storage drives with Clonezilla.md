@@ -101,7 +101,7 @@ With Clonezilla flashed in an USB drive, you can start creating images of the st
 
     ![Directory browser](images/g905/clonezilla_directory_browser.png "Directory browser")
 
-    The USB drive I'm using here is an empty ntfs formatted one, which explains the Windows recyble bin folder. Notice that Clonezilla here doesn't give you any option for handling directories, you can only choose the one you want.
+    The USB drive I'm using here is an empty ntfs formatted one, which explains the Windows recycle bin folder. Notice that Clonezilla here doesn't give you any option for handling directories, you can only choose the one you want.
 
     > **BEWARE!**  
     > Don't be confused, the `$RECYCLE.BIN` item in the snapshot above is **not** the selected directory. The currently selected one is the '`/`' one, the root of the partition you chose previously as your images' repository.
@@ -278,7 +278,7 @@ The restoration process of a basic Clonezilla image, like the one created in the
 
     ![Images Repository location not empty](images/g905/clonezilla_repository_location_not_empty.png "Images repository location not empty")
 
-    See how, below the `$RECYCLE.BIN` directory, there are two directories that correspond to images done previously. Notice how their names just fit in the listing, so remember to give your clonezilla images tight names.
+    See how, below the `$RECYCLE.BIN` directory, there are two directories that correspond to images done previously. Notice how their names just fit in the listing, so remember to give your Clonezilla images tight names.
 
     > **BEWARE!**  
     > Be careful of not choosing the folder of another image to create a new one, although it shouldn't be much a problem since each image is self-contained in its own folder.

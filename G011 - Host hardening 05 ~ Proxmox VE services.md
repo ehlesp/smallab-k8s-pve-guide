@@ -2,7 +2,7 @@
 
 Your standalone Proxmox VE node comes with a number of services running by default. Having in mind the target system's particularities assumed in this guide series, there's some reconfiguring or disabling of services that you can do to harden your Proxmox VE platform further.
 
-The basic idea is to reduce the exposition surface of your platform, and also save some RAM and CPU, by disabling unneeded Promox VE related processes.
+The basic idea is to reduce the exposition surface of your platform, and also save some RAM and CPU, by disabling unneeded Proxmox VE related processes.
 
 ## Checking currently running services
 
@@ -156,7 +156,7 @@ The PVEProxy is the component responsible for the Proxmox WEB interface communic
 
 ### _Default 8006 port and listening interfaces_
 
-By default, `pveproxy` listens on all your system's network interfaces through the `8006` port. This behaviour **cannot be changed in any way**, or is not documented how to do so. Hence you'll need to rely on other techniques, like firewalling or use an extra reverse proxy, to protect the PVE's proxy.
+By default, `pveproxy` listens on all your system's network interfaces through the `8006` port. This behavior **cannot be changed in any way**, or is not documented how to do so. Hence you'll need to rely on other techniques, like firewalling or use an extra reverse proxy, to protect the PVE's proxy.
 
 ### _Enforcing strong SSL/TLS ciphers_
 

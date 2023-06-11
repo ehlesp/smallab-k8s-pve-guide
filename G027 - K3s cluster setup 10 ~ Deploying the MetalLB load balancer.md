@@ -11,7 +11,7 @@ Before you can deploy MetalLB in your K3s cluster, there are certain points you 
 
 ### _Choosing the right mode of operation for MetalLB_
 
-MetalLB can work in one of two modes: [**layer 2**](https://metallb.universe.tf/concepts/layer2/) or [**BGP**](https://metallb.universe.tf/concepts/bgp/). The layer 2 option is the one that fits your K3s cluster, and is the most simple and straightforward to configure and run. BGP, on the other hand, requires a more complex setup (including network traffic routing) more appropiate for large Kubernetes clusters.
+MetalLB can work in one of two modes: [**layer 2**](https://metallb.universe.tf/concepts/layer2/) or [**BGP**](https://metallb.universe.tf/concepts/bgp/). The layer 2 option is the one that fits your K3s cluster, and is the most simple and straightforward to configure and run. BGP, on the other hand, requires a more complex setup (including network traffic routing) more appropriate for large Kubernetes clusters.
 
 ### _Reserve an IP range for services_
 
@@ -29,9 +29,9 @@ In the previous [**G026** guide](G026%20-%20K3s%20cluster%20setup%2009%20~%20Set
 
 ## Choosing the IP ranges for MetalLB
 
-You have to choose an IP range on the external network your K3s cluster is connected to. This IP range should leave out the IPs already used by the K3s nodes themselves, helping you in keeping the nodes differenciated from the services deployed in them. Also bear in mind that MetalLB links IPs to services, so when MetalLB moves a service from one node to another, the IP sticks to the service. So, any IP within the ranges managed by MetalLB can jump from node to node of your cluster as seen fit by the load balancer.
+You have to choose an IP range on the external network your K3s cluster is connected to. This IP range should leave out the IPs already used by the K3s nodes themselves, helping you in keeping the nodes differentiated from the services deployed in them. Also bear in mind that MetalLB links IPs to services, so when MetalLB moves a service from one node to another, the IP sticks to the service. So, any IP within the ranges managed by MetalLB can jump from node to node of your cluster as seen fit by the load balancer.
 
-In the external network `192.168.1.0` used in this guide series, all the VMs created previously don't go over the IP `192.168.1.40`. Assuming that all other devices (including the Proxmox VE host) have IPs beyond `192.168.1.100`, this means that a continous IP range available for MetalLB starts at `192.168.1.41` and can end at `192.168.1.100`.
+In the external network `192.168.1.0` used in this guide series, all the VMs created previously don't go over the IP `192.168.1.40`. Assuming that all other devices (including the Proxmox VE host) have IPs beyond `192.168.1.100`, this means that a continuous IP range available for MetalLB starts at `192.168.1.41` and can end at `192.168.1.100`.
 
 ## Deploying MetalLB on your K3s cluster
 
@@ -77,7 +77,7 @@ Now you need to create the files that describe the deployment of MetalLB.
 
     Above you can see how a pool of IPs named `default` is defined to operate with the `layer2` protocol and has a concrete IP range defined under the `addresses` parameter, corresponding with what you've seen detailed previously in this guide.
 
-    Alternatively, you could have an address pool that include several different IP ranges, somethig useful if you don't have a big continuous range of IPs available in your network. For instance, you could have configured the range in the `default` pool as:
+    Alternatively, you could have an address pool that include several different IP ranges, something useful if you don't have a big continuous range of IPs available in your network. For instance, you could have configured the range in the `default` pool as:
 
     ~~~yaml
     ...
@@ -124,7 +124,7 @@ Now you need to create the files that describe the deployment of MetalLB.
         - This Kustomize functionality allows you to generate one or more Kubernetes config map resources based on particular configurations on each one of them. There's also a [`secretGenerator` functionality](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/secretgenerator/) with has the same options as the [`configMapGenerator` one](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/configmapgenerator/).
         - In this case, there's only one config map resource configured, the one required by MetalLB for running properly.
         - This config map will be named `config` and will include the contents of the `config` file you created before in the `configs` subfolder.
-        - The `disableNameSuffixHash` option is for disabling the default behaviour of Kustomize regarding names of config maps and secrets. It adds a suffix to the name of those resources, a hash calculated from their contents like in `config-58565bck2t`. This can be problematic because certain apps don't expect such suffix, hence cannot find their config maps or secrets. MetalLB expects the generated config map `metadata.name` to be just the `config` string, making the use of this `disableNameSuffixHash` option necessary here.
+        - The `disableNameSuffixHash` option is for disabling the default behavior of Kustomize regarding names of config maps and secrets. It adds a suffix to the name of those resources, a hash calculated from their contents like in `config-58565bck2t`. This can be problematic because certain apps don't expect such suffix, hence cannot find their config maps or secrets. MetalLB expects the generated config map `metadata.name` to be just the `config` string, making the use of this `disableNameSuffixHash` option necessary here.
 
     > **BEWARE!**  
     > From the version `0.13.0` onwards, is **not** possible to configure MetalLB with configmaps as shown here. The config map has to be transformed into custom resources (or CRs), something indicated in this official [Backward Compatibility note](https://metallb.universe.tf/#backward-compatibility). Check the [guide G912 - Appendix 12](G912%20-%20Appendix%2012%20~%20Adapting%20MetalLB%20config%20to%20CR.md) to see how to adapt the MetalLB kustomize project you've created here.
@@ -188,7 +188,7 @@ deployment.apps/controller created
 daemonset.apps/speaker created
 ~~~
 
-The lines are merely informative about the resources created by your deployment, or sporadic warnings about deprecated apis still used by the software you're installing in your cluster. So, if you don't see a lot of warnings or just errors, the deployment can be considered sucessful like in the output above.
+The lines are merely informative about the resources created by your deployment, or sporadic warnings about deprecated apis still used by the software you're installing in your cluster. So, if you don't see a lot of warnings or just errors, the deployment can be considered successful like in the output above.
 
 Finally, you can check out how the MetalLB service is running in your cluster.
 

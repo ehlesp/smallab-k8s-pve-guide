@@ -392,9 +392,8 @@ Probably, this is just a problem of limiting the TFA restriction to the users an
 - [The Linux-PAM System Administrators' Guide](http://linux-pam.org/Linux-PAM-html/Linux-PAM_SAG.html)
 - [Debian Reference. 4.5. PAM and NSS](https://www.debian.org/doc/manuals/debian-reference/ch04.en.html#_pam_and_nss)
 - [How to Configure and Use PAM in Linux](https://www.tecmint.com/configure-pam-in-centos-ubuntu-linux/)
-- [Configurar y usar Linux-PAM](https://likegeeks.com/es/linux-pam/)
-- [Autenticación PAM – Redes PYMES](https://blog.desdelinux.net/autenticacion-pam-redes-pymes/)
-- [Cómo configurar y usar PAM en Linux](https://es.linux-console.net/?p=141)
+- [Enhance Linux Authentication with Linux-PAM](https://likegeeks.com/linux-pam-easy-guide/)
+- [Autenticación PAM – Redes PYMES (in Spanish)](https://blog.desdelinux.net/autenticacion-pam-redes-pymes/)
 
 ## Navigation
 

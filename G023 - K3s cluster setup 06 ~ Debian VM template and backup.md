@@ -92,7 +92,7 @@ It's convenient to have a backup of your VM template, just in case anything happ
 
     - `Mode`: indicates how you want to execute the backup on your VM. In case of running VMs, you'll have to consider if you want to execute the backup in parallel with the VM still running (`Snapshot` and `Suspend` modes, which also use the QEMU guest agent if available in the VM) or stopping it while the backup is being done (`Stop` mode). For a VM template backup, it shouldn't matter which mode you choose, although the only one that makes sense to use in this case is `Stop` mode.
         > **BEWARE!**  
-        > The behaviour of these backup modes for containers is similar but not equivalent to how they work for VMs. Check the Proxmox VE help to see the differences.
+        > The behavior of these backup modes for containers is similar but not equivalent to how they work for VMs. Check the Proxmox VE help to see the differences.
 
     - `Compression`: offers you the possibility of compressing or not the backup of your VM or container. In a scenario with very limited storage like the one used in this guide series, its mandatory to compress the dumps as much as possible. The default `ZSTD` option is the best option since is not only the fastest algorithm of the three offered, but also is multi-threaded.
 
@@ -153,7 +153,7 @@ Restoring the backup of a VM or VM template is not much more complex than creati
 
     - `VM`: the id of the VM you're restoring.
 
-    - `Bandwith Limit`: this parameter is to restrict the system's resources taken up by the restoration process, and limit the impact it will have in your system performance.
+    - `Bandwidth Limit`: this parameter is to restrict the system's resources taken up by the restoration process, and limit the impact it will have in your system performance.
 
     - `Start after restore`: makes the restored VM start immediately after being restore, although this won't work on a VM template.
 
@@ -200,13 +200,13 @@ Restoring the backup of a VM or VM template is not much more complex than creati
     It might seem odd that, in the Proxmox VE platform, the VM templates are treated almost as normal VMs. To understand this, you have to think about VM templates just as frozen-in-time VMs. Thanks to this nature, you can clone them in Proxmox VE to create new but similar VMs much faster.
 
 - **Proxmox VE doesn't compress the templates**  
-    Directly related to this "frozen VM" nature, you must bear in mind that a VM template's hard disk won't be compressed or shrinked in any way by Proxmox VE. Whatever storage space was used by the VM disk image, that's exactly the space the template will still take up. The only thing that will change, as you've seen in this guide, is the write permission on the corresponding light volume and its status to inactive. Now, in case you happened to be using a `qcow2` image file, how this read-only restriction is enforced will change. Given how the storage setup has been configured already, the `qcow2` format won't be covered in this guide series.
+    Directly related to this "frozen VM" nature, you must bear in mind that a VM template's hard disk won't be compressed or shrunk in any way by Proxmox VE. Whatever storage space was used by the VM disk image, that's exactly the space the template will still take up. The only thing that will change, as you've seen in this guide, is the write permission on the corresponding light volume and its status to inactive. Now, in case you happened to be using a `qcow2` image file, how this read-only restriction is enforced will change. Given how the storage setup has been configured already, the `qcow2` format won't be covered in this guide series.
 
 - **Clone VM templates to update them**  
     Since VM templates are read-only, **you can't modify them**. If you want to update a template, you'll have to clone it into a new VM, update that VM and, then, turn the updated VM into a new VM template.
 
 - **Hardware configuration can be changed**  
-    The part that really is read-only in a template is the storage drive that becomes the disk image, but the hardware setup can still be changed. If you have to do this, you must be careful that the changes won't contradict what the templated VM saved in the image knows about its hardware. For instance, changing the number of vCPUs or the RAM won't usually give you any trouble, but removing a network device could have concerning consecuences.
+    The part that really is read-only in a template is the storage drive that becomes the disk image, but the hardware setup can still be changed. If you have to do this, you must be careful that the changes won't contradict what the templated VM saved in the image knows about its hardware. For instance, changing the number of vCPUs or the RAM won't usually give you any trouble, but removing a network device could have concerning consequences.
 
 ## References
 

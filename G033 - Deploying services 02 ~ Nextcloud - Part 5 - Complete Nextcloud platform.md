@@ -132,7 +132,7 @@ The persistent volumes are the way to use, in your K3s cluster, the LVM storage 
 
         - In `spec.local.path` is where you specify the **absolute path**, within the node's filesystem, where you want to mount this volume. Notice how, in all the PVs, it has the path to their corresponding `k3smnt` folder you already left prepared in your `k3sagent02` VM.
 
-        - The `spec.nodeAffinity` block restricts to which node in the cluster a volume will be binded to. Otherwise, the Kubernetes engine would try to bind the volume to any node, which could lead to errors. In the yamles above, you can see how in all the PVs theres's only one node affinity rule that looks for the hostname of the node (the `key` in the `matchExpressions` section), and checks if it's `In` (the `operator` parameter) the list of admitted `values`. Since the `k3sagent02` node is the only one with the storage ready for those volumes, it's hostname is the only value in the list.
+        - The `spec.nodeAffinity` block restricts to which node in the cluster a volume will be binded to. Otherwise, the Kubernetes engine would try to bind the volume to any node, which could lead to errors. In the yamls above, you can see how in all the PVs theres's only one node affinity rule that looks for the hostname of the node (the `key` in the `matchExpressions` section), and checks if it's `In` (the `operator` parameter) the list of admitted `values`. Since the `k3sagent02` node is the only one with the storage ready for those volumes, it's hostname is the only value in the list.
 
 ### _Nextcloud Namespace resource_
 
@@ -327,7 +327,7 @@ With every required component declared or configured, now you need to put everyt
 3. As usual, check the Kustomize yaml output for this project. Since this one is going to be particularly long, let's dump it into a file such as `nextcloud.k.output.yaml`.
 
     ~~~bash
-    $ kubect kustomize $HOME/k8sprjs/nextcloud > nextcloud.k.output.yaml
+    $ kubectl kustomize $HOME/k8sprjs/nextcloud > nextcloud.k.output.yaml
     ~~~
 
 4. Open the `nextcloud.k.output.yaml` file and compare your resulting yaml output with the one next.

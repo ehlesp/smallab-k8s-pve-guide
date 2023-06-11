@@ -25,4 +25,4 @@ Just create a `.vimrc` file, with the lines above, in any user's $HOME folder.
 
 ## Navigation
 
-[<< Previous (**G901. Appendix 01**)](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G903. Appendix 03**) >>](G903%20-%20Appendiz%2003%20~%20Customization%20of%20the%20motd%20file.md)
+[<< Previous (**G901. Appendix 01**)](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G903. Appendix 03**) >>](G903%20-%20Appendix%2003%20~%20Customization%20of%20the%20motd%20file.md)

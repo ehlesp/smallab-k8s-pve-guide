@@ -158,7 +158,7 @@ For the previous service account to be able to do anything in your cluster, you 
       - watch
     ~~~
 
-    See how the `agent-kube-state-metrics` cluster role is a collection of `rules` that define what actions (`verbs`) can be done on concrete `resources` available in concrete apis (`apiGroups`). Also notice how the verbs are almost always `list` or `watch`, limiting to a read-only behaviour this cluster role.
+    See how the `agent-kube-state-metrics` cluster role is a collection of `rules` that define what actions (`verbs`) can be done on concrete `resources` available in concrete apis (`apiGroups`). Also notice how the verbs are almost always `list` or `watch`, limiting to a read-only behavior this cluster role.
 
     > **BEWARE!**  
     > `ClusterRole` resources are **not** namespaced, so you won't see a `namespace` parameter in them.
@@ -266,7 +266,7 @@ The Kube State Metric service is just an agent that doesn't store anything, so y
 
     - `server` container: executes the Kube State Metrics service.
         - `securityContext`: section for adjusting the security conditions of the container.
-            - `allowPrivilegeEscalation`: controls whether a process can gain more privileges than its parent process. Here set to `false` to contrain this container within its given privileges.
+            - `allowPrivilegeEscalation`: controls whether a process can gain more privileges than its parent process. Here set to `false` to constrain this container within its given privileges.
             - `capabilities`: with this section you can add or drop security related capabilities to the container beyond its default setting. In this case, `ALL` possible capabilities are `drop`ped to get a non-privileged container.
             - `readOnlyRootFilesystem`: to set or not the `root` filesystem within the container as read-only.
             - `runAsUser`: specifies the UID of the user running the container. In this deployment will be one with the UID `65534` that it's already prepared in the Kube State Metrics image.

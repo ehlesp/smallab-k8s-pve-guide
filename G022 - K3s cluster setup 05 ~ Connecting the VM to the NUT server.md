@@ -30,7 +30,7 @@ First, you need to change the configuration of the NUT `master` server running i
     $ sudo cp ups.conf ups.conf.bkp
     ~~~
 
-2. Edit the `ups.conf` file. At its end, you should have just the configuration block for your UPS unit you configured previosly in the [**G004** guide](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md#connecting-your-ups-with-your-pve-node-using-nut).
+2. Edit the `ups.conf` file. At its end, you should have just the configuration block for your UPS unit you configured previously in the [**G004** guide](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md#connecting-your-ups-with-your-pve-node-using-nut).
 
     ~~~properties
     [apc]
@@ -248,7 +248,7 @@ You need to make the `upsd` port (the NUT standard `3493` in this guide) accessi
         - Use only alphanumerical characters plus the '_' symbol.
         - Use only letters from the english alphabet.
         > **BEWARE!**  
-        > This behaviour is not explained in the Proxmox VE official documentation.
+        > This behavior is not explained in the Proxmox VE official documentation.
 
     - `IP/CIDR`: this value can be just a single IP (like `1.2.3.4`) or a network range (as `1.2.3.0/24`). For this case, you'll just input the VM's main IP here (the one assigned to `net0`).
 
@@ -371,7 +371,7 @@ You need to make the `upsd` port (the NUT standard `3493` in this guide) accessi
 
     - `Security Group`: here you must choose a preexisting security group defined at the `Datacenter` level. In this case, you only have the one you've created before: `nut_port_accept_in`.
 
-    - `Interface`: this field **only admits the name** (not IPs or MACs) of an existing node network interface, or just being left empty. In this case you'll need to put the name of the `vmbr0` bridge, since it's the network device through wich your Proxmox VE host communicates.
+    - `Interface`: this field **only admits the name** (not IPs or MACs) of an existing node network interface, or just being left empty. In this case you'll need to put the name of the `vmbr0` bridge, since it's the network device through which your Proxmox VE host communicates.
 
     - `Enable`: by ticking this on, you enable this rule on the firewall.
 

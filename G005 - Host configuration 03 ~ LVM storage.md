@@ -106,7 +106,7 @@ I/O size (minimum/optimal): 512 bytes / 512 bytes
 > **BEWARE!**  
 > The `fdisk` command **doesn't** return an alphabetically ordered list.
 
-The `sda` device is the 1TiB SSD drive in which Proxmox VE is installed. In it's block, below its list of technical capabilites, you can also see the list of the **real partitions** (the `/dev/sda#` lines) created in it by the Proxmox VE installation. The `sda1` and `sda2` are partitions used essentially for booting the system up, and the `sda3` is the one that contains the whole `pve` LVM volume group for Proxmox VE.
+The `sda` device is the 1TiB SSD drive in which Proxmox VE is installed. In it's block, below its list of technical capabilities, you can also see the list of the **real partitions** (the `/dev/sda#` lines) created in it by the Proxmox VE installation. The `sda1` and `sda2` are partitions used essentially for booting the system up, and the `sda3` is the one that contains the whole `pve` LVM volume group for Proxmox VE.
 
 Below the `sda` information block, you can see the details of the `sdb` and `sdc` storage devices (for instance, `fdisk` correctly recognizes the `sdc` drive as `External`, which is the HDD connected through the USB 3 plug). In this case, both of them are not partitioned at all and, therefore, completely empty. That's why they don't have a listing below each of them like in the case of the `sda` device.
 
@@ -139,7 +139,7 @@ sdc                  8:32   0   1.8T  0 disk
 
 This command not only sees all the physical storage drives available (`TYPE disk`) in the system and their partitions (`TYPE part` that, at this point, are only inside the `sda` device), it also gives information about the LVM filesystem itself (`TYPE lvm`).
 
-It correctly shows the `pve-swap`, the `pve-root` and their mountpoints, but also lists the two elements that compose an LVM-Thin pool: its metadata (`pve-data_tmeta`) and the reserved space itself (`pve-data`). Also, the default branch format is really helpful to see where is what, although the `lsblk` command supports a few other output formats as well.
+It correctly shows the `pve-swap`, the `pve-root` and their mount points, but also lists the two elements that compose an LVM-Thin pool: its metadata (`pve-data_tmeta`) and the reserved space itself (`pve-data`). Also, the default branch format is really helpful to see where is what, although the `lsblk` command supports a few other output formats as well.
 
 With the two previous commands you get the Linux's point of view, but you also need to know how the LVM system sees itself. For this, LVM has its own set of commands, and one of them is `vgs`.
 
@@ -599,7 +599,7 @@ What remains to do is to make usable all the still unallocated space within the 
     First sector (104857601-1953525134, default 104859648):
     ~~~
 
-    Notice how the first sector chosen by default is the same one you saw before with the `F` command as the `Start` of the free space. Again, the default value (104859648) is good, since you want the `sda4` partition to start at the very beggining of the available unallocated space. So **press enter** to accept the default value.
+    Notice how the first sector chosen by default is the same one you saw before with the `F` command as the `Start` of the free space. Again, the default value (104859648) is good, since you want the `sda4` partition to start at the very beginning of the available unallocated space. So **press enter** to accept the default value.
 
 5. The last question is about on which sector the new `sda4` partition has to **end**.
 

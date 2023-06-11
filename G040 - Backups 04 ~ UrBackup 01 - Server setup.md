@@ -96,7 +96,7 @@ The LVM filesystem structure of this VM retains the same names as the VM templat
 
 #### **Setting up the second network card**
 
-The second network device, or virtual ethernet card, in the new VM is disabled by default. You have to enable it and assign it a proper IP, so later it can communicate directly with the secondary virtual NICs of your K3s node VMs. Do this by following the instructions [in this particular section of the G024 guide](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md#setting-up-the-second-network-card), but configuring an IP within the same range (`10.0.0.x`) that is not already assigned. In this guide, to keep the relationship with the `6161` VM ID used in this guide, the IP for this secondary NIC will be `10.0.0.61`.
+The second network device, or virtual Ethernet card, in the new VM is disabled by default. You have to enable it and assign it a proper IP, so later it can communicate directly with the secondary virtual NICs of your K3s node VMs. Do this by following the instructions [in this particular section of the G024 guide](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md#setting-up-the-second-network-card), but configuring an IP within the same range (`10.0.0.x`) that is not already assigned. In this guide, to keep the relationship with the `6161` VM ID used in this guide, the IP for this secondary NIC will be `10.0.0.61`.
 
 #### **Changing the password of mgrsys**
 
@@ -656,7 +656,7 @@ To enable to UrBackup clients the capacity of accessing and restoring the backup
 
     ![UrBackup server Settings General Internet/Active clients Server url empty](images/g040/urbackup_server_settings_general_server_int_clients_srv_url_empty.png "UrBackup server Settings General Internet/Active clients Server url empty")
 
-    Notice that the success warning message from the previous change hasn't dissapeared when you've change to this page, which very likely is a bug in this version of UrBackup server.
+    Notice that the success warning message from the previous change hasn't disappeared when you've change to this page, which very likely is a bug in this version of UrBackup server.
 
     Type in the `Server URL` field the correct string, which for this guide is `urbackup://10.0.0.61:55414`, as you can see in the capture next.
 

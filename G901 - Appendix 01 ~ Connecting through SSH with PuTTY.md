@@ -87,9 +87,9 @@
 
     ![PuTTY security alert about server fingerprint](images/g901/putty_security_alert_server_fingerprint.png "PuTTY security alert about server fingerprint")
 
-    This is nothing to worry about, its just PuTTY telling you that it doesn't know the ssh fingerprint of the server it's connecting to and is asking you about accepting and remembering it. Just press on `Yes` (`Sí` in my spanish locale setting) and you should get into the shell.
+    This is nothing to worry about, its just PuTTY telling you that it doesn't know the ssh fingerprint of the server it's connecting to and is asking you about accepting and remembering it. Just press on `Yes` (`Sí` in my Spanish locale setting) and you should get into the shell.
 
-    ![Connection stablished as root with pve node](images/g901/putty_connection_stablished_as_root_pve_node.png "Connection stablished as root with pve node")
+    ![Connection established as root with pve node](images/g901/putty_connection_stablished_as_root_pve_node.png "Connection established as root with pve node")
 
     > **NOTE**  
     > You might notice that the font on my PuTTY shell window is different from what you see in yours. This is because I configured it this way on PuTTY, in the `Window > Appearance` screen.

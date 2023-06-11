@@ -589,7 +589,7 @@
 
 - [_References_](G902%20-%20Appendix%2002%20~%20Vim%20vimrc%20configuration.md#references)
 
-### [**G903** - Appendiz 03 ~ Customization of the motd file](G903%20-%20Appendiz%2003%20~%20Customization%20of%20the%20motd%20file.md#g903-appendiz-03-customization-of-the-motd-file)
+### [**G903** - Appendix 03 ~ Customization of the motd file](G903%20-%20Appendix%2003%20~%20Customization%20of%20the%20motd%20file.md#g903-appendix-03-customization-of-the-motd-file)
 
 - [_References_](G903%20-%20Appendiz%2003%20~%20Customization%20of%20the%20motd%20file.md#references)
 

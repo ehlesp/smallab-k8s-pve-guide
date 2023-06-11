@@ -35,7 +35,7 @@ You can expand any hard disk attached to a VM easily on Proxmox VE.
 
 ## Extending the root LVM filesystem on a live VM
 
-The hard disk is bigger now, but the VM's filesystem is not using that extra space yet. You need to extend it over the newly available space. Assuming the VM is a Debian system installed over a LVM filesystem, here you'll see how to extend it's root filesytem while the VM is running.
+The hard disk is bigger now, but the VM's filesystem is not using that extra space yet. You need to extend it over the newly available space. Assuming the VM is a Debian system installed over a LVM filesystem, here you'll see how to extend it's root filesystem while the VM is running.
 
 > **BEWARE!**  
 > The following procedure, if not applied with care, could make your VM's filesystem (and the VM itself) unusable!
@@ -254,7 +254,7 @@ This procedure is, as it is, also valid to extend any non-root LVM volumes.
 - [How to resize LVM disk in Debian 8.6 without losing data](https://unix.stackexchange.com/questions/336979/how-to-resize-lvm-disk-in-debian-8-6-without-losing-data)
 - [Expanding LVM Partitions in VMware, on the fly](https://theducks.org/2009/11/expanding-lvm-partitions-in-vmware-on-the-fly/)
 - [How to extend a Linux PV partition online after virtual disk growth](https://serverfault.com/questions/378086/how-to-extend-a-linux-pv-partition-online-after-virtual-disk-growth)
-- [Extend a LVM partition after increasing its virtual disk on Virtualbox](https://blog.vbonhomme.fr/extend-a-lvm-partition-after-increasing-its-virtual-disk-on-virtualbox/)
+- [Extend a LVM partition after increasing its virtual disk on VirtualBox](https://blog.vbonhomme.fr/extend-a-lvm-partition-after-increasing-its-virtual-disk-on-virtualbox/)
 - [How do I extend a partition with a LVM and the contained physical volume and logical volume?](https://unix.stackexchange.com/questions/98339/how-do-i-extend-a-partition-with-a-lvm-and-the-contained-physical-volume-and-log)
 - [CentOS / RHEL : How to extend Physical Volume in LVM by extending the Disk Partition used](https://www.thegeekdiary.com/centos-rhel-how-to-extend-physical-volume-in-lvm-by-extending-the-disk-partition-used/)
 - [How to Increase the size of a Linux LVM by expanding the virtual machine disk](https://www.rootusers.com/how-to-increase-the-size-of-a-linux-lvm-by-expanding-the-virtual-machine-disk/)

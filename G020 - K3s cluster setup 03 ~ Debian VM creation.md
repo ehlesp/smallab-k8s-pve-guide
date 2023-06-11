@@ -106,7 +106,7 @@ First, you need to configure the VM itself.
 
     ![Disk tab unfilled at Create VM window](images/g020/debian_vm_create_vm_disk_unfilled.png "Disk tab unfilled at Create VM window")
 
-    In this step you have a form in which you can add several storage drives to your VM, but there are certain parameters that you need to see to create a virtual SSD drive. So, enable the `Advanced` checkbox at the bottom of this window and you'll see some extra parameters which I've hightlighted in the next snapshot.
+    In this step you have a form in which you can add several storage drives to your VM, but there are certain parameters that you need to see to create a virtual SSD drive. So, enable the `Advanced` checkbox at the bottom of this window and you'll see some extra parameters which I've highlighted in the next snapshot.
 
     > **BEWARE!**  
     > The `Advanced` checkbox affects all the steps of this wizard, but not all of those steps have advanced parameters to show.
@@ -132,7 +132,7 @@ First, you need to configure the VM itself.
 
     ![Disk tab filled at Create VM window](images/g020/debian_vm_create_vm_disk_filled.png "Disk tab filled at Create VM window")
 
-    This way, you've configured the `scsi0` drive you see listed in the column at the window's left. If you wante to add more drives, click on the `Add` button and a new drive will be added with default values.
+    This way, you've configured the `scsi0` drive you see listed in the column at the window's left. If you wanted to add more drives, click on the `Add` button and a new drive will be added with default values.
 
 6. The next tab to fill is `CPU`. Since you have enabled the `Advanced` checkbox, you'll see the advanced parameters of this and following steps right away.
 
@@ -323,13 +323,13 @@ At this point, your new VM has the minimal virtual hardware setup you need for i
 
 8. At this point it will show some progress bars while the installer retrieves components and scans the VM hardware.
 
-    ![Intaller loading componentes](images/g020/debian_vm_install_os_installer_loading_components.png "Intaller loading componentes")
+    ![Installer loading componentes](images/g020/debian_vm_install_os_installer_loading_components.png "Installer loading componentes")
 
 9. After some seconds you'll end seeing the following screen about the network configuration.
 
     ![Choosing network card](images/g020/debian_vm_install_os_installer_configuring_network_choosing_network_device.png "Choosing network card")
 
-    Since this VM has two virtual ethernet network cards, the installer must know which one to use as the primary network device. Leave the default option (the card with the lowest `ens##` number) and press `Enter`.
+    Since this VM has two virtual Ethernet network cards, the installer must know which one to use as the primary network device. Leave the default option (the card with the lowest `ens##` number) and press `Enter`.
 
 10. Next, you'll see how the installer tries to setup the network in a few progress bars.
 

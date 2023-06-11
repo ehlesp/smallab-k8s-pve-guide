@@ -71,9 +71,9 @@ $ sudo sysctl -a | less
 
 Be aware that the Proxmox VE firewall handles a bunch of sysctl `net` parameters. The ones listed in the Proxmox VE Firewall official documentation, [in the firewall's **Host Specific Configuration** segment under the **Configuration Files** section](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_configuration_files), are the following ones.
 
-- `nf_conntrack_allow_invalid`: to allow packets with the state INVALID on the connection tracking (conntrack). I haven't found any other reference to this parameter beyond the Proxmox VE-related documentation, so maybe its not a `sysctl` value, although it certaingly looks like it.
+- `nf_conntrack_allow_invalid`: to allow packets with the state INVALID on the connection tracking (conntrack). I haven't found any other reference to this parameter beyond the Proxmox VE-related documentation, so maybe its not a `sysctl` value, although it certainly looks like it.
 
-- `net.netfilter.nf_conntrack_max`: the maximum number of allowed connection traking entries. This value can be changed directly in the Proxmox VE web console.
+- `net.netfilter.nf_conntrack_max`: the maximum number of allowed connection tracking entries. This value can be changed directly in the Proxmox VE web console.
 
 - `net.netfilter.nf_conntrack_tcp_timeout_established`: just a timeout in seconds for established connections. This value can be changed directly in the Proxmox VE web console. Shouldn't be shorter than the `net.ipv4.tcp_keepalive_time` value.
 
@@ -205,7 +205,7 @@ To avoid messing with the `.conf` files already present, let's make a new one fi
     $ sudo reboot
     ~~~
 
-6. The specified configuration in the previous step **3** also disables the IPv6 protocol in your system. Verify that you don't see sockets listening in `[::1]` (the IPv6 version of `localhost`) adresses with the `ss` command.
+6. The specified configuration in the previous step **3** also disables the IPv6 protocol in your system. Verify that you don't see sockets listening in `[::1]` (the IPv6 version of `localhost`) addresses with the `ss` command.
 
     ~~~bash
     $ sudo ss -atlnup

@@ -191,7 +191,7 @@ The configuration file for Prometheus is a yaml file mainly meant for configurin
             - Notice how in this job you have specified the address with the port to connect with the Kube State Metrics service, which is `mntr-agent-kube-state-metrics.monitoring.svc.deimos.cluster.io:8080`.
         - `node-exporter`: scrapes metrics from the Prometheus Node Exporter you already prepared in the previous [guide](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%203%20-%20Prometheus%20Node%20Exporter%20service.md).
 
-        Notice that each of these scraping jobs have their own particularities, like a different `scrape_interval` or `relabel_configs` to suit their own needs. To know more about all those paramters, better check out the [official Prometheus documentation](https://prometheus.io/docs/prometheus/latest/configuration/configuration/).
+        Notice that each of these scraping jobs have their own particularities, like a different `scrape_interval` or `relabel_configs` to suit their own needs. To know more about all those parameters, better check out the [official Prometheus documentation](https://prometheus.io/docs/prometheus/latest/configuration/configuration/).
 
 ### _Configuration file `prometheus.rules.yaml`_
 
@@ -336,10 +336,10 @@ Since you'll store some data with your Prometheus server, you'll better deploy i
 
         - In `args` there are three important parameters:
             - `--storage.tsdb.retention.time`: specifies for how long Prometheus has to keep the metrics in its database before purging them.
-            - `--config.file`: points to the absolute path where the config file for Promethus is stored.
+            - `--config.file`: points to the absolute path where the config file for Prometheus is stored.
             - `--storage.tsdb.path`: absolute path to the folder containing the files of the Prometheus' metrics database.
 
-        - `securityContext`: unlike other containers you've seen in previous guides of this series, the Prometheus container needs some particular security attributes defined in a [`securityContext` section](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#security-context), as in the yaml above, to allow it to access its persitent volume.
+        - `securityContext`: unlike other containers you've seen in previous guides of this series, the Prometheus container needs some particular security attributes defined in a [`securityContext` section](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#security-context), as in the yaml above, to allow it to access its persistent volume.
             - `fsGroup`: changes the persistent volume's group ownership to the indicated GID, which in this case is `65534`. Within the Prometheus container, `65534` is translated to the `nobody` group, while from the perspective of the Debian K3s agent node running the container `65534` is the group called `nogroup`.
             - `runAsUser`: forces the container to run under a different user than the one specified by its image. The user is specified by its UID, which in this case is `65534` that equals to `nobody`. This user's name is the same both within the Prometheus container and for the Debian K3s agent node running it.
             - `runAsGroup`: forces the container to run with the group indicated by the GID, not the one indicated by its image. In the yaml, the mandated group is the `nobody`/`nogroup` one, with the GID `65534`.

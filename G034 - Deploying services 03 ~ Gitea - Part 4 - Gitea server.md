@@ -245,7 +245,7 @@ Gitea is a server that stores data, so it needs to be deployed with a `StatefulS
 
         - In `ports` you have two ports declared, the `https` one to access the web interface (Gitea by default listens on the port `3000`) and the `ssh` for connecting with this Gitea server through that protocol (which uses the port `22` as the standard one).
             > **BEWARE!**  
-            > The `containerPort` declarations are essentialy informative, they don't actually determine what ports are opened in a pod. That's up to the applications or services running within the pod. [Check this thread](https://stackoverflow.com/questions/57197095/why-do-we-need-a-port-containerport-in-a-kuberntes-deployment-container-definiti) to know more about this technicality.
+            > The `containerPort` declarations are essentially informative, they don't actually determine what ports are opened in a pod. That's up to the applications or services running within the pod. [Check this thread](https://stackoverflow.com/questions/57197095/why-do-we-need-a-port-containerport-in-a-kuberntes-deployment-container-definiti) to know more about this technicality.
 
         - `env` section: the main oddity in the variables set here is the format of those named `GITEA_`. It's a format [explained here](https://github.com/go-gitea/gitea/tree/main/contrib/environment-to-ini) that allows the Gitea in this Docker image to overwrite the corresponding configuration parameters in its default `/data/gitea/conf/app.ini` file with the values set in these variables.
             - `GITEA__server__PROTOCOL`: indicates on which protocol this Gitea server listens on.
@@ -333,7 +333,7 @@ Now you have to produce the `Service` for your Gitea setup
 
     - The `https` port redirects the requests reaching the `443` port to the `3000`, because that's where the Gitea server is truly listening in its container.
 
-    - It has exactly the same `prometheus.io` annotations that were specified in the previous `StatefulSet`. Notice how the `prometheus.io/port` annotation has the same number as in the `targetPort` of the `https` port. This seems to be the recommended thing to do, at leat according to [this article](https://devopscube.com/setup-prometheus-monitoring-on-kubernetes/).
+    - It has exactly the same `prometheus.io` annotations that were specified in the previous `StatefulSet`. Notice how the `prometheus.io/port` annotation has the same number as in the `targetPort` of the `https` port. This seems to be the recommended thing to do, at least according to [this article](https://devopscube.com/setup-prometheus-monitoring-on-kubernetes/).
 
 ### _Gitea `Service`'s FQDN or DNS record_
 
@@ -619,7 +619,7 @@ This Gitea server cannot be deployed on its own because is missing several eleme
 
 ### _Kubernetes_
 
-- [Why do we need a port/containerPort in a Kuberntes deployment/container definition?](https://stackoverflow.com/questions/57197095/why-do-we-need-a-port-containerport-in-a-kuberntes-deployment-container-definiti)
+- [Why do we need a port/containerPort in a Kubernetes deployment/container definition?](https://stackoverflow.com/questions/57197095/why-do-we-need-a-port-containerport-in-a-kuberntes-deployment-container-definiti)
 - [Kubernetes API. Ports in containers](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#ports)
 - [Kubernetes & Prometheus Scraping Configuration. Per-pod Prometheus Annotations](https://www.weave.works/docs/cloud/latest/tasks/monitor/configuration-k8s/#per-pod-prometheus-annotations)
 - [How to Setup Prometheus Monitoring On Kubernetes Cluster](https://devopscube.com/setup-prometheus-monitoring-on-kubernetes/)

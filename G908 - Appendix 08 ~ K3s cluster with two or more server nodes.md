@@ -5,7 +5,7 @@ In the [**G025** guide](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubern
 In this supplementary guide I'll summarize you what to add or just do differently on the procedures explained in the [**G025** guide](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md), with the goal of creating a K3s cluster with two server nodes.
 
 > **BEWARE!**  
-> You cannot convert a single-node cluster setup that uses the embedded sqlite database into a multiserver one. You'll have to do to a clean new install of the K3s software, although of course you can reuse the same VMs you already have.
+> You cannot convert a single-node cluster setup that uses the embedded SQLite database into a multiserver one. You'll have to do to a clean new install of the K3s software, although of course you can reuse the same VMs you already have.
 
 ## Add a new VM to act as the second server node
 

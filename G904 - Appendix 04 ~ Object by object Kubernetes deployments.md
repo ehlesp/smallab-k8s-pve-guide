@@ -126,4 +126,4 @@ Bear in mind that I haven't tried this rather cumbersome method. You should alwa
 
 ## Navigation
 
-[<< Previous (**G903. Appendix 03**)](G903%20-%20Appendiz%2003%20~%20Customization%20of%20the%20motd%20file.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G905. Appendix 05**) >>](G905%20-%20Appendix%2005%20~%20Cloning%20storage%20drives%20with%20Clonezilla.md)
+[<< Previous (**G903. Appendix 03**)](G903%20-%20Appendix%2003%20~%20Customization%20of%20the%20motd%20file.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G905. Appendix 05**) >>](G905%20-%20Appendix%2005%20~%20Cloning%20storage%20drives%20with%20Clonezilla.md)

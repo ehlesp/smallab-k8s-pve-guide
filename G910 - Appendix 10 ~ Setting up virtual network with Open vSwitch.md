@@ -40,7 +40,7 @@ Go back to the web console and, again, in the `System > Network` screen of your 
 
     ![Removal of vmbr0 interface confirmation](images/g910/pve_node_network_remove_vmbr0_interface_confirm.png "Removal of vmbr0 interface confirmation")
 
-2. The `vmbr0` interface should dissapear from the list and a `Pending changes` read-only diff console will appear below.
+2. The `vmbr0` interface should disappear from the list and a `Pending changes` read-only diff console will appear below.
 
     ![Removal of vmbr0 interface pending warning](images/g910/pve_node_network_removed_vmbr0_interface_changes_pending.png "Removal of vmbr0 interface pending warning")
 

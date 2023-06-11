@@ -1,4 +1,4 @@
-# G903 - Appendiz 03 ~ Customization of the motd file
+# G903 - Appendix 03 ~ Customization of the motd file
 
 Every time you open a new shell terminal, no matter if remotely or locally, you see a bunch of lines over the starting prompt. In Debian, those lines are stored in the `/etc/motd` file and can be modified or completely replaced by any other text.
 

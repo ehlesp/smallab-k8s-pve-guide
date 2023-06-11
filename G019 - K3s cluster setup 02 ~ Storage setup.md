@@ -158,7 +158,7 @@ The new LVs are virtual partitions that still doesn't have a defined filesystem.
     Writing superblocks and filesystem accounting information: done
     ~~~
 
-3. Before you can mount these LVs like any other partition, you need to create their corresponding mountpoints. This means you have to create a directory for each LV.
+3. Before you can mount these LVs like any other partition, you need to create their corresponding mount points. This means you have to create a directory for each LV.
 
     ~~~bash
     $ sudo mkdir -p /mnt/{hdd_templates,hddusb_bkpvzdumps}
@@ -178,7 +178,7 @@ The new LVs are virtual partitions that still doesn't have a defined filesystem.
 
     Don't mind the `hostrun` folder, it was already present at `mnt`. Just check if the folder structure is as expected.
 
-4. Now you can mount the LVs on their mountpoints. To do that, use the `mount` command.
+4. Now you can mount the LVs on their mount points. To do that, use the `mount` command.
 
     ~~~bash
     $ sudo mount /dev/mapper/hddint-hdd_templates /mnt/hdd_templates
@@ -457,7 +457,7 @@ You can also modify this file manually to adjust your `Datacenter` tier's storag
 - [Proxmox VE wiki. Storage](https://pve.proxmox.com/wiki/Storage)
 - [PVE admin guide. Logical Volume Manager (LVM)](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_lvm)
 - [PVE admin guide. Storage](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_storage)
-- [Promox configuration overview](https://imgur.com/a/OFHyxiU)
+- [Proxmox configuration overview](https://imgur.com/a/OFHyxiU)
 - [How to add storage to Proxmox](https://nubcakes.net/index.php/2019/03/05/how-to-add-storage-to-proxmox/)
 - [Advice on storage structure](https://www.reddit.com/r/Proxmox/comments/bdss9x/advice_on_storage_structure/el0nxl5/)
 

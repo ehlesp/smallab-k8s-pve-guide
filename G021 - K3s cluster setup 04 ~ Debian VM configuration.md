@@ -4,7 +4,7 @@ Now you have a functional Debian VM but, as you did with your Proxmox VE host, i
 
 ## Suggestion about IP configuration in your network
 
-Before you go further configuring your new VM or creating some more, you should consider organizing the IPs in your network. With this I mean that you should assign static IPs to all your devices present in your network, including the VMs you'll create in your Proxmox VE standalone node. This will allow you to know to what IPs to connect to through ssh easily, rather than being forced to check everytime what IP is assigned to your VMs and Proxmox VE Host, and also avoid potential IP conflicts among your devices and VMs.
+Before you go further configuring your new VM or creating some more, you should consider organizing the IPs in your network. With this I mean that you should assign static IPs to all your devices present in your network, including the VMs you'll create in your Proxmox VE standalone node. This will allow you to know to what IPs to connect to through ssh easily, rather than being forced to check every time what IP is assigned to your VMs and Proxmox VE Host, and also avoid potential IP conflicts among your devices and VMs.
 
 I suggest you to figure out first, in a document or spreadsheet, the IP distribution you want within your network. This way you can see how to divide the IPs among all your present devices and future VMs. For example, you could have your devices in the `192.168.1.100 - 192.168.1.150` range and your VMs in the `192.168.1.10 - 192.168.1.40` one. Then, when you've figured out the organization of your network, apply it in your router or gateway.
 

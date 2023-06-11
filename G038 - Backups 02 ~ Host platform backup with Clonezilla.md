@@ -18,9 +18,9 @@ Is important to be aware of this because, obviously, copying all of this data ma
 
 The main utility for a host platform backup is to give you the possibility of a fast recovery to a previous stable version of your system. The scenarios in which you would need such capability are essentially two.
 
-- When applying major changes or updates on your host platform; those can lead to unexpected bad effects or behaviours.
+- When applying major changes or updates on your host platform; those can lead to unexpected bad effects or behaviors.
 
-- After being affected by some harmful event such as ramsonware, storage drive failure, etc.
+- After being affected by some harmful event such as ransomware, storage drive failure, etc.
 
 The convenience of being able to do a fast restoration of your system from those situations cannot be understated. This not only saves you time and spares your patience, but maybe even save you money!
 

@@ -19,7 +19,7 @@ The hardware setup that serves as platform and reference for this guide series i
 
 - The computer also has a bunch of USB 2 connectors plus one USB 3 plug.
 
-- One Realtek fast/gigabit ethernet controller, integrated in the motherboard.
+- One Realtek fast/gigabit Ethernet controller, integrated in the motherboard.
 
 - One Realtek wireless network adapter, also integrated in the motherboard.
 

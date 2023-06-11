@@ -68,7 +68,7 @@ Since in this new VM you're going to modify its filesystem structure, let's full
 
     Notice the name I've given (`k3snodetpl`), and that I've chosen explicitly the `ssd_disks` as target storage. I could have left the default `Same as source` option since the template volume is also placed in that storage, but I preferred to be explicit here for the sake of clarity.
 
-4. Click on `Clone` when ready and the window will dissapear. You'll have to pay attention to the `Tasks` console at the bottom to see how the cloning process goes.
+4. Click on `Clone` when ready and the window will disappear. You'll have to pay attention to the `Tasks` console at the bottom to see how the cloning process goes.
 
     ![Full clone of template in progress](images/g024/pve_node_template_full_clone_progress.png "Full clone of template in progress")
 
@@ -78,7 +78,7 @@ Since in this new VM you're going to modify its filesystem structure, let's full
 
     ![Full clone of template done](images/g024/pve_node_template_full_clone_done.png "Full clone of template done")
 
-    See how all the details in the `Summary` view are the same as what the original template had (like the `Notes` for instace).
+    See how all the details in the `Summary` view are the same as what the original template had (like the `Notes` for instance).
 
 ## Set an static IP for the main network device (`net0`)
 
@@ -131,7 +131,7 @@ Follow the next steps to remove the swap completely from your VM.
     $ sudo cp /etc/fstab /etc/fstab.orig
     ~~~
 
-    Then edit the `fstab` file and comment out, with a '#' character, the line that begings with the `/dev/mapper/debiantpl--vg-swap_1` string.
+    Then edit the `fstab` file and comment out, with a '#' character, the line that begins with the `/dev/mapper/debiantpl--vg-swap_1` string.
 
     ~~~properties
     ...
@@ -403,7 +403,7 @@ In the installation of the K3s cluster, which you'll do later in the [**G025** g
     # https://sysctl-explorer.net/kernel/panic/
     kernel.panic = 10
 
-    # Controls the kernel's behaviour when an oops or BUG is encountered.
+    # Controls the kernel's behavior when an oops or BUG is encountered.
     # https://sysctl-explorer.net/kernel/panic_on_oops/
     kernel.panic_on_oops = 1
     ~~~

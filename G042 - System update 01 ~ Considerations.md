@@ -1,6 +1,6 @@
 # G042 - System update 01 ~ Considerations
 
-Another important concept you need to know about is the update of the system's software components. As usual, the system I'm referring to is the whole setup you've been building up through all the previous guides. Updating this system is not technically difficult, in particular when using the most straighforward (and many times the only proper) method. Yet you need to be careful when doing it, something which demands knowing your system well.
+Another important concept you need to know about is the update of the system's software components. As usual, the system I'm referring to is the whole setup you've been building up through all the previous guides. Updating this system is not technically difficult, in particular when using the most straightforward (and many times the only proper) method. Yet you need to be careful when doing it, something which demands knowing your system well.
 
 ## What to update. Identifying your system's software layers
 
@@ -32,7 +32,7 @@ Finally, updating the UrBackup software is kind of a hybrid approach: the server
 
 Ideally, you want to update as soon as possible, specially when dealing with security patches or version upgrades. You may think that this procedure could be automated (scheduled with a `cron` script, for instance), but that's a dangerous proposition.
 
-Before applying any update, you need to evaluate what it does. It's just a library update?, or maybe it changes the software's behaviour, or it could be a major version change. Also, you need to be aware of the indirect implications of updating a system. For instance, you'll need to stop all your VMs before you can apply the updates to the Proxmox VE system that runs them.
+Before applying any update, you need to evaluate what it does. It's just a library update?, or maybe it changes the software's behavior, or it could be a major version change. Also, you need to be aware of the indirect implications of updating a system. For instance, you'll need to stop all your VMs before you can apply the updates to the Proxmox VE system that runs them.
 
 Therefore, you'll need to plan the updates of the different software layers running in your system. You'll have to take into account what services you're running, when and for how long you can afford your system to be down, and also how recent your backups are in case you need them.
 
