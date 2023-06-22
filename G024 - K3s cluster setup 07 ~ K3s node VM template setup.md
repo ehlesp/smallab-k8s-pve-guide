@@ -271,6 +271,18 @@ The VG you have in your VM's LVM structure is the same one defined in your Debia
 
 4. Edit the `/boot/grub/grub.cfg` file (mind you, is **read-only** even for the `root` user) to change all the `debiantpl` name with the new `k3snode` one in lines that contain the string `root=/dev/mapper/debiantpl--vg-root`.
 
+    Check first that `debiantpl--vg-root` only brings up the lines with `root=/dev/mapper/debiantpl--vg-root`.
+
+    ~~~bash
+    $ sudo cat /boot/grub/grub.cfg | grep debiantpl--vg-root
+    ~~~
+
+    Then, apply the modifications with `sed`.
+
+    ~~~bash
+    $ sudo sed -i 's/debiantpl--vg-root/k3snodetpl--vg-root/g' /boot/grub/grub.cfg
+    ~~~
+
 5. Now you must update the initramfs with the `update-initramfs` command.
 
     ~~~bash
