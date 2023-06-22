@@ -269,19 +269,31 @@ The VG you have in your VM's LVM structure is the same one defined in your Debia
     $ sudo cp /boot/grub/grub.cfg /boot/grub/grub.cfg.orig
     ~~~
 
-4. Edit the `/boot/grub/grub.cfg` file (mind you, is **read-only** even for the `root` user) to change all the `debiantpl` name with the new `k3snode` one in lines that contain the string `root=/dev/mapper/debiantpl--vg-root`.
+4. Edit the `/boot/grub/grub.cfg` file (mind you, is **read-only** even for the `root` user) to change all the `debiantpl` name with the new `k3snode` one in lines that contain the string `root=/dev/mapper/debiantpl--vg-root`. To reduce the chance of errors when editing this critical system file, you can do the following.
 
-    Check first that `debiantpl--vg-root` only brings up the lines with `root=/dev/mapper/debiantpl--vg-root`.
+    - Check first that `debiantpl--vg-root` **only** brings up the lines with `root=/dev/mapper/debiantpl--vg-root`.
 
-    ~~~bash
-    $ sudo cat /boot/grub/grub.cfg | grep debiantpl--vg-root
-    ~~~
+        ~~~bash
+        $ sudo cat /boot/grub/grub.cfg | grep debiantpl--vg-root
+        ~~~
 
-    Then, apply the modifications with `sed`.
+        Run it in another shell or dump the output in a temporal file, but keep the lines for later reference.
 
-    ~~~bash
-    $ sudo sed -i 's/debiantpl--vg-root/k3snodetpl--vg-root/g' /boot/grub/grub.cfg
-    ~~~
+    - Apply the required modifications with `sed`.
+
+        ~~~bash
+        $ sudo sed -i 's/debiantpl--vg-root/k3snodetpl--vg-root/g' /boot/grub/grub.cfg
+        ~~~
+
+        If `sed` executes alright, it won't return any output.
+
+    - Verify if all the lines that had the `debiantpl--vg-root` string have it now replaced with the `k3snodetpl--vg-root` one.
+
+        ~~~bash
+        $ sudo cat /boot/grub/grub.cfg | grep k3snodetpl--vg-root
+        ~~~
+
+        Compare this command's output with the one you got first. You should see the **same** lines as before, but with the string changed.
 
 5. Now you must update the initramfs with the `update-initramfs` command.
 
