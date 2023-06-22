@@ -283,25 +283,25 @@ The VG you have in your VM's LVM structure is the same one defined in your Debia
     $ sudo sed -i 's/debiantpl--vg-root/k3snodetpl--vg-root/g' /boot/grub/grub.cfg
     ~~~
 
-6. Now you must update the initramfs with the `update-initramfs` command.
+5. Now you must update the initramfs with the `update-initramfs` command.
 
     ~~~bash
     $ sudo update-initramfs -u -k all
     ~~~
 
-7. Reboot the system to load the changes.
+6. Reboot the system to load the changes.
 
     ~~~bash
     $ sudo reboot
     ~~~
 
-8. Next, you have to execute the `dpkg-reconfigure` command to regenerate the grub in your VM. To get the correct image to reconfigure, just autocomplete the command after typing `linux-image` and then type the one that corresponds with the kernel **currently running** in your VM.
+7. Next, you have to execute the `dpkg-reconfigure` command to regenerate the grub in your VM. To get the correct image to reconfigure, just autocomplete the command after typing `linux-image` and then type the one that corresponds with the kernel **currently running** in your VM.
 
     ~~~bash
     $ sudo dpkg-reconfigure linux-image-5.10.0-9-amd64
     ~~~
 
-9. Again, reboot the system to load the changes.
+8. Again, reboot the system to load the changes.
 
     ~~~bash
     $ sudo reboot
