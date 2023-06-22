@@ -271,25 +271,37 @@ The VG you have in your VM's LVM structure is the same one defined in your Debia
 
 4. Edit the `/boot/grub/grub.cfg` file (mind you, is **read-only** even for the `root` user) to change all the `debiantpl` name with the new `k3snode` one in lines that contain the string `root=/dev/mapper/debiantpl--vg-root`.
 
-5. Now you must update the initramfs with the `update-initramfs` command.
+    Check first that `debiantpl--vg-root` only brings up the lines with `root=/dev/mapper/debiantpl--vg-root`.
+
+    ~~~bash
+    $ sudo cat /boot/grub/grub.cfg | grep debiantpl--vg-root
+    ~~~
+
+    Then, apply the modifications with `sed`.
+
+    ~~~bash
+    $ sudo sed -i 's/debiantpl--vg-root/k3snodetpl--vg-root/g' /boot/grub/grub.cfg
+    ~~~
+
+6. Now you must update the initramfs with the `update-initramfs` command.
 
     ~~~bash
     $ sudo update-initramfs -u -k all
     ~~~
 
-6. Reboot the system to load the changes.
+7. Reboot the system to load the changes.
 
     ~~~bash
     $ sudo reboot
     ~~~
 
-7. Next, you have to execute the `dpkg-reconfigure` command to regenerate the grub in your VM. To get the correct image to reconfigure, just autocomplete the command after typing `linux-image` and then type the one that corresponds with the kernel **currently running** in your VM.
+8. Next, you have to execute the `dpkg-reconfigure` command to regenerate the grub in your VM. To get the correct image to reconfigure, just autocomplete the command after typing `linux-image` and then type the one that corresponds with the kernel **currently running** in your VM.
 
     ~~~bash
     $ sudo dpkg-reconfigure linux-image-5.10.0-9-amd64
     ~~~
 
-8. Again, reboot the system to load the changes.
+9. Again, reboot the system to load the changes.
 
     ~~~bash
     $ sudo reboot
