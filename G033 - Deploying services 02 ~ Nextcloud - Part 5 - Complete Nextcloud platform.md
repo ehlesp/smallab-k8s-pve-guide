@@ -1085,13 +1085,13 @@ With every required component declared or configured, now you need to put everyt
 
     The most important thing here is to verify that all the resources' names have been transformed correctly (prefixes or suffixes added) in all the places they are referred to. Remember that Kustomize won't change the names if they've been put in non-standard Kubernetes parameters, and it might be possible that Kustomize won't even touch values in certain particular standard ones. On the other hand, notice how Kustomize has grouped all the resources together according to their kind and ordered them alphabetically by `metadata.name`.
 
-   If you modified any value from this guide, it is a good idea to check here that you forgot nothing. As an example, you could check the domain name, if you modified it.
+5. If you modified any value from this guide, it is a good idea to check here that you forgot nothing. As an example, you could check the domain name, if you modified it.
 
-   ~~~bash
+    ~~~bash
     $ kubectl kustomize $HOME/k8sprjs/nextcloud | grep deimos.cloud
     ~~~
 
-   The result of this command should be empty.
+    The result of this command should be empty.
 
 6. If you agree with the final yaml, you can apply the Nextcloud platform Kustomize project to your cluster.
 
