@@ -806,7 +806,7 @@ The Nexcloud server setup you'll see here will have its own IP through the Metal
               limits:
                 memory: 512Mi
             volumeMounts:
-            - name: fpm-config
+            - name: nginx-config
               subPath: zz-docker.conf
               mountPath: /usr/local/etc/php-fpm.d/zz-docker.conf
             - name: html-storage
@@ -1320,7 +1320,7 @@ You need to declare slightly different `Service` and `StatefulSet` resources tha
               limits:
                 memory: 512Mi
             volumeMounts:
-            - name: fpm-config
+            - name: nginx-config
               subPath: zz-docker.conf
               mountPath: /usr/local/etc/php-fpm.d/zz-docker.conf
             - name: html-storage
