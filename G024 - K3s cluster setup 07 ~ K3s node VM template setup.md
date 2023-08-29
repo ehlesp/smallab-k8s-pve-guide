@@ -282,15 +282,15 @@ The VG you have in your VM's LVM structure is the same one defined in your Debia
     - Apply the required modifications with `sed`.
 
         ~~~bash
-        $ sudo sed -i 's/debiantpl--vg-root/k3snodetpl--vg-root/g' /boot/grub/grub.cfg
+        $ sudo sed -i 's/debiantpl--vg-root/k3snode--vg-root/g' /boot/grub/grub.cfg
         ~~~
 
         If `sed` executes alright, it won't return any output.
 
-    - Verify if all the lines that had the `debiantpl--vg-root` string have it now replaced with the `k3snodetpl--vg-root` one.
+    - Verify if all the lines that had the `debiantpl--vg-root` string have it now replaced with the `k3snode--vg-root` one.
 
         ~~~bash
-        $ sudo cat /boot/grub/grub.cfg | grep k3snodetpl--vg-root
+        $ sudo cat /boot/grub/grub.cfg | grep k3snode--vg-root
         ~~~
 
         Compare this command's output with the one you got first. You should see the **same** lines as before, but with the string changed.
