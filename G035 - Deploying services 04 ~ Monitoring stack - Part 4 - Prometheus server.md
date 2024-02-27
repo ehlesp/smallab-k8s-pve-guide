@@ -162,7 +162,7 @@ The configuration file for Prometheus is a yaml file mainly meant for configurin
           - role: endpoints
         relabel_configs:
         - source_labels: [__meta_kubernetes_endpoints_name]
-          regex: 'node-exporter'
+          regex: '.*node-exporter'
           action: keep
     ~~~
 
