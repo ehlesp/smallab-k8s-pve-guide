@@ -42,7 +42,7 @@ At the time of writing this, there's no official Kustomize way for deploying cer
 4. Deploy cert-manager with `kubectl`.
 
     ~~~bash
-    $ kubect apply -k $HOME/k8sprjs/cert-manager/deployment/
+    $ kubectl apply -k $HOME/k8sprjs/cert-manager/deployment/
     ~~~
 
     You'll get a long output of lines indicating the many resources created by the  deployment.
