@@ -94,7 +94,7 @@ To help you to manage the certificates you put in your cluster, [cert-manager ha
     This will extract two files, the `kubectl-cert_manager` binary and a `LICENSES` text file that you can remove together with the `kubectl-cert_manager-linux-amd64.tar.gz`.
 
     ~~~bash
-    $ rm kubectl-cert_manager-linux-amd64.tar.gz LICENSES
+    $ rm kubectl-cert_manager-linux-amd64.tar.gz LICENSE
     ~~~
 
 3. Restrict the binary's permissions.
