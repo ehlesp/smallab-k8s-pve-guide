@@ -60,7 +60,7 @@ $ cd /etc/sysctl.d/
     # Disconnect dead TCP connections after 10 minutes
     # https://sysctl-explorer.net/net/ipv4/tcp_keepalive_time/
     # Value in SECONDS.
-    net.ipv4.tcp_keepalive_time = 60
+    net.ipv4.tcp_keepalive_time = 600
     #
     # Determines the wait time between isAlive interval probes.
     # https://sysctl-explorer.net/net/ipv4/tcp_keepalive_intvl/
