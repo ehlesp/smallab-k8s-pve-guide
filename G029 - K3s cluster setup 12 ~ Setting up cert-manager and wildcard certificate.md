@@ -42,7 +42,7 @@ At the time of writing this, there's no official Kustomize way for deploying cer
 4. Deploy cert-manager with `kubectl`.
 
     ~~~bash
-    $ kubect apply -k $HOME/k8sprjs/cert-manager/deployment/
+    $ kubectl apply -k $HOME/k8sprjs/cert-manager/deployment/
     ~~~
 
     You'll get a long output of lines indicating the many resources created by the  deployment.
@@ -94,7 +94,7 @@ To help you to manage the certificates you put in your cluster, [cert-manager ha
     This will extract two files, the `kubectl-cert_manager` binary and a `LICENSES` text file that you can remove together with the `kubectl-cert_manager-linux-amd64.tar.gz`.
 
     ~~~bash
-    $ rm kubectl-cert_manager-linux-amd64.tar.gz LICENSES
+    $ rm kubectl-cert_manager-linux-amd64.tar.gz LICENSE
     ~~~
 
 3. Restrict the binary's permissions.
