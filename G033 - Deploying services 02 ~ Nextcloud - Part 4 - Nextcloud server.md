@@ -448,7 +448,7 @@ Your Nextcloud server requires a Service resource named `server-apache-nextcloud
       ports:
       - port: 443
         protocol: TCP
-        name: apache
+        name: server
       - port: 9205
         protocol: TCP
         name: metrics

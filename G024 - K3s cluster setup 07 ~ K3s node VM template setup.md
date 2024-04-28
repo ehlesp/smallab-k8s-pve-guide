@@ -432,6 +432,9 @@ In the installation of the K3s cluster, which you'll do later in the [**G025** g
     kernel.panic_on_oops = 1
     ~~~
 
+    > **BEWARE!**  
+    > If you skipped the [memory optimizations step](G021%20-%20K3s%20cluster%20setup%2004%20~%20Debian%20VM%20configuration.md#memory-optimizations), you need to adapt the overcommit memory flag here ! Otherwise, the k3s service will not start in [chapter G025](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#k3s-installation-of-the-server-node-k3sserver01).
+
 3. Save the `90_k3s_kubelet_demands.conf` file and apply the changes, then reboot the VM.
 
     ~~~bash
