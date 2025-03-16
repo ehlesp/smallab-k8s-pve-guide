@@ -13,9 +13,9 @@ The hardware setup that serves as platform and reference for this guide series i
 - **RAM** is one DDR3 8 GiB module, the maximum allowed by the motherboard and the J2900 CPU.
 
 - The storage has the following setup:
-    - One internal, 1 TiB, SSD drive, linked to a SATA 2 port.
-    - One internal, 1 TiB, HDD drive, linked to a SATA 2 port .
-    - One external, 2 TiB, HDD drive, plugged to a USB 3 port.
+  - One internal, 1 TiB, SSD drive, linked to a SATA 2 port.
+  - One internal, 1 TiB, HDD drive, linked to a SATA 2 port.
+  - One external, 2 TiB, HDD drive, plugged to a USB 3 port.
 
 - The computer also has a bunch of USB 2 connectors plus one USB 3 plug.
 
@@ -36,9 +36,12 @@ This rather cheap rig is close to what a basic modern NUC or mini PC can come wi
 - Having less than 8 GiB of RAM won't cut it, the virtual machines you'll use as Kubernetes nodes will require at least 1 GiB each. So, starting from 8 GiB, the more RAM you can put in your computer the better.
 
 - Regarding storage, at least you'll need one big enough internal storage drive and another big external one.
-    - The internal one should be SSD so you can get the best performance possible out of your system, meaning that in this drive is where you should install the Proxmox VE platform and where you must put the root filesystems of your VMs.
-    - The external one could be a 7200 RPM HDD, pluggable through USB 3 (if possible). This drive would serve you as the backup storage.
-    - If you happen to have another big storage drive that you can put inside your computer, as I set up in mine, you could use it as data storage.
+
+  - The internal one should be SSD so you can get the best performance possible out of your system, meaning that in this drive is where you should install the Proxmox VE platform and where you must put the root filesystems of your VMs.
+
+  - The external one could be a 7200 RPM HDD, pluggable through USB 3 (if possible). This drive would serve you as the backup storage.
+
+  - If you happen to have another big storage drive that you can put inside your computer, as I set up in mine, you could use it as data storage.
 
 - If you don't have it already, get an UPS. Running a server without one is risking damage or, at least, data losses in case of outages or electric spikes.
 
@@ -49,8 +52,11 @@ So, although a hardware setup like this won't allow you to use things usually fo
 ### _Hardware_
 
 - [Lenovo H30-00 desktop computer](https://pcsupport.lenovo.com/us/en/products/desktops-and-all-in-ones/lenovo-h-series-desktops/lenovo-h30-00-desktop)
+
 - [Intel Pentium J2900](https://ark.intel.com/content/www/us/en/ark/products/78868/intel-pentium-processor-j2900-2m-cache-up-to-2-67-ghz.html)
+
 - [Intel® HD Graphics for Intel Atom® Processor Z3700 Series](https://ark.intel.com/content/www/us/en/ark/products/78868/intel-pentium-processor-j2900-2m-cache-up-to-2-67-ghz.html#tab-blade-1-0-4)
+
 - [APC Back-UPS ES 700](https://www.apc.com/shop/es/es/products/Back-UPS-700-de-bajo-consumo-de-APC-230-V-CEE-7-7/P-BE700G-SP)
 
 ## Navigation
