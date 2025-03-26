@@ -1,12 +1,21 @@
 # Small homelab K8s cluster on Proxmox VE
 
-Would you like to practice with K8s/Kubernetes? Do you happen to have one spare computer at hand? Then this guide series may be right for you! In it I explain how to configure a server able to run a small Kubernetes cluster, set up with just a few virtual machines.
+- [Introduction](#introduction)
+- [Description of contents](#description-of-contents)
+- [Intended audience](#intended-audience)
+- [Goals](#goals)
+- [Table of contents](#table-of-contents)
+- [Navigation](#navigation)
 
-The title says "small homelab", meaning that I've written the guides having in mind the sole low-end consumer computer I had (and still have) available for it. Don't get me wrong, by the way. The hardware contemplated is limited but capable for the proposed task. You'll see what I mean in the very first [**G001** guide](G001%20-%20Hardware%20setup.md), in which I explain my hardware setup in detail.
+## Introduction
 
-You might be wondering, aren't already out there guides explaining how to build such a server? Well, not exactly. Most of the guides I've seen expect you to have a number of computers (Raspberry PIs usually) available to use as nodes of your K3s-based Kubernetes cluster. What I had was one basic computer, nothing more, but I could surmount my lack of extra computers with virtual machines.
+Would you like to practice with K8s/Kubernetes? Do you happen to have one spare computer at hand? Then this guide series may be right for you! Here I explain how to configure a server able to run a small Kubernetes cluster, set up with just a few virtual machines.
 
-On the other hand, most of those guides you'll find on internet use alternative tools (**k3sup** and **helm** come to mind) to handle the installation and configuration of those nodes. I wanted to go down the hard path first, building a Kubernetes cluster from scratch as close to the standard `kubectl` way as possible, so using those tools was out of the question. Still, some of those guides served me as reference in some cases, and you'll find some of them linked as references at the bottom of some of my guides.
+The title says "_small homelab_", meaning that I've written the guides having in mind the sole low-end consumer computer I had available for it. Don't get me wrong, by the way. The hardware contemplated is limited but affordable and capable for the proposed task. You'll see what I mean in the very first [**G001** guide](G001%20-%20Hardware%20setup.md), in which I explain my hardware setup in detail.
+
+You might be wondering, aren't already out there guides explaining how to build such a server? Well, not exactly. When I researched this matter, most of the guides I found expected from you to have a number of computers (Raspberry PIs usually) available to use as nodes of your K3s-based Kubernetes cluster. What I had was one basic computer, nothing more, but I could surmount my lack of extra computers with virtual machines.
+
+On the other hand, most of those guides you'll find on internet use alternative tools (**k3sup** and **helm** come to mind) to handle the installation and configuration of those nodes. I wanted to go down the hard path first, building a Kubernetes cluster from scratch as close to the standard `kubectl` way as possible, so using those tools was out of the question. Still, some of those guides served me as reference in some cases, and you'll find them linked here.
 
 Beyond those two previous considerations, there's also the fact that the information of the things I wanted, or needed, to do in my homelab is quite scattered on the internet. I knew that it would be very convenient for me to put in one place all the things I've done and the references I've followed. I also realized that, since my build is rather generic, I could go the extra mile and format the guides so they could be useful for anyone with a spare computer like mine (or a better one even).
 
@@ -24,11 +33,11 @@ Within those main concepts, I've also covered (up to a point) things like harden
 
 Each guide in the series is detailed and explanatory, only omitting things when they've been done in a previous step or guide, or is understood that the reader should know about them already.
 
-Also, since the whole series is about building a concrete setup, the guides are related to each other, so they're more like chapters than independent guides. Still, each guide is usually about one main concept or procedure, and the setup serves as an example of how to implement it.
+Also, since the whole series is about building a concrete setup, the guides are related to each other, so they're more like chapters than independent guides. Still, each guide is usually about one main concept or procedure, and the setup serves as the example scenario illustrating how to implement it.
 
 ## Intended audience
 
-In general, anyone with some background in Linux and virtual machines that also has an interest in Kubernetes. And, more broadly, anyone with the need or the curiosity to run Kubernetes on a single capable-enough consumer-grade computer.
+Anyone with some background in Linux and virtual machines having an interest in Kubernetes. Also, those with the need or the curiosity to run Kubernetes on a single capable-enough consumer-grade computer.
 
 ## Goals
 
