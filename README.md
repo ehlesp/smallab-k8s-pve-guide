@@ -37,7 +37,7 @@ Also, since the whole series is about building a concrete setup, the guides are 
 
 ## Intended audience
 
-In general, anyone with some background in Linux and virtual machines with an interest in Kubernetes. More broadly, anyone with the need or the curiosity to run Kubernetes on a single capable-enough consumer-grade computer.
+Anyone with some background in Linux and virtual machines having an interest in Kubernetes. Also, those with the need or the curiosity to run Kubernetes on a single capable-enough consumer-grade computer.
 
 ## Goals
 
