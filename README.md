@@ -35,6 +35,10 @@ Each guide in the series is detailed and explanatory, only omitting things when 
 
 Also, since the whole series is about building a concrete setup, the guides are related to each other, so they're more like chapters than independent guides. Still, each guide is usually about one main concept or procedure, and the setup serves as the example scenario illustrating how to implement it.
 
+> [!NOTE]
+> **This guide series has been written in Markdown GitHub format**\
+> All the textual contents of the guides/chapters in this project are Markdown documents you will visualize better rendered as HTMLs either in GitHub directly or in compatible Markdown viewers or editors.
+
 ## Intended audience
 
 Anyone with some background in Linux and virtual machines having an interest in Kubernetes. Also, those with the need or the curiosity to run Kubernetes on a single capable-enough consumer-grade computer.
