@@ -8,7 +8,11 @@
 
 ## You just need a capable enough computer
 
-In the [README](README.md) I talk about a small or low-end consumer computer, meaning that you don't need the latest and fastest machine available in the market. Any relatively modern small tower PC, or even a normal laptop, could be adequate. Also, you could also consider deploying the whole thing within a virtual machine that matches or has better capabilities than [my reference hardware setup](#the-reference-hardware-setup). Still, your computer must meet certain minimum requirements, or it won't be able to run the Kubernetes cluster the way it's explained in this guide series.
+In the [README](README.md) I talk about a small or low-end consumer computer, meaning that you don't need the latest and fastest machine available in the market. Any relatively modern small tower PC, or even a normal laptop, could be adequate. Also, you could also consider deploying the whole thing within a _virtual machine_ (_VM_) that matches or has better capabilities than [my reference hardware setup](#the-reference-hardware-setup). Still, your computer must meet certain minimum requirements, or it won't be able to run the Kubernetes cluster the way it's explained in this guide series.
+
+> [!IMPORTANT]
+> **This reviewed version of this guides series has been done with a VM**\
+> Since I no longer had the computer where I originally deployed the whole setup explained in this guide series, I've used a VirtualBox VM that closely resembles the [reference hardware explained in this document](#the-reference-hardware-setup).
 
 ## The reference hardware setup
 
