@@ -74,46 +74,49 @@ In short, just ensure to use a computer or VM that, at least, matches the [refer
 
 ### Preparing the Proxmox VE installation media
 
-Proxmox VE 8.3 is provided as an ISO image file, which you have to either burn in a CD or DVD or write in a USB drive. Since my computer has no DVD drive anymore, I'll show you the USB path. Proxmox provides some instructions about how to do it from a Linux, MacOS or Windows environment. [Check them out right here](https://pve.proxmox.com/pve-docs/chapter-pve-installation.html#installation_prepare_media)!
+Proxmox VE 8.3 is provided as an ISO image file, which you have to either burn in a CD or DVD or write in a USB drive. Here I'll show you the USB path, even though I'm using a VM. Proxmox provides some instructions about how to do it from a Linux, MacOS or Windows environment. [Check them out right here](https://pve.proxmox.com/pve-docs/chapter-pve-installation.html#installation_prepare_media)!
 
-I'll do it from a Windows 10 system, using [**Rufus**](https://rufus.ie/) to write the Proxmox VE ISO into an USB pen drive.
+I'll do it from a Windows 11 system, using [**Rufus**](https://rufus.ie/) to write the Proxmox VE ISO into an USB pen drive.
 
 #### Writing the Proxmox VE ISO from a Windows 10 system with Rufus
 
-1. Get the latest Proxmox VE 7.0 ISO from the [official site](https://www.proxmox.com/en/). You'll have to look for it in the site's [_downloads_ section](https://www.proxmox.com/en/downloads). Download the ISO found in the [_Proxmox Virtual Environment_ section](https://www.proxmox.com/en/downloads/category/proxmox-virtual-environment). The [Proxmox VE 7.0-2 ISO Installer](https://www.proxmox.com/en/downloads/item/proxmox-ve-7-0-iso-installer) weights around **1 GiB**.
+1. Get the latest Proxmox VE 8.3 ISO from the [official site](https://www.proxmox.com/en/). You'll have to look for it in the site's [_downloads_ section](https://www.proxmox.com/en/downloads). Download the ISO found in the [_Proxmox Virtual Environment_ section](https://www.proxmox.com/en/downloads/proxmox-virtual-environment). The [Proxmox VE 7.0-2 ISO Installer](https://www.proxmox.com/en/downloads/proxmox-virtual-environment/iso/proxmox-ve-8-3-iso-installer) weights around **1.34 GiB**.
 
 2. Download the [Rufus](https://rufus.ie/) tool.
 
 3. Ready an USB drive with **4 GiB** at least, just to be sure that the Proxmox VE ISO has enough room to be written on it.
 
-4. Plug your USB into your Windows 10 computer and open Rufus.
+4. Plug your USB into your Windows computer and open Rufus.
 
-5. In Rufus, choose the Proxmox VE ISO you just downloaded and adjust the `Partition scheme` depending if your target computer is a UEFI system (switch to `GPT`) or not (leave `MBR`). Leave the rest of the parameters with their default values.
+5. In Rufus, choose the Proxmox VE ISO you just downloaded. Rufus will show you a warning about the image being an ISOHybrid incompatible with some ISO/File copy mode.
 
-    ![Rufus main window](images/g002/rufus_main_window.png "Rufus main window")
+    ![Rufus ISOHybrid warning](images/g002/rufus_isohybrid_warning.webp)
 
-    > **BEWARE!**  
+    Just accept it and get into the main Rufus window.
+
+6. Adjust the `Partition scheme` depending if your target computer is a UEFI system (leave `GPT`) or not (switch to `MBR`). Leave the rest of the parameters with their default values.
+
+    ![Rufus main window](images/g002/rufus_main_window.webp "Rufus main window")
+
+    > [!WARNING]
+    > **Configure the `Partition scheme` properly!**\
     > If you don't configure the `Partition scheme` properly, the Proxmox VE installer won't boot up when you try to launch it in your computer.
-
-6. With the configuration set, press the `START` button. Rufus will ask you what mode to use for writing the Proxmox VE installer ISO. Choose `Write in DD Image mode` and press `OK`.
-
-    ![Rufus ISO write mode](images/g002/rufus_write_mode.png "Rufus ISO write mode")
 
 7. Rufus will warn you that the procedure will destroy **all data** on your USB device.
 
-    ![Rufus data destruction warning](images/g002/rufus_data_warning.png "Rufus data destruction warning")
+    ![Rufus data destruction warning](images/g002/rufus_data_warning.webp "Rufus data destruction warning")
 
-    If you're sure that you want to proceed, press `OK`.
+    If you're sure that you want to proceed, press `Accept` (_Aceptar_ in my Spanish-based Windows shown in the snapshot).
 
 8. Rufus will then write the Proxmox VE ISO in your USB drive.
 
-    ![Rufus writing ISO on USB](images/g002/rufus_writing_iso.png "Rufus writing ISO on USB")
+    ![Rufus writing ISO on USB](images/g002/rufus_writing_iso.webp "Rufus writing ISO on USB")
 
 9. Rufus will take a couple of minutes to do its job. When it finishes, you'll see the message `READY` written in the green progress bar.
 
-    ![Rufus finished writing ISO](images/g002/rufus_writing_iso_finished.png "Rufus finished writing ISO")
+    ![Rufus finished writing ISO](images/g002/rufus_writing_iso_finished.webp "Rufus finished writing ISO")
 
-With the ISO properly written in the USB drive, you can take it  finally start the installation.
+With the ISO properly written in the USB drive, you can finally start the installation of Proxmox VE.
 
 ### Prepare your storage drives
 
@@ -122,9 +125,6 @@ Remember to empty the storage drives in your server-to-be computer, meaning that
 ### Installing Proxmox VE
 
 The Proxmox site has two guides explaining the Proxmox VE installer, which I've linked to in the _References_ section at the end of this guide. But the steps you'll find below are my own take on this install procedure.
-
-> **BEWARE!**  
-> Since I couldn't take screenshots of the installer screens while installing Proxmox VE in my computer, I used a small virtual machine in a Virtual Box environment just to make the captures. That's why you'll see a couple of slightly "odd" things in the screen captures used in the following steps.
 
 1. Plug the Proxmox VE USB in the computer, and make it boot from the USB drive.
 
