@@ -1,5 +1,21 @@
 # G002 - Proxmox VE installation
 
+- [A procedure to install Proxmox VE in limited consumer hardware](#a-procedure-to-install-proxmox-ve-in-limited-consumer-hardware)
+- [System Requirements](#system-requirements)
+  - [Minimum requirements](#minimum-requirements)
+  - [Recommended requirements](#recommended-requirements)
+- [Installation procedure](#installation-procedure)
+  - [Preparing the Proxmox VE installation media](#preparing-the-proxmox-ve-installation-media)
+    - [Writing the Proxmox VE ISO from a Windows 10 system with Rufus](#writing-the-proxmox-ve-iso-from-a-windows-10-system-with-rufus)
+  - [Prepare your storage drives](#prepare-your-storage-drives)
+  - [Installing Proxmox VE](#installing-proxmox-ve)
+- [After the installation](#after-the-installation)
+- [Connecting remotely](#connecting-remotely)
+- [References](#references)
+  - [Proxmox](#proxmox)
+  - [Rufus](#rufus)
+- [Navigation](#navigation)
+
 ## A procedure to install Proxmox VE in limited consumer hardware
 
 This guide explains how to install a Proxmox VE **8.3** platform into a consumer hardware or VM setup similar to the one detailed in the [**G001** guide](G001%20-%20Hardware%20setup.md). This procedure follows a straightforward path, meaning that only some basic but necessary parameters will be configured here. Any advanced stuff will be left for later guides.
