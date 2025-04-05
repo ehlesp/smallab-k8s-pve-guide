@@ -1,28 +1,36 @@
 # G002 - Proxmox VE installation
 
-This guide explains how to install a Proxmox VE **7.0** platform into the hardware detailed in the [**G001** guide](G001%20-%20Hardware%20setup.md). This procedure follows a straightforward path, meaning that only some basic parameters will be configured here. Any advanced stuff will be left for later guides.
+## A procedure to install Proxmox VE in limited consumer hardware
+
+This guide explains how to install a Proxmox VE **8.3** platform into a consumer hardware or VM setup similar to the one detailed in the [**G001** guide](G001%20-%20Hardware%20setup.md). This procedure follows a straightforward path, meaning that only some basic but necessary parameters will be configured here. Any advanced stuff will be left for later guides.
+
+> [!NOTE]
+> **This Proxmox VE installation has been done in a virtual machine**\
+> Since I no longer have the computer I originally used to elaborate the guides in this series, this revised version has been done with a _virtual machine_ (_VM_) configured to closely match the reference hardware.
+>
+> The main singular difference of this VM with the reference hardware is the lack of a wireless network adapter, which wasn't originally used at all in these guides anyway.
 
 ## System Requirements
 
-I've copied below the minimum and recommended requirements for Proxmox VE 7.0, to compare them with the hardware I'm using.
+I've copied below the [minimum and recommended requirements for Proxmox VE 8.3](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_system_requirements).
 
-### _Minimum requirements_
+### Minimum requirements
 
 According to the Proxmox VE manual, these minimum requirements are **for evaluation purposes only**, **not for setting up an enterprise-grade production server**.
 
-- CPU: 64bit (Intel EMT64 or AMD64).
-- Intel VT/AMD-V capable CPU/Mainboard for KVM full virtualization support.
-- RAM: 1 GiB, plus additional RAM needed for guests (virtual machines and containers).
+- CPU: 64bit (Intel 64 or AMD64).
+- Intel VT/AMD-V capable CPU/motherboard for KVM full virtualization support.
+- RAM: 1 GB RAM, plus additional RAM needed for guests.
 - Hard drive.
 - One network card (NIC).
 
-As shown above, my hardware fits the minimum requirements.
+As you can see, a computer or VM matching the reference hardware fits the minimum requirements.
 
-### _Recommended requirements_
+### Recommended requirements
 
-Below you can find the minimum requirements for a proper Proxmox VE production server.
+Below you can find the [recommended system requirements for a proper Proxmox VE production server](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#install_recommended_requirements).
 
-- Intel EMT64 or AMD64 with Intel VT/AMD-V CPU flag.
+- Intel 64 or AMD64 with Intel VT/AMD-V CPU flag.
 
 - Memory: Minimum 2 GB for the OS and Proxmox VE services, plus designated memory for guests. For Ceph and ZFS, additional memory is required; approximately 1GB of memory for every TB of used storage.
 
@@ -31,26 +39,30 @@ Below you can find the minimum requirements for a proper Proxmox VE production s
 - OS storage: Use a hardware RAID with battery protected write cache (“BBU”) or non-RAID with ZFS (optional SSD for ZIL).
 
 - VM storage:
-    - For local storage, use either a hardware RAID with battery backed write cache (BBU) or non-RAID for ZFS and Ceph. Neither ZFS nor Ceph are compatible with a hardware RAID controller.
-    - Shared and distributed storage is possible.
+
+  - For local storage, use either a hardware RAID with battery backed write cache (BBU) or non-RAID for ZFS and Ceph. Neither ZFS nor Ceph are compatible with a hardware RAID controller.
+
+  - Shared and distributed storage is possible.
+
+  - SSDs with Power-Loss-Protection (PLP) are recommended for good performance. Using consumer SSDs is discouraged.
 
 - Redundant (Multi-)Gbit NICs, with additional NICs depending on the preferred storage technology and cluster setup.
 
 - For PCI(e) passthrough the CPU needs to support the VT-d/AMD-d flag.
 
-My hardware mostly complies with the CPU requirements, except on the VT-d flag part. Regarding RAM it's not in a bad shape either, specially since I'm not planning to use ZFS or Ceph given their high RAM needs. In storage terms I don't have any fancy enterprise-level thing like redundancy or hardware RAID, but at least I won't spend that much electricity either. Also, let's not forget that I have one SSD on which I'll install the Proxmox VE platform. The thing about the redundant network cards won't be really necessary for me either.
+When comparing these requirements with the reference hardware, don't lose sight of the goal here: running a small **standalone Proxmox VE node** in limited consumer hardware for personal use. Under that point of view, most of these recommendations, although illustrative, do not really apply for the problem at hand in this guide series.
 
-Overall, I've got enough hardware to run a small **standalone Proxmox VE node**.
+In short, just ensure to use a computer or VM that, at least, matches the [reference hardware](G001%20-%20Hardware%20setup.md). In particular, make sure that your CPU has virtualization capabilities and you have 8GiB of RAM at least.
 
 ## Installation procedure
 
-### _Preparing the Proxmox VE installation media_
+### Preparing the Proxmox VE installation media
 
-Proxmox VE 7.0 is provided as an ISO image file, which you have to either burn in a CD or DVD or write in a USB drive. Since my computer has no DVD drive anymore, I'll show you the USB path. Proxmox provides some instructions about how to do it from a Linux, MacOS or Windows environment. [Check them out right here](https://pve.proxmox.com/pve-docs/chapter-pve-installation.html#installation_prepare_media)!
+Proxmox VE 8.3 is provided as an ISO image file, which you have to either burn in a CD or DVD or write in a USB drive. Since my computer has no DVD drive anymore, I'll show you the USB path. Proxmox provides some instructions about how to do it from a Linux, MacOS or Windows environment. [Check them out right here](https://pve.proxmox.com/pve-docs/chapter-pve-installation.html#installation_prepare_media)!
 
 I'll do it from a Windows 10 system, using [**Rufus**](https://rufus.ie/) to write the Proxmox VE ISO into an USB pen drive.
 
-#### **Writing the Proxmox VE ISO from a Windows 10 system with Rufus**
+#### Writing the Proxmox VE ISO from a Windows 10 system with Rufus
 
 1. Get the latest Proxmox VE 7.0 ISO from the [official site](https://www.proxmox.com/en/). You'll have to look for it in the site's [_downloads_ section](https://www.proxmox.com/en/downloads). Download the ISO found in the [_Proxmox Virtual Environment_ section](https://www.proxmox.com/en/downloads/category/proxmox-virtual-environment). The [Proxmox VE 7.0-2 ISO Installer](https://www.proxmox.com/en/downloads/item/proxmox-ve-7-0-iso-installer) weights around **1 GiB**.
 
@@ -87,11 +99,11 @@ I'll do it from a Windows 10 system, using [**Rufus**](https://rufus.ie/) to wri
 
 With the ISO properly written in the USB drive, you can take it  finally start the installation.
 
-### _Prepare your storage drives_
+### Prepare your storage drives
 
 Remember to empty the storage drives in your server-to-be computer, meaning that you have to leave them completely void of data, filesystems and partitions. This is to avoid any potential conflicts like, for instance, having an old installation of some outdated, but still bootable, Linux installation. So, be sure of clearing those drives, using some Linux distribution that can be run in Live mode, such as the official Debian one or any of the Ubuntu-based ones. Then use a tool like GParted or KDE Partition Manager to just remove all the partitions present on those drives and you'll be good to go.
 
-### _Installing Proxmox VE_
+### Installing Proxmox VE
 
 The Proxmox site has two guides explaining the Proxmox VE installer, which I've linked to in the _References_ section at the end of this guide. But the steps you'll find below are my own take on this install procedure.
 
@@ -208,14 +220,15 @@ You can connect already to your standalone PVE node through any SSH client of yo
 
 ## References
 
-### _Proxmox_
+### [Proxmox](https://www.proxmox.com/en/)
 
-- [Proxmox](https://www.proxmox.com/en/)
 - [Proxmox VE installation guide](https://pve.proxmox.com/wiki/Installation)
-- [Proxmox VE admin guide. Installing Proxmox VE](https://pve.proxmox.com/pve-docs/chapter-pve-installation.html)
-- [Proxmox VE. System Requirements](https://www.proxmox.com/en/proxmox-ve/requirements)
 
-### _Rufus_
+- [Proxmox VE Administration Guide](https://pve.proxmox.com/pve-docs/pve-admin-guide.html)
+  - [2. Installing Proxmox VE](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_installation)
+    - [2.1. System Requirements](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_system_requirements)
+
+### Rufus
 
 - [Rufus](https://rufus.ie/)
 
