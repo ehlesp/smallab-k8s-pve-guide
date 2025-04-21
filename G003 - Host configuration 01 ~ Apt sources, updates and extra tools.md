@@ -1,13 +1,30 @@
 # G003 - Host configuration 01 ~ Apt sources, updates and extra tools
 
-## Remember, Proxmox VE 7.0 runs on Debian 11 _bullseye_
+- [Remember that Proxmox VE 8.4 runs on Debian 12 "bookworm"](#remember-that-proxmox-ve-84-runs-on-debian-12-bookworm)
+- [Editing the apt repository sources](#editing-the-apt-repository-sources)
+  - [Changing the apt repositories](#changing-the-apt-repositories)
+- [Update your system](#update-your-system)
+  - [Consideration about upgrades](#consideration-about-upgrades)
+  - [You can use `apt` directly](#you-can-use-apt-directly)
+- [Installing useful extra tools](#installing-useful-extra-tools)
+  - [Utilities for visualizing sensor information](#utilities-for-visualizing-sensor-information)
+    - [The lm\_sensors package](#the-lm_sensors-package)
+    - [The Stress Terminal UI: s-tui](#the-stress-terminal-ui-s-tui)
+- [Relevant system paths](#relevant-system-paths)
+  - [Directories](#directories)
+- [References](#references)
+  - [Proxmox](#proxmox)
+  - [Tools](#tools)
+- [Navigation](#navigation)
 
-Bear always in mind that your Proxmox VE 7.0 runs on a **Debian** _GNU Linux version 11_ (_bullseye_).
+## Remember that Proxmox VE 8.4 runs on Debian 12 "bookworm"
+
+Bear always in mind that your Proxmox VE 8.4 runs on a **Debian** _GNU Linux version 12_ (_bookworm_).
 
 The Debian version can be checked by opening the file `/etc/os-release` found in the system.
 
-> **BEWARE!**  
-> For more details about Proxmox VE 7.0 itself, you can find a datasheet about it [in this page](https://www.proxmox.com/en/downloads/item/proxmox-ve-datasheet).
+> [!NOTE]
+> For more details about Proxmox VE 8.4 itself, [check out its datasheet](https://www.proxmox.com/en/downloads/proxmox-virtual-environment/documentation/proxmox-ve-datasheet).
 
 ## Editing the apt repository sources
 
@@ -35,7 +52,7 @@ N: See apt-secure(8) manpage for repository creation and user configuration deta
 
 See the line Err:7 indicating an error in the process: since you don't have a valid enterprise subscription, your system is `Unauthorized` to get updates from the enterprise repository.
 
-### _Changing the apt repositories_
+### Changing the apt repositories
 
 You need to disable the enterprise repository and enable the repository for non-subscribers.
 
@@ -133,15 +150,16 @@ Now you can go to the `Updates` screen and see what's pending.
 
 While the installation left me with Proxmox VE in its version 7.0-11, after the first update, Proxmox VE got upgraded to the 7.0-14 version.
 
-### _Consideration about upgrades_
+### Consideration about upgrades
 
 As you've seen before, you can end having to apply several updates at once in your system. In theory, a good administrator has to be diligent and verify that each update is safe to apply. In reality, trying to do that usually is not doable. Still, you should at least be aware of the updates that directly affect the Proxmox VE platform, the ones that can update to a more recent minor or major version. Those are the ones that could break things in your setup, specially the major ones (for instance, when going from a version 6.4-x to a 7.0-x one).
 
 So, my advice here is, since you only have one standalone node so, before you apply such updates, you should make a clone of your only node's Proxmox VE root filesystem (or the entire drive) with a tool like **Clonezilla**. This way, if something goes south in the upgrade, you can always go back to the previous stable state.
 
-Check out the [**G905** appendix guide](G905%20-%20Appendix%2005%20~%20Cloning%20storage%20drives%20with%20Clonezilla.md) to see how to use Clonezilla to backup your host's storage drives.
+> [!NOTE]
+> Check out the [**G905** appendix guide](G905%20-%20Appendix%2005%20~%20Cloning%20storage%20drives%20with%20Clonezilla.md) to see how to use Clonezilla to backup your host's storage drives.
 
-### _You can use `apt` directly_
+### You can use `apt` directly
 
 Instead of using the `Updates` screen in the web console, you could just use the `apt` command directly through an SSH shell or by opening a shell directly from the web console, as in any other Debian-based Linux system.
 
@@ -176,13 +194,13 @@ To install all of the above at once, open a shell terminal as `root` and use the
 $ apt install -y ethtool htop net-tools sudo tree vim
 ~~~
 
-### _Utilities for visualizing sensor information_
+### Utilities for visualizing sensor information
 
 Any modern computer comes with a bunch of integrated sensors, usually ones that return CPU's cores temperatures, fan speeds and voltages. Sure you'd like to see those values through the shell easily, right? There are a bunch of tools which do that, but here I'll show you the two that I found more interesting.
 
-#### **The lm_sensors package**
+#### The lm_sensors package
 
-The lm_sensors package provides a `sensors` command that allows you to see the values returned by the sensors integrated in a Linux host like yours. To be able to use that command, you'll need to install and configure the `lm_sensors` package as follows.
+The _lm_sensors_ package provides a `sensors` command that allows you to see the values returned by the sensors integrated in a Linux host like yours. To be able to use that command, you'll need to install and configure the `lm_sensors` package as follows.
 
 1. Open a shell in your main `pve` node as `root` (or as a `sudo`-able user if you already got one), then execute the next `apt` command.
 
@@ -192,8 +210,9 @@ The lm_sensors package provides a `sensors` command that allows you to see the v
 
 2. Execute `sensors-detect`. This will launch a scan on your system looking for all the sensors available in it, so it can determine which kernel modules `lm_sensors` has to use. This scan is automatic, but the command will ask you on every step of the procedure.
 
-    > **BEWARE!**  
-    > It might be possible that a step could give some trouble if executed in your system, so read the question asked on each step and, in case of doubt, answer `no` to the step you feel unsure of.
+    > [!WARNING]
+    > **Some step could give trouble if executed in your system!**\
+    > Read the question asked on each step and, in case of doubt, answer `no` to the step you feel unsure of.
 
     ~~~bash
     $ sensors-detect
@@ -390,9 +409,9 @@ The lm_sensors package provides a `sensors` command that allows you to see the v
 
     Notice how the command outputs all sorts of information from the system: different temperature measurements from different adapters and interfaces, the speed of the fans present in my host and also some voltage information. Also see how the command has printed `ALARM` on several lines, which are warnings of things the command is finding odd. Since my computer is working fine, this is more probably a question of configuring the command so it evaluates the values properly. Also, as you may imagine, the output of this command will be quite different in your machine.
 
-#### **The Stress Terminal UI: s-tui**
+#### The Stress Terminal UI: s-tui
 
-The Stress Terminal UI, or just `s-tui`, is a command that gives you a much more graphical vision of the current performance of your hardware. To get it, just install its package with `apt`.
+The _Stress Terminal UI_, or just `s-tui`, is a command that gives you a much more graphical vision of the current performance of your hardware. To get it, just install its package with `apt`.
 
 ~~~bash
 $ apt install -y s-tui
@@ -400,7 +419,7 @@ $ apt install -y s-tui
 
 With the package installed, just execute the `s-tui` command.
 
-> **BEWARE!**  
+> [!IMPORTANT]
 > When using a **non-root** user, execute this command with `sudo` so it can access all the system sensors.
 
 ~~~bash
@@ -415,21 +434,24 @@ You can use the arrows or the Page Up/Down keys to browse in the left-side menu 
 
 ## Relevant system paths
 
-### _Directories_
+### Directories
 
 - `$HOME/.config/s-tui`
 
 ## References
 
-### _Proxmox VE_
+### [Proxmox](https://www.proxmox.com/en/)
 
-- [Proxmox VE 7.0 Datasheet](https://www.proxmox.com/en/downloads/item/proxmox-ve-datasheet)
-- [Proxmox Package Repositories](https://pve.proxmox.com/wiki/Package_Repositories)
-- [Proxmox VE No-Subscription Repository](https://pve.proxmox.com/wiki/Package_Repositories#sysadmin_no_subscription_repo)
+- [Proxmox VE 8.4 Datasheet](https://www.proxmox.com/en/downloads/proxmox-virtual-environment/documentation/proxmox-ve-datasheet)
+
+- [Proxmox VE Wiki](https://pve.proxmox.com/wiki/Main_Page)
+  - [Proxmox Package Repositories](https://pve.proxmox.com/wiki/Package_Repositories)
+  - [Proxmox VE No-Subscription Repository](https://pve.proxmox.com/wiki/Package_Repositories#sysadmin_no_subscription_repo)
+  - [Roadmap](https://pve.proxmox.com/wiki/Roadmap)
+
 - [How to: Fix Proxmox/PVE update failed(Failed to fetch 401 Unauthorized) (TASK ERROR: command ‘apt-get update’ failed: exit code 100)](https://dannyda.com/2020/06/19/how-to-fix-proxmox-pve6-1-26-1-7-update-failedfailed-to-fetch-401-unauthorized-task-error-command-apt-get-update-failed-exit-code-100/)
-- [Proxmox roadmap](https://pve.proxmox.com/wiki/Roadmap)
 
-### _Tools_
+### Tools
 
 - [Clonezilla](https://clonezilla.org/)
 - [Find fan speed and cpu temp in Linux](https://unix.stackexchange.com/questions/328906/find-fan-speed-and-cpu-temp-in-linux)
