@@ -194,7 +194,7 @@ The Proxmox site has two guides explaining Proxmox VE's installation, [linked in
 
     ![Localization and time zone ](images/g002/Installer-06_localization_time_zone.webp "Localization and time zone")
 
-    Just choose whatever suits your needs and move on.
+    Just choose the timezone and keyboard layout fitting your needs and move on.
 
 9. Now, you'll have to input a proper password and a valid email for the `root` user.
 
@@ -210,6 +210,9 @@ The Proxmox site has two guides explaining Proxmox VE's installation, [linked in
 
     What you're configuring here is through which network controller and network you want to reach the Proxmox VE management console. The installer will autodetect the values, but some adjustment may be required.
 
+    > [!NOTE]
+    > For this guide series, the FQDN will be `pve.homelab.cloud`.
+
     Be careful of which network controller you choose as `management interface`. Choosing the wrong one could make your Proxmox VE system unreachable remotely.
 
 11. The **summary** screen will show you the configuration you've chosen.
@@ -217,6 +220,10 @@ The Proxmox site has two guides explaining Proxmox VE's installation, [linked in
     ![Summary screen](images/g002/Installer-10_summary.webp "Summary screen")
 
     Notice, at the bottom of the screen, the check about **Automatically reboot after successful installation**. If you prefer to reboot manually, uncheck it. Then, if you're happy with the setup, click on **Install**.
+
+    > [!NOTE]
+    > **The email shown in the screenshot is just an example**\
+    > The `pveroot@homelab.cloud` value is a fake email with an obvious name for illustrative purposes. If you use a real one, Proxmox VE can be configured to send notifications to it.
 
 12. The next screen will show you a progress bar and some information while doing the installation.
 
@@ -233,7 +240,7 @@ The Proxmox site has two guides explaining Proxmox VE's installation, [linked in
 
 ## After the installation
 
-You have installed Proxmox VE and your server has rebooted. Proxmox VE comes with a web console which you can access through the **port 8006**. So, open a browser and navigate to `https://your.proxmox_ve_server.ip.address:8006` and you'll reach the Proxmox VE web console. In my case, it happens to load in dark mode.
+You have installed Proxmox VE and your server has rebooted. Proxmox VE comes with a web console which you can access through the **port 8006**. So, open a browser and navigate to `https://<your.proxmox_ve_server.ip.address>:8006` and you'll reach the Proxmox VE web console. In my case, it happens to load in dark mode.
 
 ![Proxmox VE web console login](images/g002/proxmox_ve_web_console_login.webp "Proxmox VE web console login")
 
