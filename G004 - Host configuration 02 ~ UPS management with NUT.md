@@ -1,11 +1,25 @@
 # G004 - Host configuration 02 ~ UPS management with NUT
 
-Any server must be always connected to an UPS! You really need to protect your server from electrical surges, power cuts or outages. Here we'll assume that you already have one UPS plugged by USB to your computer.
+- [Any server must be always connected to an UPS unit](#any-server-must-be-always-connected-to-an-ups-unit)
+- [Connecting your UPS with your pve node using NUT](#connecting-your-ups-with-your-pve-node-using-nut)
+- [Executing instant commands on the UPS unit](#executing-instant-commands-on-the-ups-unit)
+- [Other possibilities with NUT](#other-possibilities-with-nut)
+- [Relevant system paths](#relevant-system-paths)
+  - [Directories](#directories)
+  - [Files](#files)
+- [References](#references)
+  - [NUT](#nut)
+- [Navigation](#navigation)
+
+## Any server must be always connected to an UPS unit
+
+You really need to protect your server from electrical surges, power cuts or outages. Here we'll assume that you already have one UPS plugged by USB to your computer.
 
 The program we're going to use is a generic package called **NUT (Network UPS Tool)**, although be aware that your UPS brand may already have their own particular software for UPS management (like in the case of **APC** and its related `apcupsd` tool for Linux systems).
 
-> **BEWARE!**  
-> It could be that NUT doesn't support your concrete UPS model, but it may have compatible drivers for your UPS brand. Check on the [NUT hardware compatibility list](https://networkupstools.org/stable-hcl.html) to verify if your brand or model line has compatible drivers there.
+> [!IMPORTANT]
+> **NUT may not support your concrete UPS unit**\
+> Still, it may have compatible drivers for your UPS brand. Check on the [NUT hardware compatibility list](https://networkupstools.org/stable-hcl.html) to verify if your brand or model line has compatible drivers there.
 
 ## Connecting your UPS with your pve node using NUT
 
@@ -315,7 +329,7 @@ Assuming your UPS unit has the required USB cable, here's how to proceed with it
         ups.vendorid: 051d
         ~~~
 
-> **BEWARE!**  
+> [!IMPORTANT]
 > Don't forget to check the `/var/log/syslog` file to detect any problems with the NUT services!
 
 ## Executing instant commands on the UPS unit
@@ -339,8 +353,9 @@ You can also execute the whole `upscmd` command in just one line:
 $ upscmd -u upsadm -p D1Ff3rEnT_s3c4R3_p4sSw0rD! apc beeper.disable
 ~~~
 
-> **BEWARE!**  
-> Don't execute the `upscmd` like that in your normal shell, to avoid exposing your password in the shell history (in bash is the `.bash_history` text file). Use this one-line format **only for tasks automatizations in shell scripts**.
+> [!WARNING]
+> **Use this one-line format only for tasks automatizations in shell scripts**\
+> Don't execute the `upscmd` with the password in your normal shell, to avoid exposing your password in the shell history (in bash, is the `.bash_history` text file).
 
 Also, remember that:
 
@@ -350,16 +365,16 @@ Also, remember that:
 
 ## Other possibilities with NUT
 
-If you feel curious about what else you can do with NUT, there's a pdf document that provides a good number of configuration examples. [Get it in this GitHub page](https://github.com/networkupstools/ConfigExamples/releases/tag/book-2.0-20210521-nut-2.7.4).
+If you feel curious about what else you can do with NUT, there's a pdf document that provides a good number of configuration examples. [Get it in this GitHub page](https://github.com/networkupstools/ConfigExamples/releases/tag/book-3.0-20230319-nut-2.8.0).
 
 ## Relevant system paths
 
-### _Directories_
+### Directories
 
 - `/etc/nut`
 - `/var/log`
 
-### _Files_
+### Files
 
 - `/etc/nut/nut.conf`
 - `/etc/nut/nut.conf.orig`
@@ -375,13 +390,13 @@ If you feel curious about what else you can do with NUT, there's a pdf document 
 
 ## References
 
-### _NUT_
+### NUT
 
 - [NUT (Network UPS Tool)](https://networkupstools.org/)
 - [NUT Hardware compatibility list](https://networkupstools.org/stable-hcl.html)
 - [NUT User manual (chunked)](https://networkupstools.org/docs/user-manual.chunked/index.html)
 - [NUT documentation and scripts](http://rogerprice.org/NUT/)
-- [NUT config examples document on GitHub](https://github.com/networkupstools/ConfigExamples/releases/tag/book-2.0-20210521-nut-2.7.4)
+- [NUT config examples document on GitHub](https://github.com/networkupstools/ConfigExamples/releases/tag/book-3.0-20230319-nut-2.8.0)
 - [Monitorización de un SAI con GNU/Debian Linux](http://index-of.co.uk/SISTEMAS-OPERATIVOS/NUT%20Debian%20UPS%20Monitor.pdf) (in Spanish)
 - [Instalar y configurar NUT por SNMP](https://blog.ichasco.com/instalar-y-configurar-nut-por-snmp/) (in Spanish)
 - [Monitoring a UPS with nut on Debian or Ubuntu Linux](https://blog.shadypixel.com/monitoring-a-ups-with-nut-on-debian-or-ubuntu-linux/)
