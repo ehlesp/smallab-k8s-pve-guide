@@ -240,7 +240,7 @@ The Proxmox site has two guides explaining Proxmox VE's installation, [linked in
 
 ## After the installation
 
-You have installed Proxmox VE and your server has rebooted. Proxmox VE comes with a web console which you can access through the **port 8006**. So, open a browser and navigate to `https://<your.proxmox_ve_server.ip.address>:8006` and you'll reach the Proxmox VE web console. In my case, it happens to load in dark mode.
+You have installed Proxmox VE and your server has rebooted. Proxmox VE comes with a web console which you can access through the **port 8006**. So, open a browser and navigate to `https://<your.proxmox_ve_server.ip.address>:8006` and you'll reach the Proxmox VE web console. In my case, due to my browsers configuration, the Proxmox VE web console happens to load in dark mode.
 
 ![Proxmox VE web console login](images/g002/proxmox_ve_web_console_login.webp "Proxmox VE web console login")
 

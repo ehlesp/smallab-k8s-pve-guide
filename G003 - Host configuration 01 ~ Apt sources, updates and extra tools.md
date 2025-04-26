@@ -366,7 +366,7 @@ The _lm_sensors_ package provides a `sensors` command that allows you to see the
     Unloading cpuid... OK
     ~~~
 
-    You can see, in the output above, that I've allowed the `sensors-detect` command to execute all of its steps on my system, and that there were no issues. See how the final question asks for your permission to write some lines in the `/etc/modules` file. Say `yes` to it, but bear in mind that, if you uninstall the `lm_sensors` package later, those lines will remain in `/etc/modules`.
+    You can see, in the output above, that I've allowed the `sensors-detect` command to execute all of its steps on my system (the reference hardware), and that there were no issues. See how the final question asks for your permission to write some lines in the `/etc/modules` file. Say `yes` to it, but bear in mind that, if you uninstall the `lm_sensors` package later, those lines will remain in `/etc/modules`.
 
     Below you can see the lines sensors-detect wrote, in my PVE host, in the `/etc/modules` file. Bear in mind that this lines may be different in your system.
 
