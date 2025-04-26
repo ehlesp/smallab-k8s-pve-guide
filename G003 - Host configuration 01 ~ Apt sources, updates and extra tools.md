@@ -1,13 +1,30 @@
 # G003 - Host configuration 01 ~ Apt sources, updates and extra tools
 
-## Remember, Proxmox VE 7.0 runs on Debian 11 _bullseye_
+- [Proxmox VE 8.4 runs on Debian 12 "bookworm"](#proxmox-ve-84-runs-on-debian-12-bookworm)
+- [Editing the apt repository sources](#editing-the-apt-repository-sources)
+  - [Changing the apt repositories](#changing-the-apt-repositories)
+- [Update your system](#update-your-system)
+  - [Consideration about upgrades](#consideration-about-upgrades)
+  - [You can use `apt` directly](#you-can-use-apt-directly)
+- [Installing useful extra tools](#installing-useful-extra-tools)
+  - [Utilities for visualizing sensor information](#utilities-for-visualizing-sensor-information)
+    - [The lm\_sensors package](#the-lm_sensors-package)
+    - [The Stress Terminal UI: s-tui](#the-stress-terminal-ui-s-tui)
+- [Relevant system paths](#relevant-system-paths)
+  - [Directories](#directories)
+- [References](#references)
+  - [Proxmox](#proxmox)
+  - [Tools](#tools)
+- [Navigation](#navigation)
 
-Bear always in mind that your Proxmox VE 7.0 runs on a **Debian** _GNU Linux version 11_ (_bullseye_).
+## Proxmox VE 8.4 runs on Debian 12 "bookworm"
+
+Remember that your Proxmox VE 8.4 runs on a **Debian** _GNU Linux version 12_ (_bookworm_).
 
 The Debian version can be checked by opening the file `/etc/os-release` found in the system.
 
-> **BEWARE!**  
-> For more details about Proxmox VE 7.0 itself, you can find a datasheet about it [in this page](https://www.proxmox.com/en/downloads/item/proxmox-ve-datasheet).
+> [!NOTE]
+> For further details about Proxmox VE 8.4 itself, [check out its datasheet](https://www.proxmox.com/en/downloads/proxmox-virtual-environment/documentation/proxmox-ve-datasheet).
 
 ## Editing the apt repository sources
 
@@ -15,141 +32,156 @@ Proxmox VE comes with its `apt` system configured to point at a repository for *
 
 ~~~bash
 $ apt update
-Get:1 http://security.debian.org bullseye-security InRelease [44.1 kB]
-Get:2 http://ftp.es.debian.org/debian bullseye InRelease [154 kB]
-Get:3 http://security.debian.org bullseye-security/main amd64 Packages [16.8 kB]
-Get:4 http://security.debian.org bullseye-security/main Translation-en [8,244 B]
-Get:5 http://ftp.es.debian.org/debian bullseye-updates InRelease [40.1 kB]
-Get:6 http://ftp.es.debian.org/debian bullseye/main amd64 Packages [8,178 kB]
-Err:7 https://enterprise.proxmox.com/debian/pve bullseye InRelease
-  401  Unauthorized [IP: 51.91.38.34 443]
-Get:8 http://ftp.es.debian.org/debian bullseye/main Translation-en [6,241 kB]
-Get:9 http://ftp.es.debian.org/debian bullseye/contrib amd64 Packages [50.4 kB]
-Get:10 http://ftp.es.debian.org/debian bullseye/contrib Translation-en [46.9 kB]
-Reading package lists... Done
-E: Failed to fetch https://enterprise.proxmox.com/debian/pve/dists/bullseye/InRelease  401  Unauthorized [IP: 51.91.38.34 443]
-E: The repository 'https://enterprise.proxmox.com/debian/pve bullseye InRelease' is not signed.
+Get:1 http://security.debian.org bookworm-security InRelease [48.0 kB]
+Get:2 http://security.debian.org bookworm-security/main amd64 Packages [260 kB]
+Get:3 http://ftp.es.debian.org/debian bookworm InRelease [151 kB]                             
+Get:4 http://security.debian.org bookworm-security/main Translation-en [156 kB]                                       
+Get:5 http://security.debian.org bookworm-security/contrib amd64 Packages [896 B]                                                    
+Get:6 http://security.debian.org bookworm-security/contrib Translation-en [652 B]                
+Get:7 http://ftp.es.debian.org/debian bookworm-updates InRelease [55.4 kB]                             
+Err:8 https://enterprise.proxmox.com/debian/ceph-quincy bookworm InRelease
+  401  Unauthorized [IP: 62.91.38.76 443]
+Get:9 http://ftp.es.debian.org/debian bookworm/main amd64 Packages [8,792 kB]
+Err:10 https://enterprise.proxmox.com/debian/pve bookworm InRelease
+  401  Unauthorized [IP: 62.91.38.76 443]
+Get:11 http://ftp.es.debian.org/debian bookworm/main Translation-en [6,109 kB]
+Get:12 http://ftp.es.debian.org/debian bookworm/contrib amd64 Packages [54.1 kB]
+Get:13 http://ftp.es.debian.org/debian bookworm/contrib Translation-en [48.8 kB]
+Get:14 http://ftp.es.debian.org/debian bookworm-updates/main amd64 Packages [512 B]
+Get:15 http://ftp.es.debian.org/debian bookworm-updates/main Translation-en [360 B]
+Reading package lists... Done                              
+E: Failed to fetch https://enterprise.proxmox.com/debian/ceph-quincy/dists/bookworm/InRelease  401  Unauthorized [IP: 62.91.38.76 443]
+E: The repository 'https://enterprise.proxmox.com/debian/ceph-quincy bookworm InRelease' is not signed.
+N: Updating from such a repository can't be done securely, and is therefore disabled by default.
+N: See apt-secure(8) manpage for repository creation and user configuration details.
+E: Failed to fetch https://enterprise.proxmox.com/debian/pve/dists/bookworm/InRelease  401  Unauthorized [IP: 62.91.38.76 443]
+E: The repository 'https://enterprise.proxmox.com/debian/pve bookworm InRelease' is not signed.
 N: Updating from such a repository can't be done securely, and is therefore disabled by default.
 N: See apt-secure(8) manpage for repository creation and user configuration details.
 ~~~
 
-See the line Err:7 indicating an error in the process: since you don't have a valid enterprise subscription, your system is `Unauthorized` to get updates from the enterprise repository.
+See the lines like the `Err:8` one indicating an error in the process. Since you don't have a valid enterprise subscription, your system is `Unauthorized` to get updates from Proxmox's enterprise repository.
 
-### _Changing the apt repositories_
+### Changing the apt repositories
 
 You need to disable the enterprise repository and enable the repository for non-subscribers.
 
 1. Access your Proxmox VE web console as `root`, and browse to your `pve` node's `Updates > Repositories` section.
 
-    ![Updates repositories section of pve node](images/g003/pve_node_updates_repositories_section.png "Updates repositories section of pve node")
+    ![Updates repositories section of pve node](images/g003/pve_node_updates_repositories_section.webp "Updates repositories section of pve node")
 
     You'll notice the warning about having the enterprise repository enabled with no active subscription. This is related to the warning you saw when you logged in the web console.
 
-2. Select the enterprise repository, the one with the URI `https://enterprise.proxmox.com/debian/pve`.
+2. Notice that there are two enterprise repositories, one for the [Ceph distributed storage technology](https://ceph.io/en/) embedded in Proxmox while the other is for Proxmox VE itself. **You'll have to disable both**.
 
-    ![Enterprise repository to be disabled](images/g003/pve_node_updates_repositories_section_disable_enterprise.png "Enterprise repository to be disabled")
+    Begin with the Ceph enterprise repository, the one with the URI `https://enterprise.proxmox.com/debian/ceph-quincy`.
 
-    See that the `Disable` button is now active, so press it to disable the enterprise repository.
+    ![Proxmox Ceph enterprise repository selected to be disabled](images/g003/pve_node_updates_repositories_section_disable_enterprise_ceph.webp "Proxmox Ceph enterprise repository selected to be disabled")
 
-3. With the enterprise repository disabled, the web console will warn you that you won't get any updates for the Proxmox VE platform itself.
+    See that the `Disable` button is now active, so press it to disable the enterprise repository. Then, do the same with the other enterprise repository, the one for Proxmox VE with the URI `https://enterprise.proxmox.com/debian/pve`.
 
-    ![Warning about no Proxmox VE repository](images/g003/pve_node_updates_repositories_section_warning_no_repository.png "Warning about no Proxmox VE repository")
+    ![Proxmox Ceph enterprise repository selected to be disabled](images/g003/pve_node_updates_repositories_section_disable_enterprise_pve.webp "Proxmox Ceph enterprise repository selected to be disabled")
+
+3. With both Proxmox enterprise repositories disabled, the web console will warn you that you won't get any updates for your Proxmox VE platform.
+
+    ![Warning about no Proxmox VE repository](images/g003/pve_node_updates_repositories_section_warning_no_repository.webp "Warning about no Proxmox VE repository")
 
 4. Click on the `Add` button now. The web console will prompt the same warning you saw when you logged in.
 
-    ![No valid subscription warning](images/g003/pve_node_updates_repositories_section_warning_no_subscription.png "No valid subscription warning")
+    ![No valid subscription warning](images/g003/pve_node_updates_repositories_section_warning_no_subscription.webp "No valid subscription warning")
 
     Click on `OK` and you'll get to the windows where you can add apt repositories.
 
-    ![Add apt repositories window](images/g003/pve_node_updates_repositories_section_add_repository_window.png "Add apt repositories window")
+    ![Add apt repositories window](images/g003/pve_node_updates_repositories_section_add_repository_window.webp "Add apt repositories window")
 
 5. On that window, choose the `No-Subscription` option from the `Repository` list and then press on `Add`.
 
-    ![No-Subscription repository selected](images/g003/pve_node_updates_repositories_section_add_repository_no_subscription.png "No-Subscription repository selected")
+    ![No-Subscription repository selected](images/g003/pve_node_updates_repositories_section_add_repository_no_subscription.webp "No-Subscription repository selected")
 
 6. With the `No-Subscription` repository added, you'll see a different status in the `Repositories` screen.
 
-    ![Repositories screen updated](images/g003/pve_node_updates_repositories_updated.png "Repositories screen updated")
+    ![Repositories screen updated](images/g003/pve_node_updates_repositories_updated.webp "Repositories screen updated")
 
-    What the new warning means is that the no-subscription repository is not the safest one to use for real production use. Still, usually it'll be good enough for your personal needs.
+    What the new warning means is that the no-subscription repository is not the safest one to use for real production use. Regardless, it should be good enough for your personal homelab needs.
 
 ## Update your system
 
-Now you can go to the `Updates` screen and see what's pending.
+Now you can go back to the `Updates` screen and see what's pending.
 
 1. Browse to the `Updates` tab, and click on the `Refresh` button to be sure that you're getting the most recent list of updates.
 
-    ![Refresh button on Updates view](images/g003/pve_node_updates_refresh_button_after_update.png "Refresh button on Updates view")
+    ![Refresh button on Updates view](images/g003/pve_node_updates_refresh_button.webp "Refresh button on Updates view")
 
     You'll see the warning window about not having a valid subscription.
 
-    ![No valid subscription warning](images/g003/pve_node_updates_repositories_section_warning_no_subscription.png "No valid subscription warning")
+    ![No valid subscription warning](images/g003/pve_node_updates_repositories_section_warning_no_subscription.webp "No valid subscription warning")
 
     Close that window and you'll meet a new one in which you'll see the `apt update` task's progress.
 
-    ![Update package task window](images/g033/../g003/pve_node_updates_task_window.png "Update package task window")
+    ![Update package task window](images/g033/../g003/pve_node_updates_task_window.webp "Update package task window")
 
     When you see the line `TASK OK`, close the window to go back to the updates list.
 
-    ![List of updates pending](images/g003/pve_node_updates_pending.png "List of updates pending")
+    ![List of updates pending](images/g003/pve_node_updates_pending.webp "List of updates pending")
 
-    Above, you can see that there are a lot of updates that have to be applied. In other times, this page may appear with just a few packages or empty.
+    See above that there are a number of updates, from different origins, to be applied. In future attempts, this page will show a different selection of pending packages or none at all.
 
 2. To apply all the updates, click on the `Upgrade` button.
 
-    ![Upgrade button](images/g003/pve_node_updates_upgrade_button.png "Upgrade button")
+    ![Upgrade button](images/g003/pve_node_updates_upgrade_button.webp "Upgrade button")
 
 3. By default, the web console will open a shell console, using your `root` user, in which it'll launch the `apt dist-upgrade` command.
 
-    ![apt upgrade in noVNC shell](images/g003/pve_node_updates_noVNC_shell.png "apt upgrade in noVNC shell")
+    ![apt upgrade in noVNC shell](images/g003/pve_node_updates_noVNC_shell.webp "apt upgrade in noVNC shell")
 
-    Pay attention to when the apt command asks you for confirmation so it can proceed with the update. Also, be aware that some packages may require your input for some reason or other.
+    > [!IMPORTANT]
+    > **Pay attention to when the apt command requests your confirmation to proceed!**\
+    > Also, be aware that some packages may also require your input for some reason or other.
 
 4. When the apt command finishes, it'll return the control to the prompt within the shell console.
 
-    ![apt upgrade finished](images/g003/pve_node_updates_noVNC_shell_apt_ended.png "apt upgrade finished")
+    ![apt upgrade finished](images/g003/pve_node_updates_noVNC_shell_apt_ended.webp "apt upgrade finished")
 
-    Type `exit` to get out of the shell console, or just close the window directly.
+    Type `exit` to logout from the shell console and close its window, or just close the window directly.
 
-    ![noVNC shell disconnecting](images/g003/pve_node_updates_noVNC_shell_exiting.png "noVNC shell disconnecting")
+    ![noVNC shell disconnecting](images/g003/pve_node_updates_noVNC_shell_logout.webp "noVNC shell disconnecting")
 
 5. Back in the `Updates` screen of your `pve` node, you'll see that the updates list hasn't been refreshed. So, press again on the `Refresh` button to update the list.
 
-    ![Refresh button on Updates view](images/g003/pve_node_updates_refresh_button_after_update.png "Refresh button on Updates view")
+    ![Refresh button on Updates view](images/g003/pve_node_updates_refresh_button_after_update.webp "Refresh button on Updates view")
 
 6. The `Updates` screen may or may not show more updates to apply after refreshing. So, keep on applying the upgrades until none appear listed in this screen.
 
-    ![Updates list empty](images/g003/pve_node_updates_empty_list.png "Updates list empty")
+    ![Updates list empty](images/g003/pve_node_updates_empty_list.webp "Updates list empty")
 
-7. If you've applied many updates, or some of them were kernel related, it's better if you reboot the system. Just press on the `Reboot` button while having your `pve` node selected.
+7. If you've applied many updates, or if some of them were kernel-related, it's better if you reboot the system. Just press on the `Reboot` button while having your `pve` node selected.
 
-    ![Reboot button in web console](images/g003/pve_node_reboot_button.png "Reboot button in web console")
+    ![Reboot button in web console](images/g003/pve_node_reboot_button.webp "Reboot button in web console")
 
     The Proxmox VE web console will ask you to confirm the action, so click on `Yes` to proceed.
 
-    ![PVE node reboot confirmation](images/g003/pve_node_reboot_confirmation.png "PVE node reboot confirmation")
+    ![PVE node reboot confirmation](images/g003/pve_node_reboot_confirmation.webp "PVE node reboot confirmation")
 
 8. After the reboot, just log back in the web console and check that Proxmox VE is running fine.
 
-While the installation left me with Proxmox VE in its version 7.0-11, after the first update, Proxmox VE got upgraded to the 7.0-14 version.
+### Consideration about upgrades
 
-### _Consideration about upgrades_
-
-As you've seen before, you can end having to apply several updates at once in your system. In theory, a good administrator has to be diligent and verify that each update is safe to apply. In reality, trying to do that usually is not doable. Still, you should at least be aware of the updates that directly affect the Proxmox VE platform, the ones that can update to a more recent minor or major version. Those are the ones that could break things in your setup, specially the major ones (for instance, when going from a version 6.4-x to a 7.0-x one).
+As you've seen before, you can end having to apply several updates at once in your system. In theory, a good administrator has to be diligent and verify that each update is safe to apply. In reality, trying to do that is not possible. Still, you should at least be aware of the updates that directly affect the Proxmox VE platform, the ones that can update to a more recent minor or major version. Those are the ones that could break things in your setup, specially the major ones (for instance, when going from a version 7.y.z to a 8.y.z one).
 
 So, my advice here is, since you only have one standalone node so, before you apply such updates, you should make a clone of your only node's Proxmox VE root filesystem (or the entire drive) with a tool like **Clonezilla**. This way, if something goes south in the upgrade, you can always go back to the previous stable state.
 
-Check out the [**G905** appendix guide](G905%20-%20Appendix%2005%20~%20Cloning%20storage%20drives%20with%20Clonezilla.md) to see how to use Clonezilla to backup your host's storage drives.
+> [!NOTE]
+> Check out the [**G905** appendix guide](G905%20-%20Appendix%2005%20~%20Cloning%20storage%20drives%20with%20Clonezilla.md) to see how to use Clonezilla to backup your host's storage drives.
 
-### _You can use `apt` directly_
+### You can use `apt` directly
 
 Instead of using the `Updates` screen in the web console, you could just use the `apt` command directly through an SSH shell or by opening a shell directly from the web console, as in any other Debian-based Linux system.
 
 Personally, I prefer to connect through a SSH client to the server, as it's explained in the [**G901** appendix guide about PuTTY](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md). If you prefer to open the shell from the Proxmox VE web console, just know that it has three different options.
 
-![Web console shell options](images/g003/pve_node_shell_options.png "Web console shell options")
+![Web console shell options](images/g003/pve_node_shell_options.webp "Web console shell options")
 
-I recommend the `xterm.js` option, since that shell allows you to copy and paste, unlike the **noVCN** one. `SPICE` doesn't open you a shell, it gives you a file that you have to use in a special client prepared to use the SPICE protocol.
+I recommend the `xterm.js` option, since that shell allows you to copy and paste, unlike the **noVCN** one. `SPICE` does not open you a shell, it gives you a file that you have to use in a special client prepared to use the SPICE protocol.
 
 ## Installing useful extra tools
 
@@ -176,13 +208,17 @@ To install all of the above at once, open a shell terminal as `root` and use the
 $ apt install -y ethtool htop net-tools sudo tree vim
 ~~~
 
-### _Utilities for visualizing sensor information_
+### Utilities for visualizing sensor information
 
 Any modern computer comes with a bunch of integrated sensors, usually ones that return CPU's cores temperatures, fan speeds and voltages. Sure you'd like to see those values through the shell easily, right? There are a bunch of tools which do that, but here I'll show you the two that I found more interesting.
 
-#### **The lm_sensors package**
+#### The lm_sensors package
 
-The lm_sensors package provides a `sensors` command that allows you to see the values returned by the sensors integrated in a Linux host like yours. To be able to use that command, you'll need to install and configure the `lm_sensors` package as follows.
+The _lm_sensors_ package provides a `sensors` command that allows you to see the values returned by the sensors integrated in a Linux host like yours. To be able to use that command, you'll need to install and configure the `lm_sensors` package as follows.
+
+> [!IMPORTANT]
+> **Do not install this package in a VM setup!**\
+> The lm_sensors package won't be able to detect any sensor from your VM's host machine.
 
 1. Open a shell in your main `pve` node as `root` (or as a `sudo`-able user if you already got one), then execute the next `apt` command.
 
@@ -192,15 +228,16 @@ The lm_sensors package provides a `sensors` command that allows you to see the v
 
 2. Execute `sensors-detect`. This will launch a scan on your system looking for all the sensors available in it, so it can determine which kernel modules `lm_sensors` has to use. This scan is automatic, but the command will ask you on every step of the procedure.
 
-    > **BEWARE!**  
-    > It might be possible that a step could give some trouble if executed in your system, so read the question asked on each step and, in case of doubt, answer `no` to the step you feel unsure of.
+    > [!WARNING]
+    > **Some step could give trouble if executed in your system!**\
+    > Read the question asked on each step and, in case of doubt, answer `no` to the step you feel unsure of.
 
     ~~~bash
     $ sensors-detect
-    # sensors-detect revision $Revision$
+    # sensors-detect version 3.6.0
     # System: LENOVO 90C2001USP [Lenovo H30-00]
     # Board: LENOVO Aptio CRB
-    # Kernel: 5.4.124-1-pve x86_64
+    # Kernel: 6.8.12-9-pve x86_64
     # Processor: Intel(R) Pentium(R) CPU J2900 @ 2.41GHz (6/55/8)
 
     This program will help you determine which kernel modules you need
@@ -209,7 +246,7 @@ The lm_sensors package provides a `sensors` command that allows you to see the v
     unless you know what you're doing.
 
     Some south bridges, CPUs or memory controllers contain embedded sensors.
-    Do you want to scan for them? This is totally safe. (YES/no):
+    Do you want to scan for them? This is totally safe. (YES/no): 
     Module cpuid loaded successfully.
     Silicon Integrated Systems SIS5595...                       No
     VIA VT82C686 Integrated Sensors...                          No
@@ -223,6 +260,7 @@ The lm_sensors package provides a `sensors` command that allows you to see the v
     AMD Family 17h thermal sensors...                           No
     AMD Family 15h power sensors...                             No
     AMD Family 16h power sensors...                             No
+    Hygon Family 18h thermal sensors...                         No
     Intel digital thermal sensor...                             Success!
         (driver `coretemp')
     Intel AMB FB-DIMM thermal sensor...                         No
@@ -232,7 +270,7 @@ The lm_sensors package provides a `sensors` command that allows you to see the v
 
     Some Super I/O chips contain embedded sensors. We have to write to
     standard I/O ports to probe them. This is usually safe.
-    Do you want to scan for Super I/O sensors? (YES/no):
+    Do you want to scan for Super I/O sensors? (YES/no): 
     Probing for Super-I/O at 0x2e/0x2f
     Trying family `National Semiconductor/ITE'...               No
     Trying family `SMSC'...                                     No
@@ -251,14 +289,14 @@ The lm_sensors package provides a `sensors` command that allows you to see the v
     We first try to get the information from SMBIOS. If we don't find it
     there, we have to read from arbitrary I/O ports to probe for such
     interfaces. This is normally safe. Do you want to scan for IPMI
-    interfaces? (YES/no):
+    interfaces? (YES/no): 
     Probing for `IPMI BMC KCS' at 0xca0...                      No
     Probing for `IPMI BMC SMIC' at 0xca8...                     No
 
     Some hardware monitoring chips are accessible through the ISA I/O ports.
     We have to write to arbitrary I/O ports to probe them. This is usually
     safe though. Yes, you do have ISA I/O ports even if you do not have any
-    ISA slots! Do you want to scan the ISA I/O ports? (yes/NO): yes
+    ISA slots! Do you want to scan the ISA I/O ports? (YES/no): 
     Probing for `National Semiconductor LM78' at 0x290...       No
     Probing for `National Semiconductor LM79' at 0x290...       No
     Probing for `Winbond W83781D' at 0x290...                   No
@@ -328,12 +366,12 @@ The lm_sensors package provides a `sensors` command that allows you to see the v
     Unloading cpuid... OK
     ~~~
 
-    You can see, in the output above, that I've allowed the `sensors-detect` command to execute all of its steps on my system, and that there were no issues. See how the final question asks for your permission to write some lines in the `/etc/modules` file. Say `yes` to it, but bear in mind that, if you uninstall the `lm_sensors` package later, those lines will remain in `/etc/modules`.
+    You can see, in the output above, that I've allowed the `sensors-detect` command to execute all of its steps on my system (the reference hardware), and that there were no issues. See how the final question asks for your permission to write some lines in the `/etc/modules` file. Say `yes` to it, but bear in mind that, if you uninstall the `lm_sensors` package later, those lines will remain in `/etc/modules`.
 
     Below you can see the lines sensors-detect wrote, in my PVE host, in the `/etc/modules` file. Bear in mind that this lines may be different in your system.
 
     ~~~bash
-    # Generated by sensors-detect on Tue Nov  9 17:45:42 2021
+    # Generated by sensors-detect on Tue Nov  9 17:45:42 2025
     # Chip drivers
     coretemp
     it87
@@ -388,11 +426,15 @@ The lm_sensors package provides a `sensors` command that allows you to see the v
     Core 3:       +35.0°C  (high = +105.0°C, crit = +105.0°C)
     ~~~
 
-    Notice how the command outputs all sorts of information from the system: different temperature measurements from different adapters and interfaces, the speed of the fans present in my host and also some voltage information. Also see how the command has printed `ALARM` on several lines, which are warnings of things the command is finding odd. Since my computer is working fine, this is more probably a question of configuring the command so it evaluates the values properly. Also, as you may imagine, the output of this command will be quite different in your machine.
+    Notice how the command outputs all sorts of information from the system: different temperature measurements from different adapters and interfaces, the speed of the fans present in my host and also some voltage information. Also see how the command has printed `ALARM` on several lines, which are warnings of things the command is finding odd. Since my computer is working fine, this is more probably a question of configuring the command so it evaluates the values properly. As you may imagine, the output of this command will be quite different in your machine.
 
-#### **The Stress Terminal UI: s-tui**
+#### The Stress Terminal UI: s-tui
 
-The Stress Terminal UI, or just `s-tui`, is a command that gives you a much more graphical vision of the current performance of your hardware. To get it, just install its package with `apt`.
+The _Stress Terminal UI_, or just `s-tui`, is a command that gives you a much more graphical vision of the current performance of your hardware. To get it, just install its package with `apt`.
+
+> [!IMPORTANT]
+> **Do not install this package in a VM setup!**\
+> Depending on how your VM was configured, the Stress Terminal UI might be able to see information of the CPU cores available to the VM but nothing else from the underlying host's hardware.
 
 ~~~bash
 $ apt install -y s-tui
@@ -400,7 +442,7 @@ $ apt install -y s-tui
 
 With the package installed, just execute the `s-tui` command.
 
-> **BEWARE!**  
+> [!IMPORTANT]
 > When using a **non-root** user, execute this command with `sudo` so it can access all the system sensors.
 
 ~~~bash
@@ -409,28 +451,32 @@ $ s-tui
 
 You should see the main screen of `s-tui` immediately.
 
-![Main screen of s-tui](images/g003/pve_node_shell_s-tui.png "Main screen of s-tui")
+![Main screen of s-tui](images/g003/pve_node_shell_s-tui.webp "Main screen of s-tui")
 
 You can use the arrows or the Page Up/Down keys to browse in the left-side menu and even change some options. Going down in the menu, you'll see all the sensors this command is able to read. The settings of `s-tui` are kept in the user's `.config/s-tui` folder.
 
 ## Relevant system paths
 
-### _Directories_
+### Directories
 
 - `$HOME/.config/s-tui`
 
 ## References
 
-### _Proxmox VE_
+### [Proxmox](https://www.proxmox.com/en/)
 
-- [Proxmox VE 7.0 Datasheet](https://www.proxmox.com/en/downloads/item/proxmox-ve-datasheet)
-- [Proxmox Package Repositories](https://pve.proxmox.com/wiki/Package_Repositories)
-- [Proxmox VE No-Subscription Repository](https://pve.proxmox.com/wiki/Package_Repositories#sysadmin_no_subscription_repo)
+- [Proxmox VE 8.4 Datasheet](https://www.proxmox.com/en/downloads/proxmox-virtual-environment/documentation/proxmox-ve-datasheet)
+
+- [Proxmox VE Wiki](https://pve.proxmox.com/wiki/Main_Page)
+  - [Proxmox Package Repositories](https://pve.proxmox.com/wiki/Package_Repositories)
+  - [Proxmox VE No-Subscription Repository](https://pve.proxmox.com/wiki/Package_Repositories#sysadmin_no_subscription_repo)
+  - [Roadmap](https://pve.proxmox.com/wiki/Roadmap)
+
 - [How to: Fix Proxmox/PVE update failed(Failed to fetch 401 Unauthorized) (TASK ERROR: command ‘apt-get update’ failed: exit code 100)](https://dannyda.com/2020/06/19/how-to-fix-proxmox-pve6-1-26-1-7-update-failedfailed-to-fetch-401-unauthorized-task-error-command-apt-get-update-failed-exit-code-100/)
-- [Proxmox roadmap](https://pve.proxmox.com/wiki/Roadmap)
 
-### _Tools_
+### Tools
 
+- [Ceph](https://ceph.io/en/)
 - [Clonezilla](https://clonezilla.org/)
 - [Find fan speed and cpu temp in Linux](https://unix.stackexchange.com/questions/328906/find-fan-speed-and-cpu-temp-in-linux)
 - [Lm-sensors: Monitoring CPU And System Hardware Temperature](https://www.unixmen.com/lm-sensors-monitoring-cpu-system-hardware-temperature/)
