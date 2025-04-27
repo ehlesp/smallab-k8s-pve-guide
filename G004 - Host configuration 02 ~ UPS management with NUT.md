@@ -8,7 +8,8 @@
   - [Directories](#directories)
   - [Files](#files)
 - [References](#references)
-  - [NUT](#nut)
+  - [Network UPS Tools (NUT)](#network-ups-tools-nut)
+  - [Related NUT contents](#related-nut-contents)
 - [Navigation](#navigation)
 
 ## Any server must be always connected to an UPS unit
@@ -53,19 +54,6 @@ Assuming your UPS unit has the required USB cable, here's how to proceed with it
     $ apt install -y nut
     ~~~
 
-    In the `apt` output, notice the following lines pointing at an issue with the NUT service.
-
-    ~~~bash
-    Created symlink /etc/systemd/system/multi-user.target.wants/nut-monitor.service → /lib/systemd/system/nut-monitor.service.
-    Job for nut-monitor.service failed because the service did not take the steps required by its unit configuration.
-    See "systemctl status nut-monitor.service" and "journalctl -xe" for details.
-    Setting up nut-server (2.7.4-13) ...
-    Created symlink /etc/systemd/system/multi-user.target.wants/nut-server.service → /lib/systemd/system/nut-server.service.
-    nut-driver.service is a disabled or a static unit, not starting it.
-    ~~~
-
-    Don't worry about this during the `apt` installation, it's happening because you still have to configure NUT.
-
 4. You need to configure NUT properly so it can manage your UPS unit. There are several files to change, let's start editing `/etc/nut/nut.conf`. But before you change it, first make a backup of it.
 
     ~~~bash
@@ -93,7 +81,7 @@ Assuming your UPS unit has the required USB cable, here's how to proceed with it
     $ cp ups.conf ups.conf.orig
     ~~~
 
-    Then, **append** the following parameters, although with values fitting for your UPS unit.
+    Then, **append** the following parameters to the `ups.conf` file, although with values fitting for your UPS unit.
 
     ~~~properties
     [apc]
@@ -116,13 +104,21 @@ Assuming your UPS unit has the required USB cable, here's how to proceed with it
 
     ~~~bash
     $ upsdrvctl start
-    Network UPS Tools - UPS driver controller 2.7.4
-    Network UPS Tools - Generic HID driver 0.41 (2.7.4)
-    USB communication driver 0.33
-    Using subdriver: APC HID 0.96
+    Network UPS Tools - UPS driver controller 2.8.0
+    Network UPS Tools - Generic HID driver 0.47 (2.8.0)
+    USB communication driver (libusb 1.0) 0.43
+    Using subdriver: APC HID 0.98
     ~~~
 
     The command tells you what components it's using and, in the last line, also indicates you what driver NUT used to connect to your particular UPS. In this guide's example, you can see it's using the correct APC "subdriver".
+
+    > [!NOTE]
+    > **Don't worry if you get a "Duplicate driver" warning**\
+    > In the output of the `upsdrvctl start` command you may get a warning like this one:
+    >
+    > `Duplicate driver instance detected (PID file /run/nut/usbhid-ups-apc.pid exists)! Terminating other driver!`
+    >
+    > It seems that NUT had already created automatically a driver for my UPS unit in the moment I had configured it in the `ups.conf` file. This is not an issue at this point, and NUT itself takes care of this duplicity.
 
 7. Next, let's configure the NUT daemon, so edit the file `/etc/nut/upsd.conf`. Again, make a backup first.
 
@@ -130,28 +126,33 @@ Assuming your UPS unit has the required USB cable, here's how to proceed with it
     $ cp upsd.conf upsd.conf.orig
     ~~~
 
-    Then, uncomment only the `LISTEN` line referred to the IPv4 connection. It should end looking as follows.
+    Edit the `upsd.conf` file to uncomment only the `LISTEN` line referred to the IPv4 connection. It should end looking as follows.
 
     ~~~properties
-    # LISTEN <address> [<port>]
+    # LISTEN <IP address or name> [<port>]
     LISTEN 127.0.0.1 3493
     # LISTEN ::1 3493
     ~~~
 
     The `LISTEN` lines declares on which ports the `upsd` daemon will listen, and provides a basic access control mechanism. Uncomment the IPv6 line when you use this protocol in your network setup.
 
-8. In NUT there are also users, which are **NOT** the same ones as in the `passwd` file of your `pve` node. At this point, you'll require two user: one for the NUT monitor agent (`upsmon`) and other for acting as a NUT ups administrator(`upsadmin`). To add them, you must edit the file `/etc/nut/upsd.users`. First, back it up.
+8. In NUT there are also users, which are **NOT** the same ones as in the `passwd` file of your `pve` node. At this point, you'll require two user: 
+
+    - One for the NUT monitor agent (`upsmon`)
+    - Other for acting as a NUT ups administrator(`upsadmin`).
+
+    To add them, you must edit the file `/etc/nut/upsd.users`. First, back it up.
 
     ~~~bash
     $ cp upsd.users upsd.users.orig
     ~~~
 
-    Then, **append** the following configuration block.
+    Then, **append** to `upsd.users` the following configuration block.
 
     ~~~properties
     [upsmon]
         password = s3c4R3_p4sSw0rD!
-        upsmon master
+        upsmon primary
 
     [upsadm]
         password = D1Ff3rEnT_s3c4R3_p4sSw0rD!
@@ -165,7 +166,10 @@ Assuming your UPS unit has the required USB cable, here's how to proceed with it
 
     - `password` : the user's password. Please bear in mind that this is an **unencrypted** configuration file, be careful with who can access it.
 
-    - `upsmon master` : roughly speaking, this line says the user is from a machine directly connected to the UPS unit, and that NUT should be run with `master` privileges there.
+    - `upsmon primary` : roughly speaking, this line says the user is from a machine directly connected to the UPS unit, and that NUT should be run with high privileges there.
+  
+      > [!NOTE]
+      > The UPS primary and secondary types are further explained [in the NUT `upsmon` man documentation](https://networkupstools.org/docs/man/upsmon.html), in the **UPS types** section.
 
     - `actions = SET` : allows the user to set values on the managed UPS unit.
 
@@ -212,7 +216,7 @@ Assuming your UPS unit has the required USB cable, here's how to proceed with it
         # --------------------------------------------------------------------------
         # Customized settings
 
-        MONITOR apc@localhost 1 upsmon s3c4R3_p4sSw0rD! master
+        MONITOR apc@localhost 1 upsmon s3c4R3_p4sSw0rD! primary
         SHUTDOWNCMD "logger -t upsmon.conf \"SHUTDOWNCMD calling /sbin/shutdown to shut down system\" ; /sbin/shutdown -h +0"
 
         NOTIFYMSG ONLINE "UPS %s: On line power."
@@ -262,7 +266,7 @@ Assuming your UPS unit has the required USB cable, here's how to proceed with it
 
 11. Check if the NUT services are working properly with your UPS unit.
 
-    - `upscmd -l upsname`: this will list you the instant commands supported by the UPS unit named `upsname` (replace this with the name you gave to your UPS in point 5). Below you can see its output with my UPS unit.
+    - `upscmd -l upsname`: this will list you the instant commands supported by the UPS unit named `upsname` (replace this with the name you gave to your UPS back in point 5). Below you can see its output with my UPS unit.
 
         ~~~bash
         $ upscmd -l apc
@@ -291,23 +295,24 @@ Assuming your UPS unit has the required USB cable, here's how to proceed with it
         battery.charge.warning: 50
         battery.date: not set
         battery.mfr.date: 2018/04/22
-        battery.runtime: 2205
+        battery.runtime: 2250
         battery.runtime.low: 120
         battery.type: PbAc
         battery.voltage: 13.7
         battery.voltage.nominal: 12.0
         device.mfr: APC
         device.model: Back-UPS ES 700G
-        device.serial: 5B1816T44974
+        device.serial: 5B1816T44974  
         device.type: ups
         driver.name: usbhid-ups
         driver.parameter.pollfreq: 30
         driver.parameter.pollinterval: 2
         driver.parameter.port: auto
-        driver.parameter.synchronous: no
-        driver.version: 2.7.4
-        driver.version.data: APC HID 0.96
-        driver.version.internal: 0.41
+        driver.parameter.synchronous: auto
+        driver.version: 2.8.0
+        driver.version.data: APC HID 0.98
+        driver.version.internal: 0.47
+        driver.version.usb: libusb-1.0.26 (API: 0x1000109)
         input.sensitivity: low
         input.transfer.high: 266
         input.transfer.low: 180
@@ -316,13 +321,13 @@ Assuming your UPS unit has the required USB cable, here's how to proceed with it
         ups.beeper.status: disabled
         ups.delay.shutdown: 20
         ups.firmware: 871.O4 .I
-        ups.firmware.aux: O4
+        ups.firmware.aux: O4 
         ups.load: 1
         ups.mfr: APC
         ups.mfr.date: 2018/04/22
         ups.model: Back-UPS ES 700G
         ups.productid: 0002
-        ups.serial: 5B1816T44974
+        ups.serial: 5B1816T44974  
         ups.status: OL
         ups.timer.reboot: 0
         ups.timer.shutdown: -1
@@ -354,8 +359,8 @@ $ upscmd -u upsadm -p D1Ff3rEnT_s3c4R3_p4sSw0rD! apc beeper.disable
 ~~~
 
 > [!WARNING]
-> **Use this one-line format only for tasks automatizations in shell scripts**\
-> Don't execute the `upscmd` with the password in your normal shell, to avoid exposing your password in the shell history (in bash, is the `.bash_history` text file).
+> **Use this one-line format only for task automation with shell scripts**\
+> Do not execute the `upscmd` with the password in your normal shell, to avoid exposing your password in the shell history (the `.bash_history` text file in bash shells).
 
 Also, remember that:
 
@@ -390,13 +395,16 @@ If you feel curious about what else you can do with NUT, there's a pdf document 
 
 ## References
 
-### NUT
+### [Network UPS Tools (NUT)](https://networkupstools.org/)
 
-- [NUT (Network UPS Tool)](https://networkupstools.org/)
 - [NUT Hardware compatibility list](https://networkupstools.org/stable-hcl.html)
 - [NUT User manual (chunked)](https://networkupstools.org/docs/user-manual.chunked/index.html)
-- [NUT documentation and scripts](http://rogerprice.org/NUT/)
 - [NUT config examples document on GitHub](https://github.com/networkupstools/ConfigExamples/releases/tag/book-3.0-20230319-nut-2.8.0)
+- [Man for `upsmon`](https://networkupstools.org/docs/man/upsmon.html)
+
+### Related NUT contents
+
+- [NUT documentation and scripts](http://rogerprice.org/NUT/)
 - [Monitorización de un SAI con GNU/Debian Linux](http://index-of.co.uk/SISTEMAS-OPERATIVOS/NUT%20Debian%20UPS%20Monitor.pdf) (in Spanish)
 - [Instalar y configurar NUT por SNMP](https://blog.ichasco.com/instalar-y-configurar-nut-por-snmp/) (in Spanish)
 - [Monitoring a UPS with nut on Debian or Ubuntu Linux](https://blog.shadypixel.com/monitoring-a-ups-with-nut-on-debian-or-ubuntu-linux/)
