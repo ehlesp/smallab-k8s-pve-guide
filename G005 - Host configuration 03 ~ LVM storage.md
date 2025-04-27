@@ -1,5 +1,20 @@
 # G005 - Host configuration 03 ~ LVM storage
 
+- [Your Proxmox VE server's storage needs to be reorganized](#your-proxmox-ve-servers-storage-needs-to-be-reorganized)
+- [Initial filesystem configuration (**web console**)](#initial-filesystem-configuration-web-console)
+- [Initial filesystem configuration (**shell as root**)](#initial-filesystem-configuration-shell-as-root)
+- [Configuring the unused storage drives](#configuring-the-unused-storage-drives)
+  - [Seeing the new storage volumes on Proxmox VE](#seeing-the-new-storage-volumes-on-proxmox-ve)
+- [LVM rearrangement in the main storage drive](#lvm-rearrangement-in-the-main-storage-drive)
+  - [Removing the `data` LVM thin pool](#removing-the-data-lvm-thin-pool)
+  - [Extending the `root` logical volume](#extending-the-root-logical-volume)
+  - [Creating a new partition and a new VG in the unallocated space on the `sda` drive](#creating-a-new-partition-and-a-new-vg-in-the-unallocated-space-on-the-sda-drive)
+- [References](#references)
+  - [Logical Volume Management (LVM)](#logical-volume-management-lvm)
+- [Navigation](#navigation)
+
+## Your Proxmox VE server's storage needs to be reorganized
+
 After installing Proxmox VE with (almost) default settings, the storage is still not ready since it needs some reorganization.
 
 As a reference, I'll use in this guide my own server's storage setup.
@@ -8,9 +23,9 @@ As a reference, I'll use in this guide my own server's storage setup.
 - One internal, 1 TiB, HDD drive, linked to a SATA 2 port .
 - One external, 2 TiB, HDD drive, linked to a USB 3 port.
 
-Also, remember that...
+Also, keep in mind that:
 
-- Proxmox VE 7.0 is installed in the SSD drive, but only using 50 GiB of its storage space.
+- The Proxmox VE system is installed in the SSD drive, but only using 50 GiB of its storage space.
 - The filesystem is `ext4`.
 
 ## Initial filesystem configuration (**web console**)
@@ -103,8 +118,8 @@ Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 ~~~
 
-> **BEWARE!**  
-> The `fdisk` command **doesn't** return an alphabetically ordered list.
+> [!IMPORTANT]
+> The `fdisk` command **does not** return an alphabetically ordered list.
 
 The `sda` device is the 1TiB SSD drive in which Proxmox VE is installed. In it's block, below its list of technical capabilities, you can also see the list of the **real partitions** (the `/dev/sda#` lines) created in it by the Proxmox VE installation. The `sda1` and `sda2` are partitions used essentially for booting the system up, and the `sda3` is the one that contains the whole `pve` LVM volume group for Proxmox VE.
 
@@ -250,8 +265,9 @@ Let's begin by making the two empty HDDs' storage available for the LVM system.
 
 3. Next, lets create a _physical volume_ (or PV) with each of those new partitions. For this operation, you'll need to use the `pvcreate` command.
 
-    > **BEWARE!**  
-    > The `pvcreate` command will fail if it finds references to a previous LVM structure in the storage drive its trying to turn into a physical volume. So, if pvcreate returns a message like `Can't open /dev/sdb1 exclusively.  Mounted filesystem?`, you'll need to remove all the LVM structure that might be lingering in your storage device. [Follow this guide](https://www.thegeekdiary.com/lvm-error-cant-open-devsdx-exclusively-mounted-filesystem/) to know more about this issue.
+    > [!WARNING]
+    > **The `pvcreate` command will fail if it finds references to a previous LVM structure in the storage drive its trying to turn into a physical volume**\
+    > If `pvcreate` returns a message like `Can't open /dev/sdb1 exclusively.  Mounted filesystem?`, you'll need to remove all the LVM structure that might be lingering in your storage device. [Follow this guide](https://www.thegeekdiary.com/lvm-error-cant-open-devsdx-exclusively-mounted-filesystem/) to know more about this issue.
 
     ~~~bash
     $ pvcreate --metadatasize 1g -y -ff /dev/sdb1
@@ -279,7 +295,7 @@ Let's begin by making the two empty HDDs' storage available for the LVM system.
       Physical volume "/dev/sdc1" successfully created.
     ~~~
 
-    > **BEWARE!**  
+    > [!NOTE]
     > The `Wiping` lines mean that the command is removing any references, or signatures, of previous filesystems that were used in the storage devices. And, after the signatures wiping, `pvcreate` returns a success message if everything has gone right.
 
     See that, in the commands above, and following the rule of thumb of 1 MiB per 1 GiB, I've assigned 1 GiB on the `sdb1` PV and 2 GiB on the `sdc1` PV as the size for their LVM metadata space. If more is required in the future, this can be reconfigured later.
@@ -381,7 +397,7 @@ Let's begin by making the two empty HDDs' storage available for the LVM system.
       pve      1   3   0 wz--n-  <49.50g    6.12g
     ~~~
 
-### _Seeing the new storage volumes on Proxmox VE_
+### Seeing the new storage volumes on Proxmox VE
 
 If you're wondering if any of this changes appear in the Proxmox web console, just open it and browse to the `pve` node level. There, open the `Disks` screen:
 
@@ -399,7 +415,7 @@ At this point, you have an initial arrangement for your unused storage devices. 
 
 The main storage drive, the SSD unit, has an LVM arrangement that is not optimal for the small server you want to build. Let's create a new differentiated storage unit in the SSD drive, one that is not the `pve` volume group used by the Proxmox VE system itself. This way, you'll keep thing separated and reduce the chance of messing anything directly related to your Proxmox VE installation.
 
-### _Removing the `data` LVM thin pool_
+### Removing the `data` LVM thin pool
 
 The installation process of Proxmox VE created a LVM-thin pool called `data`, which is part of the `pve` volume group. You want to reclaim this space, so let's remove this `data`:
 
@@ -463,7 +479,7 @@ The installation process of Proxmox VE created a LVM-thin pool called `data`, wh
 
     ![PVE node thinpool list empty](images/g005/pve_node_disks_lvm-thin_screen_empty.png "PVE node thinpool list empty")
 
-### _Extending the `root` logical volume_
+### Extending the `root` logical volume
 
 Now that you have a lot of free space in the /dev/sda3, let's give more room to your system's `root` volume.
 
@@ -555,7 +571,7 @@ Now that you have a lot of free space in the /dev/sda3, let's give more room to 
 
     You'll see that the `root` volume has grown from 12.25 GiB to 37.50 GiB, the `pve` VG doesn't have any empty space (`VFree`) available, the `/dev/sda3` physical volume also doesn't have any space (`PFree`) free either, and that the `/dev/mapper/pve-root` `Size` corresponds to what the `root` LV has free.
 
-### _Creating a new partition and a new VG in the unallocated space on the `sda` drive_
+### Creating a new partition and a new VG in the unallocated space on the `sda` drive
 
 What remains to do is to make usable all the still unallocated space within the `sda` drive. So, let's make a new partition in it.
 
@@ -804,7 +820,7 @@ With all these steps you've got an independent space in your SSD storage unit, m
 
 ## References
 
-### _LVM_
+### Logical Volume Management (LVM)
 
 - [Logical Volume Management Explained on Linux](https://devconnected.com/logical-volume-management-explained-on-linux/)
 - [Understanding LVM In Linux (Create Logical Volume) RHEL/CentOS 7&8](https://tekneed.com/understanding-lvm-with-examples-advantages-of-lvm/)
