@@ -858,6 +858,8 @@ With all these steps you've got an independent space in your SSD storage unit, m
 - [How to Take ‘Snapshot of Logical Volume and Restore’ in LVM – Part III](https://www.tecmint.com/take-snapshot-of-logical-volume-and-restore-in-lvm/)
 - [Setup Thin Provisioning Volumes in Logical Volume Management (LVM) – Part IV](https://www.tecmint.com/setup-thin-provisioning-volumes-in-lvm/)
 - [Logical Volume Management in Linux](https://www.techtutsonline.com/logical-volume-management-in-linux/)
+- [How to Manage and Use LVM (Logical Volume Management) in Ubuntu](https://www.howtogeek.com/40702/how-to-manage-and-use-lvm-logical-volume-management-in-ubuntu/)
+- [pvcreate error : Can’t open /dev/sdx exclusively. Mounted filesystem?](https://www.ucartz.com/clients/knowledgebase/1376/pvcreate-error--Cant-open-ordevorsdx-exclusively.-Mounted-filesystem.html)
 
 ## Navigation
 
