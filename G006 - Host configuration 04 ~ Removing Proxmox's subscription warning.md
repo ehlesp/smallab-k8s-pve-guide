@@ -63,15 +63,15 @@ Follow this procedure to remove or disable Proxmox's subscription warning:
 
 If you need to undo the change explained before, you have three options to revert it:
 
-1. Undoing manually the change you made in the `proxmoxlib.js`file.
+1. Manually undoing the change you made in the `proxmoxlib.js` file.
 
-2. Restoring the backup file you created of the file within the `proxmox-widget-toolkit` directory:
+2. Restoring the `.orig` backup you created of the file within the `proxmox-widget-toolkit` directory:
 
     ~~~bash
     $ mv proxmoxlib.js.orig proxmoxlib.js
     ~~~
 
-3. Reinstall the proxmox-widget-toolkit package from the repository:
+3. Reinstalling the `proxmox-widget-toolkit` package from the repository:
 
     ~~~bash
     $ apt-get install --reinstall proxmox-widget-toolkit
@@ -87,7 +87,7 @@ $ sed -Ezi.orig "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \
 
 ## Final note
 
-This fix is known to work on any version starting from Proxmox VE **5.1** up to **8.4.z**. Bear also in mind that later Proxmox VE updates will undo this change and restore the warning, forcing your to apply this modification again.
+This fix is known to work on any version starting from Proxmox VE **5.1** up to **8.4.z**. Bear also in mind that later Proxmox VE updates may undo this change and restore the warning, forcing your to apply this modification again.
 
 ## Relevant system paths
 
