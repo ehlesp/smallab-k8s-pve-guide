@@ -15,7 +15,7 @@
 
 Every time you login into the Proxmox VE web console, or when you get into the updates section, you are met with the following warning.
 
-![Proxmox VE subscription warning](images/g006/proxmox_ve_subscription_warning.png "Proxmox VE subscription warning")
+![Proxmox VE subscription warning](images/g006/proxmox_ve_subscription_warning.webp "Proxmox VE subscription warning")
 
 This is bothersome, but there's a partial solution to stop it temporarily.
 
@@ -63,7 +63,7 @@ Follow this procedure to remove or disable Proxmox's subscription warning:
 
 If you need to undo the change explained before, you have three options to revert it:
 
-1. Undoing manually the changes you made in the `proxmoxlib.js`file.
+1. Undoing manually the change you made in the `proxmoxlib.js`file.
 
 2. Restoring the backup file you created of the file within the `proxmox-widget-toolkit` directory:
 
@@ -82,12 +82,12 @@ If you need to undo the change explained before, you have three options to rever
 To do the change in just one (long) command line, just use the following shell command.
 
 ~~~bash
-$ sed -Ezi.bkp "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \/\/\1/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js && systemctl restart pveproxy.service
+$ sed -Ezi.orig "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \/\/\1/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js && systemctl restart pveproxy.service
 ~~~
 
 ## Final note
 
-This fix is known to work on any version starting from Proxmox VE **5.1** up to **7.0-z**. Bear in mind that later Proxmox VE updates will undo this change and restore the warning, forcing your to apply this modification again.
+This fix is known to work on any version starting from Proxmox VE **5.1** up to **8.4.z**. Bear also in mind that later Proxmox VE updates will undo this change and restore the warning, forcing your to apply this modification again.
 
 ## Relevant system paths
 
