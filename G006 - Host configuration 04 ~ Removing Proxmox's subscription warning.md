@@ -17,19 +17,19 @@ Every time you login into the Proxmox VE web console, or when you get into the u
 
 ![Proxmox VE subscription warning](images/g006/proxmox_ve_subscription_warning.webp "Proxmox VE subscription warning")
 
-This is bothersome, but there's a partial solution to stop it temporarily.
+This is bothersome, but there is a way to make the web console stop showing it.
 
 ## Removing the subscription warning
 
 Follow this procedure to remove or disable Proxmox's subscription warning:
 
-1. Open a root shell and execute the next `cd` command:
+1. Open a root shell and `cd` to `/usr/share/javascript/proxmox-widget-toolkit`:
 
     ~~~bash
     $ cd /usr/share/javascript/proxmox-widget-toolkit
     ~~~
 
-2. In that `proxmox-widget-toolkit` directory there's a javascript library file called `proxmoxlib.js`. Make a backup of it:
+2. In that `proxmox-widget-toolkit` directory there's a javascript library file called `proxmoxlib.js`. Make a `.orig` backup of it:
 
     ~~~bash
     $ cp proxmoxlib.js proxmoxlib.js.orig
@@ -49,7 +49,7 @@ Follow this procedure to remove or disable Proxmox's subscription warning:
       title: gettext('No valid subscription'),
     ~~~
 
-5. Save the change and exit the editor, then restart the Proxmox web service:
+5. Save the change and exit the editor, then restart the Proxmox VE web service:
 
     ~~~bash
     $ systemctl restart pveproxy.service
