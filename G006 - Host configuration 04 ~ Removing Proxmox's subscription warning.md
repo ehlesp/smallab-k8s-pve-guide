@@ -1,38 +1,55 @@
-# G006 - Host configuration 04 ~ Removing subscription warning
+# G006 - Host configuration 04 ~ Removing Proxmox's subscription warning
 
-Every time you login into the Proxmox VE web console, you are met with the following warning.
+- [About the Proxmox subscription warning](#about-the-proxmox-subscription-warning)
+- [Removing the subscription warning](#removing-the-subscription-warning)
+- [Reverting the changes](#reverting-the-changes)
+- [Change executed in just one command line](#change-executed-in-just-one-command-line)
+- [Final note](#final-note)
+- [Relevant system paths](#relevant-system-paths)
+  - [Directories](#directories)
+  - [Files](#files)
+- [References](#references)
+- [Navigation](#navigation)
+
+## About the Proxmox subscription warning
+
+Every time you login into the Proxmox VE web console, or when you get into the updates section, you are met with the following warning.
 
 ![Proxmox VE subscription warning](images/g006/proxmox_ve_subscription_warning.png "Proxmox VE subscription warning")
 
-This is bothersome, but has an easy solution.
+This is bothersome, but there's a partial solution to stop it temporarily.
 
-1. Open a root shell and execute the next `cd` command.
+## Removing the subscription warning
+
+Follow this procedure to remove or disable Proxmox's subscription warning:
+
+1. Open a root shell and execute the next `cd` command:
 
     ~~~bash
     $ cd /usr/share/javascript/proxmox-widget-toolkit
     ~~~
 
-2. In that `proxmox-widget-toolkit` directory there's a javascript library file called `proxmoxlib.js`. Make a backup of it.
+2. In that `proxmox-widget-toolkit` directory there's a javascript library file called `proxmoxlib.js`. Make a backup of it:
 
     ~~~bash
     $ cp proxmoxlib.js proxmoxlib.js.orig
     ~~~
 
-3. Open the `proxmoxlib.js` file with a proper text editor (vi, vim or nano). Then, in the javascript code, search for the following text.
+3. Open the `proxmoxlib.js` file with a proper text editor (vi, vim or nano). Then, in the javascript code, search for the following text:
 
     ~~~js
     Ext.Msg.show({
       title: gettext('No valid subscription'),
     ~~~
 
-4. When you locate it (just search the `No valid subscription` string, its unique in the code), replace `Ext.Msg.show` with `void`, as shown below.
+4. When you locate it (just search the `No valid subscription` string, its unique in the code), replace `Ext.Msg.show` with `void`:
 
     ~~~js
     void({ //Ext.Msg.show({
       title: gettext('No valid subscription'),
     ~~~
 
-5. Save the change and exit the editor, then restart the Proxmox web service.
+5. Save the change and exit the editor, then restart the Proxmox web service:
 
     ~~~bash
     $ systemctl restart pveproxy.service
@@ -47,13 +64,14 @@ This is bothersome, but has an easy solution.
 If you need to undo the change explained before, you have three options to revert it:
 
 1. Undoing manually the changes you made in the `proxmoxlib.js`file.
-2. Restoring the backup file you created of the file within the `proxmox-widget-toolkit` directory.
+
+2. Restoring the backup file you created of the file within the `proxmox-widget-toolkit` directory:
 
     ~~~bash
     $ mv proxmoxlib.js.orig proxmoxlib.js
     ~~~
 
-3. Reinstall the proxmox-widget-toolkit package from the repository
+3. Reinstall the proxmox-widget-toolkit package from the repository:
 
     ~~~bash
     $ apt-get install --reinstall proxmox-widget-toolkit
@@ -69,15 +87,15 @@ $ sed -Ezi.bkp "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \/
 
 ## Final note
 
-This fix is known to work on any version starting from Proxmox VE **5.1** up to **7.0-x**. Also, bear in mind that any Proxmox VE update will undo this change and restore the warning, so you'll be force to apply this modification again.
+This fix is known to work on any version starting from Proxmox VE **5.1** up to **7.0-z**. Bear in mind that later Proxmox VE updates will undo this change and restore the warning, forcing your to apply this modification again.
 
 ## Relevant system paths
 
-### _Directories_
+### Directories
 
 - `/usr/share/javascript/proxmox-widget-toolkit`
 
-### _Files_
+### Files
 
 - `/usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js`
 

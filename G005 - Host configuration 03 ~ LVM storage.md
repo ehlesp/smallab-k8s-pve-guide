@@ -863,4 +863,4 @@ With all these steps you've got an independent space in your SSD storage unit, m
 
 ## Navigation
 
-[<< Previous (**G004. Host configuration 02**)](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G006. Host configuration 04**) >>](G006%20-%20Host%20configuration%2004%20~%20Removing%20subscription%20warning.md)
+[<< Previous (**G004. Host configuration 02**)](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G006. Host configuration 04**) >>](G006%20-%20Host%20configuration%2004%20~%20Removing%20Proxmox's%20subscription%20warning.md)

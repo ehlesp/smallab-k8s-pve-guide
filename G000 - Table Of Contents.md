@@ -52,13 +52,15 @@
 - [LVM rearrangement in the main storage drive](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#lvm-rearrangement-in-the-main-storage-drive)
 - [References](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#references)
 
-### [**G006** - Host configuration 04 ~ Removing subscription warning](G006%20-%20Host%20configuration%2004%20~%20Removing%20subscription%20warning.md#g006-host-configuration-04-removing-subscription-warning)
+### [**G006** - Host configuration 04 ~ Removing Proxmox's subscription warning](G006%20-%20Host%20configuration%2004%20~%20Removing%20Proxmox's%20subscription%20warning.md)
 
-- [Reverting the changes](G006%20-%20Host%20configuration%2004%20~%20Removing%20subscription%20warning.md#reverting-the-changes)
-- [Change executed in just one command line](G006%20-%20Host%20configuration%2004%20~%20Removing%20subscription%20warning.md#change-executed-in-just-one-command-line)
-- [Final note](G006%20-%20Host%20configuration%2004%20~%20Removing%20subscription%20warning.md#final-note)
-- [Relevant system paths](G006%20-%20Host%20configuration%2004%20~%20Removing%20subscription%20warning.md#relevant-system-paths)
-- [References](G006%20-%20Host%20configuration%2004%20~%20Removing%20subscription%20warning.md#references)
+- [About the Proxmox subscription warning](G006%20-%20Host%20configuration%2004%20~%20Removing%20Proxmox's%20subscription%20warning.md#about-the-proxmox-subscription-warning)
+- [Removing the subscription warning](G006%20-%20Host%20configuration%2004%20~%20Removing%20Proxmox's%20subscription%20warning.md#removing-the-subscription-warning)
+- [Reverting the changes](G006%20-%20Host%20configuration%2004%20~%20Removing%20Proxmox's%20subscription%20warning.md#reverting-the-changes)
+- [Change executed in just one command line](G006%20-%20Host%20configuration%2004%20~%20Removing%20Proxmox's%20subscription%20warning.md#change-executed-in-just-one-command-line)
+- [Final note](G006%20-%20Host%20configuration%2004%20~%20Removing%20Proxmox's%20subscription%20warning.md#final-note)
+- [Relevant system paths](G006%20-%20Host%20configuration%2004%20~%20Removing%20Proxmox's%20subscription%20warning.md#relevant-system-paths)
+- [References](G006%20-%20Host%20configuration%2004%20~%20Removing%20Proxmox's%20subscription%20warning.md#references)
 
 ### [**G007** - Host hardening 01 ~ TFA authentication](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#g007-host-hardening-01-tfa-authentication)
 
