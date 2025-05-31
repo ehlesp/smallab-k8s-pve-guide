@@ -1,6 +1,29 @@
 # G007 - Host hardening 01 ~ TFA authentication
 
-One of the first things you should do to harden your standalone PVE node is to enable the **TFA** (Two Factor Authentication, also known as _2FA_) for all your users, and specially for the `root` user.
+- [Enable Two Factor Authentication in your PVE system](#enable-two-factor-authentication-in-your-pve-system)
+- [Enabling TFA for SSH access](#enabling-tfa-for-ssh-access)
+  - [_1. Installation of Google authenticator's PAM package_](#1-installation-of-google-authenticators-pam-package)
+  - [_2. Configuration of a Google authenticator TOTP token_](#2-configuration-of-a-google-authenticator-totp-token)
+    - [**2.1 Interactive execution of Google authenticator program**](#21-interactive-execution-of-google-authenticator-program)
+    - [**2.2 Automated execution of Google authenticator program**](#22-automated-execution-of-google-authenticator-program)
+  - [_3. File with the generated authentication token configuration_](#3-file-with-the-generated-authentication-token-configuration)
+  - [_4. Enforcing TFA on remote ssh access_](#4-enforcing-tfa-on-remote-ssh-access)
+- [Enforcing TFA TOTP for accessing the Proxmox VE web console](#enforcing-tfa-totp-for-accessing-the-proxmox-ve-web-console)
+- [Enforcing TFA TOTP as a default requirement for `pam` realm](#enforcing-tfa-totp-as-a-default-requirement-for-pam-realm)
+  - [_In Proxmox VE **v7.2-z**, `Authentication` is now `Realms`_](#in-proxmox-ve-v72-z-authentication-is-now-realms)
+- [Incompatibility of PVE web console login with TFA enforced local shell access](#incompatibility-of-pve-web-console-login-with-tfa-enforced-local-shell-access)
+- [Relevant system paths](#relevant-system-paths)
+  - [_Directories_](#directories)
+  - [_Files_](#files)
+- [References](#references)
+  - [_About TFA_](#about-tfa)
+  - [_Configuring ssh login with password + TOTP_](#configuring-ssh-login-with-password--totp)
+  - [_About PAM_](#about-pam)
+- [Navigation](#navigation)
+
+## Enable Two Factor Authentication in your PVE system
+
+One of the first things you should do to harden your standalone Proxmox VE node is to enable the Two Factor Authentication (**TFA**, also known as _2FA_) for all your users, **and specially for the `root` user**.
 
 ## Enabling TFA for SSH access
 
