@@ -1,8 +1,26 @@
 # G008 - Host hardening 02 ~ Alternative administrator user
 
-In the previous guides, you've been using the `root` user to do all the set up in your Proxmox VE system. That's fine for earlier configuration steps, but it's not recommended to keep on using it as your server's everyday administrator user.
+- [Avoid using the root user](#avoid-using-the-root-user)
+- [Understanding the Proxmox VE user management and the realms](#understanding-the-proxmox-ve-user-management-and-the-realms)
+- [Creating a new system administrator user for a Proxmox VE node](#creating-a-new-system-administrator-user-for-a-proxmox-ve-node)
+  - [Creating the user with sudo privileges in Debian](#creating-the-user-with-sudo-privileges-in-debian)
+  - [Assigning a TOTP code to the new user](#assigning-a-totp-code-to-the-new-user)
+  - [Testing `sudo` with the new administrator user](#testing-sudo-with-the-new-administrator-user)
+  - [Creating a system administrator group in Proxmox VE](#creating-a-system-administrator-group-in-proxmox-ve)
+  - [Enabling the new administrator user in Proxmox VE](#enabling-the-new-administrator-user-in-proxmox-ve)
+- [Relevant system paths](#relevant-system-paths)
+  - [Directories](#directories)
+  - [Files](#files)
+- [References](#references)
+  - [Proxmox VE user management](#proxmox-ve-user-management)
+  - [PAM](#pam)
+- [Navigation](#navigation)
 
-Since `root` is **the superuser with all the privileges**, using it directly on any Linux server has always the potential for creating all sorts of problems (security related or of any other kind). To mitigate those problems, the recommended thing to do is to create an alternative administrator user with `sudo` privileges and use it instead of `root`.
+## Avoid using the root user
+
+In the previous chapters, you've been using the `root` user to work in your Proxmox VE system's setup. That's fine for earlier configuration steps, but it's not recommended to keep on using it as your server's everyday administrator user.
+
+Since `root` is **the superuser with all the privileges**, using it directly on any Linux server has always the potential for inducing all sorts of security or other problems. To mitigate those issues, is better to create an alternative administrator user with `sudo` privileges and use it instead of `root`.
 
 ## Understanding the Proxmox VE user management and the realms
 
@@ -33,7 +51,7 @@ In a normal Linux-based server, you would just create a standard user and then g
 
 So, you'll need to perform a number of steps to create a new administrative user in your Proxmox VE's `pam` realm.
 
-### _Creating the user with sudo privileges in Debian_
+### Creating the user with sudo privileges in Debian
 
 1. Open a terminal as `root`. Then create a user called, for instance, `mgrsys` with the `adduser` command.
 
@@ -78,7 +96,7 @@ So, you'll need to perform a number of steps to create a new administrative user
     Done.
     ~~~
 
-### _Assigning a TOTP code to the new user_
+### Assigning a TOTP code to the new user
 
 1. Switch to your new user by using the `su` command, and go to its `$HOME` directory.
 
@@ -98,7 +116,7 @@ So, you'll need to perform a number of steps to create a new administrative user
 
 3. Copy all the codes given by the `google-authenticator` command in a safe location, like a password manager.
 
-### _Testing `sudo` with the new administrator user_
+### Testing `sudo` with the new administrator user
 
 After you've checked that your new administrator user can connect through ssh, make a simple test to see if this user has sudo privileges. For instance, you could try to execute a `ls` with `sudo`.
 
@@ -117,7 +135,7 @@ After you've checked that your new administrator user can connect through ssh, m
 
 If `sudo` is working for your new user, the first time you use the command it'll show you a warning about the responsibility of using it and then it'll require the user's password.
 
-### _Creating a system administrator group in Proxmox VE_
+### Creating a system administrator group in Proxmox VE
 
 The most convenient way of assigning roles and privileges to users within the Proxmox VE platform is by putting them in groups that already have the required roles and privileges. So, let's create a PVE platform managers group.
 
@@ -161,7 +179,7 @@ This new group can also be seen in the user management section of your PVE's web
 > **BEWARE!**  
 > This group you've just created is just a Proxmox VE one, **it's not part of the underlying Debian groups**. Thus, you won't see it listed in the `/etc/group` file.
 
-### _Enabling the new administrator user in Proxmox VE_
+### Enabling the new administrator user in Proxmox VE
 
 The `mgrsys` user you created earlier exists within the Debian 11 OS, but not in the Proxmox VE platform yet. To do so, you have to create the same user within the PVE platform too.
 
@@ -195,21 +213,15 @@ The `mgrsys` user you created earlier exists within the Debian 11 OS, but not in
 
     The new `mgrsys` user will have access to the same tabs and options as `root`, thanks of being part of a PVE group with full administrative rights.
 
-### _TFA has its own section in Proxmox VE **v7.2-z**_
-
-There's no `TFA` button any more in the `Permissions > Users` section at the `Datacenter` level of the `v7.2-z` releases (and maybe also in the previous `v7.1-z` ones). Instead, you can manage all two factor tokens from its own separate section under `Permissions > Two Factor`.
-
-![Datacenter Permissions Two Factor section](images/g008/datacenter_permissions_two_factor_section_v7.2-z.png "Datacenter Permissions Two Factor section")
-
 ## Relevant system paths
 
-### _Directories_
+### Directories
 
 - `$HOME`
 - `/etc/pve`
 - `/etc/pve/priv`
 
-### _Files_
+### Files
 
 - `$HOME/.google_authenticator`
 - `/etc/pve/user.cfg`
@@ -218,14 +230,14 @@ There's no `TFA` button any more in the `Permissions > Users` section at the `Da
 
 ## References
 
-### _Proxmox VE user management_
+### Proxmox VE user management
 
 - [Proxmox VE, admin guide. User Management](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_user_management)
 - [Proxmox VE, admin guide. Authentication Realms](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#pveum_authentication_realms)
 - [Proxmox VE, admin guide. User Management, command line tool](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_command_line_tool)
 - [Proxmox VE, admin guide. User Management, real world examples](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_real_world_examples)
 
-### _PAM_
+### PAM
 
 - [PAM, Pluggable Authentication Module](https://en.wikipedia.org/wiki/Pluggable_authentication_module)
 

@@ -74,6 +74,7 @@
 
 ### [**G008** - Host hardening 02 ~ Alternative administrator user](G008%20-%20Host%20hardening%2002%20~%20Alternative%20administrator%20user.md#g008-host-hardening-02-alternative-administrator-user)
 
+- [Avoid using the root user](G008%20-%20Host%20hardening%2002%20~%20Alternative%20administrator%20user.md#avoid-using-the-root-user)
 - [Understanding the Proxmox VE user management and the realms](G008%20-%20Host%20hardening%2002%20~%20Alternative%20administrator%20user.md#understanding-the-proxmox-ve-user-management-and-the-realms)
 - [Creating a new system administrator user for a Proxmox VE node](G008%20-%20Host%20hardening%2002%20~%20Alternative%20administrator%20user.md#creating-a-new-system-administrator-user-for-a-proxmox-ve-node)
 - [Relevant system paths](G008%20-%20Host%20hardening%2002%20~%20Alternative%20administrator%20user.md#relevant-system-paths)
