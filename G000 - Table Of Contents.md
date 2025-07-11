@@ -82,6 +82,7 @@
 
 ### [**G009** - Host hardening 03 ~ SSH key pairs and sshd service configuration](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md#g009-host-hardening-03-ssh-key-pairs-and-sshd-service-configuration)
 
+- [Harden your SSH connections with key pairs](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md#harden-your-ssh-connections-with-key-pairs)
 - [SSH key pairs](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md#ssh-key-pairs)
 - [Hardening the `sshd` service](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md#hardening-the-sshd-service)
 - [Relevant system paths](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md#relevant-system-paths)
