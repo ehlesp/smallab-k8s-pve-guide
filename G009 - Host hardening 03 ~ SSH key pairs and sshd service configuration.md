@@ -18,8 +18,8 @@
     - [Other possible changes in ssh configuration](#other-possible-changes-in-ssh-configuration)
     - [Consideration about hardening `sshd`](#consideration-about-hardening-sshd)
 - [Relevant system paths](#relevant-system-paths)
-  - [_Directories_](#directories)
-  - [_Files_](#files)
+  - [Directories](#directories)
+  - [Files](#files)
 - [References](#references)
   - [General SSH configuration](#general-ssh-configuration)
   - [About SSH key pairs](#about-ssh-key-pairs)
@@ -27,11 +27,18 @@
   - [Particular sshd parameters](#particular-sshd-parameters)
   - [About the `authorized_keys` file](#about-the-authorized_keys-file)
   - [About disabling the `root` user](#about-disabling-the-root-user)
+  - [About SSH key generation and cryptosystems](#about-ssh-key-generation-and-cryptosystems)
 - [Navigation](#navigation)
 
 ## Harden your SSH connections with key pairs
 
-To harden the ssh remote connections to your standalone PVE node there are two main things to do: use SSH key pairs instead of passwords, and adjust the `sshd` service configuration in a certain manner.
+To harden the ssh remote connections to your standalone PVE node, there are two main steps to take:
+
+- **First step**\
+  To set up and use SSH key pairs instead of passwords.
+
+- **Second step**\
+  To harden the `sshd` service configuration in a certain manner.
 
 ## SSH key pairs
 
@@ -39,30 +46,30 @@ To harden the ssh remote connections to your standalone PVE node there are two m
 
 The `root` user in your PVE host already comes with a generated ssh key pair. Open a terminal as `root` and list the contents of the `.ssh` directory.
 
-~~~bash
+~~~sh
 $ ls -al .ssh/
-total 24
-drwxr-xr-x 2 root root 4096 Mar 12 19:31 .
-drwx------ 4 root root 4096 Mar 16 09:55 ..
-lrwxrwxrwx 1 root root   29 Mar 12 19:31 authorized_keys -> /etc/pve/priv/authorized_keys
--rw-r----- 1 root root  117 Mar 12 19:31 config
--rw------- 1 root root 1811 Mar 12 19:31 id_rsa
--rw-r--r-- 1 root root  390 Mar 12 19:31 id_rsa.pub
+total 20
+drwx------ 2 root root 4096 Apr 21 17:14 .
+drwx------ 4 root root 4096 Jul 11 18:53 ..
+lrwxrwxrwx 1 root root   29 Apr 21 17:14 authorized_keys -> /etc/pve/priv/authorized_keys
+-rw-r----- 1 root root  117 Apr 21 17:14 config
+-rw------- 1 root root 3369 Apr 21 17:14 id_rsa
+-rw-r--r-- 1 root root  734 Apr 21 17:14 id_rsa.pub
 ~~~
 
-The `id_rsa` file has the private key, while the `id_rsa.pub` has the public key. The strength of any ssh key pair is directly related to their length, and you can check out the length of this key pair with `ssh-keygen`.
+The `id_rsa` file has the private key, while the `id_rsa.pub` has the public key. Since this is a key pair encrypted with the [RSA cryptosystem](https://en.wikipedia.org/wiki/RSA_cryptosystem), its strength is directly related to number of bits used to create it. You can check out the bits employed in this key pair with `ssh-keygen`.
 
-~~~bash
+~~~sh
 $ cd .ssh/
 $ ssh-keygen -lf id_rsa
-2048 SHA256:AZ4mJD4OZcna253AaECzD97nYkjthwoZr5vyXiSACAA root@pve (RSA)
+4096 SHA256:+c40qYIXrTV+b0KHWenrgHaD4a8AEPeIHFMwZVAUk5U root@pve (RSA)
 ~~~
 
-The key pair's length is **2048**, measured always in **bits**. This is fine, but if you want a stronger key pair do the following.
+As you can see in the output above, the key pair's length is `4096` bits, which is enough (at the time I write this, I mean) for an RSA-encrypted key pair. But if you want a key pair encrypted with the newer [_Ed25519_ signature scheme](https://en.wikipedia.org/wiki/EdDSA#Ed25519), you can use the `ssh-keygen` command as follows:
 
 1. Make a backup of the current `root`'s key pair.
 
-    ~~~bash
+    ~~~sh
     $ cd .ssh/
     $ cp id_rsa id_rsa.orig
     $ cp id_rsa.pub id_rsa.pub.orig
@@ -70,73 +77,77 @@ The key pair's length is **2048**, measured always in **bits**. This is fine, bu
 
 2. Delete the current key pair.
 
-    ~~~bash
+    ~~~sh
     $ rm -f id_rsa id_rsa.pub
     ~~~
 
 3. Generate a new key pair with the `ssh-keygen` command.
 
-    ~~~bash
-    $ ssh-keygen -t rsa -b 4096 -C "root@pve"
+    ~~~sh
+    $ ssh-keygen -t ed25519 -a 100 -C "root@pve"
     ~~~
 
     The options specified mean the following.
 
-    - `-t rsa` : Specifies the type of key to create, `rsa` in this case.
+    - `-t ed25519`\
+      Specifies the type of key to create, `ed25519` in this case.
 
-    - `-b 4096` : Specifies the number of bits in the key to create, or length. Here the number is `4096` bits.
+    - `-a 100`\
+      Makes the command execute the specified number of key derivations (`100` here) to make your private key harder to break with brute-force techniques.
 
-    - `-C "root@pve"` : To set a comment associated with the generated key pair, most commonly used to put a string following the schema `[username]@[hostname]`.
+    - `-C "root@pve"`\
+      To set a comment associated with the generated key pair, most commonly used to put a string following the schema `[username]@[hostname]`.
 
 4. The ssh-keygen command will ask you two things.
 
-    - `Enter file in which to save the key (/root/.ssh/id_rsa):`
+    - `Enter file in which to save the key (/root/.ssh/id_ed25519):`
     - `Enter passphrase (empty for no passphrase):`
 
-    Leave questions both empty by pressing `enter`. Then, the whole command's output will look like the following.
+    Leave both questions empty by pressing `enter`. Then, the whole command's output will look like the following.
 
-    ~~~bash
-    Enter file in which to save the key (/root/.ssh/id_rsa):
+    ~~~sh
+    Generating public/private ed25519 key pair.
+    Enter file in which to save the key (/root/.ssh/id_ed25519):
     Enter passphrase (empty for no passphrase):
     Enter same passphrase again:
-    Your identification has been saved in /root/.ssh/id_rsa.
-    Your public key has been saved in /root/.ssh/id_rsa.pub.
+    Your identification has been saved in /root/.ssh/id_ed25519
+    Your public key has been saved in /root/.ssh/id_ed25519.pub
     The key fingerprint is:
-    SHA256:W+egCvEe3JffgWQaShiRMkUEyVaVdnFoKOpYyd2e7Co root@pve
+    SHA256:F6Vq9wL1wjAMTtaJRcnTxCtElnV5bz51BpbBc9guWVg root@pve
     The key's randomart image is:
-    +---[RSA 4096]----+
-    |   ..B*o.o.o.    |
-    |    * o.+ +.     |
-    |   o *.+ o       |
-    |    = .o.        |
-    |   +. .oS.+ +    |
-    |  . .+ o+= X .   |
-    |    . +.= + o .  |
-    |    Eo o.. . . . |
-    |     .+.    . .  |
+    +--[ED25519 256]--+
+    |      +B=Oo oo.BE|
+    |     +.+O o+. X +|
+    |      ..+.+. o O |
+    |        .*.o  o B|
+    |        S.= .  =o|
+    |       . + o   ..|
+    |          . .   .|
+    |           .     |
+    |                 |
     +----[SHA256]-----+
     ~~~
 
-5. The `ssh-keygen` command has generated a new key pair in your `root`'s the `.ssh` directory. You can verify this also with `ssh-keygen`.
+5. The `ssh-keygen` command has generated a new key pair in your `root`'s `.ssh` directory. You can verify this also with `ssh-keygen`.
 
-    ~~~bash
-    $ ssh-keygen -lf id_rsa
-    4096 SHA256:W+egCvEe3JffgWQaShiRMkUEyVaVdnFoKOpYyd2e7Co root@pve (RSA)
+    ~~~sh
+    $ ssh-keygen -lf id_ed25519
+    256 SHA256:F6Vq9wL1wjAMTtaJRcnTxCtElnV5bz51BpbBc9guWVg root@pve (ED25519)
     ~~~
 
-    It should return the same key fingerprint you saw right after generating the new key pair. Also, the bits length is 4096, not just 2046 like in the original key pair set.
+    It should return the same key fingerprint you saw right after generating the new key pair. Also, notice how the bits length informed is 256. Do not worry about this detail, since the Ed25519 signature scheme is different from the RSA cryptosystem.
 
-6. The last bit to do is to authorize the public key part in the `authorized_keys` file, while also removing the original public key from it.
+6. The last important bit to do is to authorize the public key part in the `authorized_keys` file, while also removing the original public key from it.
 
-    ~~~bash
+    ~~~sh
     $ > authorized_keys
-    $ cat id_rsa.pub >> authorized_keys
+    $ cat id_ed25519.pub >> authorized_keys
     ~~~
 
-    > **BEWARE!**  
+    > [!WARNING]
     > In a Proxmox VE system, the `root`'s `authorized_keys` is a symlink to `/etc/pve/priv/authorized_keys`, which is used by Proxmox VE to allow nodes in a cluster to communicate with each other through ssh. So, in case of a clustered PVE environment, is expected to see the public keys of other nodes' `root` users authorized in this file.
 
-As a final consideration, you could remove (with `rm`) the backup of the original ssh key pair since you won't need it anymore.
+7. As a final consideration, you could also remove (with `rm`) the backup of the original RSA-based ssh key pair since you won't need it anymore.
 
 ### New key pair for non-`root` users
 
@@ -144,70 +155,73 @@ At this point, you just have another user apart from the `root` one: your admini
 
 1. Open a shell as `mgrsys`, and verify that there's no `.ssh` folder in its `/home/mgrsys` directory.
 
-    ~~~bash
+    ~~~sh
     $ ls -al
-    total 28
-    drwxr-xr-x 2 mgrsys mgrsys 4096 Aug 20 14:25 .
-    drwxr-xr-x 3 root   root   4096 Aug 20 14:17 ..
-    -rw------- 1 mgrsys mgrsys  155 Aug 20 14:25 .bash_history
-    -rw-r--r-- 1 mgrsys mgrsys  220 Aug 20 14:17 .bash_logout
-    -rw-r--r-- 1 mgrsys mgrsys 3526 Aug 20 14:17 .bashrc
-    -r-------- 1 mgrsys mgrsys  135 Aug 20 14:21 .google_authenticator
-    -rw-r--r-- 1 mgrsys mgrsys  807 Aug 20 14:17 .profile
+    total 36
+    drwx------ 3 mgrsys mgrsys 4096 Jul 11 20:26 .
+    drwxr-xr-x 3 root   root   4096 Jun 12 17:07 ..
+    -rw------- 1 mgrsys mgrsys  466 Jun 12 17:36 .bash_history
+    -rw-r--r-- 1 mgrsys mgrsys  220 Jun 12 17:07 .bash_logout
+    -rw-r--r-- 1 mgrsys mgrsys 3526 Jun 12 17:07 .bashrc
+    drwxr-xr-x 4 mgrsys mgrsys 4096 Aug 20  2021 .config
+    -r-------- 1 mgrsys mgrsys  155 Jul 11 20:26 .google_authenticator
+    -rw-r--r-- 1 mgrsys mgrsys  807 Jun 12 17:07 .profile
+    -rw-r--r-- 1 mgrsys mgrsys    0 Jun 12 17:33 .sudo_as_admin_successful
+    -rw-r--r-- 1 mgrsys mgrsys  293 Aug 20  2021 .vimrc
     ~~~
 
-    There shouldn't be one since new users don't have such `.ssh` folder.
+    There shouldn't be one since new Debian Linux users are not created with such `.ssh` folder.
 
 2. Execute the `ssh-keygen` command to generate a ssh key pair and, as with `root`, just press enter on the questions.
 
-    ~~~bash
-    $ ssh-keygen -t rsa -b 4096 -C "mgrsys@pve"
-    Generating public/private rsa key pair.
-    Enter file in which to save the key (/home/mgrsys/.ssh/id_rsa):
+    ~~~sh
+    $ ssh-keygen -t ed25519 -a 100 -C "mgrsys@pve"
+    Generating public/private ed25519 key pair.
+    Enter file in which to save the key (/home/mgrsys/.ssh/id_ed25519):
     Created directory '/home/mgrsys/.ssh'.
     Enter passphrase (empty for no passphrase):
     Enter same passphrase again:
-    Your identification has been saved in /home/mgrsys/.ssh/id_rsa.
-    Your public key has been saved in /home/mgrsys/.ssh/id_rsa.pub.
+    Your identification has been saved in /home/mgrsys/.ssh/id_ed25519
+    Your public key has been saved in /home/mgrsys/.ssh/id_ed25519.pub
     The key fingerprint is:
-    SHA256:W+egCvEe3JffgWQaShiRMkUEyVaVdnFoKOpYyd2e7Co mgrsys@pam
+    SHA256:oW/pYlgU4eDMDpjCyCdXeNymuDsX8fBjP4das1G3rvQ mgrsys@pve
     The key's randomart image is:
-    +---[RSA 4096]----+
-    |   ..B*o.o.o.    |
-    |    * o.+ +.     |
-    |   o *.+ o       |
-    |    = .o.        |
-    |   +. .oS.+ +    |
-    |  . .+ o+= X .   |
-    |    . +.= + o .  |
-    |    Eo o.. . . . |
-    |     .+.    . .  |
+    +--[ED25519 256]--+
+    |    +.o.         |
+    |+o =.=.o         |
+    |=+.o* +..        |
+    |. ++ +.. .       |
+    |    o.* S  . .   |
+    |   . ..* .. . .  |
+    |    .oo *+.. .   |
+    |   o..oo.+=.o    |
+    |    o. oo.o..E   |
     +----[SHA256]-----+
     ~~~
 
 3. The new ssh key pair has been saved in the `.ssh` folder created inside your user's `$HOME` path.
 
-    ~~~bash
-    $ cd .ssh
+    ~~~sh
+    $ cd .ssh/
     $ ls
-    id_rsa  id_rsa.pub
+    id_ed25519  id_ed25519.pub
     ~~~
 
 4. Create the `authorized_keys` file.
 
-    ~~~bash
+    ~~~sh
     $ touch authorized_keys ; chmod 600 authorized_keys
     ~~~
 
-5. Append the content of `id_rsa.pub` into `authorized_keys`.
+5. Append the content of `id_ed25519.pub` into `authorized_keys`.
 
-    ~~~bash
-    $ cat id_rsa.pub >> authorized_keys
+    ~~~sh
+    $ cat id_ed25519.pub >> authorized_keys
     ~~~
 
 6. Copy the `config` file from the `root` user, and change it's ownership.
 
-    ~~~bash
+    ~~~sh
     $ sudo cp /root/.ssh/config config
     $ sudo chown mgrsys:mgrsys config
     ~~~
@@ -216,7 +230,7 @@ At this point, you just have another user apart from the `root` one: your admini
 
 ### Export your key pairs
 
-Don't forget to export those new key pairs so you can use them to connect to your standalone PVE node. Also remember that you'll need to generate the `.ppk` file from each private key so you can connect from Windows clients. Check out the [**G901** appendix guide](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md) to see how to connect through SSH with PuTTY.
+Don't forget to export those new key pairs so you can use them to connect to your standalone PVE node. Also remember that you'll need to generate the `.ppk` file from each private key to connect from Windows clients. Check out the [**G901** appendix guide](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md) to see how to connect through SSH with PuTTY.
 
 ## Hardening the `sshd` service
 
@@ -227,7 +241,7 @@ To do this hardening, you'll need to modify two files that you've already change
 
 So, open a terminal as your administrative `sudo` user `mgrsys` and make a backup of your current `sshd` configuration.
 
-~~~bash
+~~~sh
 $ cd /etc/pam.d
 $ sudo cp sshd sshd.bkp
 $ cd /etc/ssh
@@ -238,7 +252,7 @@ $ sudo cp sshd_config sshd_config.bkp
 
 To disable the common `pam` authentication when login through ssh, edit the `/etc/pam.d/sshd` file by commenting out the `@include common-auth` line found at at its top.
 
-~~~bash
+~~~sh
 # Standard Un*x authentication.
 #@include common-auth
 ~~~
@@ -247,14 +261,14 @@ To disable the common `pam` authentication when login through ssh, edit the `/et
 
 #### Disabling IPv6 protocol
 
-Nowadays IPv6 is still not really in use, and less in internal private networks like the one your system is in. Then, you can safely disable the protocol on the `sshd` service.
+Although the use of IPv6 seems to be growing, you will not really need it in a internal private networks like the one your system is in. Then, you can safely disable the protocol on the `sshd` service.
 
 1. Edit the current `/etc/ssh/sshd_config` file, enabling the `AddressFamily` parameter with the value `inet`. It should end looking like below.
 
-    ~~~bash
+    ~~~sh
     #Port 22
     AddressFamily inet
-    ListenAddress 192.168.1.107
+    ListenAddress 10.3.0.2
     #ListenAddress ::
     ~~~
 
@@ -262,18 +276,18 @@ Nowadays IPv6 is still not really in use, and less in internal private networks 
 
 2. Save the the change and restart the `ssh` service.
 
-    ~~~bash
+    ~~~sh
     $ sudo systemctl restart sshd.service
     ~~~
 
-3. Using the `ss` and `grep` commands, check if there's any socket listening on the port `22` but with an IPv6 address like `[::1]`.
+3. Using the `ss` and `grep` commands, check if there is any socket listening on the port `22` but with an IPv6 address like `[::1]`.
 
-    ~~~bash
+    ~~~sh
     $ sudo ss -atlnup | grep :22
-    tcp   LISTEN 0      128    192.168.1.107:22        0.0.0.0:*    users:(("sshd",pid=4822,fd=3))
+    tcp   LISTEN 0      128         10.3.0.2:22        0.0.0.0:*    users:(("sshd",pid=30959,fd=3))
     ~~~
 
-    With the `ss` command above, you get a list of all the ports open in your system and on which address, among other details. With `grep` you filter out the lines returned by `ss` to get only the ones which, in this case, have the port `22` opened. In the output above you can see that there's only one line, which corresponds to the IPv4 address where `sshd` is listening, `192.168.1.107` in this case.
+    With the `ss` command above, you get a list of all the ports open in your system and on which address, among other details. With `grep` you filter out the lines returned by `ss` to get only the ones which, in this case, have the port `22` opened. In the output above you can see that there's only one line, which corresponds to the IPv4 address where `sshd` is listening, `10.3.0.2` in this case.
 
 #### Reducing the login grace period
 
@@ -281,7 +295,7 @@ By default, the sshd daemon gives any user two full minutes to authenticate. Wit
 
 1. Edit the current `/etc/ssh/sshd_config` file, uncomment the `LoginGraceTime` parameter and set it to `45`.
 
-    ~~~bash
+    ~~~sh
     # Authentication:
 
     LoginGraceTime 45
@@ -290,12 +304,13 @@ By default, the sshd daemon gives any user two full minutes to authenticate. Wit
 
 2. Save the the change and restart the `ssh` service.
 
-    ~~~bash
+    ~~~sh
     $ sudo systemctl restart sshd.service
     ~~~
 
-> **BEWARE!**  
-> Careful of setting this value too low for your system. Take into account that, when your server receives several concurrent unauthenticated requests, it will need some time to process them. Also, a human user will need some time to type their **TOTP codes**.
+> [!WARNING]
+> **Do not set this timer with a too low value in your system**\
+> Be aware that, when your server receives several concurrent unauthenticated requests, it will need some time to process them. Also, a human user will need some time to get and type their **TOTP codes**.
 
 #### Disabling the `root` user on ssh
 
@@ -307,7 +322,7 @@ Still, given that we're working on a standalone node, we can assume that a stand
 
 1. Edit the current `/etc/ssh/sshd_config` file, look for the parameter `PermitRootLogin` and change its value to `no`.
 
-    ~~~bash
+    ~~~sh
     # Authentication:
 
     LoginGraceTime 45
@@ -317,13 +332,13 @@ Still, given that we're working on a standalone node, we can assume that a stand
 
 2. Save the change and restart the sshd server.
 
-    ~~~bash
+    ~~~sh
     $ sudo systemctl restart sshd.service
     ~~~
 
-3. Try to log in remotely as `root` through a ssh client. You should get an error message or warning indicating that the server has rejected the connection. In PuTTY you'll see the following line.
+3. Try to log in remotely as `root` through an ssh client. You should get an error message or warning indicating that the server has rejected the connection. In PuTTY you'll see something like the following output.
 
-    ~~~bash
+    ~~~sh
     Using username "root".
     Keyboard-interactive authentication prompts from server:
     | Verification code:
@@ -335,7 +350,7 @@ Still, given that we're working on a standalone node, we can assume that a stand
 
     Notice the **Access denied** line between the two `Keyboard-interactive authentication prompts`. No matter that you input the correct TOTP verification code every time, the server will reject your request. On the other hand, if you try to connect authenticating with a ssh key pair, you'll see a different message.
 
-    ~~~bash
+    ~~~sh
     Using username "root".
     Authenticating with public key "root@pve"
     Server refused public-key signature despite accepting key!
@@ -349,7 +364,7 @@ By default, the sshd daemon gives users up to six attempts to make the authentic
 
 1. Edit the current `/etc/ssh/sshd_config` file, uncomment the `MaxAuthTries` parameter and set it to `3`.
 
-    ~~~bash
+    ~~~sh
     PermitRootLogin no
     #StrictModes yes
     MaxAuthTries 3
@@ -358,7 +373,7 @@ By default, the sshd daemon gives users up to six attempts to make the authentic
 
 2. Save the the change and restart the `ssh` service.
 
-    ~~~bash
+    ~~~sh
     $ sudo systemctl restart sshd.service
     ~~~
 
@@ -368,7 +383,7 @@ You've already disabled the password prompts in ssh logins when you changed the 
 
 1. In the `/etc/ssh/sshd_config`, uncomment the `PasswordAuthentication` parameter and set it to `no`.
 
-    ~~~bash
+    ~~~sh
     # To disable tunneled clear text passwords, change to no here!
     PasswordAuthentication no
     #PermitEmptyPasswords no
@@ -376,17 +391,17 @@ You've already disabled the password prompts in ssh logins when you changed the 
 
 2. Save the the change and restart the `ssh` service.
 
-    ~~~bash
+    ~~~sh
     $ sudo systemctl restart sshd.service
     ~~~
 
 #### Disabling X11 forwarding
 
-Proxmox VE doesn't come with a graphic (X11) environment. This means that you can disable the forwarding of the X11 system through ssh connections.
+Proxmox VE does not come with a graphic (X11) environment, so you can disable the forwarding of the X11 system through ssh connections.
 
 1. Edit the current `/etc/ssh/sshd_config` file, setting the value of the `X11Forwarding` parameter to `no`.
 
-    ~~~bash
+    ~~~sh
     #GatewayPorts no
     X11Forwarding no
     #X11DisplayOffset 10
@@ -395,15 +410,15 @@ Proxmox VE doesn't come with a graphic (X11) environment. This means that you ca
 
 2. Save the the change and restart the `ssh` service.
 
-    ~~~bash
+    ~~~sh
     $ sudo systemctl restart sshd.service
     ~~~
 
 #### Setting up user specific authentication methods
 
-It's possible to particularize the authentication methods per user, something that will solve us a problem with the `root` superuser. In our standalone node scenario, we have disabled the ssh access to the `root` user but, for more advanced (clustered) scenarios, you may need to enable the `root` remote access through `ssh`. In such scenarios, the TOTP token is problematic since Proxmox VE uses the `root` superuser for launching certain automated tasks (backups, clustering actions, etc), and automations cannot input TOTP codes.
+It is possible to particularize the authentication methods per user, something that will solve us a problem with the `root` superuser. In our standalone node scenario, we have disabled the ssh access to the `root` user but, for more advanced (clustered) scenarios, you may need to enable the `root` remote access through `ssh`. In such scenarios, the TOTP token is problematic since Proxmox VE uses the `root` superuser for launching certain automated tasks (backups, clustering actions, etc), and automations cannot input TOTP codes.
 
-So, it's better to do the following:
+So, it is better to do the following:
 
 - Generate a particular pam group for users authorized to connect through ssh, but not including `root`.
 
@@ -417,25 +432,25 @@ So, it's better to do the following:
 
 1. Create a new group called `sshauth`.
 
-    ~~~bash
+    ~~~sh
     $ sudo addgroup sshauth
     ~~~
 
 2. Add the user you want to be able to connect remotely through ssh to this group.
 
-    ~~~bash
+    ~~~sh
     $ sudo adduser mgrsys sshauth
     ~~~
 
-3. Edit once more the `/etc/ssh/sshd_config` file, replacing the line below...
+3. Once more, edit the `/etc/ssh/sshd_config` file, replacing the line below...
 
-    ~~~bash
+    ~~~sh
     AuthenticationMethods keyboard-interactive
     ~~~
 
     ... with the following configuration block.
 
-    ~~~bash
+    ~~~sh
     # In Proxmox VE, root is used for automated tasks.
     # This means that only the ssh keys can be used for
     # the superuser authentication.
@@ -457,13 +472,13 @@ So, it's better to do the following:
 
 4. Save the the change and restart the `sshd` service.
 
-    ~~~bash
+    ~~~sh
     $ sudo systemctl restart sshd.service
     ~~~
 
-You cannot log as `root` through ssh, because you've already disabled that possibility but, if that were still possible, you would see how the server doesn't ask you the TFA verification code anymore. On the other hand, you can try to open a new non-shared ssh connection with `mgrsys` and check out that it's still asking you for the TFA code.
+You cannot log as `root` through ssh, because you've already disabled that possibility but, if that were still possible, you would see how the server does not ask you the TFA verification code anymore. On the other hand, you can try to open a new non-shared ssh connection with `mgrsys` and check out that it is still asking you for the TFA code.
 
-> **BEWARE!**  
+> [!IMPORTANT]
 > Managing SSH access with `Match` rules using `pam` groups is a more practical approach when handling many users.
 
 #### Other possible changes in ssh configuration
@@ -490,7 +505,7 @@ Overall, be aware of the services or tasks in your server that require ssh conne
 
 ## Relevant system paths
 
-### _Directories_
+### Directories
 
 - `/etc/pam.d`
 - `/etc/pve/priv`
@@ -498,7 +513,7 @@ Overall, be aware of the services or tasks in your server that require ssh conne
 - `/root/.ssh`
 - `$HOME/.ssh`
 
-### _Files_
+### Files
 
 - `/etc/pam.d/sshd`
 - `/etc/pam.d/sshd.bkp`
@@ -562,6 +577,15 @@ Overall, be aware of the services or tasks in your server that require ssh conne
 
 - [Don't disable root ssh login to PVE as I did, you'll get locked out of containers](https://www.reddit.com/r/Proxmox/comments/dkozht/dont_disable_root_ssh_login_to_pve_as_i_did_youll/)
 - [Disable root login](https://forum.proxmox.com/threads/disable-root-login.10512/)
+
+### About SSH key generation and cryptosystems
+
+- [What are ssh-keygen best practices?](https://security.stackexchange.com/questions/143442/what-are-ssh-keygen-best-practices)
+- [Secure Secure Shell](https://blog.stribik.technology/2015/01/04/secure-secure-shell.html)
+- [EdDSA](https://en.wikipedia.org/wiki/EdDSA#Ed25519)
+- [IANIX. Things that use Ed25519](https://ianix.com/pub/ed25519-deployment.html)
+- [RSA cryptosystem](https://en.wikipedia.org/wiki/RSA_cryptosystem)
+- [What is the -sk ending for ssh key types?](https://security.stackexchange.com/questions/240991/what-is-the-sk-ending-for-ssh-key-types)
 
 ## Navigation
 
