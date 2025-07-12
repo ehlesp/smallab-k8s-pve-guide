@@ -3,10 +3,10 @@
 - [Harden your setup against intrusions with Fail2Ban](#harden-your-setup-against-intrusions-with-fail2ban)
 - [Installing Fail2ban](#installing-fail2ban)
 - [Configuring Fail2ban](#configuring-fail2ban)
-  - [Configuring the ssh jail](#configuring-the-ssh-jail)
-    - [Testing the ssh jail configuration](#testing-the-ssh-jail-configuration)
+  - [Configuring the jail for the ssh service](#configuring-the-jail-for-the-ssh-service)
+    - [Testing the sshd jail configuration](#testing-the-sshd-jail-configuration)
   - [Configuring the Proxmox VE jail](#configuring-the-proxmox-ve-jail)
-    - [Testing the Proxmox jail configuration](#testing-the-proxmox-jail-configuration)
+    - [Testing the Proxmox VE jail configuration](#testing-the-proxmox-ve-jail-configuration)
 - [Considerations regarding Fail2ban](#considerations-regarding-fail2ban)
   - [Fail2ban client](#fail2ban-client)
   - [Fail2ban configuration files are read in order](#fail2ban-configuration-files-are-read-in-order)
@@ -36,7 +36,7 @@ $ sudo apt install -y fail2ban
 
 The usual method for configuring Fail2ban is by making a `.local` version of the `/etc/fail2ban/jail.conf` file and just editing that version. This way, you have all your particular Fail2Ban rules in one file. But, if you want to separate concerns on different files, you can do it by creating a file per concern under the `/etc/fail2ban/jail.d` folder.
 
-### Configuring the ssh jail
+### Configuring the jail for the ssh service
 
 1. Open a shell with your `sudo` user (`mgrsys` in this guide), `cd` to `/etc/fail2ban/jail.d` and create an empty file called `01_sshd.conf`.
 
@@ -78,7 +78,7 @@ The usual method for configuring Fail2ban is by making a `.local` version of the
     $ sudo systemctl restart fail2ban.service
     ~~~
 
-#### Testing the ssh jail configuration
+#### Testing the sshd jail configuration
 
 To test the jail configuration for the ssh service, you should provoke a ban.
 
@@ -183,7 +183,7 @@ To test the jail configuration for the ssh service, you should provoke a ban.
     $ sudo systemctl restart fail2ban.service
     ~~~
 
-#### Testing the Proxmox jail configuration
+#### Testing the Proxmox VE jail configuration
 
 To test the configuration, you should provoke a ban.
 
