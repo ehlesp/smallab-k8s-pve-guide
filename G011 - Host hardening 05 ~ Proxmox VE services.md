@@ -1,8 +1,37 @@
 # G011 - Host hardening 05 ~ Proxmox VE services
 
-Your standalone Proxmox VE node comes with a number of services running by default. Having in mind the target system's particularities assumed in this guide series, there's some reconfiguring or disabling of services that you can do to harden your Proxmox VE platform further.
+- [Reduce your Proxmox VE server's exposed surface](#reduce-your-proxmox-ve-servers-exposed-surface)
+- [Checking currently running services](#checking-currently-running-services)
+- [Configuring the `pveproxy` service](#configuring-the-pveproxy-service)
+  - [_Default 8006 port and listening interfaces_](#default-8006-port-and-listening-interfaces)
+  - [_Enforcing strong SSL/TLS ciphers_](#enforcing-strong-ssltls-ciphers)
+  - [_Host based access control rules_](#host-based-access-control-rules)
+- [Disabling RPC services](#disabling-rpc-services)
+- [Disabling `zfs` and `ceph`](#disabling-zfs-and-ceph)
+- [Disabling the SPICE proxy](#disabling-the-spice-proxy)
+- [Disabling cluster and high availability related services](#disabling-cluster-and-high-availability-related-services)
+- [Considerations](#considerations)
+  - [_Errors in the `apt upgrade` process_](#errors-in-the-apt-upgrade-process)
+  - [_View of services running in the Proxmox VE node_](#view-of-services-running-in-the-proxmox-ve-node)
+- [Relevant system paths](#relevant-system-paths)
+  - [_Directories_](#directories)
+  - [_Files_](#files)
+- [References](#references)
+  - [_Services management in Debian_](#services-management-in-debian)
+  - [_Proxmox hardening and standalone node optimization_](#proxmox-hardening-and-standalone-node-optimization)
+  - [_Proxmox VE service daemons_](#proxmox-ve-service-daemons)
+  - [_NFS and RPC_](#nfs-and-rpc)
+  - [_Default listening behaviour of `pveproxy`_](#default-listening-behaviour-of-pveproxy)
+  - [_Configuration of SSL/TSL ciphers in `pveproxy`_](#configuration-of-ssltsl-ciphers-in-pveproxy)
+  - [_ZFS and Ceph_](#zfs-and-ceph)
+  - [_SPICE proxy_](#spice-proxy)
+- [Navigation](#navigation)
 
-The basic idea is to reduce the exposition surface of your platform, and also save some RAM and CPU, by disabling unneeded Proxmox VE related processes.
+## Reduce your Proxmox VE server's exposed surface
+
+Your standalone Proxmox VE node comes with a number of services running by default. Having in mind the target system's particularities assumed in this guide, there is some reconfiguring or disabling of services you can do to harden your Proxmox VE platform even more.
+
+The basic idea is to reduce your platform's surface exposed to possible attacks, and also save some RAM and CPU as a plus, by disabling unneeded processes related to Proxmox VE.
 
 ## Checking currently running services
 
