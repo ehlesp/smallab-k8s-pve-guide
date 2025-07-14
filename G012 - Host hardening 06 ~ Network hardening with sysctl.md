@@ -1,48 +1,71 @@
 # G012 - Host hardening 06 ~ Network hardening with `sysctl`
 
-You can harden your server's network connections with a proper `sysctl` configuration. This will help you mitigate or nullify certain attacks, while also fitting your network configuration better to your needs.
+- [Harden your PVE's networking with a `sysctl` configuration](#harden-your-pves-networking-with-a-sysctl-configuration)
+- [About `sysctl`](#about-sysctl)
+  - [Some `sysctl` values are managed by the Proxmox VE firewall](#some-sysctl-values-are-managed-by-the-proxmox-ve-firewall)
+- [TCP/IP stack hardening with `sysctl`](#tcpip-stack-hardening-with-sysctl)
+  - [Disabling Chrony's IPv6 socket](#disabling-chronys-ipv6-socket)
+- [Relevant system paths](#relevant-system-paths)
+  - [Directories](#directories)
+  - [Files](#files)
+- [References](#references)
+  - [Proxmox VE](#proxmox-ve)
+  - [`sysctl` references](#sysctl-references)
+  - [`sysctl` configuration examples](#sysctl-configuration-examples)
+  - [SYN cookies](#syn-cookies)
+  - [ICMP](#icmp)
+  - [Other networking-related knowledge](#other-networking-related-knowledge)
+  - [Chrony](#chrony)
+- [Navigation](#navigation)
+
+## Harden your PVE's networking with a `sysctl` configuration
+
+You can harden your Proxmox VE node's network connections with a proper `sysctl` configuration. This will help you mitigate or nullify certain attacks, while also fitting your network configuration better to your needs.
 
 ## About `sysctl`
 
-The `sysctl` framework looks for system configuration files distributed on several locations of your system, and will read them in a concrete order. Inside the folders, `sysctl` will read the files in lexicographical order.
+The `sysctl` framework looks for system configuration files distributed on several locations of your system, and will parse them at boot time in a concrete order. Inside the folders, `sysctl` will read the files in lexicographical order.
 
 In your PVE system you'll find the following files.
 
 1. `/etc/sysctl.d/99-sysctl.conf` : symlink to `/etc/sysctl.conf`
-2. `/etc/sysctl.d/pve.conf`
-3. `/etc/sysctl.d/README.sysctl` : this is **not** a file `sysctl` will read.
+2. `/etc/sysctl.d/README.sysctl` : this is **not** a file `sysctl` will read.
+3. `/usr/lib/sysctl.d/10-pve.conf`
 4. `/usr/lib/sysctl.d/10-pve-ct-inotify-limits.conf`
 5. `/usr/lib/sysctl.d/50-pid-max.conf`
-6. `/usr/lib/sysctl.d/protect-links.conf`
+6. `/usr/lib/sysctl.d/99-protect-links.conf`
 7. `/usr/lib/sysctl.d/pve-firewall.conf`
 8. `/lib/sysctl.d/` : same as `/usr/lib/sysctl.d/`, since `/lib` is just a symlink to `/usr/lib/`
 9. `/etc/sysctl.conf`
 
 See how Proxmox VE already has its own files, the ones with the `pve` string in their names. Also notice that the `sysctl.conf` file will be read **twice**: first as `99-sysctl.conf`, and last as `sysctl.conf`.
 
-> **BEWARE!**  
-> All configuration files are sorted (after being loaded) in memory by their filename in lexicographic order, **regardless of the directories they're in**. If multiple files specify the same option, the entry in the file with the **lexicographically last name** will take precedence. Thus, the configuration in a certain file may either be replaced completely (by placing a file with the same name in a directory with higher priority), or individual settings might be changed (by specifying additional settings in a file with a different name that is ordered later).
+> [!IMPORTANT]
+> **The `sysctl` configuration files get sorted in memory by their names**\
+> All configuration files are sorted (after being loaded) in memory by their filename in lexicographic order, **regardless of the directories they're in**.
+>
+> If multiple files specify the same option, the entry in the file with the **lexicographically last name** will take precedence. Thus, the configuration in a certain file may either be replaced completely (by placing a file with the same name in a directory with higher priority), or individual settings might be changed (by specifying additional settings in a file with a different name that is ordered later).
 
-So, the previous file list would be applied by **sysctl** in the following _lexicographical_ order.
+So, the previous file list would be applied by `sysctl` in the following _lexicographical_ order.
 
-1. `10-pve-ct-inotify-limits.conf`
-2. `50-pid-max.conf`
-3. `99-sysctl.conf`
-4. `protect-links.conf`
-5. `pve.conf`
+1. `10-pve.conf`
+2. `10-pve-ct-inotify-limits.conf`
+3. `50-pid-max.conf`
+4. `99-sysctl.conf`
+5. `protect-links.conf`
 6. `pve-firewall.conf`
 7. `sysctl.conf`
 
 Finally, to see the current value of a `sysctl` parameter, you can use directly the `sysctl` command with any full parameter name (autocomplete works for those parameter names).
 
-~~~bash
+~~~sh
 $ sudo sysctl net.core.wmem_default
 net.core.wmem_default = 212992
 ~~~
 
 On the other hand, you can also list the full list of parameters with their current values.
 
-~~~bash
+~~~sh
 $ sudo sysctl -a
 abi.vsyscall32 = 1
 debug.exception-trace = 1
@@ -53,72 +76,78 @@ dev.cdrom.check_media = 0
 dev.cdrom.debug = 0
 dev.cdrom.info = CD-ROM information, Id: cdrom.c 3.20 2003/12/17
 dev.cdrom.info =
-dev.cdrom.info = drive name:
-dev.cdrom.info = drive speed:
-dev.cdrom.info = drive # of slots:
-dev.cdrom.info = Can close tray:
-dev.cdrom.info = Can open tray:
+dev.cdrom.info = drive name:            sr0
+dev.cdrom.info = drive speed:           32
+dev.cdrom.info = drive # of slots:      1
+dev.cdrom.info = Can close tray:                1
+dev.cdrom.info = Can open tray:         1
 ...
 ~~~
 
 Since there are a lot of parameters, you'd prefer to pipe this command to `less` so you can revise them in a more comfortable manner.
 
-~~~bash
+~~~sh
 $ sudo sysctl -a | less
 ~~~
 
-### _Some `sysctl` values are managed by the Proxmox VE firewall_
+### Some `sysctl` values are managed by the Proxmox VE firewall
 
-Be aware that the Proxmox VE firewall handles a bunch of sysctl `net` parameters. The ones listed in the Proxmox VE Firewall official documentation, [in the firewall's **Host Specific Configuration** segment under the **Configuration Files** section](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_configuration_files), are the following ones.
+Be aware that the Proxmox VE firewall handles a bunch of sysctl `net` parameters. The ones listed in the Proxmox VE Firewall official documentation, [in the firewall's **Host Specific Configuration** segment under the **Configuration Files** section](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#pve_firewall_host_specific_configuration), are the following ones.
 
-- `nf_conntrack_allow_invalid`: to allow packets with the state INVALID on the connection tracking (conntrack). I haven't found any other reference to this parameter beyond the Proxmox VE-related documentation, so maybe its not a `sysctl` value, although it certainly looks like it.
+- `nf_conntrack_allow_invalid`\
+  To allow packets with the state INVALID on the connection tracking (conntrack). I haven't found any other reference to this parameter beyond the Proxmox VE-related documentation, so maybe its not a `sysctl` value, although it certainly looks like it.
 
-- `net.netfilter.nf_conntrack_max`: the maximum number of allowed connection tracking entries. This value can be changed directly in the Proxmox VE web console.
+- `net.netfilter.nf_conntrack_max`\
+  The maximum number of allowed connection tracking entries. This value can be changed directly in the Proxmox VE web console.
 
-- `net.netfilter.nf_conntrack_tcp_timeout_established`: just a timeout in seconds for established connections. This value can be changed directly in the Proxmox VE web console. Shouldn't be shorter than the `net.ipv4.tcp_keepalive_time` value.
+- `net.netfilter.nf_conntrack_tcp_timeout_established`\
+  Just a timeout in seconds for established connections. This value can be changed directly in the Proxmox VE web console. Shouldn't be shorter than the `net.ipv4.tcp_keepalive_time` value.
 
-- `net.netfilter.nf_conntrack_tcp_timeout_syn_recv`: another timeout in seconds, although for this one I haven't found a proper definition that explains its meaning.
+- `net.netfilter.nf_conntrack_tcp_timeout_syn_recv`\
+  Another timeout in seconds, although for this one I haven't found a proper definition that explains its meaning.
 
-The parameters mentioned above are just a few of many related to the netfilter conntrack system. Read a more complete list [in this page](https://www.kernel.org/doc/html/latest/networking/nf_conntrack-sysctl.html). On the other hand, the two parameters that can be managed from the web console are found at the pve node level, in the firewall option's screen.
+The parameters mentioned above are just a few of many related to the netfilter conntrack system. Read a more complete list [in this page](https://www.kernel.org/doc/html/latest/networking/nf_conntrack-sysctl.html). On the other hand, the nf parameters that can be managed from the web console are found at the pve node level, in the firewall option's screen.
 
-![Sysctl parameters as firewall options](images/g012/pve_firewall_options_sysctl_parameters.png "Sysctl parameters as firewall options")
+![Sysctl parameters as PVE firewall's options](images/g012/pve_firewall_options_sysctl_parameters.webp "Sysctl parameters as PVE firewall's options")
 
-It's not documented, but at least two other values are also affected by the Proxmox VE firewall (which, remember, it's just the legacy `iptables` system).
+It is not documented, but at least two other values are also affected by the Proxmox VE firewall (which, remember, it is still the legacy `iptables` system).
 
 - `net.bridge.bridge-nf-call-ip6tables`
 - `net.bridge.bridge-nf-call-iptables`
 
-When the firewall gets fully enabled, those values are set to 1, overriding the 0 value they have in the `/etc/sysctl.d/pve.conf` file. This means that netfilter becomes enabled on the bridges you run on your Proxmox VE host.
+When the firewall gets fully enabled, those values are set to `1`, overriding the `0` value they have in the `/usr/lib/sysctl.d/10-pve.conf` file. This means that netfilter becomes enabled on the bridges you run on your Proxmox VE host.
 
 On the other hand, know that all the sysctl parameters are found under the `/proc/sys` folder as independent files containing just their values. So, to see the `net.netfilter` values, you should list the contents of the `/proc/sys/net/netfilter` folder and you'll be met by a little surprise.
 
-~~~bash
+~~~sh
 $ ls -al /proc/sys/net/netfilter
 total 0
-dr-xr-xr-x 1 root root 0 Nov 11 10:44 .
-dr-xr-xr-x 1 root root 0 Nov 11 10:27 ..
-dr-xr-xr-x 1 root root 0 Nov 11 10:44 nf_log
--rw-r--r-- 1 root root 0 Nov 11 10:44 nf_log_all_netns
+dr-xr-xr-x 1 root root 0 Jul 14 16:03 .
+dr-xr-xr-x 1 root root 0 Jul 14 15:47 ..
+-rw-r--r-- 1 root root 0 Jul 14 16:03 nf_hooks_lwtunnel
+dr-xr-xr-x 1 root root 0 Jul 14 16:03 nf_log
+-rw-r--r-- 1 root root 0 Jul 14 16:03 nf_log_all_netns
 ~~~
 
-None of the parameters controlled by Proxmox VE is present there, nor any of the ones you can see [here](https://www.kernel.org/doc/html/latest/networking/nf_conntrack-sysctl.html). This only means that the netfilter system is not currently active in the system. Only after you enable the firewall at the datacenter level (something you'll do in the [G014 guide](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md)), you'll see this folder filled with new `nf_conntrack_` files.
+None of the parameters controlled by Proxmox VE is present there, nor [any of the ones you can see here](https://www.kernel.org/doc/html/latest/networking/nf_conntrack-sysctl.html). This only means that the netfilter system is not currently active in the system. Only after you enable the firewall at the datacenter level (something you'll do in the [G014 guide](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md)), you'll see this folder filled with new `nf_conntrack_` files.
 
 ## TCP/IP stack hardening with `sysctl`
 
 To avoid messing with the `.conf` files already present, let's make a new one filled with parameters just for hardening the TCP/IP stack of your system.
 
-> **BEWARE!**  
+> [!IMPORTANT]
+> **Give your sysctl `.conf` files unique names**  
 > The `.conf` files can have any name but, once a file of a given filename is loaded, `sysctl` **will ignore** any other file of the same name in subsequent directories.
 
 1. Open a shell as `mgrsys` and `cd` to `/etc/sysctl.d/`.
 
-    ~~~bash
+    ~~~sh
     $ cd /etc/sysctl.d
     ~~~
 
 2. Create the new configuration file as `80_tcp_hardening.conf`.
 
-    ~~~bash
+    ~~~sh
     $ sudo touch 80_tcp_hardening.conf
     ~~~
 
@@ -190,44 +219,45 @@ To avoid messing with the `.conf` files already present, let's make a new one fi
 
 4. Save the `80_tcp_hardening.conf` file, and apply the changes in your system.
 
-    ~~~bash
+    ~~~sh
     $ sudo sysctl -p /etc/sysctl.d/80_tcp_hardening.conf
     ~~~
 
-    The command's output will list the all the parameters with their values as it has applied them to the system.
+    The command will output a list of all the parameters it has read and applied to the system.
 
-    > **BEWARE!**  
+    > [!NOTE]
+    > **Do not forget to specify the file to read to the `sysctl -p` command**\
     > When executing `sysctl -p` without specifying any file, the command will load only the values found in the `/etc/sysctl.conf` file, and won't read anything inside the `/etc/sysctl.d` folder.
 
 5. Reboot your system.
 
-    ~~~bash
+    ~~~sh
     $ sudo reboot
     ~~~
 
 6. The specified configuration in the previous step **3** also disables the IPv6 protocol in your system. Verify that you don't see sockets listening in `[::1]` (the IPv6 version of `localhost`) addresses with the `ss` command.
 
-    ~~~bash
+    ~~~sh
     $ sudo ss -atlnup
-    Netid              State               Recv-Q              Send-Q                             Local Address:Port                             Peer Address:Port              Process
-    udp                UNCONN              0                   0                                      127.0.0.1:323                                   0.0.0.0:*                  users:(("chronyd",pid=693,fd=5))
-    udp                UNCONN              0                   0                                          [::1]:323                                      [::]:*                  users:(("chronyd",pid=693,fd=6))
-    tcp                LISTEN              0                   4096                                   127.0.0.1:85                                    0.0.0.0:*                  users:(("pvedaemon worke",pid=923,fd=6),("pvedaemon worke",pid=922,fd=6),("pvedaemon worke",pid=921,fd=6),("pvedaemon",pid=920,fd=6))
-    tcp                LISTEN              0                   128                                192.168.1.107:22                                    0.0.0.0:*                  users:(("sshd",pid=677,fd=3))
-    tcp                LISTEN              0                   100                                    127.0.0.1:25                                    0.0.0.0:*                  users:(("master",pid=880,fd=13))
-    tcp                LISTEN              0                   16                                     127.0.0.1:3493                                  0.0.0.0:*                  users:(("upsd",pid=781,fd=4))
-    tcp                LISTEN              0                   4096                                           *:8006                                        *:*                  users:(("pveproxy worker",pid=932,fd=6),("pveproxy worker",pid=931,fd=6),("pveproxy worker",pid=930,fd=6),("pveproxy",pid=929,fd=6))
+    Netid                State                  Recv-Q                 Send-Q                                 Local Address:Port                                 Peer Address:Port                Process
+    udp                  UNCONN                 0                      0                                          127.0.0.1:323                                       0.0.0.0:*                    users:(("chronyd",pid=753,fd=5))
+    udp                  UNCONN                 0                      0                                              [::1]:323                                          [::]:*                    users:(("chronyd",pid=753,fd=6))
+    tcp                  LISTEN                 0                      128                                         10.3.0.2:22                                        0.0.0.0:*                    users:(("sshd",pid=731,fd=3))
+    tcp                  LISTEN                 0                      4096                                       127.0.0.1:85                                        0.0.0.0:*                    users:(("pvedaemon worke",pid=962,fd=6),("pvedaemon worke",pid=961,fd=6),("pvedaemon worke",pid=960,fd=6),("pvedaemon",pid=959,fd=6))
+    tcp                  LISTEN                 0                      100                                        127.0.0.1:25                                        0.0.0.0:*                    users:(("master",pid=914,fd=13))
+    tcp                  LISTEN                 0                      16                                         127.0.0.1:3493                                      0.0.0.0:*                    users:(("upsd",pid=985,fd=4))
+    tcp                  LISTEN                 0                      4096                                               *:8006                                            *:*                    users:(("pveproxy worker",pid=973,fd=6),("pveproxy worker",pid=972,fd=6),("pveproxy worker",pid=971,fd=6),("pveproxy",pid=970,fd=6))
     ~~~
 
     In the output above you can see that only one IPv6 socket remains, one opened by a certain `chronyd` service. Check the next subsection to learn how to disable that particular socket.
 
-### _Disabling Chrony's IPv6 socket_
+### Disabling Chrony's IPv6 socket
 
 Chrony is a daemon that keeps your system's clock synchronized with an external time server through the NTP (Network Time Protocol) protocol. It can run as time server, but in this setup it's only working as client. To disable its IPv6 socket, you'll need to modify slightly one of its configuration files.
 
 1. Go to `/etc/default` and make a backup of the `chrony` file.
 
-    ~~~bash
+    ~~~sh
     $ cd /etc/default
     $ sudo cp chrony chrony.orig
     ~~~
@@ -241,20 +271,20 @@ Chrony is a daemon that keeps your system's clock synchronized with an external 
 
 3. Restart the Chrony service.
 
-    ~~~bash
+    ~~~sh
     $ sudo systemctl restart chrony.service
     ~~~
 
 4. Verify that the Chrony daemon (`chronyd`) only has the IPv4 socket open.
 
-    ~~~bash
+    ~~~sh
     $ sudo ss -atlnup | grep chronyd
-    udp   UNCONN 0      0          127.0.0.1:323       0.0.0.0:*    users:(("chronyd",pid=1591,fd=5))
+    udp   UNCONN 0      0          127.0.0.1:323       0.0.0.0:*    users:(("chronyd",pid=1959,fd=5))
     ~~~
 
 ## Relevant system paths
 
-### _Directories_
+### Directories
 
 - `/etc`
 - `/etc/default`
@@ -264,7 +294,7 @@ Chrony is a daemon that keeps your system's clock synchronized with an external 
 - `/proc/sys`
 - `/proc/sys/net/netfilter`
 
-### _Files_
+### Files
 
 - `/etc/default/chrony`
 - `/etc/default/chrony.orig`
@@ -280,16 +310,17 @@ Chrony is a daemon that keeps your system's clock synchronized with an external 
 
 ## References
 
-### _Proxmox VE_
+### [Proxmox VE](https://pve.proxmox.com/pve-docs/)
 
-- [Proxmox VE firewall](https://pve.deimos.cloud:8006/pve-docs/chapter-pve-firewall.html)
+- [Proxmox VE firewall](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_pve_firewall)
+  - [Configuration files. Host Specific Configuration](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#pve_firewall_host_specific_configuration)
 
-### _`sysctl` references_
+### `sysctl` references
 
 - [`sysctl` ipv4 parameters](https://www.kernel.org/doc/Documentation/networking/ip-sysctl.txt)
 - [Netfilter Conntrack `sysctl` parameters](https://www.kernel.org/doc/html/latest/networking/nf_conntrack-sysctl.html)
 
-### _`sysctl` configuration examples_
+### `sysctl` configuration examples
 
 - [Archlinux wiki: `sysctl`](https://wiki.archlinux.org/index.php/Sysctl)
 - [Linux sysctl Tuning](https://community.mellanox.com/s/article/linux-sysctl-tuning)
@@ -300,7 +331,7 @@ Chrony is a daemon that keeps your system's clock synchronized with an external 
 - [nf_conntrack: table full, dropping packet](https://newbedev.com/nf-conntrack-table-full-dropping-packet)
 - [Linux kernel tuning settings for large number of concurrent clients](https://gist.github.com/kfox/1942782)
 
-### _SYN cookies_
+### SYN cookies
 
 - [SYN cookies on Wikipedia](https://en.wikipedia.org/wiki/SYN_cookies)
 - [SYN cookies by their inventor, Daniel J. Bernstein](https://cr.yp.to/syncookies.html)
@@ -310,14 +341,14 @@ Chrony is a daemon that keeps your system's clock synchronized with an external 
 - [How TCP backlog works in Linux](http://veithen.io/2014/01/01/how-tcp-backlog-works-in-linux.html)
 - [Sane value for net.ipv4.tcp_max_syn_backlog in sysctl.conf](https://serverfault.com/questions/875035/sane-value-for-net-ipv4-tcp-max-syn-backlog-in-sysctl-conf)
 
-### _ICMP_
+### ICMP
 
 - [sysctl.d: switch net.ipv4.conf.all.rp_filter from 1 to 2](https://github.com/systemd/systemd/pull/10971)
 - [What is ICMP broadcast good for?](https://superuser.com/questions/306065/what-is-icmp-broadcast-good-for)
 - [What are ICMP redirects and should they be blocked?](https://askubuntu.com/questions/118273/what-are-icmp-redirects-and-should-they-be-blocked)
 - [Ensure broadcast ICMP requests are ignored](https://secscan.acron.pl/centos7/3/2/5)
 
-### _Other_
+### Other networking-related knowledge
 
 - [DSA-4272-1 linux -- security update](https://www.debian.org/security/2018/dsa-4272)
 - [`ipfrag_high_thresh` on sysctl explorer](https://sysctl-explorer.net/net/ipv4/ipfrag_high_thresh/)
@@ -325,7 +356,7 @@ Chrony is a daemon that keeps your system's clock synchronized with an external 
 - [Improving TCP performance over a gigabit network with lots of connections and high traffic of small packets](https://serverfault.com/questions/357799/improving-tcp-performance-over-a-gigabit-network-with-lots-of-connections-and-hi)
 - [SegmentSmack and FragmentSmack: IP fragments and TCP segments with random offsets may cause a remote denial of service (CVE-2018-5390, CVE-2018-5391)](https://access.redhat.com/articles/3553061)
 
-### _Chrony_
+### Chrony
 
 - [chronyd on debian could not open IPv6 NTP socket](https://serverfault.com/questions/992844/chronyd-on-debian-could-not-open-ipv6-ntp-socket)
 - [Steps to configure Chrony as NTP Server & Client (CentOS/RHEL 8)](https://www.golinuxcloud.com/configure-chrony-ntp-server-client-force-sync/)

@@ -112,6 +112,7 @@
 
 ### [**G012** - Host hardening 06 ~ Network hardening with sysctl](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md#g012-host-hardening-06-network-hardening-with-sysctl)
 
+- [Harden your PVE's networking with a `sysctl` configuration](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md#harden-your-pves-networking-with-a-sysctl-configuration)
 - [About `sysctl`](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md#about-sysctl)
 - [TCP/IP stack hardening with `sysctl`](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md#tcpip-stack-hardening-with-sysctl)
 - [Relevant system paths](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md#relevant-system-paths)
