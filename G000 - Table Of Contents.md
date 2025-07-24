@@ -128,11 +128,12 @@
 
 ### [**G014** - Host hardening 08 ~ Firewalling](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#g014-host-hardening-08-firewalling)
 
-- [Proxmox VE firewall uses `iptables`](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#proxmox-ve-firewall-uses-iptables)
+- [[Enabling your PVE's firewall is a must](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#enabling-your-pves-firewall-is-a-must)]
+- [Proxmox VE firewall uses iptables](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#proxmox-ve-firewall-uses-iptables)
 - [Zones in the Proxmox VE firewall](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#zones-in-the-proxmox-ve-firewall)
 - [Situation at this point](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#situation-at-this-point)
-- [Enabling the firewall at the `Datacenter` tier](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#enabling-the-firewall-at-the-datacenter-tier)
-- [Firewalling with `ebtables`](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#firewalling-with-ebtables)
+- [Enabling the firewall at the Datacenter tier](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#enabling-the-firewall-at-the-datacenter-tier)
+- [Firewalling with ebtables](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#firewalling-with-ebtables)
 - [Firewall fine tuning](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#firewall-fine-tuning)
 - [Firewall logging](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#firewall-logging)
 - [Connection tracking tool](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#connection-tracking-tool)
