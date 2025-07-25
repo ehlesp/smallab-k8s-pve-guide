@@ -151,12 +151,13 @@
 - [Relevant system paths](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md#relevant-system-paths)
 - [References](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md#references)
 
-### [**G016** - Host optimization 02 ~ Disabling transparent hugepages](G016%20-%20Host%20optimization%2002%20~%20Disabling%20transparent%20hugepages.md#g016-host-optimization-02-disabling-transparent-hugepages)
+### [**G016** - Host optimization 02 ~ Disabling the transparent hugepages](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md)
 
-- [Status of transparent hugepages in your host](G016%20-%20Host%20optimization%2002%20~%20Disabling%20transparent%20hugepages.md#status-of-transparent-hugepages-in-your-host)
-- [Disabling the transparent hugepages](G016%20-%20Host%20optimization%2002%20~%20Disabling%20transparent%20hugepages.md#disabling-the-transparent-hugepages)
-- [Relevant system paths](G016%20-%20Host%20optimization%2002%20~%20Disabling%20transparent%20hugepages.md#relevant-system-paths)
-- [References](G016%20-%20Host%20optimization%2002%20~%20Disabling%20transparent%20hugepages.md#references)
+- [Understanding the transparent hugepages](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md#understanding-the-transparent-hugepages)
+- [Status of the transparent hugepages in your host](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md#status-of-the-transparent-hugepages-in-your-host)
+- [Disabling the transparent hugepages](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md#disabling-the-transparent-hugepages)
+- [Relevant system paths](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md#relevant-system-paths)
+- [References](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md#references)
 
 ### [**G017** - Virtual Networking ~ Network configuration](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#g017-virtual-networking-network-configuration)
 

@@ -1,6 +1,6 @@
 # G021 - K3s cluster setup 04 ~ Debian VM configuration
 
-Now you have a functional Debian VM but, as you did with your Proxmox VE host, it needs to be configured. Therefore, this guide will show you most of the same procedures detailed among the [**G003**](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources%2C%20updates%20and%20extra%20tools.md) to [**G016**](G016%20-%20Host%20optimization%2002%20~%20Disabling%20transparent%20hugepages.md) guides, but in an condensed manner, while also adding some extra steps needed for setting up particular aspects on this VM.
+Now you have a functional Debian VM but, as you did with your Proxmox VE host, it needs to be configured. Therefore, this guide will show you most of the same procedures detailed among the [**G003**](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources%2C%20updates%20and%20extra%20tools.md) to [**G016**](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md) guides, but in an condensed manner, while also adding some extra steps needed for setting up particular aspects on this VM.
 
 ## Suggestion about IP configuration in your network
 
@@ -847,7 +847,7 @@ Then, login as `mgrsys` and check the log files (such as `syslog`) under the `/v
 
 ## Disabling transparent hugepages on the VM
 
-Back in the [**G016** guide](G016%20-%20Host%20optimization%2002%20~%20Disabling%20transparent%20hugepages.md), you disabled the transparent hugepages in your Proxmox VE host. Now you'll do the same in this VM.
+Back in the [**G016** guide](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md), you disabled the transparent hugepages in your Proxmox VE host. Now you'll do the same in this VM.
 
 1. Check the current status of the transparent hugepages.
 
