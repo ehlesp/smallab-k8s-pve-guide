@@ -15,6 +15,8 @@ set expandtab
 " Show line numbers
 set nu
 
+" Disable autocomment of next line (bothersome when pasting texts with comments)
+autocmd FileType * set formatoptions-=cro
 ~~~
 
 Just create a `.vimrc` file, with the lines above, in any user's $HOME folder.

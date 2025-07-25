@@ -1,13 +1,34 @@
 # G015 - Host optimization 01 ~ Adjustments through `sysctl`
 
-You can get performance improvements in your system just by setting some parameters in `sysctl` configuration files. Remember that you did something like this for hardening the TCP/IP stack in the [**G012** guide](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md).
+- [Tune your Proxmox VE system's `sysctl` files to improve performance](#tune-your-proxmox-ve-systems-sysctl-files-to-improve-performance)
+- [Network optimizations](#network-optimizations)
+- [Memory optimizations](#memory-optimizations)
+- [Kernel optimizations](#kernel-optimizations)
+- [Reboot the system](#reboot-the-system)
+- [Final considerations](#final-considerations)
+- [Relevant system paths](#relevant-system-paths)
+  - [Directories](#directories)
+  - [Files](#files)
+- [References](#references)
+  - [`sysctl` variables](#sysctl-variables)
+  - [About `sysctl` in general](#about-sysctl-in-general)
+  - [About network optimizations](#about-network-optimizations)
+  - [About memory optimizations](#about-memory-optimizations)
+  - [Inotify system](#inotify-system)
+  - [About optimizing the kernel](#about-optimizing-the-kernel)
+- [Navigation](#navigation)
+
+## Tune your Proxmox VE system's `sysctl` files to improve performance
+
+You can get performance improvements in your Proxmox VE system just by setting some parameters in `sysctl` configuration files. Remember that you did something like this for hardening the TCP/IP stack back in the [**G012** chapter](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md).
 
 The changes explained in the following sections are focused on improving the performance of your system on different concerns. For the sake of clarity, each concern will have its own `sysctl` file with their own particular parameter set. This is meant to avoid the problem of having the same parameter defined twice on different configuration files, and worrying about in which order are being read (`sysctl` only keeps the last value read for each parameter).
 
-> **BEWARE!**  
-> You should revise and adjust the values set in the following sections to suit your own system setup and presumed load.
+> [!IMPORTANT]
+> **Do not apply this configuration blindly in your PVE system**\
+> Revise and adjust the values set in the following sections to suit your own system setup and presumed load.
 
-In this guide, you're going to create a bunch of sysctl configuration files that all have to be placed in the `/etc/sysctl.d`. So, `cd` to that path and start working on the sections below.
+In this chapter you're going to create a bunch of `sysctl` configuration files that all have to be placed in the `/etc/sysctl.d` directory. So, `cd` to that path and start working on the sections below.
 
 ~~~bash
 $ cd /etc/sysctl.d/
@@ -265,12 +286,6 @@ $ cd /etc/sysctl.d/
 
     # Process Scheduler related settings
     #
-    # Determines how long a migrated process has to be running before the kernel
-    # will consider migrating it again to another core. So, a higher value makes
-    # the kernel take longer before migrating again an already migrated process.
-    # Value in MILLISECONDS.
-    kernel.sched_migration_cost_ns = 5000000
-    #
     # This setting groups tasks by TTY, to improve perceived responsiveness on an
     # interactive system. On a server with a long running forking daemon, this will
     # tend to keep child processes from migrating away as soon as they should.
@@ -292,21 +307,21 @@ Although you've applied the changes with the `sysctl -p` command, it'll be bette
 $ sudo reboot
 ~~~
 
-Then, open a new shell as your `mgrsys` user and check the log files (`syslog` in particular) under the `/var/log` directory to look for possible errors or warnings related to your changes.
+Then, open a new shell as your `mgrsys` user and check your system's journal (with the `journalctl` command), and also check the log files under the `/var/log` directory, to look for possible errors or warnings related to your changes.
 
 ## Final considerations
 
-All the values modified in the previous sections have to be measured and tested against the possibilities of your system and the real load it has. So expect to revise this configuration later to fit it better to your needs, and maybe even adjust some other `sysctl` parameters that haven't been shown in this guide.
+All the values modified in the previous sections have to be measured and tested against the possibilities of your system and the real load it has. So expect to revise this configuration later to make it fit to your needs, and maybe even adjust some other `sysctl` parameters that haven't been shown in this guide.
 
 On the other hand, notice how I avoided touching any `sysctl` configuration files already present in the system (like the ones related to the PVE platform). This guarantees that future updates can change them without complaining about being different as they expected them to be.
 
 ## Relevant system paths
 
-### _Directories_
+### Directories
 
 - `/etc/sysctl.d`
 
-### _Files_
+### Files
 
 - `/etc/sysctl.d/85_kernel_optimizations.conf`
 - `/etc/sysctl.d/85_memory_optimizations.conf`
@@ -314,19 +329,19 @@ On the other hand, notice how I avoided touching any `sysctl` configuration file
 
 ## References
 
-### _`sysctl` variables_
+### `sysctl` variables
 
 - [Networking ip variables](https://www.kernel.org/doc/Documentation/networking/ip-sysctl.txt)
 - [Virtual memory variables](https://www.kernel.org/doc/Documentation/sysctl/vm.txt)
 - [Summary of hugetlbpage (huge pages) support in the Linux kernel](https://www.kernel.org/doc/Documentation/vm/hugetlbpage.txt)
 
-### _About `sysctl` in general_
+### About `sysctl` in general
 
 - [Most popular speedup sysctl options for Proxmox, corrected for the 5.3.18-3-pve kernel](https://gist.github.com/sergey-dryabzhinsky/bcc1a15cb7d06f3d4606823fcc834824#gistcomment-3297285)
 - [Sysctl on Archlinux wiki](https://wiki.archlinux.org/index.php/Sysctl)
 - [Linux Hardening: A 15-Step Checklist For A Secure Linux Server](https://www.pluralsight.com/blog/it-ops/linux-hardening-secure-server-checklist)
 
-### _Network optimizations_
+### About network optimizations
 
 - [Netfilter Conntrack Sysfs variables](https://www.kernel.org/doc/html/latest/networking/nf_conntrack-sysctl.html)
 - [How long does conntrack remember a connection?](https://unix.stackexchange.com/questions/524295/how-long-does-conntrack-remember-a-connection)
@@ -342,7 +357,7 @@ On the other hand, notice how I avoided touching any `sysctl` configuration file
 - [tcp_slow_start_after_idle tcp_no_metrics_save performance](https://github.com/ton31337/tools/wiki/tcp_slow_start_after_idle---tcp_no_metrics_save-performance)
 - [Overflow in datagram type sockets](https://www.toptip.ca/2013/02/overflow-in-datagram-type-sockets.html)
 
-### _Memory optimizations_
+### About memory optimizations
 
 - [Understanding vm.swappiness](https://linuxhint.com/understanding_vm_swappiness/)
 - [How does vm.overcommit_memory work?](https://serverfault.com/questions/606185/how-does-vm-overcommit-memory-work)
@@ -353,13 +368,13 @@ On the other hand, notice how I avoided touching any `sysctl` configuration file
 - [Linux HugePages](https://www.educba.com/linux-hugepages/)
 - [Hugepages and Multiple VMs](https://forum.proxmox.com/threads/hugepages-and-multiple-vms.34075/)
 
-### _Inotify system_
+### Inotify system
 
 - [What is a reasonable amount of inotify watches with Linux?](https://stackoverflow.com/questions/535768/what-is-a-reasonable-amount-of-inotify-watches-with-linux)
 - [Increasing the amount of inotify watchers](https://gist.github.com/ntamvl/7c41acee650d376863fd940b99da836f)
 - [Ubuntu Increase Inotify Watcher (File Watch Limit)](https://dev.to/rubiin/ubuntu-increase-inotify-watcher-file-watch-limit-kf4)
 
-### _Kernel optimizations_
+### About optimizing the kernel
 
 - [Unable to run bpf program as non root](https://stackoverflow.com/questions/65949586/unable-to-run-bpf-program-as-non-root)
 - [Disable unprivileged BPF](https://gitlab.tails.boum.org/tails/tails/-/issues/11827)
