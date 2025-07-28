@@ -161,6 +161,7 @@
 
 ### [**G017** - Virtual Networking ~ Network configuration](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#g017-virtual-networking-network-configuration)
 
+- [Preparing your virtual network comes first](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#preparing-your-virtual-network-comes-first)
 - [Current virtual network setup](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#current-virtual-network-setup)
 - [Target network scenario](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#target-network-scenario)
 - [Creating an isolated Linux bridge](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#creating-an-isolated-linux-bridge)
