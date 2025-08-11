@@ -1,6 +1,6 @@
 # **G000** - Table Of Contents
 
-## [**README**](README.md#small-homelab-k8s-cluster-on-proxmox-ve)
+## [**README**](README.md)
 
 - [Introduction](README.md#introduction)
 - [Description of contents](README.md#description-of-contents)
@@ -13,7 +13,7 @@
 
 ## Guides
 
-### [**G001** - Hardware setup](G001%20-%20Hardware%20setup.md#g001-hardware-setup)
+### [**G001** - Hardware setup](G001%20-%20Hardware%20setup.md)
 
 - [You just need a capable enough computer](G001%20-%20Hardware%20setup.md#you-just-need-a-capable-enough-computer)
 - [The reference hardware setup](G001%20-%20Hardware%20setup.md#the-reference-hardware-setup)
