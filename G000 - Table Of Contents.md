@@ -2,10 +2,11 @@
 
 ## [**README**](README.md)
 
-- [Introduction](README.md#introduction)
-- [Description of contents](README.md#description-of-contents)
+- [A complete guide for building a virtualized Kubernetes homelab](README.md#a-complete-guide-for-building-a-virtualized-kubernetes-homelab)
+- [Main concepts](README.md#main-concepts)
 - [Intended audience](README.md#intended-audience)
-- [Goals](README.md#goals)
+- [Goal of this guide](README.md#goal-of-this-guide)
+- [Software used](README.md#software-used)
 
 ## [**LICENSE**](LICENSE.md)
 
