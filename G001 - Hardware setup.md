@@ -9,41 +9,45 @@
 
 ## You just need a capable enough computer
 
-In the [README](README.md) I talk about a small or low-end consumer-grade computer, meaning that you don't need the latest and fastest machine available in the market. Any relatively modern small tower PC, or even a normal laptop, could be adequate. Still, your computer must meet certain minimum requirements, or it won't be able to run the Kubernetes cluster the way it's explained in this guide series.
+In the [README](README.md) I talk about a small or low-end consumer-grade computer, meaning that you don't need the latest and fastest machine available in the market. Any relatively modern small tower or mini PC, or even a normal laptop, could be adequate. Still, your computer must meet certain minimum requirements, or it won't be able to run the Kubernetes cluster the way it's explained in this guide.
 
 > [!NOTE]
 > **Virtualizing the Proxmox VE setup is problematic**\
-> It is possible to run the Proxmox VE platform in a VM but, in my experience with VirtualBox at least, configuring the networking to enable access to the VMs run from within Proxmox VE is not straightforward. Depending on the virtualization platform you use, you may be force to try different configurations and, even then, you might not be able to reach the VMs running in your Proxmox VE server.
+> It is possible to run the Proxmox VE platform in a VM but, in my experience with VirtualBox at least, configuring the networking to enable access to the VMs run from within Proxmox VE is not straightforward. Depending on the virtualization platform you use, you may be forced to try different configurations and, even then, you might not be able to reach the VMs running in your Proxmox VE server.
 >
 > In short, it is better if you use real hardware to avoid extra pains with the networking aspects of this guide's setup.
 
 ## The reference hardware setup
 
-The hardware used in this guide is a slightly upgraded [Packard Bell iMedia S2883 desktop computer](https://archive.org/details/manualzilla-id-7098831) from around 2014. This quite old and rather limited computer has the following specs.
+The hardware used in this guide is an upgraded [Packard Bell iMedia S2883 desktop computer](https://archive.org/details/manualzilla-id-7098831) from around 2014. This quite old and rather limited computer has the following specifications (after the upgrade):
 
-- **CPU** is an [Intel Pentium J1900](https://www.intel.com/content/www/us/en/products/sku/78867/intel-celeron-processor-j1900-2m-cache-up-to-2-42-ghz/specifications.html). This is a **four one-thread cores** CPU built on a **64 bits architecture** that also comes with **VT-x virtualization technology**.
+- The BIOS firmware is UEFI (Secure Boot) but also provides a CSM mode.
 
-- **GPU** is from the Intel® HD Graphics for Intel Atom® Processor Z3700 Series, and comes integrated in the J1900 CPU.
+- The **CPU** is an [Intel Pentium J1900](https://www.intel.com/content/www/us/en/products/sku/78867/intel-celeron-processor-j1900-2m-cache-up-to-2-42-ghz/specifications.html). This is a **four one-thread cores** CPU built on a **64 bits architecture** that also comes with **VT-x virtualization technology**.
 
-- **RAM** is made up of two DDR3 4 GiB SDRAM modules, the maximum allowed by the motherboard and the J1900 CPU.
+- The **GPU** is from the Intel® HD Graphics for Intel Atom® Processor Z3700 Series, and comes integrated in the J1900 CPU.
 
-- **Storage** is composed of the following drives:
+- The **RAM** is made up of two DDR3 4 GiB SDRAM modules, the maximum allowed by the motherboard and the J1900 CPU.
+
+- The **storage** is composed of the following drives:
 
   - One internal, 1 TiB, SSD drive, linked to a SATA port.
   - One internal, 1 TiB, HDD drive, linked to a SATA port.
   - One external, 2 TiB, HDD drive, plugged to a USB 3 port.
 
-- One Realtek gigabit Ethernet controller, integrated in the motherboard.
+- For **networking**, it has one Realtek gigabit Ethernet controller.
 
-- The computer also has a bunch of USB 2 connectors plus one USB 3 plug.
+- The computer also has some USB 2 connectors plus one USB 3 plug.
 
-- [APC Back-UPS ES 700](https://www.se.com/es/es/download/document/SPD_ASTE-6Z5KQH_ES/).
+- The UPS is an [Eaton 3S700D](https://www.eaton.com/at/en-gb/skuPage.3S700D.html) unit.
 
-This rather cheap rig is kind of close to what, at the time of writing this, a basic modern NUC or mini PC could come with.
+This rather cheap rig is somewhat close to what, at the time of writing this, a basic modern NUC or mini PC can come with.
 
 ### Why this hardware setup?
 
 Let me explain why you should consider a hardware configuration like this as your bare minimum:
+
+- It has an UEFI (Secure Boot) BIOS, necessary to boot up the EFI-based bootloader of Proxmox VE.
 
 - The CPU must be 64 bits since Proxmox VE only runs on 64 bits CPUs.
 
@@ -53,7 +57,7 @@ Let me explain why you should consider a hardware configuration like this as you
   > **Ensure your CPU's virtualization technology is active**\
   > Check in your computer's UEFI or BIOS to ensure that the virtualization instructions are enabled.
   >
-  > On the other hand, if you are considering installing Proxmox VE in a virtual machine, do not forget to give that virtual machine access to the virtualization technology of your host's CPU. For instance, in VirtualBox there's an option named `Enable Nested VT-x/AMD-V` that allows you just that.
+  > On the other hand, if you are considering installing Proxmox VE in a virtual machine, do not forget to give that virtual machine access to the virtualization technology of your host's CPU. For instance, in VirtualBox there's an option named `Enable Nested VT-x/AMD-V` that allows you just that (although its activation is not straightforward).
 
 - Having less than 8 GiB of RAM won't cut it, the virtual machines you will use as Kubernetes nodes will use 2 GiB each. So, starting from 8 GiB, the more RAM you can put in your computer the better.
 
@@ -67,7 +71,7 @@ Let me explain why you should consider a hardware configuration like this as you
 
 - If you don't have it already, get an UPS. Running a server without one is risking damage or, at least, data losses in case of outages or electric spikes.
 
-Although a hardware setup like this won't allow you to use things usually found in professional environments (RAID storage configurations, high availability, etc), you will get a decent small homelab for your personal usage.
+A hardware setup like this won't allow you to use features usually found in professional environments such as RAID storage or high availability. Still, it will be enough for you to build a decent personal homelab.
 
 ## References
 
@@ -77,7 +81,7 @@ Although a hardware setup like this won't allow you to use things usually found 
 
 - [Intel Pentium J1900](https://www.intel.com/content/www/us/en/products/sku/78867/intel-celeron-processor-j1900-2m-cache-up-to-2-42-ghz/specifications.html)
 
-- [APC Back-UPS ES 400/550/700 (manual)](https://www.se.com/es/es/download/document/SPD_ASTE-6Z5KQH_ES/)
+- [Eaton 3S700D](https://www.eaton.com/at/en-gb/skuPage.3S700D.html)
 
 ## Navigation
 
