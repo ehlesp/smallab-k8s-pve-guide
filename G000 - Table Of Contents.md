@@ -22,6 +22,7 @@
 
 ### [**G002** - Proxmox VE installation](G002%20-%20Proxmox%20VE%20installation.md#g002-proxmox-ve-installation)
 
+- [A procedure to install Proxmox VE in limited consumer hardware](G002%20-%20Proxmox%20VE%20installation.md#a-procedure-to-install-proxmox-ve-in-limited-consumer-hardware)
 - [System Requirements](G002%20-%20Proxmox%20VE%20installation.md#system-requirements)
 - [Installation procedure](G002%20-%20Proxmox%20VE%20installation.md#installation-procedure)
 - [After the installation](G002%20-%20Proxmox%20VE%20installation.md#after-the-installation)
