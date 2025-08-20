@@ -31,7 +31,7 @@
 
 ### [**G003** - Host configuration 01 ~ Apt sources, updates and extra tools](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md#g003-host-configuration-01-apt-sources-updates-and-extra-tools)
 
-- [Remember, Proxmox VE 7.0 runs on Debian 11_ bullseye](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md#remember-proxmox-ve-70-runs-on-debian-11-bullseye)
+- [Proxmox VE 9.0 runs on Debian 13 "trixie"](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md#proxmox-ve-90-runs-on-debian-13-trixie)
 - [Editing the apt repository sources](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md#editing-the-apt-repository-sources)
 - [Update your system](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md#update-your-system)
 - [Installing useful extra tools](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md#installing-useful-extra-tools)
