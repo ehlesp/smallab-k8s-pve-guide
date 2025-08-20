@@ -203,7 +203,7 @@ Any modern computer comes with a bunch of integrated sensors, usually ones that 
 
 #### The lm_sensors package
 
-The `lm_sensors` package provides a `sensors` command that allows you to see the values returned by the sensors integrated in a Linux host like yours.
+The `lm_sensors` package provides a `sensors` command that allows you to see the values returned by the sensors integrated in a Linux host like your PVE server.
 
 > [!NOTE]
 > **The `lm_sensors` package is no longer updated**\
