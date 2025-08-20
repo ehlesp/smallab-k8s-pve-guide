@@ -203,7 +203,13 @@ Any modern computer comes with a bunch of integrated sensors, usually ones that 
 
 #### The lm_sensors package
 
-The `lm_sensors` package provides a `sensors` command that allows you to see the values returned by the sensors integrated in a Linux host like yours. To be able to use that command, you'll need to install and configure the `lm_sensors` package as follows.
+The `lm_sensors` package provides a `sensors` command that allows you to see the values returned by the sensors integrated in a Linux host like yours.
+
+> [!NOTE]
+> **The `lm_sensors` package is no longer updated**\
+> It still works, in particular with old hardware like the one used in this guide, but don't be surprised if it stops working in the future.
+
+To be able to use the `sensors` command, you'll need to install and configure the `lm_sensors` package as follows:
 
 1. Open a shell in your main `pve` node as `root` (or as a `sudo`-able user if you already got one), then execute the next `apt` command:
 
@@ -435,7 +441,7 @@ You can use the arrows or the Page Up/Down keys to browse in the left-side menu 
 - [Clonezilla](https://clonezilla.org/)
 - [Find fan speed and cpu temp in Linux](https://unix.stackexchange.com/questions/328906/find-fan-speed-and-cpu-temp-in-linux)
 - [Lm-sensors: Monitoring CPU And System Hardware Temperature](https://www.unixmen.com/lm-sensors-monitoring-cpu-system-hardware-temperature/)
-- [Lm_sensors - Linux hardware monitoring](https://hwmon.wiki.kernel.org/lm_sensors)
+- [Lm_sensors - Linux hardware monitoring](https://archive.kernel.org/oldwiki/hwmon.wiki.kernel.org/lm_sensors.html)
 - [The lm-sensors package on GitHub](https://github.com/lm-sensors/lm-sensors)
 - [The Stress Terminal UI: s-tui on GitHub](https://github.com/amanusk/s-tui)
 
