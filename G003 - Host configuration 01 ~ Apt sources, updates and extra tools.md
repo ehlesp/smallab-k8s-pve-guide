@@ -12,6 +12,7 @@
     - [The Stress Terminal UI: s-tui](#the-stress-terminal-ui-s-tui)
 - [Relevant system paths](#relevant-system-paths)
   - [Directories](#directories)
+  - [Files](#files)
 - [References](#references)
   - [Proxmox](#proxmox)
   - [Tools](#tools)
@@ -326,7 +327,7 @@ The `lm_sensors` package provides a `sensors` command that allows you to see the
 
     > [!NOTE]
     > **The `/etc/modules` file has been replaced by the `/etc/modules-load.d/` directory**\
-    > Notice the related warning about this change at the beggining of the `/etc/modules` file. If you check inside the `/etc/modules-load.d/` directory, you will find a `modules.conf` symlink pointing to the `/etc/modules` file ensuring retrocompatibility with packages that still haven't adapted to this change like `lm_sensors`.
+    > Notice the related warning about this change at the beggining of the `/etc/modules` file. If you check inside the `/etc/modules-load.d/` directory, you will find a `modules.conf` symlink file pointing to the `/etc/modules` file ensuring retrocompatibility with packages that still haven't adapted to this change like `lm_sensors`.
 
 3. To ensure that all the modules configured by `sensors-detect` are loaded, reboot your system:
 
@@ -409,6 +410,13 @@ You can use the arrows or the Page Up/Down keys to browse in the left-side menu 
 ### Directories
 
 - `$HOME/.config/s-tui`
+- `/etc/`
+- `/etc/modules-load.d/`
+
+### Files
+
+- `/etc/modules`
+- `/etc/modules-load.d/modules.conf`
 
 ## References
 
