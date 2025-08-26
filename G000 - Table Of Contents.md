@@ -20,7 +20,7 @@
 - [The reference hardware setup](G001%20-%20Hardware%20setup.md#the-reference-hardware-setup)
 - [References](G001%20-%20Hardware%20setup.md#references)
 
-### [**G002** - Proxmox VE installation](G002%20-%20Proxmox%20VE%20installation.md#g002-proxmox-ve-installation)
+### [**G002** - Proxmox VE installation](G002%20-%20Proxmox%20VE%20installation.md)
 
 - [A procedure to install Proxmox VE in limited consumer hardware](G002%20-%20Proxmox%20VE%20installation.md#a-procedure-to-install-proxmox-ve-in-limited-consumer-hardware)
 - [System Requirements](G002%20-%20Proxmox%20VE%20installation.md#system-requirements)
@@ -29,7 +29,7 @@
 - [Connecting remotely](G002%20-%20Proxmox%20VE%20installation.md#connecting-remotely)
 - [References](G002%20-%20Proxmox%20VE%20installation.md#references)
 
-### [**G003** - Host configuration 01 ~ Apt sources, updates and extra tools](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md#g003-host-configuration-01-apt-sources-updates-and-extra-tools)
+### [**G003** - Host configuration 01 ~ Apt sources, updates and extra tools](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md)
 
 - [Proxmox VE 9.0 runs on Debian 13 "trixie"](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md#proxmox-ve-90-runs-on-debian-13-trixie)
 - [Editing the apt repository sources](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md#editing-the-apt-repository-sources)
@@ -38,15 +38,17 @@
 - [Relevant system paths](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md#relevant-system-paths)
 - [References](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md#references)
 
-### [**G004** - Host configuration 02 ~ UPS management with NUT](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md#g004-host-configuration-02-ups-management-with-nut)
+### [**G004** - Host configuration 02 ~ UPS management with NUT](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md)
 
-- [Connecting your UPS with your pve node using NUT](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md#connecting-your-ups-with-your-pve-node-using-nut)
-- [Executing instant commands on the UPS unit](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md#executing-instant-commands-on-the-ups-unit)
+- [Any server must be always connected to an UPS unit](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md#any-server-must-be-always-connected-to-an-ups-unit)
+- [Connecting your UPS with your PVE node using NUT](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md#connecting-your-ups-with-your-pve-node-using-nut)
+- [Checking the NUT logs](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md#checking-the-nut-logs)
+- [Executing instant commands on your UPS unit](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md#executing-instant-commands-on-your-ups-unit)
 - [Other possibilities with NUT](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md#other-possibilities-with-nut)
 - [Relevant system paths](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md#relevant-system-paths)
 - [References](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md#references)
 
-### [**G005** - Host configuration 03 ~ LVM storage](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#g005-host-configuration-03-lvm-storage)
+### [**G005** - Host configuration 03 ~ LVM storage](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md)
 
 - [Your Proxmox VE server's storage needs to be reorganized](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#your-proxmox-ve-servers-storage-needs-to-be-reorganized)
 - [Initial filesystem configuration (**PVE web console**)](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#initial-filesystem-configuration-pve-web-console)
@@ -65,7 +67,7 @@
 - [Relevant system paths](G006%20-%20Host%20configuration%2004%20~%20Removing%20Proxmox's%20subscription%20warning.md#relevant-system-paths)
 - [References](G006%20-%20Host%20configuration%2004%20~%20Removing%20Proxmox's%20subscription%20warning.md#references)
 
-### [**G007** - Host hardening 01 ~ TFA authentication](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#g007-host-hardening-01-tfa-authentication)
+### [**G007** - Host hardening 01 ~ TFA authentication](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md)
 
 - [Enable Two Factor Authentication in your PVE system](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#enable-two-factor-authentication-in-your-pve-system)
 - [Enabling TFA for SSH access](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#enabling-tfa-for-ssh-access)
