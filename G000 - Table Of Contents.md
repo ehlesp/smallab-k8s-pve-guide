@@ -77,7 +77,7 @@
 - [Relevant system paths](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#relevant-system-paths)
 - [References](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#references)
 
-### [**G008** - Host hardening 02 ~ Alternative administrator user](G008%20-%20Host%20hardening%2002%20~%20Alternative%20administrator%20user.md#g008-host-hardening-02-alternative-administrator-user)
+### [**G008** - Host hardening 02 ~ Alternative administrator user](G008%20-%20Host%20hardening%2002%20~%20Alternative%20administrator%20user.md)
 
 - [Avoid using the root user](G008%20-%20Host%20hardening%2002%20~%20Alternative%20administrator%20user.md#avoid-using-the-root-user)
 - [Understanding the Proxmox VE user management and the realms](G008%20-%20Host%20hardening%2002%20~%20Alternative%20administrator%20user.md#understanding-the-proxmox-ve-user-management-and-the-realms)
