@@ -93,7 +93,7 @@
 - [Relevant system paths](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md#relevant-system-paths)
 - [References](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md#references)
 
-### [**G010** - Host hardening 04 ~ Enabling Fail2Ban](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#g010-host-hardening-04-enabling-fail2ban)
+### [**G010** - Host hardening 04 ~ Enabling Fail2Ban](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md)
 
 - [Harden your setup against intrusions with Fail2Ban](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#harden-your-setup-against-intrusions-with-fail2ban)
 - [Installing Fail2ban](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#installing-fail2ban)

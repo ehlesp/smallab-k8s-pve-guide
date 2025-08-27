@@ -3,14 +3,14 @@
 - [Harden your setup against intrusions with Fail2Ban](#harden-your-setup-against-intrusions-with-fail2ban)
 - [Installing Fail2ban](#installing-fail2ban)
 - [Configuring Fail2ban](#configuring-fail2ban)
-  - [Configuring the jail for the ssh service](#configuring-the-jail-for-the-ssh-service)
+  - [Configuring the jail for the SSH service](#configuring-the-jail-for-the-ssh-service)
     - [Testing the sshd jail configuration](#testing-the-sshd-jail-configuration)
   - [Configuring the Proxmox VE jail](#configuring-the-proxmox-ve-jail)
     - [Testing the Proxmox VE jail configuration](#testing-the-proxmox-ve-jail-configuration)
 - [Considerations regarding Fail2ban](#considerations-regarding-fail2ban)
   - [Fail2ban client](#fail2ban-client)
   - [Fail2ban configuration files are read in order](#fail2ban-configuration-files-are-read-in-order)
-  - [Fail2ban uses `iptables` to enforce the bans](#fail2ban-uses-iptables-to-enforce-the-bans)
+  - [Fail2ban uses `nftables` to enforce the bans](#fail2ban-uses-nftables-to-enforce-the-bans)
   - [Manual banning or unbanning of IPs](#manual-banning-or-unbanning-of-ips)
   - [Checking a jail's filter](#checking-a-jails-filter)
 - [Relevant system paths](#relevant-system-paths)
@@ -22,7 +22,7 @@
 
 ## Harden your setup against intrusions with Fail2Ban
 
-To harden both the ssh port and the web interface of your Proxmox VE standalone server further, install the intrusion prevention Fail2Ban tool to protect those interfaces from anomalous login attempts trying to brute-force their way into your system.
+To harden both the SSH port and the web interface of your Proxmox VE standalone server further, install the intrusion prevention Fail2Ban tool to protect those interfaces from anomalous login attempts trying to brute-force their way into your system.
 
 ## Installing Fail2ban
 
@@ -36,16 +36,16 @@ $ sudo apt install -y fail2ban
 
 The usual method for configuring Fail2ban is by making a `.local` version of the `/etc/fail2ban/jail.conf` file and just editing that version. This way, you have all your particular Fail2Ban rules in one file. But, if you want to separate concerns on different files, you can do it by creating a file per concern under the `/etc/fail2ban/jail.d` folder.
 
-### Configuring the jail for the ssh service
+### Configuring the jail for the SSH service
 
-1. Open a shell with your `sudo` user (`mgrsys` in this guide), `cd` to `/etc/fail2ban/jail.d` and create an empty file called `01_sshd.conf`.
+1. Open a shell with your `sudo` user (`mgrsys` in this guide), `cd` to `/etc/fail2ban/jail.d` and create an empty file called `01_sshd.conf`:
 
     ~~~sh
     $ cd /etc/fail2ban/jail.d
     $ sudo touch 01_sshd.conf
     ~~~
 
-2. Edit the `01_sshd.conf` file by inserting the configuration lines below.
+2. Edit the `01_sshd.conf` file by inserting the configuration lines below:
 
     ~~~sh
     [sshd]
@@ -55,7 +55,7 @@ The usual method for configuring Fail2ban is by making a `.local` version of the
     maxretry = 3
     ~~~
 
-    Regarding the lines above.
+    Regarding the configuration above:
 
     - `[sshd]`\
       Identifies the service this jail is applied to.
@@ -67,10 +67,10 @@ The usual method for configuring Fail2ban is by making a `.local` version of the
       The Debian Linux where Proxmox VE comes installed is _systemd_-based, which means that many of the traditional logs you could use with Fail2Ban to detect attacks have been replaced by the Journal logging system. Hence, you have to enable the `systemd` backend so Fail2Ban can access the logs it needs to monitor to do its job.
 
     - `port`\
-      Should be the same as the one you've configured for your sshd service. In this guide's PVE setup is the standard SSH one.
+      Should be the same as the one you've configured for your `sshd` service. In this guide's PVE setup is the standard SSH one.
 
     - `maxretry`\
-      Is the number of failed authentication attempts allowed before applying a ban to an IP. Remember to make it the same as the `MaxAuthTries` in your `sshd` configuration, so they correlate.
+      Number of failed authentication attempts allowed before applying a ban to an IP. Remember to make it the same as the `MaxAuthTries` in your `sshd` configuration, so they correlate.
 
 3. Save the changes and restart the fail2ban service.
 
@@ -80,38 +80,39 @@ The usual method for configuring Fail2ban is by making a `.local` version of the
 
 #### Testing the sshd jail configuration
 
-To test the jail configuration for the ssh service, you should provoke a ban.
+To test the jail configuration for the SSH service, you should provoke a ban:
 
 1. **Use another computer for this test if you can**. This is to avoid banning the client system from which you usually connect to your PVE server.
 
-2. Then try to connect through ssh **with a non-existing test user**, until you use up the attempts allowed in your configuration.
+2. Then try to connect through SSH **with a non-existing test user**, until you use up the attempts allowed in your configuration.
 
 3. With the default configuration, **the ban time lasts 3600 seconds (one hour)**.
 
 4. After the banning time is over, the banned IP will be unbanned **automatically**.
 
-5. In your server, check the `/var/log/fail2ban.log`. At the end of the file you should find as the most recent lines the logs indicating what has happened with the banned IP.
+5. In your server, check the `/var/log/fail2ban.log`. At the end of the file you should find as the most recent lines the logs indicating what has happened with the banned IP:
 
     ~~~log
-    2025-07-12 20:57:00,848 fail2ban.filter         [23578]: INFO    [sshd] Found 10.3.0.1 - 2025-07-12 20:57:00
-    2025-07-12 20:57:04,003 fail2ban.filter         [23578]: INFO    [sshd] Found 10.3.0.1 - 2025-07-12 20:57:03
-    2025-07-12 20:57:04,003 fail2ban.filter         [23578]: INFO    [sshd] Found 10.3.0.1 - 2025-07-12 20:57:03
-    2025-07-12 20:57:04,501 fail2ban.actions        [23578]: NOTICE  [sshd] Ban 10.3.0.1
-    2025-07-12 21:57:04,501 fail2ban.actions        [23578]: NOTICE  [sshd] Unban 10.3.0.1
+    2025-08-27 16:43:52,822 fail2ban.filter         [2825]: INFO    [sshd] Found 10.3.0.1 - 2025-08-27 16:43:52
+    2025-08-27 16:44:17,117 fail2ban.filter         [2825]: INFO    [sshd] Found 10.3.0.1 - 2025-08-27 16:44:17
+    2025-08-27 16:44:17,117 fail2ban.filter         [2825]: INFO    [sshd] Found 10.3.0.1 - 2025-08-27 16:44:17
+    2025-08-27 16:44:17,521 fail2ban.actions        [2825]: NOTICE  [sshd] Ban 10.3.0.1
+    ...
+    2025-08-27 17:44:17,532 fail2ban.actions        [2825]: NOTICE  [sshd] Unban 10.3.0.1
     ~~~
 
     The configuration allows three login attempts through ssh, which correspond with the three `INFO` lines shown in the log output above. After them, you can see the first `NOTICE` line of the same attempting IP being banned. The final `NOTICE` log line corresponds to the unbanning of the IP after one hour.
 
 ### Configuring the Proxmox VE jail
 
-1. `cd` to `/etc/fail2ban/jail.d` and create an empty file called `02_proxmox.conf`.
+1. `cd` to `/etc/fail2ban/jail.d` and create an empty file called `02_proxmox.conf`:
 
     ~~~sh
     $ cd /etc/fail2ban/jail.d
     $ sudo touch 02_proxmox.conf
     ~~~
 
-2. Edit the `02_proxmox.conf` file by inserting the configuration lines below.
+2. Edit the `02_proxmox.conf` file by inserting the configuration lines below:
 
     ~~~sh
     [proxmox]
@@ -124,7 +125,7 @@ To test the jail configuration for the ssh service, you should provoke a ban.
     bantime = 1h
     ~~~
 
-    Regarding the lines above.
+    Regarding the configuration above:
 
     - `[proxmox]`\
       Identifies the service this jail is applied to.
@@ -142,7 +143,7 @@ To test the jail configuration for the ssh service, you should provoke a ban.
       Specifies which filter to use to look for failed authentication attempts in the PVE platform.
 
     - `maxretry`\
-      Is the number of failed authentication attempts allowed before applying a ban to an IP.
+      Number of failed authentication attempts allowed before applying a ban to an IP.
 
     - `findtime`\
       Time window Fail2Ban will monitor for repeated failed login attempts. In the configuration used in this guide, it will take into account all the attempts that happened in the last two days.
@@ -169,13 +170,13 @@ To test the jail configuration for the ssh service, you should provoke a ban.
     The `[Definition]` above establishes the filtering pattern to detect anomalous attempts at login into the Proxmox VE system:
 
     - `failregex`\
-      Here goes the regular expressions that help detect in the Proxmox VE log the anomalous authentication attempts.
+      To specify the regular expressions that help detect in the Proxmox VE log the anomalous authentication attempts.
 
     - `ignoreregex`\
-      Here can go regular expressions for detecting false positives, in case they are known to happen.
+      To set the regular expressions for detecting false positives, in case they are known to happen.
 
     - `journalmatch`\
-      Indicates the systemd service to monitor in the Journal logs. In this case is Proxmos VE's daemon.
+      Indicates the `systemd` service to monitor in the Journal logs. In this case is Proxmox VE's daemon.
 
 5. Save the changes and restart the fail2ban service.
 
@@ -195,14 +196,15 @@ To test the configuration, you should provoke a ban.
 
 4. After the banning time is over, the banned IP will be unbanned **automatically**.
 
-5. In your server, check the `/var/log/fail2ban.log`. At the end of the file you should find the lines that indicate you what happened with the banned IP.
+5. In your server, check the `/var/log/fail2ban.log`. At the end of the file you should find the lines that indicate you what happened with the banned IP:
 
     ~~~log
-    2025-07-12 21:37:47,479 fail2ban.filter         [31409]: INFO    [proxmox] Found 10.3.0.1 - 2025-07-12 21:37:47
-    2025-07-12 21:37:52,961 fail2ban.filter         [31409]: INFO    [proxmox] Found 10.3.0.1 - 2025-07-12 21:37:52
-    2025-07-12 21:38:12,950 fail2ban.filter         [31409]: INFO    [proxmox] Found 10.3.0.1 - 2025-07-12 21:38:12
-    2025-07-12 21:38:13,386 fail2ban.actions        [31409]: NOTICE  [proxmox] Ban 10.3.0.1
-    2025-07-12 22:38:13,386 fail2ban.actions        [31409]: NOTICE  [proxmox] Unban 10.3.0.1
+    2025-08-27 16:58:49,881 fail2ban.filter         [5927]: INFO    [proxmox] Found 10.3.0.1 - 2025-08-27 16:58:49
+    2025-08-27 16:58:55,690 fail2ban.filter         [5927]: INFO    [proxmox] Found 10.3.0.1 - 2025-08-27 16:58:55
+    2025-08-27 16:59:00,107 fail2ban.filter         [5927]: INFO    [proxmox] Found 10.3.0.1 - 2025-08-27 16:58:59
+    2025-08-27 16:59:00,647 fail2ban.actions        [5927]: NOTICE  [proxmox] Ban 10.3.0.1
+    ...
+    2025-08-27 17:59:00,653 fail2ban.actions        [5927]: NOTICE  [proxmox] Unban 10.3.0.1
     ~~~
 
     The configuration for accessing Proxmox VE allows three attempts, which correspond with the three `INFO` lines shown in the log snippet above. After them, you can see the first `NOTICE` warning of the same attempting IP being banned. The last `NOTICE` entry informs you of the unbanning of the IP after one hour.
@@ -233,8 +235,8 @@ $ sudo fail2ban-client status sshd
 Status for the jail: sshd
 |- Filter
 |  |- Currently failed: 0
-|  |- Total failed:     3
-|  `- Journal matches:  _SYSTEMD_UNIT=sshd.service + _COMM=sshd
+|  |- Total failed:     0
+|  `- Journal matches:  _SYSTEMD_UNIT=ssh.service + _COMM=sshd
 `- Actions
    |- Currently banned: 0
    |- Total banned:     1
@@ -249,9 +251,9 @@ Status for the jail: proxmox
 |  |- Total failed:     3
 |  `- Journal matches:  _SYSTEMD_UNIT=pvedaemon.service
 `- Actions
-   |- Currently banned: 0
+   |- Currently banned: 1
    |- Total banned:     1
-   `- Banned IP list:
+   `- Banned IP list:   10.3.0.1
 ~~~
 
 On the other hand, the `fail2ban-client` can also be used to handle the fail2ban underlying server (the `fail2ban-server` daemon that monitors the system logs).
@@ -265,37 +267,55 @@ The fail2ban configuration files are read in a particular order: first the `.con
 3. `jail.local`
 4. `jail.d/*.local` (in alphabetical order).
 
-### Fail2ban uses `iptables` to enforce the bans
+### Fail2ban uses `nftables` to enforce the bans
 
-Fail2ban monitors the log files of the services you tell it to and, if it detects that an IP is banneable under the criteria of its configuration, it will block any offending IP in the `iptables` firewall of your server.
+Fail2ban monitors the log files of the services you tell it to and, if it detects that an IP is banneable under the criteria of its configuration, it will block any offending IP with the `nftables` firewall integrated in your Proxmox VE server. The rules applied through nftables can be seen with the `nft` command:
 
-On the other hand, the fail2ban jails themselves will also temporarily appear in the `iptables` rule list when an IP is banned by a concrete jail.
+1. First, you must get the name of the table where the Fail2ban rules are kept:
 
-To see the iptables rule list, use `sudo iptables -L`. This could give an output like the following **if there has been at least one banning on each jail in your system**.
+    ~~~sh
+    $ sudo nft list tables
+    table inet f2b-table
+    ~~~
 
-~~~sh
-$ sudo iptables -L
-Chain INPUT (policy ACCEPT)
-target     prot opt source               destination
-f2b-proxmox  tcp  --  anywhere             anywhere             multiport dports https,http,8006
-f2b-sshd   tcp  --  anywhere             anywhere             multiport dports ssh
+    Notice that there is only one table active in the `nftables` firewall, the one for Fail2ban:
 
-Chain FORWARD (policy ACCEPT)
-target     prot opt source               destination
+    - `table`\
+      Just indicates that the object listed in the output is a table of rules.
 
-Chain OUTPUT (policy ACCEPT)
-target     prot opt source               destination
+    - `inet`\
+      Indicate to which address family the rules apply. In this case the rules of the table only apply to IPv4 addresses.
 
-Chain f2b-proxmox (1 references)
-target     prot opt source               destination
-RETURN     all  --  anywhere             anywhere
+    - `f2b-table`\
+      The name of the Fail2ban (`f2b`) table.
 
-Chain f2b-sshd (1 references)
-target     prot opt source               destination
-RETURN     all  --  anywhere             anywhere
-~~~
+2. Once you know the family and name of the Fail2ban table, you can see the rules in it with the `nft` command:
 
-Notice the `f2b-sshd` and `f2b-proxmox` names, they have the name for the Fail2Ban proxmox jails they are related to.
+    ~~~sh
+    $ sudo nft list table inet f2b-table
+    table inet f2b-table {
+            set addr-set-sshd {
+                    type ipv4_addr
+            }
+
+            set addr-set-proxmox {
+                    type ipv4_addr
+                    elements = { 10.3.0.1 }
+            }
+
+            chain f2b-chain {
+                    type filter hook input priority filter - 1; policy accept;
+                    tcp dport 22 ip saddr @addr-set-sshd reject with icmp port-unreachable
+                    tcp dport { 80, 443, 8006 } ip saddr @addr-set-proxmox reject with icmp port-unreachable
+            }
+    }
+    ~~~
+
+    The output reveals both sets of banned addresses and the chains of rules applied:
+
+    - The `addr-set-sshd` and `addr-set-proxmox` sets each correspond to one of the jails enabled in Fail2ban. Notice how in the `addr-set-proxmox` there is already one IP included in the set, meaning that nftables has blocked its access to the Proxmox VE server ports.
+
+    - The `f2b-chain` block contains the rules that block access to the sshd and Proxmox VE servers to banned IPs.
 
 ### Manual banning or unbanning of IPs
 
@@ -309,7 +329,10 @@ Notice how you have to specify on which `<jail>` you want to place a ban or lift
 
 ~~~sh
 $ sudo fail2ban-client set sshd unbanip 10.3.0.1
+1
 ~~~
+
+Notice that the unbanip command will return a number that indicates how many IPs have been unbanned. In the example, just one has been releases from the `proxmox` jail.
 
 ### Checking a jail's filter
 
@@ -321,19 +344,20 @@ To check that the regular expression of a jail's filter works, you have to use t
 fail2ban-regex [/path/to/log.file | systemd-journal] /path/to/fail2ban/filter/configuration.file
 ~~~
 
-Notice that you can test any filter against any log file, or the systemd journal. For instance, if you were to check the `proxmox` filter previously explained in this guide, you would do it like the following.
+Notice that you can test any filter against any log file, or the systemd Journal. For instance, if you were to check the `proxmox` filter previously explained in this guide, you would do this:
 
 ~~~sh
 $ sudo fail2ban-regex systemd-journal /etc/fail2ban/filter.d/proxmox.conf
 ~~~
 
-The output of the command above will be something like the following.
+The output of the command above should be something like the following:
 
 ~~~sh
+
 Running tests
 =============
 
-Use   failregex filter file : proxmox, basedir: /etc/fail2ban
+Use      filter file : proxmox, basedir: /etc/fail2ban
 Use         systemd journal
 Use         encoding : UTF-8
 Use    journal match : _SYSTEMD_UNIT=pvedaemon.service
@@ -342,20 +366,20 @@ Use    journal match : _SYSTEMD_UNIT=pvedaemon.service
 Results
 =======
 
-Failregex: 5 total
+Failregex: 8 total
 |-  #) [# of hits] regular expression
-|   1) [5] pvedaemon\[.*authentication failure; rhost=<HOST> user=.* msg=.*
+|   1) [8] pvedaemon\[.*authentication failure; rhost=<HOST> user=.* msg=.*
 `-
 
 Ignoreregex: 0 total
 
-Lines: 429 lines, 0 ignored, 5 matched, 424 missed
-[processed in 0.04 sec]
+Lines: 356 lines, 0 ignored, 8 matched, 348 missed
+[processed in 0.14 sec]
 
-Missed line(s): too many to print.  Use --print-all-missed to print all 424 lines
+Missed line(s): too many to print.  Use --print-all-missed to print all 348 lines
 ~~~
 
-Notice how the `fail2ban-regex` command reports a total of five matches in the `Failregex` line.
+Notice how the `fail2ban-regex` command reports a total of eight matches in the `Failregex` line.
 
 ## Relevant system paths
 
@@ -380,8 +404,7 @@ Notice how the `fail2ban-regex` command reports a total of five matches in the `
 - [Proxmox VE wiki. Protecting the web interface with fail2ban](https://pve.proxmox.com/wiki/Fail2ban)
 - [fail2ban conf file](https://unix.stackexchange.com/questions/456756/fail2ban-conf-file)
 - [Fail2ban on Debian Buster - the right way to configure?](https://serverfault.com/questions/997099/fail2ban-on-debian-buster-the-right-way-to-configure)
-- [How to install Fail2ban on Debian](https://upcloud.com/community/tutorials/install-fail2ban-debian/)
-- [How to Setup Fail2ban on Debian 9](https://www.vultr.com/docs/how-to-setup-fail2ban-on-debian-9-stretch)
+- [How to install Fail2ban on Debian](https://upcloud.com/resources/tutorials/install-fail2ban-debian/)
 
 ## Navigation
 
