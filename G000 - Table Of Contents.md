@@ -96,9 +96,9 @@
 ### [**G010** - Host hardening 04 ~ Enabling Fail2Ban](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md)
 
 - [Harden your setup against intrusions with Fail2Ban](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#harden-your-setup-against-intrusions-with-fail2ban)
-- [Installing Fail2ban](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#installing-fail2ban)
-- [Configuring Fail2ban](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#configuring-fail2ban)
-- [Considerations regarding Fail2ban](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#considerations-regarding-fail2ban)
+- [Installing Fail2Ban](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#installing-fail2ban)
+- [Configuring Fail2Ban](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#configuring-fail2ban)
+- [Considerations regarding Fail2Ban](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#considerations-regarding-fail2ban)
 - [Relevant system paths](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#relevant-system-paths)
 - [References](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#references)
 

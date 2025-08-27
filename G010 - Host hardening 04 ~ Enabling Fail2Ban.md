@@ -1,30 +1,30 @@
 # G010 - Host hardening 04 ~ Enabling Fail2Ban
 
 - [Harden your setup against intrusions with Fail2Ban](#harden-your-setup-against-intrusions-with-fail2ban)
-- [Installing Fail2ban](#installing-fail2ban)
-- [Configuring Fail2ban](#configuring-fail2ban)
+- [Installing Fail2Ban](#installing-fail2ban)
+- [Configuring Fail2Ban](#configuring-fail2ban)
   - [Configuring the jail for the SSH service](#configuring-the-jail-for-the-ssh-service)
     - [Testing the sshd jail configuration](#testing-the-sshd-jail-configuration)
   - [Configuring the Proxmox VE jail](#configuring-the-proxmox-ve-jail)
     - [Testing the Proxmox VE jail configuration](#testing-the-proxmox-ve-jail-configuration)
-- [Considerations regarding Fail2ban](#considerations-regarding-fail2ban)
-  - [Fail2ban client](#fail2ban-client)
-  - [Fail2ban configuration files are read in order](#fail2ban-configuration-files-are-read-in-order)
-  - [Fail2ban uses `nftables` to enforce the bans](#fail2ban-uses-nftables-to-enforce-the-bans)
+- [Considerations regarding Fail2Ban](#considerations-regarding-fail2ban)
+  - [Fail2Ban client](#fail2ban-client)
+  - [Fail2Ban configuration files are read in order](#fail2ban-configuration-files-are-read-in-order)
+  - [Fail2Ban uses `nftables` to enforce the bans](#fail2ban-uses-nftables-to-enforce-the-bans)
   - [Manual banning or unbanning of IPs](#manual-banning-or-unbanning-of-ips)
   - [Checking a jail's filter](#checking-a-jails-filter)
 - [Relevant system paths](#relevant-system-paths)
   - [Directories](#directories)
   - [Files](#files)
 - [References](#references)
-  - [Fail2ban](#fail2ban)
+  - [Fail2Ban](#fail2ban)
 - [Navigation](#navigation)
 
 ## Harden your setup against intrusions with Fail2Ban
 
 To harden both the SSH port and the web interface of your Proxmox VE standalone server further, install the intrusion prevention Fail2Ban tool to protect those interfaces from anomalous login attempts trying to brute-force their way into your system.
 
-## Installing Fail2ban
+## Installing Fail2Ban
 
 Login with `mgrsys`, and execute the `apt install` command.
 
@@ -32,9 +32,9 @@ Login with `mgrsys`, and execute the `apt install` command.
 $ sudo apt install -y fail2ban
 ~~~
 
-## Configuring Fail2ban
+## Configuring Fail2Ban
 
-The usual method for configuring Fail2ban is by making a `.local` version of the `/etc/fail2ban/jail.conf` file and just editing that version. This way, you have all your particular Fail2Ban rules in one file. But, if you want to separate concerns on different files, you can do it by creating a file per concern under the `/etc/fail2ban/jail.d` folder.
+The usual method for configuring Fail2Ban is by making a `.local` version of the `/etc/fail2ban/jail.conf` file and just editing that version. This way, you have all your particular Fail2Ban rules in one file. But, if you want to separate concerns on different files, you can do it by creating a file per concern under the `/etc/fail2ban/jail.d` folder.
 
 ### Configuring the jail for the SSH service
 
@@ -209,7 +209,7 @@ To test the configuration, you should provoke a ban.
 
     The configuration for accessing Proxmox VE allows three attempts, which correspond with the three `INFO` lines shown in the log snippet above. After them, you can see the first `NOTICE` warning of the same attempting IP being banned. The last `NOTICE` entry informs you of the unbanning of the IP after one hour.
 
-## Considerations regarding Fail2ban
+## Considerations regarding Fail2Ban
 
 First, to know more about how to configure `fail2ban`, check the manual for `jail.conf`.
 
@@ -217,9 +217,9 @@ First, to know more about how to configure `fail2ban`, check the manual for `jai
 $ man jail.conf
 ~~~
 
-### Fail2ban client
+### Fail2Ban client
 
-Fail2ban comes with the `fail2ban-client` program to monitor its status. For instance, after applying the configuration explained in this guide, you would see the following.
+Fail2Ban comes with the `fail2ban-client` program to monitor its status. For instance, after applying the configuration explained in this guide, you would see the following.
 
 ~~~sh
 $ sudo fail2ban-client status
@@ -258,7 +258,7 @@ Status for the jail: proxmox
 
 On the other hand, the `fail2ban-client` can also be used to handle the fail2ban underlying server (the `fail2ban-server` daemon that monitors the system logs).
 
-### Fail2ban configuration files are read in order
+### Fail2Ban configuration files are read in order
 
 The fail2ban configuration files are read in a particular order: first the `.conf` files, then the `.local` ones. And the configuration files within the `.d/` folders are read in alphabetical order. So, the reading order for the `jail` files would be:
 
@@ -267,18 +267,18 @@ The fail2ban configuration files are read in a particular order: first the `.con
 3. `jail.local`
 4. `jail.d/*.local` (in alphabetical order).
 
-### Fail2ban uses `nftables` to enforce the bans
+### Fail2Ban uses `nftables` to enforce the bans
 
-Fail2ban monitors the log files of the services you tell it to and, if it detects that an IP is banneable under the criteria of its configuration, it will block any offending IP with the `nftables` firewall integrated in your Proxmox VE server. The rules applied through nftables can be seen with the `nft` command:
+Fail2Ban monitors the log files of the services you tell it to and, if it detects that an IP is banneable under the criteria of its configuration, it will block any offending IP with the `nftables` firewall integrated in your Proxmox VE server. The rules applied through nftables can be seen with the `nft` command:
 
-1. First, you must get the name of the table where the Fail2ban rules are kept:
+1. First, you must get the name of the table where the Fail2Ban rules are kept:
 
     ~~~sh
     $ sudo nft list tables
     table inet f2b-table
     ~~~
 
-    Notice that there is only one table active in the `nftables` firewall, the one for Fail2ban:
+    Notice that there is only one table active in the `nftables` firewall, the one for Fail2Ban:
 
     - `table`\
       Just indicates that the object listed in the output is a table of rules.
@@ -287,9 +287,9 @@ Fail2ban monitors the log files of the services you tell it to and, if it detect
       Indicate to which address family the rules apply. In this case the rules of the table only apply to IPv4 addresses.
 
     - `f2b-table`\
-      The name of the Fail2ban (`f2b`) table.
+      The name of the Fail2Ban (`f2b`) table.
 
-2. Once you know the family and name of the Fail2ban table, you can see the rules in it with the `nft` command:
+2. Once you know the family and name of the Fail2Ban table, you can see the rules in it with the `nft` command:
 
     ~~~sh
     $ sudo nft list table inet f2b-table
@@ -313,7 +313,7 @@ Fail2ban monitors the log files of the services you tell it to and, if it detect
 
     The output reveals both sets of banned addresses and the chains of rules applied:
 
-    - The `addr-set-sshd` and `addr-set-proxmox` sets each correspond to one of the jails enabled in Fail2ban. Notice how in the `addr-set-proxmox` there is already one IP included in the set, meaning that nftables has blocked its access to the Proxmox VE server ports.
+    - The `addr-set-sshd` and `addr-set-proxmox` sets each correspond to one of the jails enabled in Fail2Ban. Notice how in the `addr-set-proxmox` there is already one IP included in the set, meaning that nftables has blocked its access to the Proxmox VE server ports.
 
     - The `f2b-chain` block contains the rules that block access to the sshd and Proxmox VE servers to banned IPs.
 
@@ -397,7 +397,7 @@ Notice how the `fail2ban-regex` command reports a total of eight matches in the 
 
 ## References
 
-### [Fail2ban](https://github.com/fail2ban/fail2ban)
+### [Fail2Ban](https://github.com/fail2ban/fail2ban)
 
 - [How Fail2Ban Works to Protect Services on a Linux Server](https://www.digitalocean.com/community/tutorials/how-fail2ban-works-to-protect-services-on-a-linux-server)
 - [How to configure fail2ban with systemd journal?](https://unix.stackexchange.com/questions/268357/how-to-configure-fail2ban-with-systemd-journal)
