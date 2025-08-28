@@ -22,9 +22,9 @@
   - [Directories](#directories)
   - [Files](#files)
 - [References](#references)
-  - [Services management in Debian](#services-management-in-debian)
+  - [Proxmox VE](#proxmox-ve)
   - [Proxmox hardening and standalone node optimization](#proxmox-hardening-and-standalone-node-optimization)
-  - [Proxmox VE service daemons](#proxmox-ve-service-daemons)
+  - [Services management in Debian](#services-management-in-debian)
   - [NFS and RPC](#nfs-and-rpc)
   - [Default listening behaviour of `pveproxy`](#default-listening-behaviour-of-pveproxy)
   - [Configuration of SSL/TSL ciphers in `pveproxy`](#configuration-of-ssltsl-ciphers-in-pveproxy)
@@ -34,7 +34,7 @@
 
 ## Reduce your Proxmox VE server's exposed surface
 
-Your standalone Proxmox VE node comes with a number of services running by default. Having in mind the target system's particularities assumed in this guide, there is some reconfiguring or disabling of services you can do to harden your Proxmox VE platform even more.
+Your standalone Proxmox VE node comes with a number of services running by default. Having in mind the particularities assumed in this guide's target system, there is some reconfiguring or disabling of services you can do to harden your Proxmox VE platform even more.
 
 The basic idea is to reduce your platform's surface exposed to possible attacks, while also saving some RAM and CPU in the process, by disabling unneeded processes related to Proxmox VE.
 
@@ -48,190 +48,219 @@ Check out the `/etc/init.d/` folder with `ls -al` to get an output like the foll
 
 ~~~sh
 $ ls -al /etc/init.d/
-total 128
-drwxr-xr-x  2 root root 4096 Jul 12 19:49 .
-drwxr-xr-x 97 root root 4096 Jul 12 19:49 ..
--rwxr-xr-x  1 root root 3740 Feb 14  2023 apparmor
--rwxr-xr-x  1 root root 1897 May  8  2023 chrony
--rwxr-xr-x  1 root root 1235 May 21  2023 console-setup.sh
--rwxr-xr-x  1 root root 3059 Jul 17  2022 cron
--rwxr-xr-x  1 root root 3152 Sep 16  2023 dbus
--rwxr-xr-x  1 root root 7013 Apr 21  2023 fail2ban
--rwxr-xr-x  1 root root 1748 Nov 21  2024 hwclock.sh
--rwxr-xr-x  1 root root 1503 May  3  2024 iscsid
--rwxr-xr-x  1 root root 1482 Jul 18  2022 keyboard-setup.sh
--rwxr-xr-x  1 root root 2063 Dec  9  2022 kmod
--rwxr-xr-x  1 root root 5658 Dec 11  2024 nfs-common
--rwxr-xr-x  1 root root 5329 Jan 25  2023 nut-client
--rwxr-xr-x  1 root root 5316 Jan 25  2023 nut-server
--rwxr-xr-x  1 root root 2433 May  3  2024 open-iscsi
--rwxr-xr-x  1 root root 3089 Mar  6  2024 postfix
--rwxr-xr-x  1 root root  959 Dec 19  2022 procps
--rwxr-xr-x  1 root root 2505 Jul 27  2022 rpcbind
--rwxr-xr-x  1 root root 5246 Sep  1  2019 rrdcached
--rwxr-xr-x  1 root root 4417 Jan 15 19:47 rsync
--rwxr-xr-x  1 root root 3088 Jun 15  2023 smartmontools
--rwxr-xr-x  1 root root 4060 Feb 14 12:51 ssh
--rwxr-xr-x  1 root root 1161 Jun 27  2023 sudo
--rwxr-xr-x  1 root root 6871 Mar  6 15:56 udev
-lrwxrwxrwx  1 root root   10 Jan 25  2023 ups-monitor -> nut-client
+total 112
+drwxr-xr-x   2 root root 4096 Aug 27 16:28 .
+drwxr-xr-x 100 root root 4096 Aug 27 16:28 ..
+-rwxr-xr-x   1 root root 3740 Jul 21 11:30 apparmor
+-rwxr-xr-x   1 root root 1897 Jun  3 17:16 chrony
+-rwxr-xr-x   1 root root 1235 Jul 20 06:30 console-setup.sh
+-rwxr-xr-x   1 root root 3100 Apr  3 12:18 cron
+-rwxr-xr-x   1 root root 3152 Mar  8 20:04 dbus
+-rwxr-xr-x   1 root root 7013 May  9 12:19 fail2ban
+-rwxr-xr-x   1 root root 1511 Mar  9 18:18 iscsid
+-rwxr-xr-x   1 root root 1482 Aug  7  2022 keyboard-setup.sh
+-rwxr-xr-x   1 root root  883 Apr 12 14:35 lm-sensors
+-rwxr-xr-x   1 root root 5619 Mar 31 20:13 nfs-common
+-rwxr-xr-x   1 root root 5329 Jun 27 23:04 nut-client
+-rwxr-xr-x   1 root root 5316 Jun 27 23:04 nut-server
+-rwxr-xr-x   1 root root 2472 Mar  9 18:18 open-iscsi
+-rwxr-xr-x   1 root root 2161 Dec 17  2024 postfix
+-rwxr-xr-x   1 root root  959 Jul 30 13:58 procps
+-rwxr-xr-x   1 root root 2529 Mar 18 01:43 rpcbind
+-rwxr-xr-x   1 root root 4417 Jul 26 11:26 rsync
+-rwxr-xr-x   1 root root 3088 Oct 10  2019 smartmontools
+-rwxr-xr-x   1 root root 4060 Aug  1 17:02 ssh
+-rwxr-xr-x   1 root root 1161 Jun 30 07:55 sudo
+lrwxrwxrwx   1 root root   10 Jun 27 23:04 ups-monitor -> nut-client
+-rwxr-xr-x   1 root root 1221 May  4 19:39 wtmpdb-update-boot
 ~~~
 
-The problem is that not all running processes or services have an executable file in this folder, so this listing gives you a very incomplete reference.
+The problem with this approach is that not all running processes or services have an executable file in this folder, so this listing gives you a very incomplete reference.
 
 ### Listing the unit files with `systemctl`
 
-A much more detailed listing is the one offered by the following `systemctl` command.
+A much more detailed listing is the one offered by this `systemctl` command:
 
 ~~~sh
 $ sudo systemctl list-unit-files
 ~~~
 
-This will give you an interactive read-only long and exhaustive list of processes and services.
+This command will give you a long and exhaustive interactive read-only list of processes and services:
 
 ~~~sh
-UNIT FILE                              STATE           PRESET
-proc-sys-fs-binfmt_misc.automount      static          -
--.mount                                generated       -
-dev-hugepages.mount                    static          -
-dev-mqueue.mount                       static          -
-proc-fs-nfsd.mount                     static          -
-proc-sys-fs-binfmt_misc.mount          disabled        disabled
-run-rpc_pipefs.mount                   generated       -
-sys-fs-fuse-connections.mount          static          -
-sys-kernel-config.mount                static          -
-sys-kernel-debug.mount                 static          -
-sys-kernel-tracing.mount               static          -
-var-lib-nfs-rpc_pipefs.mount           static          -
-nut-driver-enumerator.path             enabled         enabled
-postfix-resolvconf.path                disabled        enabled
-systemd-ask-password-console.path      static          -
-systemd-ask-password-wall.path         static          -
-session-1.scope                        transient       -
-apparmor.service                       enabled         enabled
-apt-daily-upgrade.service              static          -
-apt-daily.service                      static          -
+UNIT FILE                                    STATE           PRESET
+efi.automount                                generated       -
+proc-sys-fs-binfmt_misc.automount            static          -
+-.mount                                      generated       -
+dev-hugepages.mount                          static          -
+dev-mqueue.mount                             static          -
+efi.mount                                    generated       -
+proc-fs-nfsd.mount                           static          -
+proc-sys-fs-binfmt_misc.mount                disabled        disabled
+run-lock.mount                               disabled        enabled
+run-rpc_pipefs.mount                         generated       -
+sys-fs-fuse-connections.mount                static          -
+sys-kernel-config.mount                      static          -
+sys-kernel-debug.mount                       static          -
+sys-kernel-tracing.mount                     static          -
+tmp.mount                                    static          -
+nut-driver-enumerator.path                   enabled         enabled
+postfix-resolvconf.path                      disabled        enabled
+systemd-ask-password-console.path            static          -
+systemd-ask-password-wall.path               static          -
+session-1.scope                              transient       -
+apparmor.service                             enabled         enabled
+apt-daily-upgrade.service                    static          -
+apt-daily.service                            static          -
+apt-listchanges.service                      static          -
+auth-rpcgss-module.service                   static          -
+autovt@.service                              alias           -
+blk-availability.service                     enabled         enabled
+capsule@.service                             static          -
+ceph-fuse@.service                           disabled        enabled
+chrony-dnssrv@.service                       static          -
+chrony-wait.service                          disabled        enabled
+chrony.service                               enabled         enabled
+chronyd-restricted.service                   disabled        enabled
+chronyd.service                              alias           -
+console-getty.service                        disabled        disabled
+console-setup.service                        enabled         enabled
 ...
 ~~~
 
 ### Getting the status of running services with `systemctl`
 
-Another way of listing all the running services with `systemctl` is the following:
+Another way of listing all the running services with `systemctl` is:
 
 ~~~sh
 $ sudo systemctl status
 ~~~
 
-The command will output an interactive read-only list like the following excerpt.
+The command will print an interactive read-only list:
 
 ~~~sh
 ● pve
     State: running
-    Units: 394 loaded (incl. loaded aliases)
-     Jobs: 1 queued
+    Units: 486 loaded (incl. loaded aliases)
+     Jobs: 0 queued
    Failed: 0 units
-    Since: Sun 2025-07-13 16:47:00 CEST; 8min ago
-  systemd: 252.38-1~deb12u1
+    Since: Thu 2025-08-28 16:09:43 CEST; 10min ago
+  systemd: 257.7-1
+  Tainted: unmerged-bin
    CGroup: /
            ├─init.scope
            │ └─1 /sbin/init
            ├─system.slice
            │ ├─chrony.service
-           │ │ ├─796 /usr/sbin/chronyd -F 1
-           │ │ └─799 /usr/sbin/chronyd -F 1
+           │ │ ├─842 /usr/sbin/chronyd -F 1
+           │ │ └─863 /usr/sbin/chronyd -F 1
            │ ├─cron.service
-           │ │ └─988 /usr/sbin/cron -f
+           │ │ └─1106 /usr/sbin/cron -f
            │ ├─dbus.service
-           │ │ └─563 /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile -->
+           │ │ └─705 /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
            │ ├─fail2ban.service
-           │ │ └─754 /usr/bin/python3 /usr/bin/fail2ban-server -xf start
+           │ │ └─958 /usr/bin/python3 /usr/bin/fail2ban-server -xf start
            │ ├─ksmtuned.service
-           │ │ ├─ 588 /bin/bash /usr/sbin/ksmtuned
-           │ │ └─2900 sleep 60
+           │ │ ├─ 724 /bin/bash /usr/sbin/ksmtuned
+           │ │ └─2741 sleep 60
            │ ├─lxc-monitord.service
-           │ │ └─756 /usr/libexec/lxc/lxc-monitord --daemon
+           │ │ └─959 /usr/libexec/lxc/lxc-monitord --daemon
            │ ├─lxcfs.service
-           │ │ └─609 /usr/bin/lxcfs /var/lib/lxcfs
+           │ │ └─739 /usr/bin/lxcfs /var/lib/lxcfs
+           │ ├─nfs-blkmap.service
+           │ │ └─674 /usr/sbin/blkmapd
            │ ├─nut-monitor.service
-           │ │ ├─1058 /lib/nut/upsmon -F
-           │ │ └─1060 /lib/nut/upsmon -F
+           │ │ ├─1159 /lib/nut/upsmon -F
+           │ │ └─1160 /lib/nut/upsmon -F
            │ ├─nut-server.service
-           │ │ └─1057 /lib/nut/upsd -F
-           │ ├─proxmox-firewall.service
-           │ │ └─989 /usr/libexec/proxmox/proxmox-firewall
-           │ ├─pve-cluster.service
-           │ │ └─875 /usr/bin/pmxcfs
-           │ ├─pve-firewall.service
-           │ │ └─1001 pve-firewall
+           │ │ └─1156 /lib/nut/upsd -F
+           │ ├─postfix.service
+           │ │ ├─1146 /usr/lib/postfix/sbin/master -w
 ...
 ~~~
 
 ### Checking the systemd units loaded in memory
 
-Also with `systemctl`, you can see the "units" systemd has currently in memory and their state.
+Also with `systemctl`, you can see the "units" `systemd` has currently in memory and their state:
 
 ~~~sh
 $ sudo systemctl list-units
-    UNIT                                                                                                       LOAD   ACTIVE     SUB       DESCRIPTION
-    proc-sys-fs-binfmt_misc.automount                                                                          loaded active     waiting   Arbitrary Executable File Formats File System Automount Point
-    dev-fuse.device                                                                                            loaded activating tentative /dev/fuse
-    sys-devices-pci0000:00-0000:00:13.0-ata1-host0-target0:0:0-0:0:0:0-block-sda-sda1.device                   loaded active     plugged   Samsung_SSD_860_QVO_1TB 1
-    sys-devices-pci0000:00-0000:00:13.0-ata1-host0-target0:0:0-0:0:0:0-block-sda-sda2.device                   loaded active     plugged   Samsung_SSD_860_QVO_1TB 2
-    sys-devices-pci0000:00-0000:00:13.0-ata1-host0-target0:0:0-0:0:0:0-block-sda-sda3.device                   loaded active     plugged   Samsung_SSD_860_QVO_1TB 3
-    sys-devices-pci0000:00-0000:00:13.0-ata1-host0-target0:0:0-0:0:0:0-block-sda-sda4.device                   loaded active     plugged   Samsung_SSD_860_QVO_1TB 4
-    sys-devices-pci0000:00-0000:00:13.0-ata1-host0-target0:0:0-0:0:0:0-block-sda.device                        loaded active     plugged   Samsung_SSD_860_QVO_1TB
-    sys-devices-pci0000:00-0000:00:13.0-ata2-host1-target1:0:0-1:0:0:0-block-sdb-sdb1.device                   loaded active     plugged   ST1000DM003-9YN162 1
-    sys-devices-pci0000:00-0000:00:13.0-ata2-host1-target1:0:0-1:0:0:0-block-sdb.device                        loaded active     plugged   ST1000DM003-9YN162
-    sys-devices-pci0000:00-0000:00:14.0-usb2-2\x2d1-2\x2d1:1.0-host2-target2:0:0-2:0:0:0-block-sdc-sdc1.device loaded active     plugged   WDC_WD20EARX-00PASB0 1
-    sys-devices-pci0000:00-0000:00:14.0-usb2-2\x2d1-2\x2d1:1.0-host2-target2:0:0-2:0:0:0-block-sdc.device      loaded active     plugged   WDC_WD20EARX-00PASB0
-    sys-devices-pci0000:00-0000:00:1b.0-sound-card0-controlC0.device                                           loaded active     plugged   /sys/devices/pci0000:00/0000:00:1b.0/sound/card0/controlC0
-    sys-devices-pci0000:00-0000:00:1c.2-0000:02:00.0-net-enp2s0.device                                         loaded active     plugged   RTL810xE PCI Express Fast Ethernet controller
-    sys-devices-pci0000:00-0000:00:1c.3-0000:03:00.0-net-wlp3s0.device                                         loaded active     plugged   RTL8723BE PCIe Wireless Network Adapter
-    sys-devices-platform-serial8250-tty-ttyS1.device                                                           loaded active     plugged   /sys/devices/platform/serial8250/tty/ttyS1
-    sys-devices-platform-serial8250-tty-ttyS10.device                                                          loaded active     plugged   /sys/devices/platform/serial8250/tty/ttyS10
-    sys-devices-platform-serial8250-tty-ttyS11.device                                                          loaded active     plugged   /sys/devices/platform/serial8250/tty/ttyS11
-    sys-devices-platform-serial8250-tty-ttyS12.device                                                          loaded active     plugged   /sys/devices/platform/serial8250/tty/ttyS12
+  UNIT                                                                                                       LOAD   ACTIVE     SUB       DESCRIPTION
+  efi.automount                                                                                              loaded active     waiting   EFI System Partition Automount
+  proc-sys-fs-binfmt_misc.automount                                                                          loaded active     running   Arbitrary Executable File Formats File System Automount Point
+● dev-fuse.device                                                                                            loaded activating tentative /dev/fuse
+  sys-devices-pci0000:00-0000:00:13.0-ata1-host0-target0:0:0-0:0:0:0-block-sda-sda1.device                   loaded active     plugged   Samsung_SSD_860_QVO_1TB 1
+  sys-devices-pci0000:00-0000:00:13.0-ata1-host0-target0:0:0-0:0:0:0-block-sda-sda2.device                   loaded active     plugged   Samsung_SSD_860_QVO_1TB 2
+  sys-devices-pci0000:00-0000:00:13.0-ata1-host0-target0:0:0-0:0:0:0-block-sda-sda3.device                   loaded active     plugged   Samsung_SSD_860_QVO_1TB 3
+  sys-devices-pci0000:00-0000:00:13.0-ata1-host0-target0:0:0-0:0:0:0-block-sda-sda4.device                   loaded active     plugged   Samsung_SSD_860_QVO_1TB 4
+  sys-devices-pci0000:00-0000:00:13.0-ata1-host0-target0:0:0-0:0:0:0-block-sda.device                        loaded active     plugged   Samsung_SSD_860_QVO_1TB
+  sys-devices-pci0000:00-0000:00:13.0-ata2-host1-target1:0:0-1:0:0:0-block-sdb-sdb1.device                   loaded active     plugged   WDC_WD10JPVX-22JC3T0 1
+  sys-devices-pci0000:00-0000:00:13.0-ata2-host1-target1:0:0-1:0:0:0-block-sdb.device                        loaded active     plugged   WDC_WD10JPVX-22JC3T0
+  sys-devices-pci0000:00-0000:00:14.0-usb2-2\x2d1-2\x2d1:1.0-host2-target2:0:0-2:0:0:0-block-sdc-sdc1.device loaded active     plugged   ST2000LM015-2E8174 1
+  sys-devices-pci0000:00-0000:00:14.0-usb2-2\x2d1-2\x2d1:1.0-host2-target2:0:0-2:0:0:0-block-sdc.device      loaded active     plugged   ST2000LM015-2E8174
+  sys-devices-pci0000:00-0000:00:1b.0-sound-card0-controlC0.device                                           loaded active     plugged   /sys/devices/pci0000:00/0000:00:1b.0/sound/card0/controlC0
+  sys-devices-pci0000:00-0000:00:1c.2-0000:03:00.0-net-enp3s0.device                                         loaded active     plugged   RTL8111/8168/8211/8411 PCI Express Gigabit Ethernet Controller
+  sys-devices-pci0000:00-0000:00:1f.0-intel\x2dspi-spi_master-spi0-spi0.0-mtd-mtd0.device                    loaded active     plugged   /sys/devices/pci0000:00/0000:00:1f.0/intel-spi/spi_master/spi0/spi0.0/mtd/mtd0
+  sys-devices-pci0000:00-0000:00:1f.0-intel\x2dspi-spi_master-spi0-spi0.0-mtd-mtd0ro.device                  loaded active     plugged   /sys/devices/pci0000:00/0000:00:1f.0/intel-spi/spi_master/spi0/spi0.0/mtd/mtd0ro
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.0-tty-ttyS0.device                               loaded active     plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.0/tty/ttyS0
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.1-tty-ttyS1.device                               loaded active     plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.1/tty/ttyS1
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.2-tty-ttyS2.device                               loaded active     plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.2/tty/ttyS2
+  sys-devices-platform-serial8250-serial8250:0-serial8250:0.3-tty-ttyS3.device                               loaded active     plugged   /sys/devices/platform/serial8250/serial8250:0/serial8250:0.3/tty/ttyS3
+  sys-devices-virtual-block-dm\x2d0.device                                                                   loaded active     plugged   /sys/devices/virtual/block/dm-0
+  sys-devices-virtual-block-dm\x2d1.device                                                                   loaded active     plugged   /sys/devices/virtual/block/dm-1
+  sys-devices-virtual-misc-rfkill.device                                                                     loaded active     plugged   /sys/devices/virtual/misc/rfkill
+  sys-devices-virtual-net-vmbr0.device                                                                       loaded active     plugged   /sys/devices/virtual/net/vmbr0
+  sys-devices-virtual-tty-ttyprintk.device                                                                   loaded active     plugged   /sys/devices/virtual/tty/ttyprintk
+  sys-module-configfs.device                                                                                 loaded active     plugged   /sys/module/configfs
+  sys-module-fuse.device                                                                                     loaded active     plugged   /sys/module/fuse
+  sys-subsystem-net-devices-enp3s0.device                                                                    loaded active     plugged   RTL8111/8168/8211/8411 PCI Express Gigabit Ethernet Controller
+  sys-subsystem-net-devices-vmbr0.device                                                                     loaded active     plugged   /sys/subsystem/net/devices/vmbr0
+  -.mount                                                                                                    loaded active     mounted   Root Mount
+  dev-hugepages.mount                                                                                        loaded active     mounted   Huge Pages File System
+  dev-mqueue.mount                                                                                           loaded active     mounted   POSIX Message Queue File System
+  etc-pve.mount                                                                                              loaded active     mounted   /etc/pve
+  proc-sys-fs-binfmt_misc.mount                                                                              loaded active     mounted   Arbitrary Executable File Formats File System
+  run-lock.mount                                                                                             loaded active     mounted   Legacy Locks Directory /run/lock
+  run-rpc_pipefs.mount                                                                                       loaded active     mounted   RPC Pipe File System
 ...
 ~~~
 
 ### Inspecting the running services with `htop`
 
-If you installed it, you can use `htop` to monitor in real time all the services running and the resources usage.
+If you installed it, you can use `htop` to monitor in real time all the services currently running in your Proxmox VE server and the resources usage:
 
 ~~~sh
 $ htop
 ~~~
 
-This program offers an interactive text-based interface that, after some tinkering, can be configured to look like in this snapshot:
+This program offers an interactive text-based interface that, after some tinkering (press `F2` to enter its `Setup` menu), can be configured to look like in this snapshot:
 
 ![Htop interface already customized](images/g011/htop_command.webp "Htop interface already customized")
 
 ## Configuring the `pveproxy` service
 
-The PVEProxy is the component responsible for exposing the Proxmox VE API through HTTPS. It's just a specific reverse proxy that gives access to the PVE API and the web console at the 8006 port.
+The PVEProxy is the component responsible for exposing the Proxmox VE API through HTTPS. It is just a specific reverse proxy that gives access to the Proxmox VE API and its web console at the 8006 port.
 
 ### Default 8006 port and listening interfaces
 
-By default, `pveproxy` listens on all your system's network interfaces through the `8006` port. This behavior **cannot be changed in any way**, or is not documented how to do so. Hence you'll need to rely on other techniques, like firewalling or use an extra reverse proxy, to protect the PVE's proxy.
+By default, `pveproxy` listens on all your system's network interfaces through the `8006` port. You can adjust this behavior to make `pveproxy` listen only through one specific IP, although you cannot change the listening port:
 
-### Enforcing strong SSL/TLS ciphers
-
-To make the `pveproxy` use strong SSL/TLS ciphers (for TLS 1.2 and below) and cipher suites (for TLS 1.3 and above) only when its negotiating TLS connections (to avoid _Man In The Middle_, or _MITM_, attacks), do the following.
-
-1. Open a shell with `mgrsys`, `cd` to `/etc/default/` and create an empty `pveproxy` file.
+1. Open a shell with `mgrsys`, `cd` to `/etc/default/` and create an empty `pveproxy` file:
 
     ~~~sh
     $ cd /etc/default/
     $ sudo touch pveproxy
     ~~~
 
-2. Add to the `pveproxy` file the following lines.
+2. Edit the new `/etc/default/pveproxy` file to add a line like the following:
 
     ~~~sh
-    CIPHERS="ECDHE-ARIA128-GCM-SHA256:ECDHE-ARIA256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-ECDSA-ARIA128-GCM-SHA256:ECDHE-ECDSA-ARIA256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-PSK-CHACHA20-POLY1305:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-CHACHA20-POLY1305"
-    CIPHERSUITES="TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256"
-    HONOR_CIPHER_ORDER="1"
+    LISTEN_IP="10.1.0.1"
     ~~~
+
+    > [!WARNING]
+    > **Ensure you specify your PVE system's IP!**\
+    > Do not just blindly copy this configuration line and forget about it, or you might very well disable your access to your Proxmox VE web interface!
 
 3. Save the changes and restart the `pveproxy` service.
 
@@ -239,7 +268,29 @@ To make the `pveproxy` use strong SSL/TLS ciphers (for TLS 1.2 and below) and ci
     $ sudo systemctl restart pveproxy.service
     ~~~
 
-The set in the CIPHERS parameter is derived from the list of supported ciphers you can find [in Cryptcheck](https://cryptcheck.fr/ciphers). The chosen ones are the ones at the top of the list, branded with a green mark but not of the _CCM_ type. The set in `CIPHERSUITES` is the default one, which is a selection of the just five cipher suites currently available for TLS 1.3.
+> [!NOTE]
+> **This change also affects PVE's `spiceproxy` service**\
+> Since `spiceproxy` is a service you will disable later in this chapter, it is not necessary to restart it here.
+
+### Enforcing strong SSL/TLS ciphers
+
+To make the `pveproxy` use strong SSL/TLS ciphers (for TLS 1.2 and below) and cipher suites (for TLS 1.3 and above) only when its negotiating TLS connections (to avoid _Man In The Middle_, or _MITM_, attacks), do the following:
+
+1. Add to the `pveproxy` file the following lines:
+
+    ~~~sh
+    CIPHERS="ECDHE-ARIA128-GCM-SHA256:ECDHE-ARIA256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-ECDSA-ARIA128-GCM-SHA256:ECDHE-ECDSA-ARIA256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-PSK-CHACHA20-POLY1305:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-CHACHA20-POLY1305"
+    CIPHERSUITES="TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256"
+    HONOR_CIPHER_ORDER="1"
+    ~~~
+
+2. Save the changes and restart the `pveproxy` service:
+
+    ~~~sh
+    $ sudo systemctl restart pveproxy.service
+    ~~~
+
+The set in the CIPHERS parameter is derived from the list of supported ciphers you can find [in Cryptcheck](https://cryptcheck.fr/ciphers). The chosen ones are the ones at the top of the list, branded with a green mark but not of the _CCM_ type. The set in `CIPHERSUITES` is the default one, which is a selection from the five cipher suites currently available for TLS 1.3.
 
 > [!WARNING]\
 > **Ciphers evolve over time**\
@@ -279,9 +330,9 @@ If you really need or find useful to enforce some hard access control directly i
 
 ## Disabling RPC services
 
-Since we're not using NFS in our standalone node, here you'll see how to disable all of its related services or daemons.
+Since you will not use NFS in your standalone PVE node, here you'll see how to disable all of its related services or daemons:
 
-1. Open a shell with your `mgrsys` user, and prevent with `systemctl` the `rpcbind` services from starting up when the system boots up.
+1. Open a shell with your `mgrsys` user, and prevent with `systemctl` the `rpcbind` services from starting up when the system boots up:
 
     ~~~sh
     $ sudo systemctl disable --now rpcbind.target rpcbind.socket rpcbind.service
@@ -290,20 +341,24 @@ Since we're not using NFS in our standalone node, here you'll see how to disable
     The command will output this:
 
     ~~~sh
-    Synchronizing state of rpcbind.service with SysV service script with /lib/systemd/systemd-sysv-install.
-    Executing: /lib/systemd/systemd-sysv-install disable rpcbind
-    Removed "/etc/systemd/system/sockets.target.wants/rpcbind.socket".
-    Removed "/etc/systemd/system/multi-user.target.wants/rpcbind.service".
+    Synchronizing state of rpcbind.service with SysV service script with /usr/lib/systemd/systemd-sysv-install.
+    Executing: /usr/lib/systemd/systemd-sysv-install disable rpcbind
+    Removed '/etc/systemd/system/sockets.target.wants/rpcbind.socket'.
+    Removed '/etc/systemd/system/multi-user.target.wants/rpcbind.service'.
+    Disabling 'rpcbind.service', but its triggering units are still active:
+    rpcbind.socket
     ~~~
 
-2. `cd` to `/etc/defaults/` and make a backup of the `nfs-common` file.
+    Nevermind the warning about the `rpcbind.socket` unit. After the reboot you'll perform in a later step, that service unit and the other rpcbind ones will remain disabled.
+
+2. `cd` to `/etc/default/` and make a backup of the `nfs-common` file:
 
     ~~~sh
-    $ cd /etc/defaults
+    $ cd /etc/default/
     $ sudo cp nfs-common nfs-common.orig
     ~~~
 
-    Then, edit `nfs-common` and set its parameters as follows.
+    Then, edit `nfs-common` and set its `NEED_` parameters as follows:
 
     ~~~sh
     # If you do not set values for the NEED_ options, they will be attempted
@@ -313,13 +368,6 @@ Since we're not using NFS in our standalone node, here you'll see how to disable
     # Do you want to start the statd daemon? It is not needed for NFSv4.
     NEED_STATD=no
 
-    # Options for rpc.statd.
-    #   Should rpc.statd listen on a specific port? This is especially useful
-    #   when you have a port-based firewall. To use a fixed port, set this
-    #   this variable to a statd argument like: "--port 4000 --outgoing-port 4001".
-    #   For more information, see rpc.statd(8) or http://wiki.debian.org/SecuringNFS
-    STATDOPTS=
-
     # Do you want to start the idmapd daemon? It is only needed for NFSv4.
     NEED_IDMAPD=no
 
@@ -327,42 +375,42 @@ Since we're not using NFS in our standalone node, here you'll see how to disable
     NEED_GSSD=no
     ~~~
 
-    Notice that I've set only the `NEED_` parameters as `no`, disabling certain daemons that won't be used in this guide's PVE setup.
+    Notice that I've set the `NEED_` parameters as `no`, disabling certain daemons that won't be used in this guide's PVE setup.
 
-3. There's also a unit loaded in systemd which offers nfs client services. Let's disable it.
+3. There's also a unit loaded in systemd which offers nfs client services. Let's disable it:
 
     ~~~sh
     $ sudo systemctl disable --now nfs-client.target
     ~~~
 
-4. Reboot your system.
+4. Reboot your system:
 
     ~~~sh
     $ sudo reboot
     ~~~
 
-5. Finally, check what sockets are currently listening in your system.
+5. Finally, check what sockets are currently listening in your system:
 
     ~~~sh
     $ sudo ss -atlnup
     ~~~
 
-    This will return you an output like this:
+    This will print you an output like this:
 
     ~~~sh
-    Netid    State      Recv-Q     Send-Q         Local Address:Port         Peer Address:Port    Process
-    udp      UNCONN     0          0                  127.0.0.1:323               0.0.0.0:*        users:(("chronyd",pid=784,fd=5))
-    udp      UNCONN     0          0                      [::1]:323                  [::]:*        users:(("chronyd",pid=784,fd=6))
-    tcp      LISTEN     0          4096               127.0.0.1:85                0.0.0.0:*        users:(("pvedaemon worke",pid=997,fd=6),("pvedaemon worke",pid=996,fd=6),("pvedaemon worke",pid=995,fd=6),("pvedaemon",pid=994,fd=6))
-    tcp      LISTEN     0          100                127.0.0.1:25                0.0.0.0:*        users:(("master",pid=949,fd=13))
-    tcp      LISTEN     0          128                 10.3.0.2:22                0.0.0.0:*        users:(("sshd",pid=767,fd=3))
-    tcp      LISTEN     0          16                 127.0.0.1:3493              0.0.0.0:*        users:(("upsd",pid=1026,fd=4))
-    tcp      LISTEN     0          4096                       *:8006                    *:*        users:(("pveproxy worker",pid=1010,fd=6),("pveproxy worker",pid=1009,fd=6),("pveproxy worker",pid=1008,fd=6),("pveproxy",pid=1007,fd=6))
-    tcp      LISTEN     0          4096                       *:3128                    *:*        users:(("spiceproxy work",pid=1016,fd=6),("spiceproxy",pid=1015,fd=6))
-    tcp      LISTEN     0          100                    [::1]:25                   [::]:*        users:(("master",pid=949,fd=14))
+    Netid            State             Recv-Q            Send-Q                       Local Address:Port                       Peer Address:Port           Process
+    udp              UNCONN            0                 0                                127.0.0.1:323                             0.0.0.0:*               users:(("chronyd",pid=834,fd=5))
+    udp              UNCONN            0                 0                                    [::1]:323                                [::]:*               users:(("chronyd",pid=834,fd=6))
+    tcp              LISTEN            0                 128                               10.1.0.1:22                              0.0.0.0:*               users:(("sshd",pid=972,fd=6))
+    tcp              LISTEN            0                 4096                             127.0.0.1:85                              0.0.0.0:*               users:(("pvedaemon worke",pid=1182,fd=6),("pvedaemon worke",pid=1181,fd=6),("pvedaemon worke",pid=1180,fd=6),("pvedaemon",pid=1179,fd=6))
+    tcp              LISTEN            0                 100                              127.0.0.1:25                              0.0.0.0:*               users:(("master",pid=1132,fd=13))
+    tcp              LISTEN            0                 16                               127.0.0.1:3493                            0.0.0.0:*               users:(("upsd",pid=1141,fd=4))
+    tcp              LISTEN            0                 4096                              10.1.0.1:3128                            0.0.0.0:*               users:(("spiceproxy work",pid=1242,fd=6),("spiceproxy",pid=1241,fd=6))
+    tcp              LISTEN            0                 4096                              10.1.0.1:8006                            0.0.0.0:*               users:(("pveproxy worker",pid=1213,fd=6),("pveproxy worker",pid=1212,fd=6),("pveproxy worker",pid=1211,fd=6),("pveproxy",pid=1210,fd=6))
+    tcp              LISTEN            0                 100                                  [::1]:25                                 [::]:*               users:(("master",pid=1132,fd=14))
     ~~~
 
-    The nfs service use several ports in both TCP and UDP protocols: 111, 1110, 2049, 4045. But, as you can see in the output above, none of them appear as being in use by any active socket.
+    The nfs service uses several ports in both TCP and UDP protocols: 111, 1110, 2049, 4045. But, as you can see in the output above, none of them appear as being in use by any active socket.
 
 ## Disabling `zfs` and `ceph`
 
@@ -390,7 +438,7 @@ ZFS requires a lot of RAM we cannot afford in such a small server as the one use
 
 > [!NOTE]
 > **The ZFS tab will remain visible in PVE's web console**\
-> Disabling the `zfs` services **won't remove** the ZFS tab found in the PVE web console at the `pve` node level, under the `Disks` section.
+> Disabling the `zfs` services **will not remove** the ZFS tab found in the PVE web console at the `pve` node level, under the `Disks` section.
 >
 > Also, Ceph was not really installed on your system, something notified by the PVE web console at the `Datacenter > Ceph` section, although Proxmox VE is installed with a couple of Ceph-related services.
 
@@ -427,12 +475,16 @@ The `spiceproxy` service allows SPICE clients to connect to virtual machines and
 > [!NOTE]
 > **The `SPICE` option will remain available**\
 > The `SPICE` option offered by the PVE web console will still be present in the `Shell` list, although of course you won't be able to connect to the server through that method now.
-> 
+>
 > ![The SPICE option remains available among the web console's shell options](images/g011/pve_web_console_shell_options.webp "The SPICE option remains available among the web console's shell options")
 
 ## Disabling cluster and high availability related services
 
 Since we're working just with a standalone node, it doesn't make much sense to have cluster or high availability related services running for nothing.
+
+> [!WARNING]
+> **Do not attempt to disable the `pve-cluster` daemon**\
+> [The Proxmox VE documentation explicitly says](https://pve.proxmox.com/wiki/Service_daemons#pve-cluster) that this service is **needed** even when not running a cluster.
 
 1. Open a shell with you administrator user, and with the `systemctl` command disable and stop the services as follows.
 
@@ -448,29 +500,27 @@ Since we're working just with a standalone node, it doesn't make much sense to h
 
 3. Check either with `htop` or `systemctl` that the `pve-ha-crm` and `pve-ha-lrm` services are not running. Corosync wasn't running since your node is a standalone one.
 
-> [!WARNING]
-> **Do not attempt to disable the `pve-cluster` daemon**\
-> [The Proxmox VE documentation explicitly says](https://pve.proxmox.com/wiki/Service_daemons#pve-cluster) that this service is **needed** even when not running a cluster.
-
 ## Considerations
+
+These are a couple of things to be aware of regarding Proxmox VE services.
 
 ### Errors in the `apt upgrade` process
 
-Disabling or masking PVE related services may provoke errors during the `apt upgrade` process of Proxmox VE packages, as it can happen with the `pve-manager` when `apt` does not find the `spiceproxy` daemon available. The update process of some of those PVE packages may expect a certain service to be present or running in the system, and they may try to restart them as part of the update process.
+Disabling or masking PVE related services may provoke errors during the `apt upgrade` process of Proxmox VE packages, as it can happen with the `pve-manager` when `apt` does not find the `spiceproxy` daemon available. The update process for some of those PVE packages may expect a certain service to be present or running in the system, and they may try to restart them as part of the update process.
 
 You should expect these error happening anytime you run an update of your system, although your Proxmox VE standalone node should keep on running just fine. Any time you end an upgrade process with errors, try the command `sudo apt autoremove` to make `apt` or `dpkg` treat them somehow.
 
 ### View of services running in the Proxmox VE node
 
-The Proxmox VE web console has a view, at the node level, where you can see the current status of the Proxmox VE-related service units running in your host.
+The Proxmox VE web console has a `System` view, at the PVE node level, where you can see the current status of the Proxmox VE-related service units running in your host.
 
 ![PVE web console's System view](images/g011/pve_web_console_system_services_view.webp "PVE web console's System view")
 
-For example, notice how the `corosync`, `pve-ha-crm` and `pve-ha-lrm` services are reported _dead_ with their systemd units _disabled_. Meanwhile, the `spiceproxy` service is listed as _disabled_ with its systemd unit _masked_ (which explains why its line has been rendered in a light gray color) .
+For example, notice how the `corosync`, `pve-ha-crm` and `pve-ha-lrm` services are reported _dead_ with their systemd units _disabled_. Meanwhile, the `spiceproxy` service is greyed out as _disabled_ with its systemd unit _masked_.
 
 > [!IMPORTANT]
 > **The System view only shows PVE-related services**\
-> The services shown in this System view are only the ones Proxmox VE is directly concerned with. Other services running in your PVE host will not appear here.
+> The services shown in this `System` view are only the ones Proxmox VE is directly concerned with. Other system services running in your PVE host will not appear listed here.
 
 ## Relevant system paths
 
@@ -486,21 +536,23 @@ For example, notice how the `corosync`, `pve-ha-crm` and `pve-ha-lrm` services a
 
 ## References
 
+### [Proxmox VE](https://pve.proxmox.com/)
+
+- [Wiki. Service daemons](https://pve.proxmox.com/wiki/Service_daemons)
+
+- [Administration Guide. Important Service Daemons](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_important_service_daemons)
+  - [pveproxy - Proxmox VE API Proxy Daemon](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_pveproxy_proxmox_ve_api_proxy_daemon)
+
+### Proxmox hardening and standalone node optimization
+
+- [Proxmox Lite](https://www.lowendtalk.com/discussion/165481/proxmox-lite)
+- [PROXMOX Standalone or Cluster](https://www.reddit.com/r/Proxmox/comments/i3mupd/proxmox_standalone_or_cluster/)
+
 ### Services management in Debian
 
 - [How to Start, Stop and Restart Services in Debian 10](https://vitux.com/how-to-start-stop-and-restart-services-in-debian-10/)
 - [The directory `/etc/default/`](https://www.linuxquestions.org/questions/slackware-14/the-directory-etc-default-723942/)
 - [What is the purpose of /etc/default?](https://superuser.com/questions/354944/what-is-the-purpose-of-etc-default)
-
-### Proxmox hardening and standalone node optimization
-
-- [Hardening Proxmox, some in one place](https://blog.samuel.domains/blog/security/hardening-proxmox-some-in-one-place)
-- [Proxmox Lite](https://www.lowendtalk.com/discussion/165481/proxmox-lite)
-- [PROXMOX Standalone or Cluster](https://www.reddit.com/r/Proxmox/comments/i3mupd/proxmox_standalone_or_cluster/)
-
-### Proxmox VE service daemons
-
-- [Proxmox VE wiki. Service daemons](https://pve.proxmox.com/wiki/Service_daemons)
 
 ### NFS and RPC
 
@@ -515,8 +567,8 @@ For example, notice how the `corosync`, `pve-ha-crm` and `pve-ha-lrm` services a
 
 ### Configuration of SSL/TSL ciphers in `pveproxy`
 
+- [CryptCheck. Supported cipher suites](https://cryptcheck.fr/ciphers)
 - [pveproxy - Disable weak SSL ciphers?](https://forum.proxmox.com/threads/pveproxy-disable-weak-ssl-ciphers.14794/page-3)
-- [Supported cipher suites - List of SSL ciphers and it's quality](https://cryptcheck.fr/ciphers)
 - [Cipher Suites Explained in Simple Terms: Unlocking the Code](https://www.ssldragon.com/blog/cipher-suites/)
 - [Cipher Suites: Ciphers, Algorithms and Negotiating Security Settings](https://www.thesslstore.com/blog/cipher-suites-algorithms-security-settings/)
 
@@ -527,7 +579,7 @@ For example, notice how the `corosync`, `pve-ha-crm` and `pve-ha-lrm` services a
 
 ### SPICE proxy
 
-- [PVE admin manual. spiceproxy - SPICE Proxy Service](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_spiceproxy_spice_proxy_service)
+- [spiceproxy - SPICE Proxy Service](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_spiceproxy_spice_proxy_service)
 - [disable spiceproxy](https://forum.proxmox.com/threads/disable-spiceproxy.36638/)
 - [pve-manager and other updates with optional services masked](https://forum.proxmox.com/threads/pve-manager-and-other-updates-with-optional-services-masked.63652/)
 
