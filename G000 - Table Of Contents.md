@@ -102,7 +102,7 @@
 - [Relevant system paths](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#relevant-system-paths)
 - [References](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#references)
 
-### [**G011** - Host hardening 05 ~ Proxmox VE services](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md#g011-host-hardening-05-proxmox-ve-services)
+### [**G011** - Host hardening 05 ~ Proxmox VE services](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md)
 
 - [Reduce your Proxmox VE server's exposed surface](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md#reduce-your-proxmox-ve-servers-exposed-surface)
 - [Checking currently running services](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md#checking-currently-running-services)
