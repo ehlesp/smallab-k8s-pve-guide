@@ -519,7 +519,7 @@ The Proxmox VE web console has a `System` view, at the PVE node level, where you
 For example, notice how the `corosync`, `pve-ha-crm` and `pve-ha-lrm` services are reported _dead_ with their systemd units _disabled_. Meanwhile, the `spiceproxy` service is greyed out as _disabled_ with its systemd unit _masked_.
 
 > [!IMPORTANT]
-> **The System view only shows PVE-related services**\
+> **The `System` view only shows PVE-related services**\
 > The services shown in this `System` view are only the ones Proxmox VE is directly concerned with. Other system services running in your PVE host will not appear listed here.
 
 ## Relevant system paths
