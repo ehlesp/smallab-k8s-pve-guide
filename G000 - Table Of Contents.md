@@ -123,11 +123,11 @@
 - [Relevant system paths](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md#relevant-system-paths)
 - [References](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md#references)
 
-### [**G013** - Host hardening 07 ~ Mitigating CPU vulnerabilities](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#g013-host-hardening-07-mitigating-cpu-vulnerabilities)
+### [**G013** - Host hardening 07 ~ Mitigating CPU vulnerabilities](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md)
 
 - [CPUs also have security vulnerabilities](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#cpus-also-have-security-vulnerabilities)
 - [Discovering your CPU's vulnerabilities](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#discovering-your-cpus-vulnerabilities)
-- [Applying the correct microcode package](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#applying-the-correct-microcode-package)
+- [Your Proxmox VE system will already have the correct microcode package applied](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#your-proxmox-ve-system-will-already-have-the-correct-microcode-package-applied)
 - [Relevant system paths](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#relevant-system-paths)
 - [References](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#references)
 
