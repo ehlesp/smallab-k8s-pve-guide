@@ -115,7 +115,7 @@ Be aware that the Proxmox VE firewall handles a bunch of sysctl `net` parameters
 - `net.netfilter.nf_conntrack_tcp_timeout_syn_recv`\
   Another timeout in seconds, although for this one I haven't found a proper definition that explains its meaning.
 
-The parameters mentioned above are just a few of many related to the netfilter conntrack system. [Find a more complete list in this page](https://www.kernel.org/doc/html/latest/networking/nf_conntrack-sysctl.html). On the other hand, the nf parameters that can be managed from the web console are found at the pve node level, in the firewall option's screen.
+The parameters mentioned above are just a few of many related to the netfilter conntrack system. [Find a more complete list in this page](https://www.kernel.org/doc/html/latest/networking/nf_conntrack-sysctl.html). On the other hand, the nf parameters that can be managed from the web console are found at the pve node level, in the firewall option's page:
 
 ![Sysctl parameters as PVE firewall's options](images/g012/pve_firewall_options_sysctl_parameters.webp "Sysctl parameters as PVE firewall's options")
 
