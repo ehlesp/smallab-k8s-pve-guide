@@ -19,7 +19,7 @@
   - [Directories](#directories)
   - [Files](#files)
 - [References](#references)
-  - [Proxmox VE firewall](#proxmox-ve-firewall)
+  - [Proxmox VE](#proxmox-ve)
   - [Ethernet Bridge firewall ebtables](#ethernet-bridge-firewall-ebtables)
   - [Network auditing on Linux](#network-auditing-on-linux)
   - [Network security concepts](#network-security-concepts)
@@ -29,7 +29,7 @@
 
 ## Enabling your PVE's firewall is a must
 
-One of the strongest hardening measures you can apply is a proper firewall, and Proxmox VE comes with one integrated. Needless to say, you must enable and configure this firewall to secure your system.
+One of the strongest hardening measures you can apply in any computing system is setting up a proper firewall, and Proxmox VE comes with one integrated. Needless to say, you must enable and configure this firewall to secure your virtualization server.
 
 ## Proxmox VE firewall uses iptables
 
@@ -37,26 +37,30 @@ The Proxmox VE firewall is based on iptables, meaning that any rules defined wit
 
 ### iptables is a legacy package
 
-The iptables is a legacy package that has been replaced by [nftables](https://wiki.nftables.org/wiki-nftables/index.php/Main_Page) (where `nf` stands for _Netfilter_), but Proxmox VE 8.4 is still using iptables. You can verify this by printing the iptables version.
+The iptables is a legacy package that has been replaced by [nftables](https://wiki.nftables.org/wiki-nftables/index.php/Main_Page) (where `nf` stands for _Netfilter_), but Proxmox VE 9.0 is still using iptables. You can verify this by printing the iptables version.
 
 ~~~sh
 $ sudo iptables -V
-iptables v1.8.9 (legacy)
+iptables v1.8.11 (legacy)
 ~~~
 
 > [!NOTE]
 > **You can enable in your Proxmox VE system a nftables-based version of its firewall**\
-> At the time of writing this, [the new nftables-based `proxmox-firewall` service it is still in the _tech-preview_ stage](https://pve.proxmox.com/pve-docs/chapter-pve-firewall.html#pve_firewall_nft). Therefore, this guide sticks to the legacy iptables-based firewall, which is the one that comes enabled by default in a Proxmox VE 8.4 server.
+> At the time of writing this, [the new nftables-based `proxmox-firewall` service it is still in the _tech-preview_ stage](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#pve_firewall_nft). Therefore, this guide sticks to the legacy iptables-based firewall, which is the one that comes enabled by default in a Proxmox VE 8.4 server.
 >
 > If you want to try using the nftables firewall, know that the configuration explained here is compatible with the new firewall since it uses the same files and configuration format.
 
+> [!IMPORTANT]
+> **Fail2Ban uses nftables!**\
+> Remember that the Fail2Ban service you enabled [back in chapter **G010** already uses nftables to ban IPs](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#fail2ban-uses-nftables-to-enforce-the-bans). Both iptables and nftables can coexist, but you must remember which one is used to ban suspicious IPs (nftables) and which one is used by Proxmox VE as its main firewall (iptables).
+
 > [!NOTE]
 > **Careful of not confusing nftables commands with iptables ones**\
-> There are several iptables commands available in the system, but some of them are meant to be used with the nftables firewall. So, when you execute iptables commands, avoid using the ones that have the `-nft` string in their names (unless you have switched to the new nftables firewall).
+> There are several iptables commands available in the system, but some of them are meant to be used with the nftables firewall. So, when you specifically execute iptables commands, avoid using the ones that have the `-nft` string in their names (unless you have switched to the new nftables firewall).
 
 ## Zones in the Proxmox VE firewall
 
-The [Proxmox VE documentation](https://pve.proxmox.com/pve-docs/chapter-pve-firewall.html#_zones) indicates that the firewall groups the network in three logical zones:
+The [Proxmox VE documentation](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_directions_amp_zones) indicates that the firewall groups the network in three logical zones:
 
 - **Host**\
   Traffic from/to a cluster node (a host).
@@ -75,21 +79,21 @@ Also, know that the PVE firewall offers different options for each tier.
 
 ## Situation at this point
 
-By enabling Fail2Ban in the previous [**G010** chapter](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md), you have also enabled the iptables firewall at the **node level**. You can verify this in the web console at the `pve` node level, by going to the `Firewall > Options` of your standalone node.
+You will find the Proxmox VE firewall feature already enabled by default at the node level of your setup. You can verify this in the web console at the `pve` node level, by going to the `Firewall > Options` of your standalone node:
 
 ![Firewall enabled at the node level](images/g014/pve_firewall_enabled_node_level.webp "Firewall enabled at the node level")
 
-But, on the other hand, the PVE firewall **is NOT running at the `Datacenter` tier**.
+However, the PVE firewall **is NOT running at the `Datacenter` tier**:
 
 ![Firewall disabled at the datacenter tier](images/g014/pve_firewall_disabled_datacenter_tier.webp "Firewall disabled at the datacenter tier")
 
-The Proxmox VE documentation indicates that the firewall comes completely disabled, at all levels we should understand, after the installation. That's why you find the `Firewall` disabled at the `Datacenter` level.
+The Proxmox VE documentation indicates that the firewall comes disabled "cluster-wide" after the installation. That's why you find the `Firewall` disabled at the `Datacenter` level.
 
-Also, from the PVE web console's point of view, the firewall doesn't seem to have rules whatsoever, something you can check when you go directly into the `Firewall` screen of either the `Datacenter` or the node tier.
+Furthermoe, from the PVE web console's point of view, the firewall does not seem to have rules whatsoever. You can see this in the `Firewall` page of either the `Datacenter` or the node tier.
 
 ![No rules present in firewall at the node level](images/g014/pve_firewall_no_rules_node_level.webp "No rules present in firewall at the node level")
 
-The _No firewall rule configured here._ line highlighted in the snapshot above is mostly correct. If you open a shell terminal in your node as your `mgrsys` user, you can check the rules actually enabled in the iptables firewall of your Proxmox VE server.
+The _No firewall rule configured here._ line highlighted in the snapshot above is mostly correct. If you open a shell terminal in your node as your `mgrsys` user, you can check the rules actually enabled in the iptables firewall of your Proxmox VE server:
 
 ~~~sh
 $ sudo iptables -L -n
@@ -103,50 +107,50 @@ Chain OUTPUT (policy ACCEPT)
 target     prot opt source               destination
 ~~~
 
-There are no rules per se, just empty _chains of rules_. Still, you can see how each `Chain` has a policy already established: all chains are **accepting everything** with the default `ACCEPT` policy. Your firewall is completely open, something you do not want at all.
+There are no rules per se, just empty _chains of rules_. Still, you can see how each `Chain` has a policy already established: all chains are **accepting everything** with the `ACCEPT` policy. Your firewall is completely open, something you do not want at all.
 
-Next, let's revise which are the ports currently open in your PVE system.
+Next, let's revise which are the ports currently open in your PVE system:
 
 ~~~sh
 $ sudo ss -atlnup
 Netid            State             Recv-Q            Send-Q                       Local Address:Port                       Peer Address:Port           Process
-udp              UNCONN            0                 0                                127.0.0.1:323                             0.0.0.0:*               users:(("chronyd",pid=752,fd=5))
-tcp              LISTEN            0                 100                              127.0.0.1:25                              0.0.0.0:*               users:(("master",pid=926,fd=13))
-tcp              LISTEN            0                 4096                             127.0.0.1:85                              0.0.0.0:*               users:(("pvedaemon worke",pid=979,fd=6),("pvedaemon worke",pid=978,fd=6),("pvedaemon worke",pid=977,fd=6),("pvedaemon",pid=976,fd=6))
-tcp              LISTEN            0                 16                               127.0.0.1:3493                            0.0.0.0:*               users:(("upsd",pid=1004,fd=4))
-tcp              LISTEN            0                 128                               10.3.0.2:22                              0.0.0.0:*               users:(("sshd",pid=733,fd=3))
-tcp              LISTEN            0                 4096                                     *:8006                                  *:*               users:(("pveproxy worker",pid=991,fd=6),("pveproxy worker",pid=990,fd=6),("pveproxy worker",pid=989,fd=6),("pveproxy",pid=988,fd=6))
+udp              UNCONN            0                 0                                127.0.0.1:323                             0.0.0.0:*               users:(("chronyd",pid=819,fd=5))
+tcp              LISTEN            0                 100                              127.0.0.1:25                              0.0.0.0:*               users:(("master",pid=1101,fd=13))
+tcp              LISTEN            0                 4096                             127.0.0.1:85                              0.0.0.0:*               users:(("pvedaemon worke",pid=1151,fd=6),("pvedaemon worke",pid=1150,fd=6),("pvedaemon worke",pid=1148,fd=6),("pvedaemon",pid=1147,fd=6))
+tcp              LISTEN            0                 4096                              10.1.0.1:8006                            0.0.0.0:*               users:(("pveproxy worker",pid=1796,fd=6),("pveproxy worker",pid=1795,fd=6),("pveproxy worker",pid=1794,fd=6),("pveproxy",pid=1161,fd=6))
+tcp              LISTEN            0                 128                               10.1.0.1:22                              0.0.0.0:*               users:(("sshd",pid=942,fd=6))
+tcp              LISTEN            0                 16                               127.0.0.1:3493                            0.0.0.0:*               users:(("upsd",pid=1109,fd=4))
 ~~~
 
-If you've followed this guide closely, you should get a list of listening sockets like the output above:
+If you've followed this guide closely up to this chapter, you should get a list of listening sockets like the output above (although not necessarily in the same order):
 
-- Service `chronyd` listening on localhost (`127.0.0.1`) interface at port `323`:\
-  Daemon for synchronizing the system's clock with an external time server (already seen back in the [**G012** guide](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md)).
+- **Service `chronyd` listening on localhost (`127.0.0.1`) interface at port `323`**\
+  Daemon for synchronizing the system's clock with an external time server (already seen back in the [**G012** chapter](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md#disabling-chronys-ipv6-socket)).
 
-- Service `master` listening on localhost (`127.0.0.1`) interface at port `25`:\
+- **Service `master` listening on localhost (`127.0.0.1`) interface at port `25`**\
   Postmaster mail service providing mailing within the system itself.
 
-- Service `pvedaemon` listening on localhost (`127.0.0.1`) interface at port `85`:
+- **Service `pvedaemon` listening on localhost (`127.0.0.1`) interface at port `85`**\
   Exposes the whole Proxmox VE API.
 
-- Service `upsd` listening on localhost (`127.0.0.1`) interface at port `3493`:
-  NUT service for monitoring your UPS.
+- **Service `pveproxy` listening on the host's network Ethernet interface (`10.1.0.1`) at port `8006`**\
+  Proxmox VE proxy that gives access to the web console and also exposes the Proxmox VE API.
 
-- Service `sshd` listening on the host's network Ethernet interface (`10.3.0.2`) at port `22`:
+- **Service `sshd` listening on the host's network Ethernet interface (`10.1.0.1`) at port `22`**\
   SSH daemon service.
 
-- Service `pveproxy` listening on all interfaces (`0.0.0.0`) at port `8006`:
-  Proxmox VE proxy that gives access to the web console and also exposes the Proxmox VE API.
+- **Service `upsd` listening on localhost (`127.0.0.1`) interface at port `3493`**\
+  NUT service for monitoring your UPS.
 
 ## Enabling the firewall at the Datacenter tier
 
 Just by enabling the PVE firewall at the `Datacenter` tier you'll get a much stronger set of rules enforced in your firewall. But, before you do this...
 
 > [!WARNING]
-> **Read this before enabling the firewall at the `Datacenter` tier**\
+> **Read this warning before enabling the firewall at the `Datacenter` tier**\
 > After enabling the firewall at the `Datacenter` tier, your Proxmox VE platform will block incoming traffic from all hosts towards your datacenter, except the traffic coming from your LAN towards the 8006 (web console) and 22 (ssh) ports.
 >
-> If you plan to access your PVE platform **from IPs outside your LAN**, you'll need to **add first** the rules in the PVE firewall to allow such access. But I won't cover this here, since I'm just assuming a "pure" LAN scenario (meaning a Proxmox VE server **not accessible** from internet), in this guide series.
+> If you plan to access your PVE platform **from IPs outside your LAN**, you'll need to **add first** the rules in the PVE firewall to allow such access. But I won't cover this here, since I'm just assuming a "pure" LAN scenario (meaning a Proxmox VE server **not accessible** from internet), in this guide.
 
 Assuming you are accessing your PVE system from another computer in the same LAN, go to the `Datacenter > Firewall > Options` screen in the web console and select the `Firewall` parameter.
 
@@ -156,62 +160,166 @@ Click on `Edit` and mark the `Firewall` checkbox presented to enable the firewal
 
 ![Enabling firewall option at datacenter tier](images/g014/pve_firewall_enabling_datacenter_tier_checking_option.webp "Enabling firewall option at Datacenter tier")
 
-Hit `OK` and you'll see the `Firewall` parameter has a `Yes` value now.
+Hit `OK` and you'll see how the `Firewall` parameter has changed to a `Yes` value.
 
 ![Firewall enabled at Datacenter tier](images/g014/pve_firewall_enabled_datacenter_tier.webp "Firewall enabled at Datacenter tier")
 
-The change will be applied immediately, but you won't see any rules at all in the `Firewall` screens, neither at the `Datacenter` nor at the `pve` node level. But the iptables ruleset will change a lot, something you can verify with the iptables command.
+The change will be applied immediately, but you won't see any rules at all in your Proxmox VE server's `Firewall` pages, neither at the `Datacenter` nor at the `pve` node level. What will change a lot is the iptables ruleset, something you can verify with the `iptables` command:
 
 ~~~sh
 $ sudo iptables -L -n
 Chain INPUT (policy ACCEPT)
 target     prot opt source               destination
-PVEFW-INPUT  0    --  0.0.0.0/0            0.0.0.0/0
+PVEFW-INPUT  all  --  0.0.0.0/0            0.0.0.0/0
 
 Chain FORWARD (policy ACCEPT)
 target     prot opt source               destination
-PVEFW-FORWARD  0    --  0.0.0.0/0            0.0.0.0/0
+PVEFW-FORWARD  all  --  0.0.0.0/0            0.0.0.0/0
 
 Chain OUTPUT (policy ACCEPT)
 target     prot opt source               destination
-PVEFW-OUTPUT  0    --  0.0.0.0/0            0.0.0.0/0
+PVEFW-OUTPUT  all  --  0.0.0.0/0            0.0.0.0/0
 
 Chain PVEFW-Drop (1 references)
 target     prot opt source               destination
-PVEFW-DropBroadcast  0    --  0.0.0.0/0            0.0.0.0/0
-ACCEPT     1    --  0.0.0.0/0            0.0.0.0/0            icmptype 3 code 4
-ACCEPT     1    --  0.0.0.0/0            0.0.0.0/0            icmptype 11
-DROP       0    --  0.0.0.0/0            0.0.0.0/0            ctstate INVALID
-DROP       17   --  0.0.0.0/0            0.0.0.0/0            multiport dports 135,445
-DROP       17   --  0.0.0.0/0            0.0.0.0/0            udp dpts:137:139
-DROP       17   --  0.0.0.0/0            0.0.0.0/0            udp spt:137 dpts:1024:65535
-DROP       6    --  0.0.0.0/0            0.0.0.0/0            multiport dports 135,139,445
-DROP       17   --  0.0.0.0/0            0.0.0.0/0            udp dpt:1900
-DROP       6    --  0.0.0.0/0            0.0.0.0/0            tcp flags:!0x17/0x02
-DROP       17   --  0.0.0.0/0            0.0.0.0/0            udp spt:53
-           0    --  0.0.0.0/0            0.0.0.0/0            /* PVESIG:83WlR/a4wLbmURFqMQT3uJSgIG8 */
+PVEFW-DropBroadcast  all  --  0.0.0.0/0            0.0.0.0/0
+ACCEPT     icmp --  0.0.0.0/0            0.0.0.0/0            icmptype 3 code 4
+ACCEPT     icmp --  0.0.0.0/0            0.0.0.0/0            icmptype 11
+DROP       all  --  0.0.0.0/0            0.0.0.0/0            ctstate INVALID
+DROP       udp  --  0.0.0.0/0            0.0.0.0/0            multiport dports 135,445
+DROP       udp  --  0.0.0.0/0            0.0.0.0/0            udp dpts:137:139
+DROP       udp  --  0.0.0.0/0            0.0.0.0/0            udp spt:137 dpts:1024:65535
+DROP       tcp  --  0.0.0.0/0            0.0.0.0/0            multiport dports 135,139,445
+DROP       udp  --  0.0.0.0/0            0.0.0.0/0            udp dpt:1900
+DROP       tcp  --  0.0.0.0/0            0.0.0.0/0            tcp flags:!0x17/0x02
+DROP       udp  --  0.0.0.0/0            0.0.0.0/0            udp spt:53
+           all  --  0.0.0.0/0            0.0.0.0/0            /* PVESIG:83WlR/a4wLbmURFqMQT3uJSgIG8 */
 
 Chain PVEFW-DropBroadcast (2 references)
 target     prot opt source               destination
-DROP       0    --  0.0.0.0/0            0.0.0.0/0            ADDRTYPE match dst-type BROADCAST
-DROP       0    --  0.0.0.0/0            0.0.0.0/0            ADDRTYPE match dst-type MULTICAST
-DROP       0    --  0.0.0.0/0            0.0.0.0/0            ADDRTYPE match dst-type ANYCAST
-DROP       0    --  0.0.0.0/0            224.0.0.0/4
-           0    --  0.0.0.0/0            0.0.0.0/0            /* PVESIG:NyjHNAtFbkH7WGLamPpdVnxHy4w */
+DROP       all  --  0.0.0.0/0            0.0.0.0/0            ADDRTYPE match dst-type BROADCAST
+DROP       all  --  0.0.0.0/0            0.0.0.0/0            ADDRTYPE match dst-type MULTICAST
+DROP       all  --  0.0.0.0/0            0.0.0.0/0            ADDRTYPE match dst-type ANYCAST
+DROP       all  --  0.0.0.0/0            224.0.0.0/4
+           all  --  0.0.0.0/0            0.0.0.0/0            /* PVESIG:NyjHNAtFbkH7WGLamPpdVnxHy4w */
 
 Chain PVEFW-FORWARD (1 references)
 target     prot opt source               destination
-DROP       0    --  0.0.0.0/0            0.0.0.0/0            ctstate INVALID
-ACCEPT     0    --  0.0.0.0/0            0.0.0.0/0            ctstate RELATED,ESTABLISHED
-PVEFW-FWBR-IN  0    --  0.0.0.0/0            0.0.0.0/0            PHYSDEV match --physdev-in fwln+ --physdev-is-bridged
-PVEFW-FWBR-OUT  0    --  0.0.0.0/0            0.0.0.0/0            PHYSDEV match --physdev-out fwln+ --physdev-is-bridged
-           0    --  0.0.0.0/0            0.0.0.0/0            /* PVESIG:qnNexOcGa+y+jebd4dAUqFSp5nw */
-...
+DROP       all  --  0.0.0.0/0            0.0.0.0/0            ctstate INVALID
+ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0            ctstate RELATED,ESTABLISHED
+PVEFW-FWBR-IN  all  --  0.0.0.0/0            0.0.0.0/0            PHYSDEV match --physdev-in fwln+ --physdev-is-bridged
+PVEFW-FWBR-OUT  all  --  0.0.0.0/0            0.0.0.0/0            PHYSDEV match --physdev-out fwln+ --physdev-is-bridged
+           all  --  0.0.0.0/0            0.0.0.0/0            /* PVESIG:qnNexOcGa+y+jebd4dAUqFSp5nw */
+
+Chain PVEFW-FWBR-IN (1 references)
+target     prot opt source               destination
+PVEFW-smurfs  all  --  0.0.0.0/0            0.0.0.0/0            ctstate INVALID,NEW
+           all  --  0.0.0.0/0            0.0.0.0/0            /* PVESIG:Ijl7/xz0DD7LF91MlLCz0ybZBE0 */
+
+Chain PVEFW-FWBR-OUT (1 references)
+target     prot opt source               destination
+           all  --  0.0.0.0/0            0.0.0.0/0            /* PVESIG:2jmj7l5rSw0yVb/vlWAYkK/YBwk */
+
+Chain PVEFW-HOST-IN (1 references)
+target     prot opt source               destination
+ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0
+DROP       all  --  0.0.0.0/0            0.0.0.0/0            ctstate INVALID
+ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0            ctstate RELATED,ESTABLISHED
+PVEFW-smurfs  all  --  0.0.0.0/0            0.0.0.0/0            ctstate INVALID,NEW
+RETURN     2    --  0.0.0.0/0            0.0.0.0/0
+RETURN     tcp  --  0.0.0.0/0            0.0.0.0/0            match-set PVEFW-0-management-v4 src tcp dpt:8006
+RETURN     tcp  --  0.0.0.0/0            0.0.0.0/0            match-set PVEFW-0-management-v4 src tcp dpts:5900:5999
+RETURN     tcp  --  0.0.0.0/0            0.0.0.0/0            match-set PVEFW-0-management-v4 src tcp dpt:3128
+RETURN     tcp  --  0.0.0.0/0            0.0.0.0/0            match-set PVEFW-0-management-v4 src tcp dpt:22
+RETURN     tcp  --  0.0.0.0/0            0.0.0.0/0            match-set PVEFW-0-management-v4 src tcp dpts:60000:60050
+PVEFW-Drop  all  --  0.0.0.0/0            0.0.0.0/0
+DROP       all  --  0.0.0.0/0            0.0.0.0/0
+           all  --  0.0.0.0/0            0.0.0.0/0            /* PVESIG:cucENGwfi+iPw5e/BS7lH7zNnU8 */
+
+Chain PVEFW-HOST-OUT (1 references)
+target     prot opt source               destination
+ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0
+DROP       all  --  0.0.0.0/0            0.0.0.0/0            ctstate INVALID
+ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0            ctstate RELATED,ESTABLISHED
+RETURN     2    --  0.0.0.0/0            0.0.0.0/0
+RETURN     tcp  --  0.0.0.0/0            10.0.0.0/8           tcp dpt:8006
+RETURN     tcp  --  0.0.0.0/0            10.0.0.0/8           tcp dpt:22
+RETURN     tcp  --  0.0.0.0/0            10.0.0.0/8           tcp dpts:5900:5999
+RETURN     tcp  --  0.0.0.0/0            10.0.0.0/8           tcp dpt:3128
+RETURN     all  --  0.0.0.0/0            0.0.0.0/0
+           all  --  0.0.0.0/0            0.0.0.0/0            /* PVESIG:ayfLu3G+p/8c4SeNBnCZRkwon94 */
+
+Chain PVEFW-INPUT (1 references)
+target     prot opt source               destination
+PVEFW-HOST-IN  all  --  0.0.0.0/0            0.0.0.0/0
+           all  --  0.0.0.0/0            0.0.0.0/0            /* PVESIG:+5iMmLaxKXynOB/+5xibfx7WhFk */
+
+Chain PVEFW-OUTPUT (1 references)
+target     prot opt source               destination
+PVEFW-HOST-OUT  all  --  0.0.0.0/0            0.0.0.0/0
+           all  --  0.0.0.0/0            0.0.0.0/0            /* PVESIG:LjHoZeSSiWAG3+2ZAyL/xuEehd0 */
+
+Chain PVEFW-Reject (0 references)
+target     prot opt source               destination
+PVEFW-DropBroadcast  all  --  0.0.0.0/0            0.0.0.0/0
+ACCEPT     icmp --  0.0.0.0/0            0.0.0.0/0            icmptype 3 code 4
+ACCEPT     icmp --  0.0.0.0/0            0.0.0.0/0            icmptype 11
+DROP       all  --  0.0.0.0/0            0.0.0.0/0            ctstate INVALID
+PVEFW-reject  udp  --  0.0.0.0/0            0.0.0.0/0            multiport dports 135,445
+PVEFW-reject  udp  --  0.0.0.0/0            0.0.0.0/0            udp dpts:137:139
+PVEFW-reject  udp  --  0.0.0.0/0            0.0.0.0/0            udp spt:137 dpts:1024:65535
+PVEFW-reject  tcp  --  0.0.0.0/0            0.0.0.0/0            multiport dports 135,139,445
+DROP       udp  --  0.0.0.0/0            0.0.0.0/0            udp dpt:1900
+DROP       tcp  --  0.0.0.0/0            0.0.0.0/0            tcp flags:!0x17/0x02
+DROP       udp  --  0.0.0.0/0            0.0.0.0/0            udp spt:53
+           all  --  0.0.0.0/0            0.0.0.0/0            /* PVESIG:h3DyALVslgH5hutETfixGP08w7c */
+
+Chain PVEFW-SET-ACCEPT-MARK (0 references)
+target     prot opt source               destination
+MARK       all  --  0.0.0.0/0            0.0.0.0/0            MARK or 0x80000000
+           all  --  0.0.0.0/0            0.0.0.0/0            /* PVESIG:Hg/OIgIwJChBUcWU8Xnjhdd2jUY */
+
+Chain PVEFW-logflags (5 references)
+target     prot opt source               destination
+DROP       all  --  0.0.0.0/0            0.0.0.0/0
+           all  --  0.0.0.0/0            0.0.0.0/0            /* PVESIG:MN4PH1oPZeABMuWr64RrygPfW7A */
+
+Chain PVEFW-reject (4 references)
+target     prot opt source               destination
+DROP       all  --  0.0.0.0/0            0.0.0.0/0            ADDRTYPE match dst-type BROADCAST
+DROP       all  --  224.0.0.0/4          0.0.0.0/0
+DROP       icmp --  0.0.0.0/0            0.0.0.0/0
+REJECT     tcp  --  0.0.0.0/0            0.0.0.0/0            reject-with tcp-reset
+REJECT     udp  --  0.0.0.0/0            0.0.0.0/0            reject-with icmp-port-unreachable
+REJECT     icmp --  0.0.0.0/0            0.0.0.0/0            reject-with icmp-host-unreachable
+REJECT     all  --  0.0.0.0/0            0.0.0.0/0            reject-with icmp-host-prohibited
+           all  --  0.0.0.0/0            0.0.0.0/0            /* PVESIG:Jlkrtle1mDdtxDeI9QaDSL++Npc */
+
+Chain PVEFW-smurflog (2 references)
+target     prot opt source               destination
+DROP       all  --  0.0.0.0/0            0.0.0.0/0
+           all  --  0.0.0.0/0            0.0.0.0/0            /* PVESIG:2gfT1VMkfr0JL6OccRXTGXo+1qk */
+
+Chain PVEFW-smurfs (2 references)
+target     prot opt source               destination
+RETURN     all  --  0.0.0.0              0.0.0.0/0
+PVEFW-smurflog  all  --  0.0.0.0/0            0.0.0.0/0           [goto]  ADDRTYPE match src-type BROADCAST
+PVEFW-smurflog  all  --  224.0.0.0/4          0.0.0.0/0           [goto]
+           all  --  0.0.0.0/0            0.0.0.0/0            /* PVESIG:HssVe5QCBXd5mc9kC88749+7fag */
+
+Chain PVEFW-tcpflags (0 references)
+target     prot opt source               destination
+PVEFW-logflags  tcp  --  0.0.0.0/0            0.0.0.0/0           [goto]  tcp flags:0x3F/0x29
+PVEFW-logflags  tcp  --  0.0.0.0/0            0.0.0.0/0           [goto]  tcp flags:0x3F/0x00
+PVEFW-logflags  tcp  --  0.0.0.0/0            0.0.0.0/0           [goto]  tcp flags:0x06/0x06
+PVEFW-logflags  tcp  --  0.0.0.0/0            0.0.0.0/0           [goto]  tcp flags:0x03/0x03
+PVEFW-logflags  tcp  --  0.0.0.0/0            0.0.0.0/0           [goto]  tcp spt:0 flags:0x17/0x02
+           all  --  0.0.0.0/0            0.0.0.0/0            /* PVESIG:CMFojwNPqllyqD67NeI5m+bP5mo */
 ~~~
 
-I've omitted most of the output since it is quite long, but you can see that quite a lot of rules have been added just by enabling the firewall at the `Datacenter` tier.
+As you can see in the long output above, quite a lot of rules have been added just by enabling the firewall at the `Datacenter` tier. And, if you look closely, you will notice that most of these rules are applied to any source or destination IP. Only a few ones, defined in the `Chain PVEFW-HOST-OUT`, are particular to your local network.
 
-The Proxmox VE firewall's configuration files can be found at the following locations.
+The Proxmox VE firewall's `.fw` configuration files can be found at the following locations:
 
 - `/etc/pve/firewall/cluster.fw`\
   For the datacenter or cluster wide tier.
@@ -225,19 +333,21 @@ The Proxmox VE firewall's configuration files can be found at the following loca
 - `/etc/pve/sdn/firewall/<vnet_name>.fw`\
   For each VNet configured in the system, identified by their `<vnet_name>`.
 
+These files will only appear in your system when you change the configuration they belong to. For instance, at this point, you will only find the `/etc/pve/firewall/cluster.fw` file existing under its expected path.
+
 ### Netfilter conntrack sysctl parameters
 
-I hinted you in the [G012 chapter](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md) how, by enabling the firewall, new `sysctl` parameters would become available in your Proxmox VE host. Those new parameters are all the files put in the `/proc/sys/net/netfilter` folder, except the `nf_log` ones which were already present initially. All of them are related to the netfilter conntrack system used to track network connections on the system. A new `/proc/sys/net/nf_conntrack_max` file is also created as a duplicate of the `/proc/sys/net/netfilter/nf_conntrack_max` file, maybe as a management convenience for Proxmox VE.
+I hinted you back in the [**G012** chapter](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md#some-sysctl-values-are-managed-by-the-proxmox-ve-firewall) how, by enabling the firewall, new `sysctl` parameters would become available in your Proxmox VE host. Those new parameters are all the files put in the `/proc/sys/net/netfilter` folder, except the `nf_log` ones which were already present initially. All of them are related to the netfilter conntrack system used to track network connections on the system. A new `/proc/sys/net/nf_conntrack_max` file is also created as a duplicate of the `/proc/sys/net/netfilter/nf_conntrack_max` file, maybe as a management convenience for Proxmox VE.
 
-But not only new parameters are enabled, some already existing ones get changed. In particular the `net.bridge.bridge-nf-call-ip6tables` and `net.bridge.bridge-nf-call-iptables` are set to `1`, enabling filtering on the bridges existing on the host. In fact, at this point your system already has one Linux bridge enabled, which you can find in the `pve` node level at the `System > Network` view.
+But not only new parameters are enabled, some already existing ones get changed. In particular the `net.bridge.bridge-nf-call-ip6tables` and `net.bridge.bridge-nf-call-iptables` are set to `1`, enabling filtering on the bridges existing on the host. In fact, at this point your system already has one Linux bridge enabled, which you can find in the `pve` node level at the `System > Network` view:
 
 ![Linux bridge at pve node network](images/g014/pve_node_system_network_bridge.webp "Linux bridge at pve node network")
 
-In the capture above, you can see how this Linux bridge uses the host's Ethernet network card `enp0s3` as port to have access to the network. This bridge is necessary for later being able to provide network connectivity to the VMs you'll create in later chapters. But keep on reading this guide to see how to apply firewalling at the bridge level with **ebtables**.
+In the capture above, you can see how this Linux bridge uses the host's Ethernet network card `enp0s3` as port to have access to the network. This bridge is necessary for later being able to provide network connectivity to the VMs you'll create in later chapters. But keep on reading this chapter to see how to apply firewalling at the bridge level with **ebtables**.
 
 ## Firewalling with ebtables
 
-When you enabled the firewall at the datacenter level, you might have noticed the ebtables option which was already enabled.
+When you enabled the firewall at the datacenter level, you may have noticed the `ebtables` option which was already enabled:
 
 ![ebtables option at Datacenter firewall](images/g014/pve_firewall_ebtables_option.webp "ebtables option at Datacenter firewall")
 
@@ -390,7 +500,13 @@ The `ebtables` command handles rules but is unable to make them persist, meaning
     rules.broute  rules.filter  rules.nat
     ~~~
 
-    You should see three different rule files, as in the output above. The files are in binary format, so **do not open them with a text editor**. Each file corresponds to one of the tables ebtables uses to separate its functionality into different sets of rules. The `filter` table is the default one on which the ebtables command works.
+    You should see three different rule files, as in the output above.
+
+    > [!NOTE]
+    > **Do not open the ebtables rule files with a text editor**\
+    > The files are in binary format. Do not manipulate them in any way.
+  
+    Each file corresponds to one of the tables ebtables uses to separate its functionality into different sets of rules. The `filter` table is the default one on which the ebtables command works.
 
 ### Example of ebtables usage
 
@@ -406,28 +522,23 @@ While I was working in the first version of this guide, I detected that incoming
 $ ip -s link show
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
-    RX: bytes  packets  errors  dropped missed  mcast
-    62755      932      0       0       0       0
-    TX: bytes  packets  errors  dropped carrier collsns
-    62755      932      0       0       0       0
-2: enp2s0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast master vmbr0 state UP mode DEFAULT group default qlen 1000
-    link/ether a8:ae:ed:27:c1:7d brd ff:ff:ff:ff:ff:ff
-    RX: bytes  packets  errors  dropped missed  mcast
-    327191     3186     0       0       0       2279
-    TX: bytes  packets  errors  dropped carrier collsns
-    65623      639      0       0       0       0
-3: wlp3s0: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
-    link/ether 64:39:ac:32:cb:23 brd ff:ff:ff:ff:ff:ff
-    RX: bytes  packets  errors  dropped missed  mcast
-    0          0        0       0       0       0
-    TX: bytes  packets  errors  dropped carrier collsns
-    0          0        0       0       0       0
-4: vmbr0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
-    link/ether a8:ae:ed:27:c1:7d brd ff:ff:ff:ff:ff:ff
-    RX: bytes  packets  errors  dropped missed  mcast
-    280443     3186     0       1494    0       2279
-    TX: bytes  packets  errors  dropped carrier collsns
-    65677      640      0       0       0       0
+    RX:  bytes packets errors dropped  missed   mcast
+        213838    2817      0       0       0       0
+    TX:  bytes packets errors dropped carrier collsns
+        213838    2817      0       0       0       0
+2: enp3s0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel master vmbr0 state UP mode DEFAULT group default qlen 1000
+    link/ether 87:ea:ab:02:15:a5 brd ff:ff:ff:ff:ff:ff
+    RX:  bytes packets errors dropped  missed   mcast
+       4365227   13252      0     448       0    4972
+    TX:  bytes packets errors dropped carrier collsns
+       3220375    5281      0       1       0       0
+    altname enx98eecb0305a3
+3: vmbr0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+    link/ether 87:ea:ab:02:15:a5 brd ff:ff:ff:ff:ff:ff
+    RX:  bytes packets errors dropped  missed   mcast
+       4051731   12474      0       0       0    4524
+    TX:  bytes packets errors dropped carrier collsns
+       3220459    5283      0       0       0       0
 ~~~
 
 In the output above, you can see that only the `vmbr0` interface is reporting many `dropped` `RX` packets. As you can imagine, this was kind of bothersome, so I tracked them down. To do that there is a command called `tcpdump` that comes handy to see the packets themselves. The command captures the traffic going on in your system's network and prints a description of each packet it sees. I executed `tcpdump` as follows.
@@ -534,14 +645,14 @@ See in this output that:
 
 - Proxmox VE also has its own rules in ebtables, see the `PVEFW-FORWARD` and `PVEFW-FWBR-OUT` rule chains.
 
-The final step was persisting the rules with the `netfilter-persistent` command.
+The final step was persisting the rules with the `netfilter-persistent` command:
 
 ~~~sh
 $ sudo netfilter-persistent save
 run-parts: executing /usr/share/netfilter-persistent/plugins.d/35-ebtables save
 ~~~
 
-Notice how, in the command's output, how it calls the `35-ebtables` shell script. Now, if you rebooted your Proxmox VE host, the `netfilter-persistent` command would restore the ebtables rules you've just persisted, also invoking the `35-ebtables` script for that. Look for this loading in the `/var/log/syslog` file, by searching the `netfilter-persistent` string.
+Notice how, in the command's output, how it calls the `35-ebtables` shell script. Now, if you rebooted your Proxmox VE host, the `netfilter-persistent` command would restore the ebtables rules you've just persisted, also invoking the `35-ebtables` script for that. Look for this loading in the Journal logging system (`journalctl` command), by searching the `netfilter-persistent` string.
 
 Thanks to this configuration, I don't have any more `dropped` packets of that unknown ethertype showing up on my `vmbr0` bridge.
 
@@ -557,14 +668,14 @@ $ ip -s link show vmbr0
 
 ## Firewall fine tuning
 
-You now have your Proxmox VE's firewall up and running with default settings, but you can adjust it further. In particular, there are a number of options at the node level you should have a look to. Browse to the `Firewall > Options` view at your `pve` node level.
+Now you have your Proxmox VE's firewall up and running with default settings, but you can adjust it further. In particular, there are a number of options at the node level you should have a look to. Browse to the `Firewall > Options` view at your `pve` node level.
 
 ![Firewall options at pve node level](images/g014/pve_firewall_node_level_options.webp "Firewall options at pve node level")
 
 Since the official documentation is not very detailed about them, let me tell you a bit about these options:
 
 - `Firewall`\
-  Disabled by default. Enables the firewall at the `pve` node/host level.
+  Enabled by default. Enables the firewall at the `pve` node/host level.
 
 - `SMURFS filter`\
   Enabled by default. Gives protection against SMURFS attacks, which are a form of distributed denial of service (DDoS) attacks "[that overloads network resources by broadcasting ICMP echo requests to devices across the network](https://www.fortinet.com/resources/cyberglossary/smurf-attack)".
@@ -580,7 +691,7 @@ Since the official documentation is not very detailed about them, let me tell yo
 
   These two values limit how many simultaneous connections can be established with your host and be tracked in the corresponding connections table maintained by netfilter. When the maximum value is reached, your host will stop accepting new TCP connections silently. If you detect connectivity issues in your setup, one of the things you can try is making this value bigger.
 
-  This is one of the sysctl parameters enabled by the firewall when it got fully active, as I mentioned back in the [G012 guide](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md).
+  This is one of the `sysctl` parameters enabled by the firewall when it got fully active, as I mentioned in the [chapter **G012**](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md).
 
 - `nf_conntrack_tcp_timeout_established`\
   `432000` by default (in seconds). This value says for how long established connections can be considered to be in such state, before being discarded as too old. The default value is equivalent to 5 days, which may or may not be excessive for your needs or requirements. If you want to reduce this value, know that the Proxmox VE web console won't allow you to put a value lower than `7875` seconds, which is equivalent to roughly 2 hours and 11 minutes.
@@ -603,7 +714,7 @@ Since the official documentation is not very detailed about them, let me tell yo
   `nolog` value by default. To get logs of firewall action regarding SMURFS attacks protection.
 
 - `nftables (tech preview)`\
-  Disabled by default. Enable this if you want to try the newer (but still in tech preview state) nftables-based firewall of Proxmox VE.
+  Disabled by default. Enable this if you want to try the newer, **but still in tech preview state**, nftables-based firewall of Proxmox VE.
 
 ### Enabling TCP SYN flood protection
 
@@ -622,17 +733,21 @@ These three parameters haven't been made directly available from the PVE web con
 
 1. Since in this guide the Proxmox VE node is called `pve`, the full path of that file is `/etc/pve/nodes/pve/host.fw`. Open a shell with your `mgrsys` user, then edit the file:
 
+    > [!NOTE]
+    > **Remember, this file only appears if you change the node's firewall configuration**\
+    > Modify something to make Proxmox VE generate the `/etc/pve/nodes/pve/host.fw` file.
+
     ~~~properties
     [OPTIONS]
 
-    smurf_log_level: info
-    ndp: 0
-    log_level_in: info
-    tcp_flags_log_level: info
-    log_level_forward: info
-    log_level_out: info
-    tcpflags: 1
     nf_conntrack_tcp_timeout_established: 7875
+    ndp: 0
+    smurf_log_level: info
+    tcp_flags_log_level: info
+    log_level_out: info
+    log_level_in: info
+    tcpflags: 1
+    log_level_forward: info
     ~~~
 
     Above you can see the configuration I set up in my host, which may differ from what you have chosen to configure in your setup.
@@ -647,13 +762,13 @@ These three parameters haven't been made directly available from the PVE web con
     protection_synflood_rate: 200
     ~~~
 
-    Notice that, in my case, I chose to stick with the default values for `protection_synflood_burst` and `protection_synflood_rate`.
+    See that, in my case, I chose to stick with the default values for `protection_synflood_burst` and `protection_synflood_rate`.
 
 3. The Proxmox VE documentation does not say if the changes in the `host.fw` file are automatically applied after saving them. Just reboot your PVE node to be sure.
 
 ## Firewall logging
 
-If you've configured your firewall as I've showed you before, now you have its log enabled at the node level. You can see it in the PVE web console, at the `Firewall > Log` view of your `pve` node.
+If you've configured your firewall as I've showed you before, now you have its log enabled at the node level. You can see it in the PVE web console, at the `Firewall > Log` view of your `pve` node:
 
 ![PVE node firewall log view](images/g014/pve_node_firewall_log_view.webp "PVE node firewall log view")
 
@@ -661,18 +776,18 @@ This log is a text file that you can find in your PVE host at the path `/var/log
 
 ### Understanding the firewall log
 
-Let's imagine you just booted up your Proxmox VE system and then you connect through a SSH client, like PuTTY, to open a shell in your PVE host. With the configuration explained in this guide, you may see lines in your firewall log like the following ones.
+Let's imagine you just booted up your Proxmox VE system and then you try to ping your PVE host form another computer within the same LAN. With the configuration explained in this guide, you will see lines in your firewall log like the following ones:
 
 ~~~log
-0 5 - 24/Jul/2025:15:53:00 +0200 starting pvefw logger
-0 5 - 24/Jul/2025:16:45:37 +0200 received terminate request (signal)
-0 5 - 24/Jul/2025:16:45:37 +0200 stopping pvefw logger
-0 5 - 24/Jul/2025:16:45:38 +0200 starting pvefw logger
-0 6 PVEFW-HOST-IN 24/Jul/2025:17:27:00 +0200 policy DROP: IN=vmbr0 PHYSIN=enp0s3 MAC=ae:b7:cd:26:7f:d2:54:5e:96:4b:2c:cf:08:00 SRC=10.137.113.200 DST=10.3.0.2 LEN=60 TOS=0x00 PREC=0x00 TTL=128 ID=64406 PROTO=ICMP TYPE=8 CODE=0 ID=1 SEQ=1
-0 6 PVEFW-HOST-IN 24/Jul/2025:17:27:17 +0200 policy DROP: IN=vmbr0 PHYSIN=enp0s3 MAC=ae:b7:cd:26:7f:d2:54:5e:96:4b:2c:cf:08:00 SRC=10.137.113.200 DST=10.3.0.2 LEN=60 TOS=0x00 PREC=0x00 TTL=128 ID=64488 PROTO=ICMP TYPE=8 CODE=0 ID=1 SEQ=2
+0 5 - 30/Aug/2025:20:22:39 +0200 starting pvefw logger
+0 5 - 30/Aug/2025:20:22:52 +0200 received terminate request (signal)
+0 5 - 30/Aug/2025:20:22:52 +0200 stopping pvefw logger
+0 5 - 30/Aug/2025:20:22:52 +0200 starting pvefw logger
+0 6 PVEFW-HOST-IN 30/Aug/2025:20:33:05 +0200 policy DROP: IN=vmbr0 PHYSIN=enp3s0 MAC=87:ea:ab:02:15:a5:1a:e3:a5:13:f2:57:08:00 SRC=10.157.123.220 DST=10.1.0.1 LEN=60 TOS=0x00 PREC=0x00 TTL=128 ID=20335 PROTO=ICMP TYPE=8 CODE=0 ID=1 SEQ=1
+0 6 PVEFW-HOST-IN 30/Aug/2025:20:33:09 +0200 policy DROP: IN=vmbr0 PHYSIN=enp3s0 MAC=87:ea:ab:02:15:a5:1a:e3:a5:13:f2:57:08:00 SRC=10.157.123.220 DST=10.1.0.1 LEN=60 TOS=0x00 PREC=0x00 TTL=128 ID=20402 PROTO=ICMP TYPE=8 CODE=0 ID=1 SEQ=2
 ~~~
 
-The typical log line is formatted with the following schema:
+These and any other log lines are formatted with the following schema:
 
 ~~~sh
 VMID LOGID CHAIN TIMESTAMP POLICY: PACKET_DETAILS
@@ -680,30 +795,36 @@ VMID LOGID CHAIN TIMESTAMP POLICY: PACKET_DETAILS
 
 This schema is translated as follows:
 
-- `VMID`: identifies the virtual machine on which the firewall rule or policy is acting. For the Proxmox VE host itself this value is always `0`.
+- `VMID`\
+  Identifies the virtual machine on which the firewall rule or policy is acting. For the Proxmox VE host itself this value is always `0`.
 
-- `LOGID`: tells the logging level this log line has. Proxmox VE firewall has eight levels, check them out [in its official wiki](https://pve.proxmox.com/wiki/Firewall#_logging_of_firewall_rules).
+- `LOGID`\
+  Tells the logging level this log line has. Proxmox VE firewall has eight levels, check them out [in its official wiki](https://pve.proxmox.com/wiki/Firewall#_logging_of_firewall_rules).
 
-- `CHAIN`: the firewall rule chain's name in which the policy or rule that provoked the log line is set. For cases in which there's no related chain, a `-` is printed here.
+- `CHAIN`\
+  The firewall rule chain's name in which the policy or rule that provoked the log line is set. For cases in which there is no related chain, a `-` is printed here.
 
-- `TIMESTAMP`: a full timestamp that includes the UTC.
+- `TIMESTAMP`\
+  A full timestamp that includes the UTC.
 
-- `POLICY`: indicates what policy was applied in the rule that printed the log line.
+- `POLICY`\
+  Indicates what policy was applied in the rule that printed the log line.
 
-- `PACKET_DETAILS`: details from the affected packet, like source and destination IPs, protocol used, etc.
+- `PACKET_DETAILS`\
+  Details from the affected packet, like source and destination IPs, protocol used, etc.
 
-Knowing all that above, let's translate the previous logging example.
+Knowing all that above, let's translate the previous logging example:
 
 - All the lines are relative to the Proxmox VE host, since all of them start with the `VMID` set as `0`.
 
 - The first four lines are **notices** warning about the firewall logger activity:
 
   - Their `LOGID` is `5`, which corresponds to the **notice** logging level.
-  - These log lines don't correspond to any rule chain of the firewall, so their `CHAIN` is just a `-`.
+  - These log lines do not correspond to any rule chain of the firewall, so their `CHAIN` is just a `-`.
   - The `TIMESTAMP` is a full date plus the UTC reference as expected.
-  - The rest of their content is just a string in which the POLICY part is just empty and the PACKET_DETAILS is used to print the notice's message.
+  - The rest of their content is just a string in which the `POLICY` part is just empty and the `PACKET_DETAILS` is used to print the notice's message.
 
-- The following two lines **inform** of two packets that have been dropped by the firewall.
+- The following two lines **inform** of two ICMP packets that have been dropped by the firewall:
 
   - Their `LOGID` is `6`, which corresponds to the **info** logging level.
   - The rule that has printed this log is set in the `PVEFW-HOST-IN` chain.
@@ -711,271 +832,349 @@ Knowing all that above, let's translate the previous logging example.
   - The `POLICY` string indicates the `DROP` action taken with the packets.
   - The `PACKET_DETAILS` is a list of details from the dropped packets.
 
-    - `IN`: refers to the input network device through which the packet came, in this case the bridge `vmbr0`.
-    - `PHYSIN`: is the _physical_ input network device through which the packet came. Here is the ethernet network card `enp0s3` of this host, which is the one used by the bridge `vmbr0` as networking port.
-    - `MAC`: this is a rather odd value because is not just the mac of a particular network device, but the concatenation of the packet's source mac (`ae:b7:cd:26:7f:d2`) with the destination mac (`54:5e:96:4b:2c:cf`) and an extra suffix `08:00`.
-    - `SRC`: IP of this packet's source.
-    - `DST`: IP of this packet's destination.
-    - `LEN`: packet's total length in bytes.
-    - `TOS`: [Type Of Service](https://linuxreviews.org/Type_of_Service_(ToS)_and_DSCP_Values), meant for prioritization of packets within a network.
-    - `PREC`: the precedence bits of the previous `TOS` field.
-    - `TTL`: Time To Live, which is the number of hops this packet can make before being discarded.
-    - `ID`: packet's datagram identifier.
-    - `PROTO`: message protocol used in the packet, [ICMP](https://en.wikipedia.org/wiki/Internet_Control_Message_Protocol) in these two cases.
-    - `TYPE`: is the ICMP type of [control message](https://en.wikipedia.org/wiki/Internet_Control_Message_Protocol#Control_messages). Here is `8` which is the echo request, used to ping.
-    - `CODE`: parameter used in ICMP messages, some types have several codes but the 8 only has the `0` one.
-    - `ID`: this second identifier is also an ICMP field.
-    - `SEQ`: a sequence identifier set up too by the ICMP protocol.
+    - `IN`\
+      Refers to the input network device through which the packet came, in this case the bridge `vmbr0`.
 
-The conclusion you can get from those log lines is that this Proxmox VE setup is dropping incoming ping packets, something common as a network hardening method. Be aware that, in the `PACKET_DETAILS` section, you should expect seeing very different parameters depending on the protocol used on each logged packet. In the example above you've seen ICMP ping packets, but other times you might see other types of ICMP messages or, more commonly, TCP or UDP packets.
+    - `PHYSIN`\
+      Is the _physical_ input network device through which the packet came. Here is the ethernet network card `enp0s3` of this host, which is the one used by the bridge `vmbr0` as networking port.
+
+    - `MAC`\
+      This is a rather odd value. It is not just the MAC of a particular network device, but the concatenation of the packet's source MAC (`87:ea:ab:02:15:a5`) with the destination MAC (`1a:e3:a5:13:f2:57`) and an extra suffix `08:00`.
+
+    - `SRC`\
+      IP of this packet's source.
+
+    - `DST`\
+      IP of this packet's destination.
+
+    - `LEN`\
+      Packet's total length in bytes.
+
+    - `TOS`\
+      [Type Of Service](https://linuxreviews.org/Type_of_Service_(ToS)_and_DSCP_Values), meant for prioritization of packets within a network.
+
+    - `PREC`\
+      The precedence bits of the previous `TOS` field.
+
+    - `TTL`\
+      Time To Live, which is the number of hops this packet can make before being discarded.
+
+    - `ID`\
+      Packet's datagram identifier.
+
+    - `PROTO`\
+      Message protocol used in the packet, [ICMP](https://en.wikipedia.org/wiki/Internet_Control_Message_Protocol) in these two cases.
+
+    - `TYPE`\
+      Is the ICMP type of [control message](https://en.wikipedia.org/wiki/Internet_Control_Message_Protocol#Control_messages). Here is `8` which is the echo request, used to ping.
+
+    - `CODE`\
+      Parameter used in ICMP messages, some types have several codes but the 8 only has the `0` one.
+
+    - `ID`\
+      This second identifier is also an ICMP field.
+
+    - `SEQ`\
+      A sequence identifier set up too by the ICMP protocol.
+
+The conclusion you can get from the example log lines is that this Proxmox VE setup is dropping incoming ping packets, something common as a network hardening method. Be aware that, in the `PACKET_DETAILS` section, you should expect seeing very different parameters depending on the protocol used on each logged packet. In the example above you've seen ICMP ping packets, but other times you might see other types of ICMP messages or, more commonly, TCP or UDP packets.
 
 ## Connection tracking tool
 
-In this chapter and in the [previous G012 one](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md) I've mentioned a few times the connection tracking system enabled by the firewall. This is popularly known as _conntrack_ and, adding to its own particular `sysctl` parameters (identified by the `nf_conntrack_` prefix), there is also a command enabling system administrators to manage the in-kernel connection tracking state tables.
+In this chapter and in the [previous **G012** one](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md) I've mentioned a few times the connection tracking system enabled by the firewall. This is popularly known as _conntrack_ and, adding to its own particular `sysctl` parameters (identified by the `nf_conntrack_` prefix), there is also a command enabling system administrators to manage the in-kernel connection tracking state tables:
 
-1. Install the `conntrack` command with `apt`.
+1. The `conntrack` command is already installed in Proxmox VE 9.0, as `apt` warns:
 
     ~~~sh
     $ sudo apt install conntrack
+    conntrack is already the newest version (1:1.4.8-2).
+    Summary:
+      Upgrading: 0, Installing: 0, Removing: 0, Not Upgrading: 17
     ~~~
 
-2. Test the command by showing the currently tracked connections.
+2. Test the command by showing the currently tracked connections. Pipe it to the `less` command to be able to paginate through its long output:
 
     ~~~sh
-    $ sudo conntrack -L
+    $ sudo conntrack -L | less
     ~~~
 
-    The `-L` option makes `conntrack` list the currently "established" or "expected" connections in your system.
+    The `-L` option makes `conntrack` list the currently "established" or "expected" connections in your system:
 
     ~~~sh
-    tcp      6 103 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59955 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59955 [ASSURED] mark=0 use=1
-    unknown  2 579 src=0.0.0.0 dst=224.0.0.1 [UNREPLIED] src=224.0.0.1 dst=0.0.0.0 mark=0 use=1
-    tcp      6 82 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59937 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59937 [ASSURED] mark=0 use=1
-    tcp      6 108 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=48786 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=48786 [ASSURED] mark=0 use=1
-    tcp      6 22 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=43730 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=43730 [ASSURED] mark=0 use=1
-    tcp      6 17 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59881 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59881 [ASSURED] mark=0 use=1
-    tcp      6 61 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=42514 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=42514 [ASSURED] mark=0 use=1
-    tcp      6 11 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=58690 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=58690 [ASSURED] mark=0 use=1
-    tcp      6 97 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=37430 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=37430 [ASSURED] mark=0 use=1
-    tcp      6 46 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=40820 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=40820 [ASSURED] mark=0 use=1
-    tcp      6 108 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59956 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59956 [ASSURED] mark=0 use=1
-    tcp      6 13 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=58698 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=58698 [ASSURED] mark=0 use=1
-    tcp      6 82 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=59294 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=59294 [ASSURED] mark=0 use=1
-    tcp      6 38 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=40764 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=40764 [ASSURED] mark=0 use=1
-    tcp      6 35 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=52504 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=52504 [ASSURED] mark=0 use=1
-    tcp      6 43 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59901 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59901 [ASSURED] mark=0 use=1
-    tcp      6 115 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=48850 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=48850 [ASSURED] mark=0 use=1
-    tcp      6 61 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59920 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59920 [ASSURED] mark=0 use=1
-    tcp      6 88 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=55626 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=55626 [ASSURED] mark=0 use=2
-    tcp      6 100 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=37440 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=37440 [ASSURED] mark=0 use=1
-    tcp      6 66 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59925 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59925 [ASSURED] mark=0 use=1
-    tcp      6 71 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59928 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59928 [ASSURED] mark=0 use=1
-    udp      17 20 src=10.3.0.2 dst=10.0.0.1 sport=41858 dport=53 src=10.0.0.1 dst=10.3.0.2 sport=53 dport=41858 mark=0 use=1
-    tcp      6 85 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=59310 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=59310 [ASSURED] mark=0 use=1
-    tcp      6 83 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59939 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59939 [ASSURED] mark=0 use=1
-    tcp      6 118 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=59914 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=59914 [ASSURED] mark=0 use=1
-    tcp      6 54 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59912 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59912 [ASSURED] mark=0 use=1
-    tcp      6 102 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59954 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59954 [ASSURED] mark=0 use=1
-    tcp      6 65 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59923 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59923 [ASSURED] mark=0 use=1
-    tcp      6 69 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59927 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59927 [ASSURED] mark=0 use=1
-    tcp      6 87 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=59318 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=59318 [ASSURED] mark=0 use=1
-    tcp      6 33 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59895 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59895 [ASSURED] mark=0 use=1
-    tcp      6 15 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=58726 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=58726 [ASSURED] mark=0 use=1
-    tcp      6 65 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=42538 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=42538 [ASSURED] mark=0 use=1
-    tcp      6 81 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=59278 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=59278 [ASSURED] mark=0 use=1
-    tcp      6 80 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59936 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59936 [ASSURED] mark=0 use=1
-    tcp      6 51 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=47074 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=47074 [ASSURED] mark=0 use=1
-    tcp      6 90 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=55640 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=55640 [ASSURED] mark=0 use=2
-    tcp      6 68 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=60512 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=60512 [ASSURED] mark=0 use=1
-    tcp      6 8 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59875 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59875 [ASSURED] mark=0 use=1
-    tcp      6 50 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=47062 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=47062 [ASSURED] mark=0 use=1
-    tcp      6 42 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59903 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59903 [ASSURED] mark=0 use=1
-    tcp      6 100 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59952 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59952 [ASSURED] mark=0 use=1
-    tcp      6 60 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59919 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59919 [ASSURED] mark=0 use=1
-    tcp      6 44 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59904 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59904 [ASSURED] mark=0 use=1
-    tcp      6 31 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59892 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59892 [ASSURED] mark=0 use=1
-    tcp      6 24 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59887 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59887 [ASSURED] mark=0 use=1
-    tcp      6 23 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59886 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59886 [ASSURED] mark=0 use=1
-    tcp      6 36 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59897 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59897 [ASSURED] mark=0 use=1
-    tcp      6 85 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59938 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59938 [ASSURED] mark=0 use=1
-    tcp      6 91 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=55646 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=55646 [ASSURED] mark=0 use=1
-    tcp      6 42 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=40786 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=40786 [ASSURED] mark=0 use=1
-    tcp      6 31 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=52464 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=52464 [ASSURED] mark=0 use=1
-    tcp      6 110 TIME_WAIT src=10.3.0.2 dst=199.232.34.132 sport=55598 dport=80 src=199.232.34.132 dst=10.3.0.2 sport=80 dport=55598 [ASSURED] mark=0 use=1
-    tcp      6 13 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59878 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59878 [ASSURED] mark=0 use=1
-    tcp      6 106 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=37506 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=37506 [ASSURED] mark=0 use=1
-    tcp      6 49 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59907 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59907 [ASSURED] mark=0 use=2
-    tcp      6 91 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59943 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59943 [ASSURED] mark=0 use=1
-    tcp      6 115 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59964 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59964 [ASSURED] mark=0 use=1
-    tcp      6 64 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59922 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59922 [ASSURED] mark=0 use=1
-    tcp      6 34 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=52488 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=52488 [ASSURED] mark=0 use=1
-    tcp      6 47 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=40826 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=40826 [ASSURED] mark=0 use=1
-    tcp      6 3 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=51444 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=51444 [ASSURED] mark=0 use=1
-    tcp      6 119 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59968 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59968 [ASSURED] mark=0 use=1
-    tcp      6 19 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=43722 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=43722 [ASSURED] mark=0 use=1
-    tcp      6 83 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=59302 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=59302 [ASSURED] mark=0 use=1
-    tcp      6 89 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=55634 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=55634 [ASSURED] mark=0 use=1
-    tcp      6 95 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=55674 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=55674 [ASSURED] mark=0 use=1
-    tcp      6 2 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59870 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59870 [ASSURED] mark=0 use=1
-    tcp      6 118 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59966 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59966 [ASSURED] mark=0 use=1
-    tcp      6 109 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59959 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59959 [ASSURED] mark=0 use=1
-    tcp      6 79 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59934 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59934 [ASSURED] mark=0 use=1
-    tcp      6 53 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=47086 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=47086 [ASSURED] mark=0 use=1
-    tcp      6 27 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=43766 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=43766 [ASSURED] mark=0 use=1
-    tcp      6 10 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=58680 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=58680 [ASSURED] mark=0 use=1
-    tcp      6 53 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59910 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59910 [ASSURED] mark=0 use=2
-    tcp      6 15 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59879 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59879 [ASSURED] mark=0 use=1
-    tcp      6 113 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=48826 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=48826 [ASSURED] mark=0 use=1
-    tcp      6 30 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59890 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59890 [ASSURED] mark=0 use=1
-    tcp      6 93 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=55666 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=55666 [ASSURED] mark=0 use=1
-    tcp      6 80 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=59262 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=59262 [ASSURED] mark=0 use=1
-    tcp      6 4 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59872 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59872 [ASSURED] mark=0 use=1
-    tcp      6 37 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=52524 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=52524 [ASSURED] mark=0 use=1
-    tcp      6 98 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59950 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59950 [ASSURED] mark=0 use=1
-    tcp      6 93 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59947 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59947 [ASSURED] mark=0 use=1
-    tcp      6 36 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=52510 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=52510 [ASSURED] mark=0 use=1
-    tcp      6 75 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59931 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59931 [ASSURED] mark=0 use=1
-    tcp      6 26 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59889 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59889 [ASSURED] mark=0 use=1
-    tcp      6 74 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=60562 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=60562 [ASSURED] mark=0 use=1
-    tcp      6 110 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=48798 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=48798 [ASSURED] mark=0 use=1
-    tcp      6 90 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59944 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59944 [ASSURED] mark=0 use=1
-    tcp      6 30 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=52456 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=52456 [ASSURED] mark=0 use=1
-    tcp      6 114 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=48840 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=48840 [ASSURED] mark=0 use=1
-    tcp      6 33 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=52484 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=52484 [ASSURED] mark=0 use=1
-    tcp      6 56 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59913 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59913 [ASSURED] mark=0 use=2
-    tcp      6 79 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=59256 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=59256 [ASSURED] mark=0 use=1
-    tcp      6 92 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=55652 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=55652 [ASSURED] mark=0 use=1
-    tcp      6 7873 ESTABLISHED src=10.137.113.200 dst=10.3.0.2 sport=59967 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59967 [ASSURED] mark=0 use=1
-    tcp      6 3 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59871 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59871 [ASSURED] mark=0 use=1
-    tcp      6 0 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59867 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59867 [ASSURED] mark=0 use=1
-    tcp      6 64 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=42530 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=42530 [ASSURED] mark=0 use=1
-    tcp      6 70 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=60528 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=60528 [ASSURED] mark=0 use=1
-    tcp      6 116 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59965 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59965 [ASSURED] mark=0 use=1
-    tcp      6 14 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=58714 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=58714 [ASSURED] mark=0 use=1
-    tcp      6 0 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=51424 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=51424 [ASSURED] mark=0 use=1
-    tcp      6 41 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59902 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59902 [ASSURED] mark=0 use=1
-    tcp      6 14 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59880 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59880 [ASSURED] mark=0 use=1
-    tcp      6 68 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59926 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59926 [ASSURED] mark=0 use=1
-    tcp      6 111 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=48814 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=48814 [ASSURED] mark=0 use=1
-    tcp      6 60 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=42508 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=42508 [ASSURED] mark=0 use=1
-    tcp      6 38 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59899 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59899 [ASSURED] mark=0 use=1
-    tcp      6 58 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59918 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59918 [ASSURED] mark=0 use=1
-    tcp      6 113 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59961 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59961 [ASSURED] mark=0 use=1
-    tcp      6 111 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59962 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59962 [ASSURED] mark=0 use=2
-    tcp      6 40 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59900 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59900 [ASSURED] mark=0 use=1
-    tcp      6 32 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59894 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59894 [ASSURED] mark=0 use=1
-    tcp      6 76 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=60582 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=60582 [ASSURED] mark=0 use=1
-    tcp      6 72 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=60558 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=60558 [ASSURED] mark=0 use=1
-    tcp      6 71 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=60544 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=60544 [ASSURED] mark=0 use=1
-    tcp      6 75 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=60576 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=60576 [ASSURED] mark=0 use=1
-    tcp      6 102 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=37458 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=37458 [ASSURED] mark=0 use=1
-    tcp      6 47 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59905 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59905 [ASSURED] mark=0 use=1
-    tcp      6 27 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59888 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59888 [ASSURED] mark=0 use=1
-    tcp      6 6 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=51464 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=51464 [ASSURED] mark=0 use=1
-    tcp      6 24 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=43752 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=43752 [ASSURED] mark=0 use=1
-    tcp      6 94 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59946 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59946 [ASSURED] mark=0 use=1
-    tcp      6 37 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59898 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59898 [ASSURED] mark=0 use=1
-    tcp      6 101 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59953 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59953 [ASSURED] mark=0 use=1
-    udp      17 20 src=10.3.0.2 dst=10.0.0.1 sport=44052 dport=53 src=10.0.0.1 dst=10.3.0.2 sport=53 dport=44052 mark=0 use=1
-    tcp      6 34 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59896 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59896 [ASSURED] mark=0 use=1
-    tcp      6 2 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=51438 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=51438 [ASSURED] mark=0 use=1
-    tcp      6 6 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59873 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59873 [ASSURED] mark=0 use=1
-    tcp      6 57 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=47110 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=47110 [ASSURED] mark=0 use=2
-    tcp      6 54 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=47092 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=47092 [ASSURED] mark=0 use=1
-    tcp      6 10 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59876 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59876 [ASSURED] mark=0 use=1
-    tcp      6 9 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=58678 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=58678 [ASSURED] mark=0 use=1
-    tcp      6 49 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=47050 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=47050 [ASSURED] mark=0 use=1
-    tcp      6 56 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=47094 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=47094 [ASSURED] mark=0 use=1
-    tcp      6 44 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=40808 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=40808 [ASSURED] mark=0 use=1
-    tcp      6 97 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59951 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59951 [ASSURED] mark=0 use=1
-    tcp      6 8 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=58666 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=58666 [ASSURED] mark=0 use=1
-    tcp      6 74 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59930 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59930 [ASSURED] mark=0 use=1
-    tcp      6 50 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59909 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59909 [ASSURED] mark=0 use=1
-    tcp      6 106 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59958 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59958 [ASSURED] mark=0 use=1
-    tcp      6 32 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=52474 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=52474 [ASSURED] mark=0 use=1
-    tcp      6 88 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59940 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59940 [ASSURED] mark=0 use=1
-    tcp      6 92 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59945 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59945 [ASSURED] mark=0 use=1
-    tcp      6 18 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=43706 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=43706 [ASSURED] mark=0 use=1
-    tcp      6 95 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59949 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59949 [ASSURED] mark=0 use=1
-    tcp      6 41 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=40784 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=40784 [ASSURED] mark=0 use=1
-    tcp      6 26 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=43756 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=43756 [ASSURED] mark=0 use=1
-    tcp      6 103 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=37474 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=37474 [ASSURED] mark=0 use=2
-    tcp      6 87 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59941 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59941 [ASSURED] mark=0 use=1
-    tcp      6 300 ESTABLISHED src=10.137.113.200 dst=10.3.0.2 sport=59044 dport=22 src=10.3.0.2 dst=10.137.113.200 sport=22 dport=59044 [ASSURED] mark=0 use=3
-    tcp      6 22 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59883 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59883 [ASSURED] mark=0 use=1
-    tcp      6 46 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59906 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59906 [ASSURED] mark=0 use=1
-    tcp      6 7872 ESTABLISHED src=127.0.0.1 dst=127.0.0.1 sport=47606 dport=3493 src=127.0.0.1 dst=127.0.0.1 sport=3493 dport=47606 [ASSURED] mark=0 use=1
-    tcp      6 94 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=55670 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=55670 [ASSURED] mark=0 use=1
-    tcp      6 109 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=48790 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=48790 [ASSURED] mark=0 use=1
-    tcp      6 52 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=47078 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=47078 [ASSURED] mark=0 use=1
-    tcp      6 70 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59924 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59924 [ASSURED] mark=0 use=1
-    tcp      6 9 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59874 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59874 [ASSURED] mark=0 use=1
-    tcp      6 57 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59915 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59915 [ASSURED] mark=0 use=1
-    tcp      6 96 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=55690 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=55690 [ASSURED] mark=0 use=1
-    tcp      6 51 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59908 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59908 [ASSURED] mark=0 use=1
-    tcp      6 17 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=58740 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=58740 [ASSURED] mark=0 use=1
-    tcp      6 81 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59935 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59935 [ASSURED] mark=0 use=1
-    tcp      6 43 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=40798 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=40798 [ASSURED] mark=0 use=1
-    tcp      6 28 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59891 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59891 [ASSURED] mark=0 use=1
-    tcp      6 40 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=40776 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=40776 [ASSURED] mark=0 use=1
-    tcp      6 98 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=37432 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=37432 [ASSURED] mark=0 use=2
-    tcp      6 21 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59885 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59885 [ASSURED] mark=0 use=1
-    tcp      6 104 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=37490 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=37490 [ASSURED] mark=0 use=1
-    tcp      6 78 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59932 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59932 [ASSURED] mark=0 use=1
-    tcp      6 52 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59911 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59911 [ASSURED] mark=0 use=1
-    tcp      6 11 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59877 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59877 [ASSURED] mark=0 use=1
-    tcp      6 76 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59933 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59933 [ASSURED] mark=0 use=1
-    tcp      6 114 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59963 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59963 [ASSURED] mark=0 use=1
-    tcp      6 63 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59921 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59921 [ASSURED] mark=0 use=1
-    tcp      6 28 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=52448 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=52448 [ASSURED] mark=0 use=1
-    tcp      6 110 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59960 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59960 [ASSURED] mark=0 use=1
-    tcp      6 101 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=37448 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=37448 [ASSURED] mark=0 use=1
-    tcp      6 96 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59948 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59948 [ASSURED] mark=0 use=1
-    tcp      6 18 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59882 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59882 [ASSURED] mark=0 use=1
-    tcp      6 23 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=43746 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=43746 [ASSURED] mark=0 use=1
-    tcp      6 72 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59929 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59929 [ASSURED] mark=0 use=1
-    tcp      6 58 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=42502 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=42502 [ASSURED] mark=0 use=1
-    tcp      6 35 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59893 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59893 [ASSURED] mark=0 use=1
-    tcp      6 19 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59884 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59884 [ASSURED] mark=0 use=1
-    tcp      6 78 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=59252 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=59252 [ASSURED] mark=0 use=2
-    tcp      6 4 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=51456 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=51456 [ASSURED] mark=0 use=1
-    tcp      6 63 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=42522 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=42522 [ASSURED] mark=0 use=1
-    tcp      6 104 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59957 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59957 [ASSURED] mark=0 use=1
-    tcp      6 69 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=60526 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=60526 [ASSURED] mark=0 use=1
-    tcp      6 66 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=42546 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=42546 [ASSURED] mark=0 use=1
-    tcp      6 116 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=48862 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=48862 [ASSURED] mark=0 use=1
-    tcp      6 21 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=43726 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=43726 [ASSURED] mark=0 use=1
-    tcp      6 119 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=59926 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=59926 [ASSURED] mark=0 use=1
-    tcp      6 89 TIME_WAIT src=10.137.113.200 dst=10.3.0.2 sport=59942 dport=8006 src=10.3.0.2 dst=10.137.113.200 sport=8006 dport=59942 [ASSURED] mark=0 use=1
-    conntrack v1.4.7 (conntrack-tools): 199 flow entries have been shown.
+    tcp      6 103 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=58546 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=58546 [ASSURED] mark=0 use=1
+    tcp      6 58 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61942 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61942 [ASSURED] mark=0 use=1
+    tcp      6 69 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61952 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61952 [ASSURED] mark=0 use=1
+    tcp      6 79 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=58110 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=58110 [ASSURED] mark=0 use=1
+    tcp      6 62 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61945 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61945 [ASSURED] mark=0 use=1
+    tcp      6 92 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=35924 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=35924 [ASSURED] mark=0 use=1
+    tcp      6 99 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61984 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61984 [ASSURED] mark=0 use=1
+    tcp      6 29 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=56546 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=56546 [ASSURED] mark=0 use=1
+    tcp      6 49 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61931 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61931 [ASSURED] mark=0 use=1
+    tcp      6 38 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=32788 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=32788 [ASSURED] mark=0 use=1
+    tcp      6 20 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=45300 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=45300 [ASSURED] mark=0 use=1
+    tcp      6 13 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=46314 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=46314 [ASSURED] mark=0 use=1
+    tcp      6 113 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=37396 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=37396 [ASSURED] mark=0 use=1
+    tcp      6 5 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=57050 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=57050 [ASSURED] mark=0 use=1
+    tcp      6 46 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61930 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61930 [ASSURED] mark=0 use=1
+    tcp      6 22 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61903 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61903 [ASSURED] mark=0 use=1
+    tcp      6 16 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=46346 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=46346 [ASSURED] mark=0 use=1
+    tcp      6 79 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61964 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61964 [ASSURED] mark=0 use=2
+    tcp      6 102 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=58544 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=58544 [ASSURED] mark=0 use=1
+    tcp      6 68 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=36384 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=36384 [ASSURED] mark=0 use=1
+    tcp      6 58 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=41962 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=41962 [ASSURED] mark=0 use=1
+    tcp      6 50 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61936 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61936 [ASSURED] mark=0 use=1
+    tcp      6 66 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61949 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61949 [ASSURED] mark=0 use=1
+    tcp      6 99 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=58522 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=58522 [ASSURED] mark=0 use=1
+    tcp      6 24 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61905 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61905 [ASSURED] mark=0 use=1
+    tcp      6 39 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=32804 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=32804 [ASSURED] mark=0 use=1
+    tcp      6 104 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61988 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61988 [ASSURED] mark=0 use=1
+    tcp      6 85 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=58158 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=58158 [ASSURED] mark=0 use=1
+    tcp      6 17 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61898 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61898 [ASSURED] mark=0 use=1
+    tcp      6 3 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61882 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61882 [ASSURED] mark=0 use=1
+    tcp      6 28 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61910 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61910 [ASSURED] mark=0 use=1
+    tcp      6 106 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61990 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61990 [ASSURED] mark=0 use=1
+    tcp      6 49 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=39872 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=39872 [ASSURED] mark=0 use=1
+    tcp      6 42 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=32834 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=32834 [ASSURED] mark=0 use=1
+    tcp      6 54 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=39906 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=39906 [ASSURED] mark=0 use=1
+    tcp      6 97 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61981 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61981 [ASSURED] mark=0 use=1
+    tcp      6 76 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=36462 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=36462 [ASSURED] mark=0 use=2
+    tcp      6 114 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=37400 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=37400 [ASSURED] mark=0 use=1
+    tcp      6 93 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61976 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61976 [ASSURED] mark=0 use=1
+    tcp      6 37 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61921 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61921 [ASSURED] mark=0 use=1
+    tcp      6 102 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61983 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61983 [ASSURED] mark=0 use=1
+    tcp      6 24 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=45356 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=45356 [ASSURED] mark=0 use=1
+    tcp      6 26 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61907 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61907 [ASSURED] mark=0 use=1
+    tcp      6 36 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61920 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61920 [ASSURED] mark=0 use=1
+    tcp      6 107 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61991 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61991 [ASSURED] mark=0 use=1
+    tcp      6 41 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=32824 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=32824 [ASSURED] mark=0 use=1
+    tcp      6 55 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=39912 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=39912 [ASSURED] mark=0 use=1
+    tcp      6 8 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=46280 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=46280 [ASSURED] mark=0 use=1
+    tcp      6 38 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61922 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61922 [ASSURED] mark=0 use=1
+    tcp      6 44 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=32852 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=32852 [ASSURED] mark=0 use=1
+    tcp      6 1 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=57024 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=57024 [ASSURED] mark=0 use=1
+    tcp      6 117 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=37424 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=37424 [ASSURED] mark=0 use=1
+    tcp      6 60 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=41990 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=41990 [ASSURED] mark=0 use=1
+    tcp      6 19 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61900 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61900 [ASSURED] mark=0 use=1
+    tcp      6 100 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=58526 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=58526 [ASSURED] mark=0 use=1
+    tcp      6 98 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=35992 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=35992 [ASSURED] mark=0 use=2
+    tcp      6 95 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61979 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61979 [ASSURED] mark=0 use=1
+    tcp      6 83 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=58156 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=58156 [ASSURED] mark=0 use=1
+    tcp      6 57 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61943 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61943 [ASSURED] mark=0 use=1
+    tcp      6 109 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=37360 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=37360 [ASSURED] mark=0 use=1
+    tcp      6 37 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=56602 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=56602 [ASSURED] mark=0 use=1
+    tcp      6 10 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61890 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61890 [ASSURED] mark=0 use=1
+    tcp      6 89 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61973 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61973 [ASSURED] mark=0 use=1
+    tcp      6 5 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61885 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61885 [ASSURED] mark=0 use=1
+    tcp      6 108 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=37348 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=37348 [ASSURED] mark=0 use=1
+    tcp      6 17 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=46348 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=46348 [ASSURED] mark=0 use=1
+    tcp      6 2 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=57030 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=57030 [ASSURED] mark=0 use=1
+    tcp      6 91 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=35910 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=35910 [ASSURED] mark=0 use=1
+    tcp      6 7 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=57060 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=57060 [ASSURED] mark=0 use=1
+    tcp      6 90 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61974 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61974 [ASSURED] mark=0 use=1
+    tcp      6 94 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=35942 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=35942 [ASSURED] mark=0 use=1
+    tcp      6 96 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=35968 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=35968 [ASSURED] mark=0 use=1
+    tcp      6 66 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=42030 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=42030 [ASSURED] mark=0 use=1
+    tcp      6 80 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61962 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61962 [ASSURED] mark=0 use=1
+    tcp      6 98 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61982 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61982 [ASSURED] mark=0 use=2
+    tcp      6 18 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=45268 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=45268 [ASSURED] mark=0 use=1
+    tcp      6 40 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61924 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61924 [ASSURED] mark=0 use=1
+    tcp      6 14 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61895 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61895 [ASSURED] mark=0 use=1
+    tcp      6 52 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61934 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61934 [ASSURED] mark=0 use=1
+    tcp      6 101 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61986 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61986 [ASSURED] mark=0 use=1
+    tcp      6 61 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=41996 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=41996 [ASSURED] mark=0 use=1
+    tcp      6 87 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61971 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61971 [ASSURED] mark=0 use=1
+    tcp      6 4 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61884 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61884 [ASSURED] mark=0 use=1
+    tcp      6 25 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61906 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61906 [ASSURED] mark=0 use=1
+    tcp      6 109 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61993 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61993 [ASSURED] mark=0 use=1
+    tcp      6 9 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=46286 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=46286 [ASSURED] mark=0 use=1
+    tcp      6 74 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61957 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61957 [ASSURED] mark=0 use=1
+    tcp      6 114 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=62002 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=62002 [ASSURED] mark=0 use=1
+    tcp      6 51 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61935 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61935 [ASSURED] mark=0 use=1
+    tcp      6 45 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=32854 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=32854 [ASSURED] mark=0 use=1
+    unknown  2 591 src=0.0.0.0 dst=224.0.0.1 [UNREPLIED] src=224.0.0.1 dst=0.0.0.0 mark=0 use=1
+    tcp      6 59 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=41976 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=41976 [ASSURED] mark=0 use=1
+    tcp      6 67 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61950 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61950 [ASSURED] mark=0 use=1
+    tcp      6 11 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=46294 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=46294 [ASSURED] mark=0 use=2
+    tcp      6 15 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61897 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61897 [ASSURED] mark=0 use=1
+    tcp      6 111 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=37372 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=37372 [ASSURED] mark=0 use=1
+    tcp      6 81 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=58134 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=58134 [ASSURED] mark=0 use=1
+    tcp      6 77 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61961 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61961 [ASSURED] mark=0 use=1
+    tcp      6 115 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61997 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61997 [ASSURED] mark=0 use=1
+    tcp      6 56 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=39916 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=39916 [ASSURED] mark=0 use=1
+    tcp      6 67 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=42032 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=42032 [ASSURED] mark=0 use=1
+    tcp      6 32 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61916 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61916 [ASSURED] mark=0 use=1
+    tcp      6 27 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=45370 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=45370 [ASSURED] mark=0 use=1
+    tcp      6 4 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=57040 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=57040 [ASSURED] mark=0 use=1
+    tcp      6 63 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61948 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61948 [ASSURED] mark=0 use=1
+    tcp      6 116 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=62003 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=62003 [ASSURED] mark=0 use=1
+    tcp      6 34 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=56580 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=56580 [ASSURED] mark=0 use=1
+    tcp      6 39 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61923 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61923 [ASSURED] mark=0 use=1
+    tcp      6 116 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=37420 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=37420 [ASSURED] mark=0 use=1
+    tcp      6 31 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=56560 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=56560 [ASSURED] mark=0 use=1
+    tcp      6 119 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=34464 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=34464 [ASSURED] mark=0 use=1
+    tcp      6 20 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61901 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61901 [ASSURED] mark=0 use=1
+    tcp      6 42 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61927 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61927 [ASSURED] mark=0 use=2
+    tcp      6 71 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61953 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61953 [ASSURED] mark=0 use=1
+    tcp      6 55 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61939 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61939 [ASSURED] mark=0 use=1
+    tcp      6 62 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=42010 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=42010 [ASSURED] mark=0 use=1
+    tcp      6 106 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=58584 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=58584 [ASSURED] mark=0 use=1
+    tcp      6 9 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61889 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61889 [ASSURED] mark=0 use=1
+    tcp      6 54 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61938 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61938 [ASSURED] mark=0 use=1
+    tcp      6 44 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61929 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61929 [ASSURED] mark=0 use=1
+    tcp      6 89 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=35884 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=35884 [ASSURED] mark=0 use=1
+    tcp      6 53 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=39902 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=39902 [ASSURED] mark=0 use=1
+    tcp      6 23 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=45340 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=45340 [ASSURED] mark=0 use=1
+    tcp      6 88 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=58196 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=58196 [ASSURED] mark=0 use=1
+    tcp      6 92 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61978 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61978 [ASSURED] mark=0 use=1
+    tcp      6 43 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=32842 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=32842 [ASSURED] mark=0 use=1
+    tcp      6 107 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=58588 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=58588 [ASSURED] mark=0 use=1
+    tcp      6 22 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=45330 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=45330 [ASSURED] mark=0 use=1
+    tcp      6 47 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=32870 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=32870 [ASSURED] mark=0 use=1
+    tcp      6 50 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=39878 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=39878 [ASSURED] mark=0 use=1
+    tcp      6 43 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61928 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61928 [ASSURED] mark=0 use=1
+    tcp      6 10 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=46290 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=46290 [ASSURED] mark=0 use=2
+    tcp      6 25 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=45360 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=45360 [ASSURED] mark=0 use=1
+    tcp      6 6 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61886 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61886 [ASSURED] mark=0 use=1
+    tcp      6 2 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61881 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61881 [ASSURED] mark=0 use=1
+    tcp      6 1 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61879 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61879 [ASSURED] mark=0 use=1
+    tcp      6 30 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61915 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61915 [ASSURED] mark=0 use=1
+    tcp      6 30 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=56548 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=56548 [ASSURED] mark=0 use=1
+    tcp      6 83 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61968 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61968 [ASSURED] mark=0 use=1
+    tcp      6 41 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61925 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61925 [ASSURED] mark=0 use=1
+    tcp      6 87 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=58180 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=58180 [ASSURED] mark=0 use=1
+    tcp      6 72 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61955 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61955 [ASSURED] mark=0 use=1
+    tcp      6 104 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=58558 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=58558 [ASSURED] mark=0 use=1
+    tcp      6 117 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=62005 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=62005 [ASSURED] mark=0 use=1
+    tcp      6 73 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=36432 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=36432 [ASSURED] mark=0 use=1
+    tcp      6 31 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61914 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61914 [ASSURED] mark=0 use=1
+    tcp      6 105 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61989 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61989 [ASSURED] mark=0 use=1
+    tcp      6 48 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61933 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61933 [ASSURED] mark=0 use=1
+    tcp      6 78 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=36486 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=36486 [ASSURED] mark=0 use=1
+    tcp      6 85 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61970 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61970 [ASSURED] mark=0 use=1
+    tcp      6 27 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61908 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61908 [ASSURED] mark=0 use=2
+    tcp      6 12 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=46300 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=46300 [ASSURED] mark=0 use=1
+    tcp      6 57 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=39926 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=39926 [ASSURED] mark=0 use=1
+    tcp      6 113 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61998 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61998 [ASSURED] mark=0 use=1
+    tcp      6 6 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=57056 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=57056 [ASSURED] mark=0 use=1
+    tcp      6 118 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=34454 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=34454 [ASSURED] mark=0 use=1
+    tcp      6 110 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61994 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61994 [ASSURED] mark=0 use=1
+    tcp      6 77 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=36472 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=36472 [ASSURED] mark=0 use=1
+    tcp      6 110 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=37364 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=37364 [ASSURED] mark=0 use=1
+    tcp      6 62 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61946 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61946 [ASSURED] mark=0 use=1
+    tcp      6 7871 ESTABLISHED src=127.0.0.1 dst=127.0.0.1 sport=43472 dport=3493 src=127.0.0.1 dst=127.0.0.1 sport=3493 dport=43472 [ASSURED] mark=0 use=1
+    tcp      6 16 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61896 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61896 [ASSURED] mark=0 use=1
+    tcp      6 56 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61941 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61941 [ASSURED] mark=0 use=1
+    tcp      6 23 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61904 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61904 [ASSURED] mark=0 use=1
+    tcp      6 8 CLOSE src=10.157.123.220 dst=10.1.0.1 sport=62004 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=62004 [ASSURED] mark=0 use=1
+    tcp      6 13 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61894 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61894 [ASSURED] mark=0 use=1
+    tcp      6 71 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=36406 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=36406 [ASSURED] mark=0 use=1
+    tcp      6 76 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61960 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61960 [ASSURED] mark=0 use=1
+    tcp      6 101 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=58532 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=58532 [ASSURED] mark=0 use=1
+    tcp      6 68 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61951 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61951 [ASSURED] mark=0 use=2
+    tcp      6 36 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=56592 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=56592 [ASSURED] mark=0 use=1
+    tcp      6 21 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61902 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61902 [ASSURED] mark=0 use=1
+    tcp      6 66 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61947 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61947 [ASSURED] mark=0 use=1
+    tcp      6 100 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61985 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61985 [ASSURED] mark=0 use=1
+    tcp      6 19 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=45284 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=45284 [ASSURED] mark=0 use=1
+    tcp      6 29 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61913 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61913 [ASSURED] mark=0 use=1
+    tcp      6 115 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=37416 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=37416 [ASSURED] mark=0 use=1
+    tcp      6 32 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=56566 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=56566 [ASSURED] mark=0 use=1
+    tcp      6 78 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61963 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61963 [ASSURED] mark=0 use=1
+    tcp      6 95 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=35954 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=35954 [ASSURED] mark=0 use=1
+    tcp      6 111 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61995 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61995 [ASSURED] mark=0 use=1
+    tcp      6 94 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61977 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61977 [ASSURED] mark=0 use=1
+    tcp      6 11 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61892 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61892 [ASSURED] mark=0 use=1
+    tcp      6 33 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=56578 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=56578 [ASSURED] mark=0 use=1
+    tcp      6 86 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61969 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61969 [ASSURED] mark=0 use=1
+    tcp      6 112 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=37384 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=37384 [ASSURED] mark=0 use=1
+    tcp      6 82 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61967 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61967 [ASSURED] mark=0 use=1
+    tcp      6 74 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=36438 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=36438 [ASSURED] mark=0 use=1
+    tcp      6 300 ESTABLISHED src=10.157.123.220 dst=10.1.0.1 sport=60507 dport=22 src=10.1.0.1 dst=10.157.123.220 sport=22 dport=60507 [ASSURED] mark=0 use=2
+    tcp      6 65 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=42016 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=42016 [ASSURED] mark=0 use=1
+    tcp      6 8 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61888 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61888 [ASSURED] mark=0 use=1
+    tcp      6 7 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61887 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61887 [ASSURED] mark=0 use=1
+    tcp      6 3 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=57038 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=57038 [ASSURED] mark=0 use=1
+    tcp      6 96 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61980 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61980 [ASSURED] mark=0 use=1
+    tcp      6 15 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=46332 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=46332 [ASSURED] mark=0 use=1
+    tcp      6 82 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=58144 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=58144 [ASSURED] mark=0 use=1
+    tcp      6 51 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=39886 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=39886 [ASSURED] mark=0 use=1
+    tcp      6 93 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=35936 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=35936 [ASSURED] mark=0 use=1
+    tcp      6 60 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61944 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61944 [ASSURED] mark=0 use=1
+    tcp      6 97 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=35982 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=35982 [ASSURED] mark=0 use=1
+    tcp      6 35 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61919 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61919 [ASSURED] mark=0 use=1
+    tcp      6 59 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61940 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61940 [ASSURED] mark=0 use=1
+    tcp      6 0 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61878 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61878 [ASSURED] mark=0 use=1
+    tcp      6 88 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61972 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61972 [ASSURED] mark=0 use=1
+    tcp      6 53 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61937 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61937 [ASSURED] mark=0 use=1
+    tcp      6 105 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=58568 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=58568 [ASSURED] mark=0 use=1
+    tcp      6 90 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=35898 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=35898 [ASSURED] mark=0 use=1
+    tcp      6 69 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=36396 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=36396 [ASSURED] mark=0 use=2
+    tcp      6 0 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=57016 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=57016 [ASSURED] mark=0 use=1
+    tcp      6 63 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=42014 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=42014 [ASSURED] mark=0 use=1
+    tcp      6 119 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=62006 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=62006 [ASSURED] mark=0 use=1
+    tcp      6 33 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61918 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61918 [ASSURED] mark=0 use=1
+    tcp      6 81 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61966 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61966 [ASSURED] mark=0 use=1
+    tcp      6 108 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61992 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61992 [ASSURED] mark=0 use=1
+    tcp      6 12 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61891 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61891 [ASSURED] mark=0 use=1
+    tcp      6 91 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61975 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61975 [ASSURED] mark=0 use=1
+    tcp      6 26 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=45362 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=45362 [ASSURED] mark=0 use=1
+    tcp      6 75 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61958 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61958 [ASSURED] mark=0 use=1
+    tcp      6 21 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=45314 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=45314 [ASSURED] mark=0 use=1
+    tcp      6 80 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=58122 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=58122 [ASSURED] mark=0 use=1
+    tcp      6 52 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=39900 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=39900 [ASSURED] mark=0 use=1
+    tcp      6 34 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61917 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61917 [ASSURED] mark=0 use=1
+    tcp      6 40 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=32820 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=32820 [ASSURED] mark=0 use=1
+    tcp      6 28 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=56544 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=56544 [ASSURED] mark=0 use=1
+    tcp      6 18 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61899 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61899 [ASSURED] mark=0 use=1
+    tcp      6 48 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=39866 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=39866 [ASSURED] mark=0 use=1
+    tcp      6 47 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61932 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61932 [ASSURED] mark=0 use=2
+    tcp      6 103 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61987 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61987 [ASSURED] mark=0 use=1
+    tcp      6 72 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=36416 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=36416 [ASSURED] mark=0 use=1
+    tcp      6 112 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61996 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61996 [ASSURED] mark=0 use=1
+    tcp      6 75 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=36454 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=36454 [ASSURED] mark=0 use=1
+    tcp      6 73 TIME_WAIT src=10.157.123.220 dst=10.1.0.1 sport=61954 dport=8006 src=10.1.0.1 dst=10.157.123.220 sport=8006 dport=61954 [ASSURED] mark=0 use=1
+    tcp      6 35 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=56584 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=56584 [ASSURED] mark=0 use=1
+    tcp      6 86 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=58172 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=58172 [ASSURED] mark=0 use=1
+    tcp      6 14 TIME_WAIT src=127.0.0.1 dst=127.0.0.1 sport=46322 dport=85 src=127.0.0.1 dst=127.0.0.1 sport=85 dport=46322 [ASSURED] mark=0 use=1
+    conntrack v1.4.8 (conntrack-tools): 235 flow entries have been shown.
     ~~~
 
-Know that the connection tracking subsystem uses four different internal tables: _conntrack_ (the default one for active connections), _expect_, _dying_ and _unconfirmed_. Check [the `conntrack` command's `man` page](https://manpages.debian.org/bullseye/conntrack/conntrack.8.en.html) to know more.
+Know that the connection tracking subsystem uses four different internal tables: _conntrack_ (the default one for active connections), _expect_, _dying_ and _unconfirmed_. Check [the `conntrack` command's `man` page](https://manpages.debian.org/trixie/conntrack/conntrack.8.en.html) to know more.
 
 ## Relevant system paths
 
 ### Directories
 
+- `/etc/ebtables/`
 - `/etc/pve/firewall`
 - `/etc/pve/nodes/<nodename>/`
 - `/etc/pve/sdn/firewall/`
+- `/usr/share/netfilter-persistent/`
+- `/usr/share/netfilter-persistent/plugins.d/`
+- `/var/log/`
 
 ### Files
 
+- `/etc/ebtables/rules.broute`
+- `/etc/ebtables/rules.filter`
+- `/etc/ebtables/rules.nat`
 - `/etc/pve/firewall/<VMID>.fw`
 - `/etc/pve/firewall/cluster.fw`
 - `/etc/pve/nodes/<nodename>/host.fw`
 - `/etc/pve/sdn/firewall/<vnet_name>.fw`
+- `/usr/share/netfilter-persistent/plugins.d/35-ebtables`
+- `/var/log/pve-firewall.log`
 
 ## References
 
-### Proxmox VE firewall
+### [Proxmox VE](https://pve.proxmox.com/)
 
-- [Proxmox VE admin guide. Firewall](https://pve.proxmox.com/pve-docs/chapter-pve-firewall.html)
-  - [Directions & Zones. Zones](https://pve.proxmox.com/pve-docs/chapter-pve-firewall.html#_zones)
-  - [nftables](https://pve.proxmox.com/pve-docs/chapter-pve-firewall.html#pve_firewall_nft)
+- [Proxmox VE admin guide. Firewall](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_pve_firewall)
+  - [Directions & Zones. Zones](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_directions_amp_zones)
+  - [nftables](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#pve_firewall_nft)
 - [Proxmox VE wiki. Firewall](https://pve.proxmox.com/wiki/Firewall)
 - [nftables HOWTO documentation](https://wiki.nftables.org/wiki-nftables/index.php/Main_Page)
+- [Why Configure the Firewall on Proxmox?. Defaults. Node level](https://homelab.casaursus.net/new_install-firewall/#node-level)
 - [Postinstall Configuration of Proxmox VE 6.2](https://lowendspirit.com/postinstall-configuration-of-proxmox-ve-6-2)
 - [Secure Proxmox Install – Sudo, Firewall with IPv6, and more – How to Configure from Start to Finish](https://www.kiloroot.com/secure-proxmox-install-sudo-firewall-with-ipv6-and-more-how-to-configure-from-start-to-finish/)
 - [Hardening Proxmox VE management interface with 2FA, reverse proxy and Let's Encrypt](https://loicpefferkorn.net/2020/11/hardening-proxmox-ve-management-interface-with-2fa-reverse-proxy-and-lets-encrypt/)
@@ -997,7 +1196,6 @@ Know that the connection tracking subsystem uses four different internal tables:
 
 ### Network security concepts
 
-- [Linux TCP/IP Tuning for Scalability](https://developer.akamai.com/blog/2012/09/27/linux-tcpip-tuning-scalability)
 - [What Is a Smurf Attack?](https://www.fortinet.com/resources/cyberglossary/smurf-attack)
 - [Smurf attack](https://en.wikipedia.org/wiki/Smurf_attack)
 - [Tcpdump: Filter Packets with Tcp Flags](https://www.howtouselinux.com/post/tcpdump-capture-packets-with-tcp-flags)
@@ -1006,19 +1204,18 @@ Know that the connection tracking subsystem uses four different internal tables:
 - [Address Resolution Protocol (ARP)](https://en.wikipedia.org/wiki/Address_Resolution_Protocol)
 - [Netfilter Conntrack Sysfs variables](https://www.kernel.org/doc/html/latest/networking/nf_conntrack-sysctl.html)
 - [TCP SYN Flood](https://www.imperva.com/learn/ddos/syn-flood/)
-- [Firewall Log Messages What Do They Mean](https://www.halolinux.us/firewalls/firewall-log-messages-what-do-they-mean.html)
 
 ### Networking concepts
 
 - [Internet Control Message Protocol](https://en.wikipedia.org/wiki/Internet_Control_Message_Protocol)
 - [What is the Internet Control Message Protocol (ICMP)?](https://www.cloudflare.com/learning/ddos/glossary/internet-control-message-protocol-icmp/)
-- [TCP/IP packets](https://inc0x0.com/tcp-ip-packets-introduction/)
+- [TCP/IP packets – Introduction](https://inc0x0.com/tcp-ip-packets-introduction/)
 - [Type of Service (ToS) and DSCP Values](https://linuxreviews.org/Type_of_Service_(ToS)_and_DSCP_Values)
 
 ### conntrack command
 
-- [CONNTRACK(8)](https://manpages.debian.org/bullseye/conntrack/conntrack.8.en.html)
-- [Package: conntrack (1:1.4.6-2)](https://packages.debian.org/bullseye/conntrack)
+- [CONNTRACK(8)](https://manpages.debian.org/trixie/conntrack/conntrack.8.en.html)
+- [Package: conntrack (1:1.4.8-2 and others)](https://packages.debian.org/trixie/conntrack)
 - [Matching connection tracking stateful metainformation](https://wiki.nftables.org/wiki-nftables/index.php/Matching_connection_tracking_stateful_metainformation)
 
 ## Navigation
