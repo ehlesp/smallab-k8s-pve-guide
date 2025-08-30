@@ -131,7 +131,7 @@
 - [Relevant system paths](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#relevant-system-paths)
 - [References](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#references)
 
-### [**G014** - Host hardening 08 ~ Firewalling](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#g014-host-hardening-08-firewalling)
+### [**G014** - Host hardening 08 ~ Firewalling](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md)
 
 - [[Enabling your PVE's firewall is a must](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#enabling-your-pves-firewall-is-a-must)]
 - [Proxmox VE firewall uses iptables](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#proxmox-ve-firewall-uses-iptables)
