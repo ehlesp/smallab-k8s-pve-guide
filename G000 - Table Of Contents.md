@@ -145,9 +145,10 @@
 - [Relevant system paths](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#relevant-system-paths)
 - [References](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#references)
 
-### [**G015** - Host optimization 01 ~ Adjustments through sysctl](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md#g015-host-optimization-01-adjustments-through-sysctl)
+### [**G015** - Host optimization 01 ~ Adjustments through sysctl](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md)
 
 - [Tune your Proxmox VE system's `sysctl` files to improve performance](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md#tune-your-proxmox-ve-systems-sysctl-files-to-improve-performance)
+- [First go the `sysctl` directory](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md#first-go-the-sysctl-directory)
 - [Network optimizations](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md#network-optimizations)
 - [Memory optimizations](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md#memory-optimizations)
 - [Kernel optimizations](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md#kernel-optimizations)
