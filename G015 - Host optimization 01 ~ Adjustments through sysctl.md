@@ -33,7 +33,7 @@ The changes explained in the following sections are focused on improving the per
 
 In this chapter you're going to create a bunch of `sysctl` configuration files that all have to be placed in the `/etc/sysctl.d` directory. So, first `cd` to that path:
 
-~~~bash
+~~~sh
 $ cd /etc/sysctl.d/
 ~~~
 
@@ -43,7 +43,7 @@ From this directory, apply the configurations specified in the following section
 
 1. Create a new empty file called `85_network_optimizations.conf`:
 
-    ~~~bash
+    ~~~sh
     $ sudo touch 85_network_optimizations.conf
     ~~~
 
@@ -191,7 +191,7 @@ From this directory, apply the configurations specified in the following section
 
 3. Save the `85_network_optimizations.conf` file and apply the changes:
 
-    ~~~bash
+    ~~~sh
     $ sudo sysctl -p 85_network_optimizations.conf
     ~~~
 
@@ -199,7 +199,7 @@ From this directory, apply the configurations specified in the following section
 
 1. Create a new empty file called `85_memory_optimizations.conf`:
 
-    ~~~bash
+    ~~~sh
     $ sudo touch 85_memory_optimizations.conf
     ~~~
 
@@ -266,7 +266,7 @@ From this directory, apply the configurations specified in the following section
 
 3. Save the `85_memory_optimizations.conf` file and apply the changes:
 
-    ~~~bash
+    ~~~sh
     $ sudo sysctl -p 85_memory_optimizations.conf
     ~~~
 
@@ -274,7 +274,7 @@ From this directory, apply the configurations specified in the following section
 
 1. Create a new empty file called `85_kernel_optimizations.conf`:
 
-    ~~~bash
+    ~~~sh
     $ sudo touch 85_kernel_optimizations.conf
     ~~~
 
@@ -300,7 +300,7 @@ From this directory, apply the configurations specified in the following section
 
 3. Save the `85_kernel_optimizations.conf` file and apply the changes:
 
-    ~~~bash
+    ~~~sh
     $ sudo sysctl -p 85_kernel_optimizations.conf
     ~~~
 
@@ -308,7 +308,7 @@ From this directory, apply the configurations specified in the following section
 
 Although you've applied the changes with the `sysctl -p` command, it'll be better to restart your server too:
 
-~~~bash
+~~~sh
 $ sudo reboot
 ~~~
 

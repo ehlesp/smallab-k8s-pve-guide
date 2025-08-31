@@ -13,7 +13,7 @@
 
 ## Understanding the transparent hugepages
 
-**Transparent hugepages** is a Linux kernel feature intended to improve performance by making more efficient use of your processor’s memory-mapping hardware. This feature gives some applications a small performance improvement, but can cause significant latency issues (to database engines for instance) or even apparent memory leaks at worst.
+**Transparent hugepages** is a Linux kernel feature intended to improve performance by making more efficient use of your processor’s memory-mapping hardware. This feature gives some applications a small performance boost, but can cause significant latency issues (to database engines for instance) or even apparent memory leaks at worst.
 
 > [!NOTE]
 > **Do not confuse transparent hugepages with explicit hugepages**\
@@ -29,22 +29,22 @@ In this chapter I'll show you how to disable the transparent hugepages since, as
 > **Do not dismiss using transparent hugepages forever!**\
 > Remember that some applications may benefit from this feature, although they have to be built for it specifically.
 >
-> Therefore, research the [references found at the end of this chapter](#references) and carefully evaluate if your system's workload can benefit from having THP enabled.
+> Therefore, research the [references found at the end of this chapter](#references) and carefully evaluate if your system's workload can benefit from having transparent hugepages enabled.
 
 ## Status of the transparent hugepages in your host
 
-To check out the current status of the transparent hugepages in your standalone PVE node, log as your `mgrsys` user in a shell and execute.
+To check out the current status of the transparent hugepages in your standalone PVE node, log as your `mgrsys` user in a shell and execute:
 
-~~~bash
+~~~sh
 $ cat /sys/kernel/mm/transparent_hugepage/enabled
 always [madvise] never
 ~~~
 
 The highlighted value is `madvise`, which means that transparent hugepages are enabled but only for applications that request it specifically.
 
-There's other parameter that hints about the usage of transparent hugepages, `AnonHugePages`. To see its current value, execute the following command.
+There is other parameter that hints about the usage of transparent hugepages, `AnonHugePages`. To see its current value, execute the following command:
 
-~~~bash
+~~~sh
 $ grep AnonHuge /proc/meminfo
 AnonHugePages:         0 kB
 ~~~
@@ -55,32 +55,34 @@ At this point, no application has made use of transparent hugepages, so the valu
 
 To switch the status of the transparent hugepages from `madvise` to `never`, you must modify the configuration of your Debian's Grub boot system.
 
-1. Open a shell as `mgrsys`, `cd` to `/etc/default/` and make a backup of the original `grub` file.
+1. Open a shell as `mgrsys`, `cd` to `/etc/default/` and make a backup of the original `grub` file:
 
-    ~~~bash
+    ~~~sh
     $ cd /etc/default/
     $ sudo cp grub grub.orig
     ~~~
 
-2. Edit the `grub` file, modifying the `GRUB_CMDLINE_LINUX=""` line as follows.
+2. Edit the `grub` file, modifying the `GRUB_CMDLINE_LINUX=""` line as follows:
 
     ~~~properties
     GRUB_CMDLINE_LINUX="transparent_hugepage=never"
     ~~~
 
-3. Update the grub and reboot the system.
+3. Update the grub and reboot the system:
 
-    ~~~bash
+    ~~~sh
     $ sudo update-grub
     $ sudo reboot
     ~~~
 
-4. Log again as `mgrsys` and check the current status of the transparent hugepages.
+4. Log again as `mgrsys` and check the current status of the transparent hugepages:
 
-    ~~~bash
+    ~~~sh
     $ cat /sys/kernel/mm/transparent_hugepage/enabled
     always madvise [never]
     ~~~
+
+    The highlighted status should be `never` now, as shown in the snippet above.
 
 ## Relevant system paths
 
