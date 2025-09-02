@@ -182,7 +182,7 @@
 - [Arrangement of VMs and services](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md#arrangement-of-vms-and-services)
 - [References](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md#references)
 
-### [**G019** - K3s cluster setup 02 ~ Storage setup](G019%20-%20K3s%20cluster%20setup%2002%20~%20Storage%20setup.md#g019-k3s-cluster-setup-02-storage-setup)
+### [**G019** - K3s cluster setup 02 ~ Storage setup](G019%20-%20K3s%20cluster%20setup%2002%20~%20Storage%20setup.md)
 
 - [Identifying your storage needs and current setup](G019%20-%20K3s%20cluster%20setup%2002%20~%20Storage%20setup.md#identifying-your-storage-needs-and-current-setup)
 - [Storage organization model](G019%20-%20K3s%20cluster%20setup%2002%20~%20Storage%20setup.md#storage-organization-model)
