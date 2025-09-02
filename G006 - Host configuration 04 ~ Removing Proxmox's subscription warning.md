@@ -13,7 +13,7 @@
 
 ## About the Proxmox subscription warning
 
-Every time you login into the Proxmox VE web console, or when you get into the updates section, you are met with the following warning.
+Every time you log in the Proxmox VE web console, or when you get into the updates section, you are met with the following warning:
 
 ![Proxmox VE subscription warning](images/g006/proxmox_ve_subscription_warning.webp "Proxmox VE subscription warning")
 
@@ -39,14 +39,14 @@ Follow this procedure to remove or disable Proxmox's subscription warning:
 
     ~~~js
     Ext.Msg.show({
-      title: gettext('No valid subscription'),
+        title: gettext('No valid subscription'),
     ~~~
 
 4. When you locate it (just search the `No valid subscription` string, its unique in the code), replace `Ext.Msg.show` with `void`:
 
     ~~~js
     void({ //Ext.Msg.show({
-      title: gettext('No valid subscription'),
+        title: gettext('No valid subscription'),
     ~~~
 
 5. Save the change and exit the editor, then restart the Proxmox VE web service:
@@ -87,7 +87,7 @@ $ sed -Ezi.orig "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \
 
 ## Final note
 
-This fix is known to work on any version starting from Proxmox VE **5.1** up to **8.4.z**. Bear also in mind that later Proxmox VE updates may undo this change and restore the warning, forcing your to apply this modification again.
+This fix is known to work on any version starting from Proxmox VE **5.1** up to **9.0**. Bear also in mind that later Proxmox VE updates may undo this change and restore the warning, forcing your to apply this modification again.
 
 ## Relevant system paths
 

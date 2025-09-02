@@ -1,11 +1,12 @@
 # **G000** - Table Of Contents
 
-## [**README**](README.md#small-homelab-k8s-cluster-on-proxmox-ve)
+## [**README**](README.md)
 
-- [Introduction](README.md#introduction)
-- [Description of contents](README.md#description-of-contents)
+- [A complete guide for building a virtualized Kubernetes homelab](README.md#a-complete-guide-for-building-a-virtualized-kubernetes-homelab)
+- [Main concepts](README.md#main-concepts)
 - [Intended audience](README.md#intended-audience)
-- [Goals](README.md#goals)
+- [Goal of this guide](README.md#goal-of-this-guide)
+- [Software used](README.md#software-used)
 
 ## [**LICENSE**](LICENSE.md)
 
@@ -13,40 +14,44 @@
 
 ## Guides
 
-### [**G001** - Hardware setup](G001%20-%20Hardware%20setup.md#g001-hardware-setup)
+### [**G001** - Hardware setup](G001%20-%20Hardware%20setup.md)
 
 - [You just need a capable enough computer](G001%20-%20Hardware%20setup.md#you-just-need-a-capable-enough-computer)
 - [The reference hardware setup](G001%20-%20Hardware%20setup.md#the-reference-hardware-setup)
 - [References](G001%20-%20Hardware%20setup.md#references)
 
-### [**G002** - Proxmox VE installation](G002%20-%20Proxmox%20VE%20installation.md#g002-proxmox-ve-installation)
+### [**G002** - Proxmox VE installation](G002%20-%20Proxmox%20VE%20installation.md)
 
+- [A procedure to install Proxmox VE in limited consumer hardware](G002%20-%20Proxmox%20VE%20installation.md#a-procedure-to-install-proxmox-ve-in-limited-consumer-hardware)
 - [System Requirements](G002%20-%20Proxmox%20VE%20installation.md#system-requirements)
 - [Installation procedure](G002%20-%20Proxmox%20VE%20installation.md#installation-procedure)
 - [After the installation](G002%20-%20Proxmox%20VE%20installation.md#after-the-installation)
 - [Connecting remotely](G002%20-%20Proxmox%20VE%20installation.md#connecting-remotely)
 - [References](G002%20-%20Proxmox%20VE%20installation.md#references)
 
-### [**G003** - Host configuration 01 ~ Apt sources, updates and extra tools](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md#g003-host-configuration-01-apt-sources-updates-and-extra-tools)
+### [**G003** - Host configuration 01 ~ Apt sources, updates and extra tools](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md)
 
-- [Remember, Proxmox VE 7.0 runs on Debian 11_ bullseye](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md#remember-proxmox-ve-70-runs-on-debian-11-bullseye)
+- [Proxmox VE 9.0 runs on Debian 13 "trixie"](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md#proxmox-ve-90-runs-on-debian-13-trixie)
 - [Editing the apt repository sources](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md#editing-the-apt-repository-sources)
 - [Update your system](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md#update-your-system)
 - [Installing useful extra tools](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md#installing-useful-extra-tools)
 - [Relevant system paths](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md#relevant-system-paths)
 - [References](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md#references)
 
-### [**G004** - Host configuration 02 ~ UPS management with NUT](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md#g004-host-configuration-02-ups-management-with-nut)
+### [**G004** - Host configuration 02 ~ UPS management with NUT](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md)
 
-- [Connecting your UPS with your pve node using NUT](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md#connecting-your-ups-with-your-pve-node-using-nut)
-- [Executing instant commands on the UPS unit](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md#executing-instant-commands-on-the-ups-unit)
+- [Any server must be always connected to an UPS unit](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md#any-server-must-be-always-connected-to-an-ups-unit)
+- [Connecting your UPS with your PVE node using NUT](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md#connecting-your-ups-with-your-pve-node-using-nut)
+- [Checking the NUT logs](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md#checking-the-nut-logs)
+- [Executing instant commands on your UPS unit](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md#executing-instant-commands-on-your-ups-unit)
 - [Other possibilities with NUT](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md#other-possibilities-with-nut)
 - [Relevant system paths](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md#relevant-system-paths)
 - [References](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md#references)
 
-### [**G005** - Host configuration 03 ~ LVM storage](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#g005-host-configuration-03-lvm-storage)
+### [**G005** - Host configuration 03 ~ LVM storage](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md)
 
-- [Initial filesystem configuration (**web console**)](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#initial-filesystem-configuration-web-console)
+- [Your Proxmox VE server's storage needs to be reorganized](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#your-proxmox-ve-servers-storage-needs-to-be-reorganized)
+- [Initial filesystem configuration (**PVE web console**)](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#initial-filesystem-configuration-pve-web-console)
 - [Initial filesystem configuration (**shell as root**)](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#initial-filesystem-configuration-shell-as-root)
 - [Configuring the unused storage drives](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#configuring-the-unused-storage-drives)
 - [LVM rearrangement in the main storage drive](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#lvm-rearrangement-in-the-main-storage-drive)
@@ -62,7 +67,7 @@
 - [Relevant system paths](G006%20-%20Host%20configuration%2004%20~%20Removing%20Proxmox's%20subscription%20warning.md#relevant-system-paths)
 - [References](G006%20-%20Host%20configuration%2004%20~%20Removing%20Proxmox's%20subscription%20warning.md#references)
 
-### [**G007** - Host hardening 01 ~ TFA authentication](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#g007-host-hardening-01-tfa-authentication)
+### [**G007** - Host hardening 01 ~ TFA authentication](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md)
 
 - [Enable Two Factor Authentication in your PVE system](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#enable-two-factor-authentication-in-your-pve-system)
 - [Enabling TFA for SSH access](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#enabling-tfa-for-ssh-access)
@@ -72,7 +77,7 @@
 - [Relevant system paths](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#relevant-system-paths)
 - [References](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#references)
 
-### [**G008** - Host hardening 02 ~ Alternative administrator user](G008%20-%20Host%20hardening%2002%20~%20Alternative%20administrator%20user.md#g008-host-hardening-02-alternative-administrator-user)
+### [**G008** - Host hardening 02 ~ Alternative administrator user](G008%20-%20Host%20hardening%2002%20~%20Alternative%20administrator%20user.md)
 
 - [Avoid using the root user](G008%20-%20Host%20hardening%2002%20~%20Alternative%20administrator%20user.md#avoid-using-the-root-user)
 - [Understanding the Proxmox VE user management and the realms](G008%20-%20Host%20hardening%2002%20~%20Alternative%20administrator%20user.md#understanding-the-proxmox-ve-user-management-and-the-realms)
@@ -80,24 +85,24 @@
 - [Relevant system paths](G008%20-%20Host%20hardening%2002%20~%20Alternative%20administrator%20user.md#relevant-system-paths)
 - [References](G008%20-%20Host%20hardening%2002%20~%20Alternative%20administrator%20user.md#references)
 
-### [**G009** - Host hardening 03 ~ SSH key pairs and sshd service configuration](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md#g009-host-hardening-03-ssh-key-pairs-and-sshd-service-configuration)
+### [**G009** - Host hardening 03 ~ SSH key pairs and sshd service configuration](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md)
 
 - [Harden your SSH connections with key pairs](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md#harden-your-ssh-connections-with-key-pairs)
-- [SSH key pairs](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md#ssh-key-pairs)
+- [Generating SSH key pairs](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md#generating-ssh-key-pairs)
 - [Hardening the `sshd` service](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md#hardening-the-sshd-service)
 - [Relevant system paths](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md#relevant-system-paths)
 - [References](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md#references)
 
-### [**G010** - Host hardening 04 ~ Enabling Fail2Ban](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#g010-host-hardening-04-enabling-fail2ban)
+### [**G010** - Host hardening 04 ~ Enabling Fail2Ban](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md)
 
 - [Harden your setup against intrusions with Fail2Ban](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#harden-your-setup-against-intrusions-with-fail2ban)
-- [Installing Fail2ban](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#installing-fail2ban)
-- [Configuring Fail2ban](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#configuring-fail2ban)
-- [Considerations regarding Fail2ban](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#considerations-regarding-fail2ban)
+- [Installing Fail2Ban](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#installing-fail2ban)
+- [Configuring Fail2Ban](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#configuring-fail2ban)
+- [Considerations regarding Fail2Ban](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#considerations-regarding-fail2ban)
 - [Relevant system paths](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#relevant-system-paths)
 - [References](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#references)
 
-### [**G011** - Host hardening 05 ~ Proxmox VE services](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md#g011-host-hardening-05-proxmox-ve-services)
+### [**G011** - Host hardening 05 ~ Proxmox VE services](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md)
 
 - [Reduce your Proxmox VE server's exposed surface](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md#reduce-your-proxmox-ve-servers-exposed-surface)
 - [Checking currently running services](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md#checking-currently-running-services)
@@ -110,7 +115,7 @@
 - [Relevant system paths](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md#relevant-system-paths)
 - [References](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md#references)
 
-### [**G012** - Host hardening 06 ~ Network hardening with sysctl](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md#g012-host-hardening-06-network-hardening-with-sysctl)
+### [**G012** - Host hardening 06 ~ Network hardening with sysctl](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md)
 
 - [Harden your PVE's networking with a `sysctl` configuration](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md#harden-your-pves-networking-with-a-sysctl-configuration)
 - [About `sysctl`](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md#about-sysctl)
@@ -118,15 +123,15 @@
 - [Relevant system paths](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md#relevant-system-paths)
 - [References](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md#references)
 
-### [**G013** - Host hardening 07 ~ Mitigating CPU vulnerabilities](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#g013-host-hardening-07-mitigating-cpu-vulnerabilities)
+### [**G013** - Host hardening 07 ~ Mitigating CPU vulnerabilities](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md)
 
 - [CPUs also have security vulnerabilities](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#cpus-also-have-security-vulnerabilities)
 - [Discovering your CPU's vulnerabilities](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#discovering-your-cpus-vulnerabilities)
-- [Applying the correct microcode package](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#applying-the-correct-microcode-package)
+- [Your Proxmox VE system will already have the correct microcode package applied](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#your-proxmox-ve-system-will-already-have-the-correct-microcode-package-applied)
 - [Relevant system paths](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#relevant-system-paths)
 - [References](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#references)
 
-### [**G014** - Host hardening 08 ~ Firewalling](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#g014-host-hardening-08-firewalling)
+### [**G014** - Host hardening 08 ~ Firewalling](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md)
 
 - [[Enabling your PVE's firewall is a must](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#enabling-your-pves-firewall-is-a-must)]
 - [Proxmox VE firewall uses iptables](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#proxmox-ve-firewall-uses-iptables)
@@ -140,9 +145,10 @@
 - [Relevant system paths](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#relevant-system-paths)
 - [References](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#references)
 
-### [**G015** - Host optimization 01 ~ Adjustments through sysctl](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md#g015-host-optimization-01-adjustments-through-sysctl)
+### [**G015** - Host optimization 01 ~ Adjustments through sysctl](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md)
 
 - [Tune your Proxmox VE system's `sysctl` files to improve performance](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md#tune-your-proxmox-ve-systems-sysctl-files-to-improve-performance)
+- [First go the `sysctl` directory](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md#first-go-the-sysctl-directory)
 - [Network optimizations](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md#network-optimizations)
 - [Memory optimizations](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md#memory-optimizations)
 - [Kernel optimizations](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md#kernel-optimizations)
@@ -159,9 +165,9 @@
 - [Relevant system paths](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md#relevant-system-paths)
 - [References](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md#references)
 
-### [**G017** - Virtual Networking ~ Network configuration](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#g017-virtual-networking-network-configuration)
+### [**G017** - Virtual Networking ~ Network configuration](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md)
 
-- [Preparing your virtual network comes first](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#preparing-your-virtual-network-comes-first)
+- [Preparing your virtual network for Kubernetes](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#preparing-your-virtual-network-for-kubernetes)
 - [Current virtual network setup](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#current-virtual-network-setup)
 - [Target network scenario](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#target-network-scenario)
 - [Creating an isolated Linux bridge](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#creating-an-isolated-linux-bridge)
@@ -176,7 +182,7 @@
 - [Arrangement of VMs and services](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md#arrangement-of-vms-and-services)
 - [References](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md#references)
 
-### [**G019** - K3s cluster setup 02 ~ Storage setup](G019%20-%20K3s%20cluster%20setup%2002%20~%20Storage%20setup.md#g019-k3s-cluster-setup-02-storage-setup)
+### [**G019** - K3s cluster setup 02 ~ Storage setup](G019%20-%20K3s%20cluster%20setup%2002%20~%20Storage%20setup.md)
 
 - [Identifying your storage needs and current setup](G019%20-%20K3s%20cluster%20setup%2002%20~%20Storage%20setup.md#identifying-your-storage-needs-and-current-setup)
 - [Storage organization model](G019%20-%20K3s%20cluster%20setup%2002%20~%20Storage%20setup.md#storage-organization-model)

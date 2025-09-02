@@ -1,6 +1,7 @@
 # G015 - Host optimization 01 ~ Adjustments through `sysctl`
 
 - [Tune your Proxmox VE system's `sysctl` files to improve performance](#tune-your-proxmox-ve-systems-sysctl-files-to-improve-performance)
+- [First go the `sysctl` directory](#first-go-the-sysctl-directory)
 - [Network optimizations](#network-optimizations)
 - [Memory optimizations](#memory-optimizations)
 - [Kernel optimizations](#kernel-optimizations)
@@ -22,27 +23,31 @@
 
 You can get performance improvements in your Proxmox VE system just by setting some parameters in `sysctl` configuration files. Remember that you did something like this for hardening the TCP/IP stack back in the [**G012** chapter](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md).
 
-The changes explained in the following sections are focused on improving the performance of your system on different concerns. For the sake of clarity, each concern will have its own `sysctl` file with their own particular parameter set. This is meant to avoid the problem of having the same parameter defined twice on different configuration files, and worrying about in which order are being read (`sysctl` only keeps the last value read for each parameter).
+The changes explained in the following sections are focused on improving the performance of your system on different concerns. For the sake of clarity, each concern will have its own `sysctl` file with their own particular parameter set. This is to avoid two problems: having the same parameter defined twice on different configuration files, and worrying about the order in which the parameters are being read (`sysctl` only keeps the last value read for each parameter).
 
 > [!IMPORTANT]
 > **Do not apply this configuration blindly in your PVE system**\
 > Revise and adjust the values set in the following sections to suit your own system setup and presumed load.
 
-In this chapter you're going to create a bunch of `sysctl` configuration files that all have to be placed in the `/etc/sysctl.d` directory. So, `cd` to that path and start working on the sections below.
+## First go the `sysctl` directory
 
-~~~bash
+In this chapter you're going to create a bunch of `sysctl` configuration files that all have to be placed in the `/etc/sysctl.d` directory. So, first `cd` to that path:
+
+~~~sh
 $ cd /etc/sysctl.d/
 ~~~
 
+From this directory, apply the configurations specified in the following sections.
+
 ## Network optimizations
 
-1. Create a new empty file called `85_network_optimizations.conf`.
+1. Create a new empty file called `85_network_optimizations.conf`:
 
-    ~~~bash
+    ~~~sh
     $ sudo touch 85_network_optimizations.conf
     ~~~
 
-2. Edit the `85_network_optimizations.conf` file and input the following content.
+2. Edit the `85_network_optimizations.conf` file and set the following content:
 
     ~~~properties
     ## NETWORK optimizations
@@ -184,21 +189,21 @@ $ cd /etc/sysctl.d/
     net.unix.max_dgram_qlen = 1024
     ~~~
 
-3. Save the `85_network_optimizations.conf` file and apply the changes.
+3. Save the `85_network_optimizations.conf` file and apply the changes:
 
-    ~~~bash
+    ~~~sh
     $ sudo sysctl -p 85_network_optimizations.conf
     ~~~
 
 ## Memory optimizations
 
-1. Create a new empty file called `85_memory_optimizations.conf`.
+1. Create a new empty file called `85_memory_optimizations.conf`:
 
-    ~~~bash
+    ~~~sh
     $ sudo touch 85_memory_optimizations.conf
     ~~~
 
-2. Edit the `85_memory_optimizations.conf` file and input the following content.
+2. Edit the `85_memory_optimizations.conf` file and enter the following content:
 
     ~~~properties
     ## Memory optimizations
@@ -259,21 +264,21 @@ $ cd /etc/sysctl.d/
     vm.nr_hugepages = 1
     ~~~
 
-3. Save the `85_memory_optimizations.conf` file and apply the changes.
+3. Save the `85_memory_optimizations.conf` file and apply the changes:
 
-    ~~~bash
+    ~~~sh
     $ sudo sysctl -p 85_memory_optimizations.conf
     ~~~
 
 ## Kernel optimizations
 
-1. Create a new empty file called `85_kernel_optimizations.conf`.
+1. Create a new empty file called `85_kernel_optimizations.conf`:
 
-    ~~~bash
+    ~~~sh
     $ sudo touch 85_kernel_optimizations.conf
     ~~~
 
-2. Edit the `85_kernel_optimizations.conf` file and input the following content.
+2. Edit the `85_kernel_optimizations.conf` file and input the following content:
 
     ~~~properties
     ## Kernel optimizations
@@ -281,7 +286,7 @@ $ cd /etc/sysctl.d/
     # Controls whether unprivileged users can load eBPF programs.
     # For most scenarios this is recommended to be set as 1 (enabled).
     # This is a kernel hardening concern rather than a optimization one, but
-    # is left here since its just this value. 
+    # is left here since its just this value.
     kernel.unprivileged_bpf_disabled=1
 
     # Process Scheduler related settings
@@ -293,17 +298,17 @@ $ cd /etc/sysctl.d/
     kernel.sched_autogroup_enabled = 0
     ~~~
 
-3. Save the `85_kernel_optimizations.conf` file and apply the changes.
+3. Save the `85_kernel_optimizations.conf` file and apply the changes:
 
-    ~~~bash
+    ~~~sh
     $ sudo sysctl -p 85_kernel_optimizations.conf
     ~~~
 
 ## Reboot the system
 
-Although you've applied the changes with the `sysctl -p` command, it'll be better to restart your server too.
+Although you've applied the changes with the `sysctl -p` command, it'll be better to restart your server too:
 
-~~~bash
+~~~sh
 $ sudo reboot
 ~~~
 
@@ -311,7 +316,7 @@ Then, open a new shell as your `mgrsys` user and check your system's journal (wi
 
 ## Final considerations
 
-All the values modified in the previous sections have to be measured and tested against the possibilities of your system and the real load it has. So expect to revise this configuration later to make it fit to your needs, and maybe even adjust some other `sysctl` parameters that haven't been shown in this guide.
+All the values modified in the previous sections have to be measured and tested against the possibilities of your system and the real load running on it. So expect to revise this configuration later to make it fit to your needs, and maybe even adjust some other `sysctl` parameters that haven't been shown in this guide.
 
 On the other hand, notice how I avoided touching any `sysctl` configuration files already present in the system (like the ones related to the PVE platform). This guarantees that future updates can change them without complaining about being different as they expected them to be.
 
@@ -339,7 +344,7 @@ On the other hand, notice how I avoided touching any `sysctl` configuration file
 
 - [Most popular speedup sysctl options for Proxmox, corrected for the 5.3.18-3-pve kernel](https://gist.github.com/sergey-dryabzhinsky/bcc1a15cb7d06f3d4606823fcc834824#gistcomment-3297285)
 - [Sysctl on Archlinux wiki](https://wiki.archlinux.org/index.php/Sysctl)
-- [Linux Hardening: A 15-Step Checklist For A Secure Linux Server](https://www.pluralsight.com/blog/it-ops/linux-hardening-secure-server-checklist)
+- [Linux Hardening. Secure your Linux Distro in 15 Steps](https://www.pluralsight.com/resources/blog/tech-operations/linux-hardening-secure-server-checklist)
 
 ### About network optimizations
 
@@ -354,7 +359,6 @@ On the other hand, notice how I avoided touching any `sysctl` configuration file
 - [Linux Increase TCP Port Range with net.ipv4.ip_local_port_range Kernel Parameter](https://www.cyberciti.biz/tips/linux-increase-outgoing-network-sockets-range.html)
 - [Linux increase ip_local_port_range TCP port range](https://ma.ttias.be/linux-increase-ip_local_port_range-tcp-port-range/)
 - [Neighbour Table Overflow – sysctl.Conf Tuning](https://www.serveradminblog.com/2011/02/neighbour-table-overflow-sysctl-conf-tunning/)
-- [tcp_slow_start_after_idle tcp_no_metrics_save performance](https://github.com/ton31337/tools/wiki/tcp_slow_start_after_idle---tcp_no_metrics_save-performance)
 - [Overflow in datagram type sockets](https://www.toptip.ca/2013/02/overflow-in-datagram-type-sockets.html)
 
 ### About memory optimizations
@@ -364,7 +368,7 @@ On the other hand, notice how I avoided touching any `sysctl` configuration file
 - [Memory Overcommit Settings](https://iainvlinux.wordpress.com/2014/02/16/memory-overcommit-settings/)
 - [Reducing inode and dentry caches to keep OOM killer at bay](https://major.io/2008/12/03/reducing-inode-and-dentry-caches-to-keep-oom-killer-at-bay/)
 - [Better Linux Disk Caching & Performance with vm.dirty_ratio & vm.dirty_background_ratio](https://lonesysadmin.net/2013/12/22/better-linux-disk-caching-performance-vm-dirty_ratio/)
-- [Hugepages on Debian wiki](https://wiki.debian.org/Hugepages)
+- [Debian. Wiki. Hugepages](https://wiki.debian.org/Hugepages)
 - [Linux HugePages](https://www.educba.com/linux-hugepages/)
 - [Hugepages and Multiple VMs](https://forum.proxmox.com/threads/hugepages-and-multiple-vms.34075/)
 
