@@ -343,7 +343,7 @@ But not only new parameters are enabled, some already existing ones get changed.
 
 ![Linux bridge at pve node network](images/g014/pve_node_system_network_bridge.webp "Linux bridge at pve node network")
 
-In the capture above, you can see how this Linux bridge uses the host's Ethernet network card `enp0s3` as port to have access to the network. This bridge is necessary for later being able to provide network connectivity to the VMs you'll create in later chapters. But keep on reading this chapter to see how to apply firewalling at the bridge level with **ebtables**.
+In the capture above, you can see how this Linux bridge uses the host's Ethernet network card `enp3s0` as port to have access to the network. This bridge is necessary for later being able to provide network connectivity to the VMs you'll create in later chapters. But keep on reading this chapter to see how to apply firewalling at the bridge level with **ebtables**.
 
 ## Firewalling with ebtables
 
@@ -836,7 +836,7 @@ Knowing all that above, let's translate the previous logging example:
       Refers to the input network device through which the packet came, in this case the bridge `vmbr0`.
 
     - `PHYSIN`\
-      Is the _physical_ input network device through which the packet came. Here is the ethernet network card `enp0s3` of this host, which is the one used by the bridge `vmbr0` as networking port.
+      Is the _physical_ input network device through which the packet came. Here is the ethernet network card `enp3s0` of this host, which is the one used by the bridge `vmbr0` as networking port.
 
     - `MAC`\
       This is a rather odd value. It is not just the MAC of a particular network device, but the concatenation of the packet's source MAC (`87:ea:ab:02:15:a5`) with the destination MAC (`1a:e3:a5:13:f2:57`) and an extra suffix `08:00`.

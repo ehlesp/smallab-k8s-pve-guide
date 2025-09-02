@@ -165,9 +165,9 @@
 - [Relevant system paths](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md#relevant-system-paths)
 - [References](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md#references)
 
-### [**G017** - Virtual Networking ~ Network configuration](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#g017-virtual-networking-network-configuration)
+### [**G017** - Virtual Networking ~ Network configuration](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md)
 
-- [Preparing your virtual network comes first](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#preparing-your-virtual-network-comes-first)
+- [Preparing your virtual network for Kubernetes](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#preparing-your-virtual-network-for-kubernetes)
 - [Current virtual network setup](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#current-virtual-network-setup)
 - [Target network scenario](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#target-network-scenario)
 - [Creating an isolated Linux bridge](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#creating-an-isolated-linux-bridge)
