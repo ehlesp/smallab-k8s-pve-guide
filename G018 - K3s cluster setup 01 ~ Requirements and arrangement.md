@@ -20,11 +20,11 @@
 
 ## Gearing up for your K3s cluster
 
-With your Proxmox VE standalone node ready, you can start building your private cloud of services. The idea is to setup first a Kubernetes K3s cluster running on KVM virtual machines. Then, you would deploy the apps and services you want in that cluster.
+With your Proxmox VE standalone node ready, you can start building your private cloud of services. The idea is to setup first a Kubernetes K3s cluster running on KVM virtual machines. Then, you would deploy the apps and services you want in that Kubernetes cluster.
 
 ## Requirements for the K3s cluster and the services to deploy in it
 
-Let's go over the list of services I'm aiming to run in the K3s cluster, and check their requirements. This is necessary to plan in advance how to distribute the hardware resources available in the Proxmox VE server among the virtual machines that will act as nodes of the K3s cluster.
+Let's go over the list of services this guide aims to run in the K3s cluster, and check their requirements. This is necessary to plan in advance how to distribute the hardware resources available in the Proxmox VE server among the virtual machines that will act as nodes of the K3s cluster.
 
 ### Rancher K3s Kubernetes cluster
 
@@ -73,13 +73,15 @@ For monitoring the K3s Kubernetes cluster, you will install a stack which includ
 
 ## Arrangement of VMs and services
 
-Now that we have a rough idea about what each software requires, it's time to stablish a proper arrangement for them. So, in my virtual hardware of four-single-threaded cores CPU and 8 GiB of RAM, I'll go with three VMs with the hardware configuration listed next:
+Now that you have a rough idea about what each software requires, it's time to stablish a proper arrangement for them. So, in my virtual hardware of four-single-threaded cores CPU and 8 GiB of RAM, I'll go with three VMs with the hardware configuration listed next:
 
-- **One VM** with 2 vCPU and 2 GiB of RAM. This will become the K3s **server** (_master_) node of the Kubernetes cluster.
+- **One VM with 2 vCPU and 2 GiB of RAM**\
+  This will become the K3s **server** (_master_) node of the Kubernetes cluster.
 
-- **Two VMs** with 3 vCPU and 2 GiB of RAM. These will be K3s **agent** (_worker_) nodes where most of the Kubernetes pods will run.
+- **Two VMs with 3 vCPU and 2 GiB of RAM**\
+  These will be K3s **agent** (_worker_) nodes where most of the Kubernetes pods will run.
 
-If your hardware setup has more RAM and cores than mine, you can consider either putting more VMs in your system or just assigning them more RAM and vCPUs. Also, since all your VMs will run on the same host, Proxmox VE will be able to use [**KSM and Auto-Ballooning** for a more efficient and dynamic shared use of RAM among them](https://pve.proxmox.com/wiki/Dynamic_Memory_Management).
+If your hardware setup has more RAM and cores than the one used in this guide, you can consider either putting more VMs in your system or just assigning them more RAM and vCPUs. Also, since all your VMs will run on the same host, Proxmox VE will be able to use [**KSM and Auto-Ballooning** for a more efficient and dynamic shared use of RAM among them](https://pve.proxmox.com/wiki/Dynamic_Memory_Management).
 
 ## References
 
