@@ -15,6 +15,7 @@
 - [References](#references)
   - [Debian](#debian)
   - [Virtual Machines on Proxmox VE](#virtual-machines-on-proxmox-ve)
+  - [Units of measurement for storage](#units-of-measurement-for-storage)
 - [Navigation](#navigation)
 
 ## You can start creating VMs in your Proxmox VE server
@@ -27,17 +28,17 @@ Since the operative system chosen to build the VMs is Debian Linux, first you ne
 
 ### Obtaining the latest stable Debian ISO image
 
-At the time of writing this, the latest stable version of Debian is [**12.11.0 Bookworm**](https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-12.11.0-amd64-netinst.iso).
+At the time of writing this, the latest stable version of Debian is [**13.0.0 "trixie"**](https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-13.0.0-amd64-netinst.iso).
 
-You can find the _net install_ version of the ISO for the latest Debian version right at the [Debian project's webpage](https://www.debian.org/).
+You can find the _net install_ version of the ISO for the latest Debian version right at the [Debian project's webpage](https://www.debian.org/):
 
 ![Debian project main's webpage](images/g020/debian_netinstall_iso_download.webp "Debian project's main webpage")
 
-After clicking on that big `Download` button, your browser should start downloading the `debian-12.11.0-amd64-netinst.iso` file automatically.
+After clicking on that big `Download` button, your browser should start downloading the `debian-13.0.0-amd64-netinst.iso` file.
 
 ### Storing the ISO image in the Proxmox VE platform
 
-Proxmox VE needs that ISO image saved in the proper storage space it has available to be able to use it. Therefore, you need to upload the `debian-12.11.0-amd64-netinst.iso` file to the storage space you configured to hold such files, the one called `hdd_templates`.
+Proxmox VE needs that ISO image saved in the proper storage space it has available to be able to use it. Therefore, you need to upload the `debian-13.0.0-amd64-netinst.iso` file to the storage space you configured to hold such files, the one called `hdd_templates`:
 
 1. Open the web console and unfold the tree of available storages under your `pve` node. Click on `hdd_templates` to reach its `Summary` page:
 
@@ -54,14 +55,14 @@ Proxmox VE needs that ISO image saved in the proper storage space it has availab
     ![ISO image upload dialog](images/g020/pve_templates_storage_iso_upload_dialog.webp "ISO image upload dialog")
 
     > [!NOTE]
-    > **Ensure having enough storage in your Proxmox VE's filesystem before uploading files**\
-    > Notice the warning about where Proxmox VE temporarily stores the file you upload before moving it to its definitive place. The `/var/tmp/` path is part of your PVE server, so be sure of having room in it or the upload will fail.
+    > **Ensure having enough free storage available in your Proxmox VE's root filesystem before uploading files**\
+    > Notice the warning about where Proxmox VE temporarily stores the file you upload before moving it to its definitive place. The `/var/tmp/` path lays in the root filesystem of your PVE server, so be sure of having enough room in it or the upload will fail.
 
-4. Click on `Select File`, find and select your `debian-12.11.0-amd64-netinst.iso` file in your computer, then click on `Upload`. The same dialog will show the upload progress:
+4. Click on `Select File`, find and select your `debian-13.0.0-amd64-netinst.iso` file in your computer, then click on `Upload`. The same dialog will show the upload progress:
 
     ![ISO image upload dialog in progress](images/g020/pve_templates_storage_iso_upload_dialog_in_progress.webp "ISO image upload dialog in progress")
 
-    When the upload is finished, Proxmox VE will show you another dialog with the result of the task that moves the ISO file from the `/var/tmp/` PVE system path to the `hdd_templates` storage.
+    When the upload is finished, Proxmox VE will show you another dialog with the result of the task that moves the ISO file from the `/var/tmp/` PVE system path to the `hdd_templates` storage:
 
     ![ISO image copy data task dialog result OK](images/g020/pve_templates_storage_iso_upload_copy_task_ok.webp "ISO image copy data task dialog result OK")
 
@@ -83,7 +84,7 @@ In this section you'll see how to create a basic and lean Debian VM, then how to
 
 ### Setting up a new virtual machine
 
-First, you need to create and configure the VM itself.
+First, you need to create and configure a new VM:
 
 1. Click on the `Create VM` button found at the web console's top right:
 
@@ -102,7 +103,7 @@ First, you need to create and configure the VM itself.
       A numerical identifier for the VM.
 
       > [!NOTE]
-      > Proxmox VE does not allow IDs lower than 100.
+      > Proxmox VE does not allow IDs lower than `100`.
 
     - `Name`\
       This field must be a valid DNS name, like `debiantpl` or something longer such as `debiantpl.homelab.cloud`.
@@ -110,9 +111,10 @@ First, you need to create and configure the VM itself.
       > [!NOTE]
       > The official Proxmox VE says that this name is `a free form text string you can use to describe the VM`, which contradicts what the web console actually validates as correct.
 
-    - `Resource Pool`: here you can indicate to which pool of resources (you have none defined at this point) you want to make this VM a member of.
+    - `Resource Pool`\
+      Here you can indicate to which pool of resources (you have none defined at this point) you want to make this VM a member of.
 
-    The only value you really need to set here is the name, which in this case could be `debian12tpl` (for Debian 12 Template).
+    The only value you really need to set here is the name, which in this case it could be `debiantpl` (for Debian Template).
 
     ![General tab filled at Create VM window](images/g020/debian_vm_create_vm_general_filled.webp "General tab filled at Create VM window")
 
@@ -122,7 +124,7 @@ First, you need to create and configure the VM itself.
 
     In this form, you only have to choose the Debian ISO image you uploaded before. The `Guest OS` options are already properly set up for the kind of OS (a Linux distribution) you're going to install in this VM.
 
-    So, be sure of having the `Use CD/DVD disc image file` option enabled, so you can select the proper `Storage` (you should only see here the `hdd_templates` one) and `ISO image` (you just have one ISO right now).
+    Therefore, be sure of having the `Use CD/DVD disc image file` option enabled, then select the proper `Storage` (you should only see here the `hdd_templates` one) and `ISO image` (you just have one ISO right now).
 
     ![OS tab filled at Create VM window](images/g020/debian_vm_create_vm_os_filled.webp "OS tab filled at Create VM window")
 
@@ -140,10 +142,10 @@ First, you need to create and configure the VM itself.
 
     ![Disks tab unfilled at Create VM window](images/g020/debian_vm_create_vm_disk_unfilled.webp "Disks tab unfilled at Create VM window")
 
-    In this step you have a form in which you can add several storage drives to your VM, but there are certain parameters that you need to see to create a virtual SSD drive. So, enable the `Advanced` checkbox at the bottom of this window and you'll see some extra parameters which I've highlighted in the next snapshot.
+    In this step you have a form in which you can add several storage drives to your VM, but there are certain parameters that you need to see to create a virtual SSD drive. So, enable the `Advanced` checkbox at the bottom of this window and you'll get some extra parameters which I've highlighted in the next snapshot:
 
     > [!NOTE]
-    > The `Advanced` checkbox affects all the steps of this wizard, but not all of those steps have advanced parameters to show.
+    > Although the `Advanced` checkbox appears in all the steps of this wizard, not all of those steps have advanced parameters to offer.
 
     ![Disks tab unfilled advanced options](images/g020/debian_vm_create_vm_disk_unfilled_advanced.webp "Disks tab unfilled advanced options")
 
@@ -153,10 +155,10 @@ First, you need to create and configure the VM itself.
       Here you must choose on which storage you will place the disk image of this VM. At this point, in the list you'll only see the thinpools you created in the [**G019** chapter](G019%20-%20K3s%20cluster%20setup%2002%20~%20Storage%20setup.md).
 
     - `Disk size (GiB)`\
-      How big you want the main disk for this VM, in gigabytes.
+      How big you want the main disk for this VM, [in gibibytes](https://en.wikipedia.org/wiki/Gigabyte#Base_2_(binary)).
 
     - `Discard`\
-      Since this drive will be put on a thin provisioned storage, you can enable this option so this drive's image get's shrunk when space is marked as freed after removing files within the VM.
+      Since this drive will be put on a thin provisioned storage, you can enable this option to make this drive's image get shrunk when space is marked as freed after removing files within the VM.
 
     - `SSD emulation`\
       If your storage is on an SSD drive, (like the `ssd_disks` thinpool), you can turn this on.
@@ -172,13 +174,13 @@ First, you need to create and configure the VM itself.
 
     > [!IMPORTANT]
     > **The `Bandwidth` tab allows you to adjust the read/write capabilities of the storage drive**\
-    > Only adjust the bandwith options if you are really sure about how to set them up.
+    > Only adjust the bandwidth options if you are really sure about how to set them up.
 
     Knowing all this, choose the `ssd_disks` thinpool as `Storage`, put a small number as `Disk Size` (such as 10 GiB), and ensure to enable the `Discard` and `SSD emulation` options. Leave the `IO thread` option enabled (as it is by default), and do not change the default value already set in the `Async IO` parameter. Do not change any of the remaining parameters in this dialog.
 
     ![Disks tab filled at Create VM window](images/g020/debian_vm_create_vm_disk_filled.webp "Disks tab filled at Create VM window")
 
-    This way, you've configured the `scsi0` drive you see listed in the column at the window's left. If you wanted to add more drives, click on the `Add` button and a new drive will be added with default values.
+    This way, you've configured the `scsi0` drive you see listed in the column at the window's left. If you want to add more drives, click on the `Add` button and a new drive will be added with default values.
 
 6. The next tab to fill is `CPU`. Since you have enabled the `Advanced` checkbox in the previous `Disks` tab, you'll see the advanced parameters of this and following steps right away:
 
@@ -196,7 +198,7 @@ First, you need to create and configure the VM itself.
       > Never put here a number greater than the real cores count in your CPU, or Proxmox VE won't start your VM!
 
     - `Type`\
-      This indicates the type of CPU you want to emulate, and the closer it is to the real CPU running your system the better. There's a type `host` which'll make the VM's CPU have exactly the same flags as the real CPU running your Proxmox VE platform, but VMs with such CPU type will only run on CPUs that include the same flags. So, if you migrated such VM to a new Proxmox VE platform that runs on a CPU lacking certain flags expected by the VM, the VM won't run there.
+      This indicates the type of CPU you want to emulate, and the closer it is to the real CPU running your system the better. There's a type `host` which'll make the VM's CPU have exactly the same flags as the real CPU running your Proxmox VE platform, but VMs with that `host` CPU type will only run on CPUs that include the same flags. So, if you migrated such VM to a new Proxmox VE platform that runs on a CPU lacking certain flags expected by the VM, the VM won't run there.
 
     - `Enable NUMA`\
       If your host supports [**NUMA**](https://en.wikipedia.org/wiki/Non-uniform_memory_access), enable this option.
@@ -208,18 +210,18 @@ First, you need to create and configure the VM itself.
         $ less /proc/cpuinfo
         ~~~
 
-        This file lists the specifications of each core on your CPU. For instance, the first core (called `processor` in the file) on the VM where I'm running the whole Proxmox VE setup is detailed as follows.
+        This file lists the specifications of each core on your CPU. For instance, the first core (called `processor` in the file) on the host where I'm running this guide's whole Proxmox VE setup is detailed as follows:
 
         ~~~properties
         processor       : 0
         vendor_id       : GenuineIntel
         cpu family      : 6
-        model           : 158
-        model name      : Intel(R) Core(TM) i7-8750H CPU @ 2.20GHz
-        stepping        : 10
-        microcode       : 0xde
-        cpu MHz         : 2207.998
-        cache size      : 9216 KB
+        model           : 55
+        model name      : Intel(R) Celeron(R) CPU  J1900  @ 1.99GHz
+        stepping        : 8
+        microcode       : 0x838
+        cpu MHz         : 2211.488
+        cache size      : 1024 KB
         physical id     : 0
         siblings        : 4
         core id         : 0
@@ -228,21 +230,21 @@ First, you need to create and configure the VM itself.
         initial apicid  : 0
         fpu             : yes
         fpu_exception   : yes
-        cpuid level     : 22
+        cpuid level     : 11
         wp              : yes
-        flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid tsc_known_freq pni pclmulqdq vmx ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch pti tpr_shadow flexpriority ept vpid fsgsbase bmi1 avx2 bmi2 invpcid rdseed adx clflushopt arat vnmi md_clear flush_l1d
-        vmx flags       : vnmi invvpid ept_x_only flexpriority tsc_offset vtpr vapic ept vpid unrestricted_guest ple
-        bugs            : cpu_meltdown spectre_v1 spectre_v2 spec_store_bypass l1tf mds swapgs itlb_multihit srbds mmio_stale_data retbleed gds bhi
-        bogomips        : 4415.99
+        flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology tsc_reliable nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm sse4_1 sse4_2 movbe popcnt tsc_deadline_timer rdrand lahf_lm 3dnowprefetch epb pti ibrs ibpb stibp tpr_shadow flexpriority ept vpid tsc_adjust smep erms dtherm ida arat vnmi md_clear
+        vmx flags       : vnmi preemption_timer invvpid ept_x_only flexpriority tsc_offset vtpr mtf vapic ept vpid unrestricted_guest
+        bugs            : cpu_meltdown spectre_v1 spectre_v2 mds msbds_only mmio_unknown
+        bogomips        : 4000.00
         clflush size    : 64
         cache_alignment : 64
-        address sizes   : 39 bits physical, 48 bits virtual
+        address sizes   : 36 bits physical, 48 bits virtual
         power management:
         ~~~
 
-        The flags available in the CPU are listed on the `flags` line, and below you can see also the `bugs` list.
+        The flags available in the CPU are listed on the `flags`, `vmx flags` and `bugs` lists.
 
-    Being aware of the capabilities of the real CPU used to run the Proxmox VE VM used in this guide, this form could be filled like shown below.
+    Being aware of the capabilities of the real CPU used to run the Proxmox VE VM used in this guide, this form is filled like this:
 
     ![CPU tab filled at Create VM window](images/g020/debian_vm_create_vm_cpu_filled.webp "CPU tab filled at Create VM window")
 
@@ -264,7 +266,7 @@ First, you need to create and configure the VM itself.
 
     With the arrangement above, the VM will start with 1 GiB and will only be able to take as much as 2 GiB from the host's available RAM.
 
-8. The next tab to go to is `Network`, which shows too its advanced parameters:
+8. The next tab to go to is `Network`, which also has advanced parameters:
 
     ![Network tab default at Create VM window](images/g020/debian_vm_create_vm_network_unfilled.webp "Network tab default at Create VM window")
 
@@ -282,28 +284,28 @@ First, you need to create and configure the VM itself.
 
     ![VM creation on Tasks log](images/g020/debian_vm_create_vm_task_done.webp "VM creation on Tasks log")
 
-    Notice how the new VM appear in the `Server View` tree of your PVE node. Click on it to see its `Summary` view, as you can also see in the capture above.
+    Notice how the new VM appears in the `Server View` tree of your PVE node. Click on it to see its `Summary` view as shown in the capture above.
 
-The configuration file for the new VM is stored at `/etc/pve/nodes/pve/qemu-server` (notice that **it is related to the `pve` node**) as `[VM ID].cfg`. So, for this new VM that has the VM ID `100`, the file is `/etc/pve/nodes/pve/qemu-server/100.cfg` and looks like below.
+The configuration file for the new VM is stored at `/etc/pve/nodes/pve/qemu-server` (notice that **it is related to the `pve` node**) as `[VM ID].conf`. So, for this new VM that has the VM ID `100`, the file is `/etc/pve/nodes/pve/qemu-server/100.conf`:
 
 ~~~properties
 agent: 1
 balloon: 1024
 boot: order=scsi0;ide2;net0
 cores: 2
-cpu: host,flags=+md-clear;+pcid;+spec-ctrl;+aes
-ide2: hdd_templates:iso/debian-12.11.0-amd64-netinst.iso,media=cdrom,size=670M
+cpu: host
+ide2: hdd_templates:iso/debian-13.0.0-amd64-netinst.iso,media=cdrom,size=754M
 memory: 2048
-meta: creation-qemu=9.2.0,ctime=1754480633
-name: debian12tpl
-net0: virtio=BC:24:11:0B:5D:51,bridge=vmbr0,firewall=1
+meta: creation-qemu=10.0.2,ctime=1756890694
+name: debiantpl
+net0: virtio=BC:24:11:3E:B9:39,bridge=vmbr0,firewall=1
 numa: 0
 ostype: l26
 scsi0: ssd_disks:vm-100-disk-0,discard=on,iothread=1,size=10G,ssd=1
 scsihw: virtio-scsi-single
-smbios1: uuid=c39d59eb-ff7f-4f5b-af9a-1d07cab26349
+smbios1: uuid=8fce9b8d-d716-4e7b-9817-3d727b40eb9f
 sockets: 1
-vmgenid: 22f2b75a-f300-4f14-8ad1-d921485895e3
+vmgenid: 08b95c71-2feb-4338-8970-c3cfba8a6e94
 ~~~
 
 ### Adding an extra network device to the new VM
@@ -322,10 +324,10 @@ In the VM creation wizard, Proxmox VE does not allow you to configure more than 
 
     ![Adding a new network device to the VM](images/g020/debian_vm_adding_network_device.webp "Adding a new network device to the VM")
 
-    You have to adjust two parameters:
+    Notice that the `Advanced` options are also enabled, probably because the Proxmox VE web administration remembers that check as enabled from the creation wizard. Here you have to adjust only two parameters:
 
     - `Bridge`\
-      You must set here the `vmbr1` bridge.
+      You must set the `vmbr1` bridge.
 
     - `Firewall`\
       Since this network device is strictly meant for internal networking, you won't need the firewall active here. Disable this checkbox.
@@ -338,23 +340,23 @@ In the VM creation wizard, Proxmox VE does not allow you to configure more than 
 
 ### Installing Debian on the new VM
 
-At this point, your Debian 12 template VM has the minimal virtual hardware setup you need for installing Debian in it.
+At this point, your Debian template VM has the minimal virtual hardware setup you need for installing Debian in it.
 
 1. Go back to the `Summary` tab of your new VM and press the `Start` button to start the VM up:
 
     ![VM Start button](images/g020/debian_vm_install_os_start_button.webp "VM Start button")
 
-    Right after it, click on the `>_ Console` button to raise a `noVNC` shell window.
+    Right after starting the VM, click on the `>_ Console` button to raise a `noVNC` shell window.
 
-2. In the `noVCN` shell window, you should end up seeing the following screen:
+2. In the `noVCN` shell window, you should end up seeing the Debian installer boot menu:
 
     ![Debian installer menu](images/g020/debian_vm_install_os_installer_menu.webp "Debian installer menu")
 
-3. In this menu, you **must** choose the `Install` option to run the installation of Debian in text mode:
+3. In this menu, **you must choose the `Install` option** to run the installation of Debian in text mode:
 
     ![Install option chosen](images/g020/debian_vm_install_os_installer_install_option.webp "Install option chosen")
 
-    It will take a few seconds to load the screen of the next step.
+    It will take a few seconds to load the next step's screen.
 
 4. The next screen asks you about what language you want to use in the installation process and apply to the installed system:
 
@@ -382,7 +384,7 @@ At this point, your Debian 12 template VM has the minimal virtual hardware setup
 
     ![Installer loading componentes](images/g020/debian_vm_install_os_installer_loading_components.webp "Installer loading componentes")
 
-9. After some seconds you'll end seeing the following screen about the network configuration:
+9. After a few seconds you'll reach the screen about configuring the network:
 
     ![Choosing network card](images/g020/debian_vm_install_os_installer_configuring_network_choosing_network_device.webp "Choosing network card")
 
@@ -396,19 +398,19 @@ At this point, your Debian 12 template VM has the minimal virtual hardware setup
 
     ![Hostname input screen](images/g020/debian_vm_install_os_installer_hostname_input.webp "Hostname input screen")
 
-    In the text box, type in the `hostname` for this system, bearing in mind that this VM will become just a template to build others. Preferably, input the same name you used previously in the creation of the VM, which in this guide was `debian12tpl`.
+    In the text box, type in the `hostname` for this system, bearing in mind that this VM will become just a template to build others. Preferably, input the same name you used previously in the creation of the VM, which in this guide is `debiantpl`.
 
 12. In the next step you'll have to specify a domain name:
 
     ![Domain name input screen](images/g020/debian_vm_install_os_installer_domain_name_input.webp "Domain name input screen")
 
-    Here use the same one you set for your Proxmox VE system.
+    Here use the same one you set for your Proxmox VE system, which in this guide is `homelab.cloud`.
 
 13. The following screen is about setting up the password for the `root` user:
 
     ![Setting up root password](images/g020/debian_vm_install_os_installer_setting_root_password.webp "Setting up root password")
 
-    Since this VM is going to be just a template, there's no need for you to type a difficult or long password.
+    Since this VM is going to be just a template, there's no need here for you to type a difficult or long password.
 
 14. The installer will ask you to confirm the `root` password:
 
@@ -424,9 +426,9 @@ At this point, your Debian 12 template VM has the minimal virtual hardware setup
 
     ![Setting the new user's username](images/g020/debian_vm_install_os_installer_creating_admin_user_setting_username.webp "Setting the new user's username")
 
-    By default, the installer will take the first word you set in the full name and use it (in lowercase) as username. In this guide, this user will be called `mgrsys`, following the same criteria used for creating the alternative manager user for the Proxmox VE host.
+    By default, the installer will take the first word you set as the user's full name and use it (in lowercase) as username. In this guide, this user will be called `mgrsys`, following the same criteria used for creating the alternative manager user for the Proxmox VE host.
 
-17. On this step you input the password for this new administrative user. Again, since this VM is going to be just a template, don't put a complex password here:
+17. On this step you input the password for this new administrative user. Again, since this VM is going to be just a template, do not enter a complex password here:
 
     ![Setting password for new user](images/g020/debian_vm_install_os_installer_creating_admin_user_setting_password.webp "Setting password for new user")
 
@@ -442,11 +444,11 @@ At this point, your Debian 12 template VM has the minimal virtual hardware setup
 
     ![Choosing timezone](images/g020/debian_vm_install_os_installer_choosing_timezone.webp "Choosing timezone")
 
-20. After a few more loading bars, you'll reach the step regarding the disk partitioning:
+20. After a few more loading bars, you'll reach the step for disk partitioning:
 
     ![Disk partitioning options screen](images/g020/debian_vm_install_os_installer_disk_partitioning.webp "Disk partitioning options screen")
 
-    Be sure of choosing the **SECOND** guided option to give the VM's disk a more flexible partition structure with the LVM system, like the one you have in your Proxmox VE host.
+    **Be sure of choosing the SECOND guided option** to give the VM's disk a more flexible partition structure with the LVM system, like the one you have in your Proxmox VE host.
 
     ![Second option chosen at disk partitioning](images/g020/debian_vm_install_os_installer_disk_partitioning_second_option_chosen.webp "Second option chosen at disk partitioning")
 
@@ -454,13 +456,15 @@ At this point, your Debian 12 template VM has the minimal virtual hardware setup
 
     ![Choosing disk for partitioning](images/g020/debian_vm_install_os_installer_disk_partitioning_choose_drive.webp "Choosing disk for partitioning")
 
-    There's only one disk attached to this VM, so there's no other option but the one shown.
+    There is only one disk attached to this VM, so there's no other option but the one shown.
 
-22. Next, the installer asks you about how to set up the `home` and other directories:
+22. Next, the installer asks you which partition schema you want to apply:
 
-    ![Partition setup for home directory](images/g020/debian_vm_install_os_installer_disk_partitioning_home_setup.webp "Partition setup for home directory")
+    ![Choosing the partition schema to apply on the VM storage](images/g020/debian_vm_install_os_installer_disk_partitioning_schema_setup.webp "Choosing the partition schema to apply on the VM storage")
 
-    This VM is going to be a template for servers, so you shouldn't ever need to mount a separate partition for the `home` directory. Something else could be said about the `var` or the `tmp` directories, whose contents can grow notably. But, since you can increase the size of the VM's storage easily from Proxmox VE, just leave the default highlighted option and press `Enter`.
+    This VM is going to be a template for servers, so you shouldn't ever need to mount a separate partition for the `home` directory. Something else could be said about the `var`. `srv` directories and swap, which they can grow notably. Therefore, better chose the option meant for servers, the third option specifying `Separate /var and /srv, swap < 1GB (for servers)`:
+
+    ![Picking the option for servers as partition schema](images/g020/debian_vm_install_os_installer_disk_partitioning_schema_for_servers.webp "Picking the option for servers as partition schema")
 
 23. The next screen is the confirmation of the disk partitioning you've setup in the previous steps:
 
@@ -474,7 +478,7 @@ At this point, your Debian 12 template VM has the minimal virtual hardware setup
 
     Unless you know better, just stick with the default value and move on.
 
-25. After some more fast loading screens, you'll reach the disk partitioning final confirmation screen:
+25. The installer will apply the partition scheme selected and, after seeing some more fast progress windows, you'll reach the disk partitioning final confirmation screen:
 
     ![Disk partitioning final confirmation screen](images/g020/debian_vm_install_os_installer_disk_partitioning_final_confirmation.webp "Disk partitioning final confirmation screen")
 
@@ -484,7 +488,7 @@ At this point, your Debian 12 template VM has the minimal virtual hardware setup
 
     ![Installing the base system screen](images/g020/debian_vm_install_os_installer_base_system_installation.webp "Installing the base system screen")
 
-    The installer will take a bit to finish this task.
+    The Debian installer will need a bit of time to finish this task.
 
 27. When the base system is installed, you'll see the following dialog:
 
@@ -510,97 +514,96 @@ At this point, your Debian 12 template VM has the minimal virtual hardware setup
 
     In this guide it's assumed that you're not using a proxy, so that field should be left blank.
 
-31. The installer will take a bit while configuring the VM's `apt` system.
+31. The installer will take a moment to configure the VM's `apt` system:
 
     ![Autoconfiguration of apt system](images/g020/debian_vm_install_os_installer_package_manager_autoconfiguring_apt.webp "Autoconfiguration of apt system")
 
-32. When the `apt` configuration has finished, you'll see the following question about allowing some script to get some usage statistics of packages on your system.
+32. When the `apt` configuration has finished, you'll see the following question about allowing a script to get some usage statistics of packages on your system:
 
-    ![Popularity contest question screen](images/g020/debian_vm_install_os_installer_package_manager_popularity_contest.png "Popularity contest question screen")
+    ![Popularity contest question screen](images/g020/debian_vm_install_os_installer_package_manager_popularity_contest.webp "Popularity contest question screen")
 
     Choose whatever you like here, although bear in mind that the security restrictions that you'll have to apply later to this Debian VM system may end blocking that script's functionality.
 
-33. After another loading bar, you'll reach the `Software selection` screen.
+33. After another loading bar, you'll reach the `Software selection` screen:
 
-    ![Software selection screen](images/g020/debian_vm_install_os_installer_software_selection.png "Software selection screen")
+    ![Software selection screen](images/g020/debian_vm_install_os_installer_software_selection.webp "Software selection screen")
 
-    You'll see that, by default, the installer is setting the VM to be a graphical environment. You only need the two last options enabled (`SSH server` and `standard system utilities`), so change them so they look like below and then press `Continue`.
+    Notice that the installer has "deduced" (probably because of the "for servers" partition schema chosen in the previous step 22) that the VM is going to be a server. The installer has  already chosen the only two options that must be enabled here: `SSH server` and `standard system utilities`. This allows you to press `Continue` directly without changing anything.
 
-    ![Software selection changed](images/g020/debian_vm_install_os_installer_software_selection_changed.png "Software selection changed")
+34. Another progress windows will show up and the installer will proceed with the remainder of the installation process:
 
-34. Another progress windows will show up and the installer will proceed with the remainder of the installation process.
+    ![Installation progress bar](images/g020/debian_vm_install_os_installer_executing_installation.webp "Installation progress bar")
 
-    ![Installation progress bar](images/g020/debian_vm_install_os_installer_executing_installation.png "Installation progress bar")
+35. Within the installation process, the installer will ask you if you want to install the GRUB boot loader in the VM's primary storage drive:
 
-35. In the installation process, the installer will ask you if you want to install the GRUB boot loader in the VM's primary storage drive.
-
-    ![GRUB boot loader installation screen](images/g020/debian_vm_install_os_installer_grub_boot_loader.png "GRUB boot loader installation screen")
+    ![GRUB boot loader installation screen](images/g020/debian_vm_install_os_installer_grub_boot_loader.webp "GRUB boot loader installation screen")
 
     The default `Yes` option is the correct one, so just press `Enter` on this screen.
 
-36. Next, the installer will ask you on which drive you want to install GRUB.
+36. Next, the installer will ask you on which drive you want to install GRUB:
 
-    ![GRUB boot loader installation location screen](images/g020/debian_vm_install_os_installer_grub_boot_loader_disk.png "GRUB boot loader installation location screen")
+    ![GRUB boot loader installation location screen](images/g020/debian_vm_install_os_installer_grub_boot_loader_disk.webp "GRUB boot loader installation location screen")
 
-    Highlight the `/dev/sda` option and press `Enter` to continue the process.
+    Highlight the `/dev/sda` option and press `Enter` to continue the process:
 
-    ![GRUB boot loader disk sda chosen](images/g020/debian_vm_install_os_installer_grub_boot_loader_disk_sda_chosen.png "GRUB boot loader disk sda chosen")
+    ![GRUB boot loader disk sda chosen](images/g020/debian_vm_install_os_installer_grub_boot_loader_disk_sda_chosen.webp "GRUB boot loader disk sda chosen")
 
-37. After installing the GRUB boot loader, you'll see for a few seconds how the installer finishes the process.
+37. After installing the GRUB boot loader, the installer will perform some remaining tasks like installing GRUB:
 
-    ![Finishing the installation screen](images/g020/debian_vm_install_os_installer_finishing_installation.png "Finishing the installation screen")
+    ![Finishing the installation screen](images/g020/debian_vm_install_os_installer_finishing_installation.webp "Finishing the installation screen")
 
-38. After the installation has finished, the installer will warn you about removing the media you used to launch the whole procedure.
+38. After the installation has finished, the installer will warn you about removing the media you used to launch the whole procedure:
 
-    ![Remove installer media screen](images/g020/debian_vm_install_os_installer_remove_media.png "Remove installer media screen")
+    ![Remove installer media screen](images/g020/debian_vm_install_os_installer_remove_media.webp "Remove installer media screen")
 
-    > **BEWARE!**  
-    > Keep calm, **DON'T** press `Enter` yet and read the following steps.
+    > [!WARNING]
+    > **Keep calm, _DO NOT_ press `Enter` yet and read the following steps**\
+    > If you `Continue`, the VM will reboot and, if the installer media is still in place, the installer will boot up again.
 
-    If you `Continue`, the VM will reboot and, if the installer media is still in place, the installer will boot up again.
+39. Go back to your Proxmox VE web console, and open the `Hardware` tab of your VM. Then, choose the `CD/DVD Drive` item and press the `Edit` button:
 
-39. Go back to your Proxmox VE web console, and open the `Hardware` tab of your VM. Then, choose the `CD/DVD Drive` item and press the `Edit` button.
+    ![Edit button on VM's hardware tab](images/g020/debian_vm_install_os_vm_hardware_tab_edit_button.webp "Edit button on VM's hardware tab")
 
-    ![Edit button on VM's hardware tab](images/g020/debian_vm_install_os_vm_hardware_tab_edit_button.png "Edit button on VM's hardware tab")
+40. You'll see the Edit window for the `CD/DVD Drive` you chose:
 
-40. You'll see the Edit window for the `CD/DVD Drive` you chose.
-
-    ![Edit window for CD/DVD Drive](images/g020/debian_vm_install_os_vm_hardware_tab_edit_window.png "Edit window for CD/DVD Drive")
+    ![Edit window for CD/DVD Drive](images/g020/debian_vm_install_os_vm_hardware_tab_edit_window.webp "Edit window for CD/DVD Drive")
 
     Here, choose the `Do not use any media` option and click on `OK`.
 
-    ![Option changed at Edit window for CD/DVD Drive](images/g020/debian_vm_install_os_vm_hardware_tab_edit_window_changed.png "Option changed at Edit window for CD/DVD Drive")
+    ![Option changed at Edit window for CD/DVD Drive](images/g020/debian_vm_install_os_vm_hardware_tab_edit_window_changed.webp "Option changed at Edit window for CD/DVD Drive")
 
-41. Back in the Hardware screen, you'll see how the CD/DVD Drive is now set to `none`.
+41. Back in the Hardware screen, you'll see how the CD/DVD Drive is now set to `none`:
 
-    ![CD/DVD Drive empty on VM's Hardware tab](images/g020/debian_vm_install_os_vm_hardware_tab_cdrom_updated.png "CD/DVD Drive empty on VM's Hardware tab")
+    ![CD/DVD Drive empty on VM's Hardware tab](images/g020/debian_vm_install_os_vm_hardware_tab_cdrom_updated.webp "CD/DVD Drive empty on VM's Hardware tab")
 
-    > **BEWARE!**  
-    > This doesn't mean that the change has been applied to the still running VM. Usually, changes like these will require a reboot of the VM.
+    > [!IMPORTANT]
+    > **This does not mean that the change has been applied to the still running VM**\
+    > Usually, changes like these will require a reboot of the VM.
 
-42. Now that the VM's CD/DVD Drive is configured to be empty, you can go back to the noVNC shell and press on `Enter` to finish the Debian installation. If everything goes as it should, the VM will reboot into the GRUB screen of your newly installed Debian system.
+42. Now that the VM's CD/DVD drive is configured to be empty, you can go back to the noVNC shell and press on `Enter` to finish the Debian installation. If everything goes as it should, the VM will reboot into the GRUB screen of your newly installed Debian system:
 
-    ![GRUB boot loader screen](images/g020/debian_vm_install_os_vm_rebooted_grub.png "GRUB boot loader screen")
+    ![GRUB boot loader screen](images/g020/debian_vm_install_os_vm_rebooted_grub.webp "GRUB boot loader screen")
 
-43. Press Enter with the default highlighted option or allow the timer to reach `0`. Then, after the usual system booting shell output, you should reach the login.
+43. Press Enter with the default highlighted option or allow the timer to reach `0`. Then, after the usual system booting shell output, you should reach the login:
 
-    ![Debian login](images/g020/debian_vm_install_os_debian_login.png "Debian login")
+    ![Debian login](images/g020/debian_vm_install_os_debian_login.webp "Debian login")
 
 44. As a final verification, login either with `root` or with `mgrsys` to check that they work as expected.
 
 ## Note about the VM's `Boot Order` option
 
-Go to the `Options` tab of your new Debian VM.
+Go to the `Options` tab of your new Debian VM:
 
-![VM Options tab](images/g020/debian_vm_note_option_boot_order_options_tab.png "VM Options tab")
+![VM Options tab](images/g020/debian_vm_note_option_boot_order_options_tab.webp "VM Options tab")
 
-In the capture above, you can see highlighted the `Boot Order` list currently enabled in this VM. If you press on the `Edit` button, you'll be able to edit this `Boot Order` list.
+In the capture above, you can see highlighted the `Boot Order` list currently enabled in this VM. If you press on the `Edit` button, you'll be able to edit this `Boot Order` list:
 
-![Edit Boot Order option window](images/g020/debian_vm_note_option_boot_order_edit_window.png "Edit Boot Order option window")
+![Edit Boot Order option window](images/g020/debian_vm_note_option_boot_order_edit_window.webp "Edit Boot Order option window")
 
-Notice how PVE has already enabled the bootable hardware devices (hard disk, CD/DVD drive and network device) that were configured in the VM creation process. Also see how the network device added later, `net1`, is **NOT** enabled by default.
+Notice how PVE has already enabled the bootable hardware devices (hard disk, CD/DVD drive and network device) that were configured in the VM creation process. Also see how the network device added later, `net1`, **is NOT enabled by default**.
 
-> **BEWARE!**  
+> [!IMPORTANT]
+> **New bootable devices in VMs are not enabled by default**\
 > When you modify the bootable hardware devices of a VM, Proxmox VE **WON'T** enable automatically any new bootable device in the `Boot Order` list. You must revise or modify it whenever you make changes to the hardware devices available in a VM.
 
 ## Relevant system paths
@@ -625,9 +628,9 @@ Notice how PVE has already enabled the bootable hardware devices (hard disk, CD/
 ### Virtual Machines on Proxmox VE
 
 - [PVE admin guide. QEMU/KVM Virtual Machines](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_virtual_machines)
-  - [PVE admin guide. QEMU/KVM Virtual Machines. CPU](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#qm_cpu)
-  - [PVE admin guide. QEMU/KVM Virtual Machines. Memory](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#qm_memory)
-  - [PVE admin guide. QEMU/KVM Virtual Machines. Network Device](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#qm_network_device)
+  - [CPU](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#qm_cpu)
+  - [Memory](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#qm_memory)
+  - [Network Device](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#qm_network_device)
 
 - [PVE admin guide. Permission Management. Pools](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#pveum_pools)
 
@@ -636,6 +639,11 @@ Notice how PVE has already enabled the bootable hardware devices (hard disk, CD/
 - [Reddit. Proxmox. Best practices on setting up Proxmox on a new server](https://www.reddit.com/r/Proxmox/comments/oz81qq/best_practices_on_setting_up_proxmox_on_a_new/)
 
 - [Non-uniform memory access](https://en.wikipedia.org/wiki/Non-uniform_memory_access)
+
+### Units of measurement for storage
+
+- [Wikipedia. Gigabyte](https://en.wikipedia.org/wiki/Gigabyte#Definition)
+  - [Definition. Base 2 (binary)](https://en.wikipedia.org/wiki/Gigabyte#Base_2_(binary))
 
 ## Navigation
 
