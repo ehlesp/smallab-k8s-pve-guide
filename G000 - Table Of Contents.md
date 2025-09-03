@@ -192,8 +192,9 @@
 - [Relevant system paths](G019%20-%20K3s%20cluster%20setup%2002%20~%20Storage%20setup.md#relevant-system-paths)
 - [References](G019%20-%20K3s%20cluster%20setup%2002%20~%20Storage%20setup.md#references)
 
-### [**G020** - K3s cluster setup 03 ~ Debian VM creation](G020%20-%20K3s%20cluster%20setup%2003%20~%20Debian%20VM%20creation.md#g020-k3s-cluster-setup-03-debian-vm-creation)
+### [**G020** - K3s cluster setup 03 ~ Debian VM creation](G020%20-%20K3s%20cluster%20setup%2003%20~%20Debian%20VM%20creation.md)
 
+- [You can start creating VMs in your Proxmox VE server](G020%20-%20K3s%20cluster%20setup%2003%20~%20Debian%20VM%20creation.md#you-can-start-creating-vms-in-your-proxmox-ve-server)
 - [Preparing the Debian ISO image](G020%20-%20K3s%20cluster%20setup%2003%20~%20Debian%20VM%20creation.md#preparing-the-debian-iso-image)
 - [Building a Debian virtual machine](G020%20-%20K3s%20cluster%20setup%2003%20~%20Debian%20VM%20creation.md#building-a-debian-virtual-machine)
 - [Note about the VM's `Boot Order` option](G020%20-%20K3s%20cluster%20setup%2003%20~%20Debian%20VM%20creation.md#note-about-the-vms-boot-order-option)
