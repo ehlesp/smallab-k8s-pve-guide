@@ -1,256 +1,310 @@
 # G021 - K3s cluster setup 04 ~ Debian VM configuration
 
-Now you have a functional Debian VM but, as you did with your Proxmox VE host, it needs to be configured. Therefore, this guide will show you most of the same procedures detailed among the [**G003**](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources%2C%20updates%20and%20extra%20tools.md) to [**G016**](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md) guides, but in an condensed manner, while also adding some extra steps needed for setting up particular aspects on this VM.
+- [You have to configure your new Debian VM](#you-have-to-configure-your-new-debian-vm)
+- [Suggestion about the IP organization within your LAN](#suggestion-about-the-ip-organization-within-your-lan)
+- [Adding the `apt` sources for _non-free_ packages](#adding-the-apt-sources-for-non-free-packages)
+- [Installing extra packages](#installing-extra-packages)
+- [The QEMU guest agent comes enabled in Debian](#the-qemu-guest-agent-comes-enabled-in-debian)
+  - [Discovering the QEMU guest agent configuration](#discovering-the-qemu-guest-agent-configuration)
+- [Hardening the VM's access](#hardening-the-vms-access)
+  - [Enabling `sudo` to the administrative user](#enabling-sudo-to-the-administrative-user)
+  - [Assigning a TOTP code to the administrative user](#assigning-a-totp-code-to-the-administrative-user)
+  - [SSH key pair for the administrative user](#ssh-key-pair-for-the-administrative-user)
+- [Hardening the `sshd` service](#hardening-the-sshd-service)
+  - [Create group for SSH users](#create-group-for-ssh-users)
+  - [Backup of `sshd` configuration files](#backup-of-sshd-configuration-files)
+  - [Changes to the `/etc/pam.d/sshd` file](#changes-to-the-etcpamdsshd-file)
+  - [Changes to the `/etc/ssh/sshd_config` file](#changes-to-the-etcsshsshd_config-file)
+- [Configuring Fail2Ban for SSH connections](#configuring-fail2ban-for-ssh-connections)
+- [Disabling the `root` user login](#disabling-the-root-user-login)
+- [Configuring the VM with `sysctl`](#configuring-the-vm-with-sysctl)
+  - [TCP/IP stack hardening](#tcpip-stack-hardening)
+  - [Network optimizations](#network-optimizations)
+  - [Memory optimizations](#memory-optimizations)
+  - [Kernel optimizations](#kernel-optimizations)
+- [Reboot the VM](#reboot-the-vm)
+- [Disabling transparent hugepages on the VM](#disabling-transparent-hugepages-on-the-vm)
+- [Regarding the microcode `apt` packages for CPU vulnerabilities](#regarding-the-microcode-apt-packages-for-cpu-vulnerabilities)
+- [Relevant system paths](#relevant-system-paths)
+  - [Directories on Debian VM](#directories-on-debian-vm)
+  - [Files on Debian VM](#files-on-debian-vm)
+- [References](#references)
+  - [QEMU](#qemu)
+  - [About `sudo`](#about-sudo)
+  - [Disabling `root` login](#disabling-root-login)
+  - [Microcode packages on VMs](#microcode-packages-on-vms)
+- [Navigation](#navigation)
 
-## Suggestion about IP configuration in your network
+## You have to configure your new Debian VM
 
-Before you go further configuring your new VM or creating some more, you should consider organizing the IPs in your network. With this I mean that you should assign static IPs to all your devices present in your network, including the VMs you'll create in your Proxmox VE standalone node. This will allow you to know to what IPs to connect to through ssh easily, rather than being forced to check every time what IP is assigned to your VMs and Proxmox VE Host, and also avoid potential IP conflicts among your devices and VMs.
+Now you have a functional Debian VM but, as you did with your Proxmox VE host, it needs to be configured. This chapter will show you most of the same setup procedures detailed between the [**G003**](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources%2C%20updates%20and%20extra%20tools.md) and [**G016**](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md) chapters, but in an condensed manner. It will also add some extra steps needed for setting up particular aspects on this VM.
 
-I suggest you to figure out first, in a document or spreadsheet, the IP distribution you want within your network. This way you can see how to divide the IPs among all your present devices and future VMs. For example, you could have your devices in the `192.168.1.100 - 192.168.1.150` range and your VMs in the `192.168.1.10 - 192.168.1.40` one. Then, when you've figured out the organization of your network, apply it in your router or gateway.
+## Suggestion about the IP organization within your LAN
+
+Before you go further configuring your new VM or creating some more, you should consider organizing the IPs in your network. With this I mean that you should assign static IPs (if you haven't done it already) to your Proxmox VE server and your VMs, including your new one. This will allow you to know to what IPs to connect to through SSH easily, rather than being forced to check every time what IP is assigned to your VMs and Proxmox VE host. Also will help you avoid potential IP conflicts among your devices and VMs. I suggest you to figure out first, in a document or spreadsheet, the IP distribution you want within your network. This way you can see how to divide the IPs among all your present devices and future VMs.
+
+I'll tell you how I've done it in my own LAN as an example. I set my router's LAN as a `10.0.0.0/8` network, which gives a very big range of IP numbers. Then, I only set static IPs in specific subranges (just defined in a spreadsheet) for my Proxmox VE server and the VMs I run in it. My Proxmox VE standalone node's IP is in a particular subrange (`10.1.0.0`), while all my Proxmox-based VMs are in a different one (`10.4.0.0`). Since the range of IPs available in a `10.0.0.0` network is enormous for a home LAN, I can afford leaving my user devices getting random IPs (with randomized MACs for better security) without worrying about possible IP conflicts.
 
 ## Adding the `apt` sources for _non-free_ packages
 
 It might happen that you need to install `apt` packages in your VM that are _non-free_ for Debian standards. To allow that, you need to enable the right `apt` sources in your Debian VM.
 
-1. Start the VM, then open a `noVNC` shell and log in the VM as `root`, or open a ssh session and log in as your **other user** (the `sshd` server won't allow you to log in as `root` using a password). If you choose the ssh method, you'll have to become `root` with the `su` command.
+1. Start the VM, then open a `noVNC` shell and log in the VM as `root`, or open a SSH session and log in as your **other user** (the `sshd` server won't allow you to log in as `root` using a password). If you choose the SSH method, you'll have to become `root` with the `su` command:
 
-    ~~~bash
+    ~~~sh
     $ su root
     ~~~
 
-2. Then, `cd` to `/etc/apt/sources.list.d`.
+2. Then, `cd` to `/etc/apt/sources.list.d`:
 
-    ~~~bash
+    ~~~sh
     $ cd /etc/apt/sources.list.d
     ~~~
 
-3. Create a new file called `debian-nonfree.list`.
+3. Create a new file called `debian-nonfree.list`:
 
-    ~~~bash
+    ~~~sh
     $ touch debian-nonfree.list
     ~~~
 
-4. Edit the `debian-nonfree.list` file, filling it with the lines below.
+4. Edit the `debian-nonfree.list` file, filling it with the lines below:
 
-    ~~~bash
-    deb http://deb.debian.org/debian bullseye non-free
-    deb-src http://deb.debian.org/debian bullseye non-free
+    ~~~sh
+    deb http://deb.debian.org/debian trixie non-free
+    deb-src http://deb.debian.org/debian trixie non-free
 
-    deb http://deb.debian.org/debian-security/ bullseye-security non-free
-    deb-src http://deb.debian.org/debian-security/ bullseye-security non-free
+    deb http://deb.debian.org/debian-security/ trixie-security non-free
+    deb-src http://deb.debian.org/debian-security/ trixie-security non-free
 
-    deb http://deb.debian.org/debian bullseye-updates non-free
-    deb-src http://deb.debian.org/debian bullseye-updates non-free
+    deb http://deb.debian.org/debian trixie-updates non-free
+    deb-src http://deb.debian.org/debian trixie-updates non-free
     ~~~
 
-    > **BEWARE!**  
-    > This sources list is only for Debian 11 Bullseye!
+    > [!WARNING]
+    > This sources list is only for Debian 13 "trixie"!
 
-5. Save the file and update `apt`.
+5. Save the file and update `apt`:
 
-    ~~~bash
+    ~~~sh
     $ apt update
     ~~~
 
 ## Installing extra packages
 
-The Debian OS you have running in your VM is rather barebones, so let's install some packages that can be useful to have in a server. Some of them will be also necessary in the following steps described in this guide. As `root`, execute the following `apt` command.
+The Debian OS you have running in your VM is rather barebone, so let's install some packages that can be useful to have in a server. Some of them will be also necessary in the following steps described in this chapter. As `root`, execute the following `apt` command.
 
-~~~bash
+~~~sh
 $ apt install -y ethtool fail2ban gdisk htop libpam-google-authenticator net-tools nut-client sudo tree vim
 ~~~
 
-## The QEMU guest agent comes enabled in Debian 11
+## The QEMU guest agent comes enabled in Debian
 
-To allow the Proxmox VE platform to control properly the VMs, you need to have in them the QEMU guest agent service. Debian 11 already comes with it installed and running, so you can go to the web console and check the `Status` block in your VM's `Summary` tab.
+To grant the Proxmox VE platform a better control of its VMs, you need to have deployed in them the QEMU guest agent service. Debian already comes with it installed and running, so you can go to the web console and check the `Status` block in your VM's `Summary` tab:
 
-![PVE web console connects with QEMU guest agent on VM](images/g021/pve_qemu_guest_agent_web_console_connects.png "PVE web console connects with QEMU guest agent on VM")
+![PVE web console connects with QEMU guest agent on VM](images/g021/pve_qemu_guest_agent_web_console_connects.webp "PVE web console connects with QEMU guest agent on VM")
 
-The web console now shows the v4 and v6 IPs of the VM's current main network card and, if you click on `More`, you'll be able to see all the MACs and IPs assigned to all the network devices currently present in your VM.
+The web console now shows the v4 and v6 IPs of the VM's current main network card. If you click on `More`, you will see all the MACs and IPs assigned to all the network devices currently present in your VM:
 
-![Guest Agent Network Information window of VM](images/g021/pve_qemu_guest_agent_web_console_connects_show_more.png "Guest Agent Network Information window of VM")
+![Guest Agent Network Information window of VM](images/g021/pve_qemu_guest_agent_web_console_connects_show_more.webp "Guest Agent Network Information window of VM")
 
-In the list above, you should recognize the network devices currently attached to your VM: the `localhost` (called `lo`), the `ens18` (`net0` for Proxmox VE in the VM's `Hardware` tab) and `ens19` (`net1`) ones. Any change to the network devices active in the VM will be also shown here.
+In the list above, you should recognize the network devices currently attached to your VM:
 
-Thanks to this agent, you can execute web console actions like `Shutdown` or execute VM snapshots properly.
+- The `localhost`, called `lo`.
+- The `ens18`, named `net0` for Proxmox VE in the VM's `Hardware` tab.
+- The `ens19`, named `net1` for Proxmox VE in the VM's `Hardware` tab.
 
-A last detail to take into account here is the configuration of this QEMU agent. Although in this case it works just with the default values, you should know where to find its configuration files.
+Any change to the network devices active in the VM will also be shown in this list.
 
-- `/etc/qemu` : directory for the agent configuration files.
+Thanks to this QEMU agent, you can execute PVE web console actions like `Shutdown` or execute VM snapshots properly.
 
-- `/etc/qemu/qemu-ga.conf` : this is the configuration file for the agent. Oddly enough, you won't find one created, meaning the agent is working with default values set either in some other file or just hardcoded in the program.
+### Discovering the QEMU guest agent configuration
 
-- `/usr/sbin/qemu-ga` : the path to the agent program itself. For some (probably security) reason, it's setup in such a way that you won't be able to execute it like any other command.
+Another important detail to take into account is the configuration of this QEMU agent. Although in the case of your first Debian VM it works well just with the default values, you should know where to find its configuration files:
 
-So, if you want to know what concrete configuration has your agent, do the following.
+- `/etc/qemu`
+  Directory for the agent configuration files.
 
-1. As `root`, cd to `/usr/sbin`.
+- `/etc/qemu/qemu-ga.conf`
+  This is the configuration file for the agent. Oddly enough, you will not find one created in your Debian VM, meaning the agent is working with default values set either in some other file or just hardcoded in the program.
 
-    ~~~bash
+- `/usr/sbin/qemu-ga`
+  The path to the agent program itself. Probably for security reason, it is setup in such a way that you will not be able to execute it like a regular command.
+
+If you want to know what concrete configuration the QEMU agent in your VM has:
+
+1. As `root`, cd to `/usr/sbin`:
+
+    ~~~sh
     $ cd /usr/sbin
     ~~~
 
-2. Execute the `qemu-ga` command as follows.
+2. Execute the `qemu-ga` command as follows:
 
-    ~~~bash
+    ~~~sh
     $ ./qemu-ga -D
     ~~~
 
-The previous command will return you an output like the following.
+3. The previous command will return you an output like the following:
 
-~~~properties
-[general]
-daemon=false
-method=virtio-serial
-path=/dev/virtio-ports/org.qemu.guest_agent.0
-pidfile=/var/run/qemu-ga.pid
-statedir=/var/run
-verbose=false
-retry-path=false
-blacklist=
-~~~
+    ~~~properties
+    [general]
+    daemon=false
+    method=virtio-serial
+    path=/dev/virtio-ports/org.qemu.guest_agent.0
+    pidfile=/var/run/qemu-ga.pid
+    statedir=/var/run
+    verbose=false
+    retry-path=false
+    block-rpcs=
+    allow-rpcs=
+    ~~~
 
-The lines returned are in the format proper for the agent's `/etc/qemu/qemu-ga.conf` configuration file.
+    The lines returned have the same format used in the agent's `/etc/qemu/qemu-ga.conf` configuration file.
 
 ## Hardening the VM's access
 
-The user you created in the Debian installation process, which in this guide series is called `mgrsys`, needs its login to be hardened with TFA and a ssh key pair, while also enabling it to use the `sudo` command. This way, that user will become a proper administrative user for your system. On the other hand, after properly setting up that user, you won't really need to use `root` any more. So, in this section you'll also see how to completely disable the `root` login access to the VM.
+The user you created in the Debian installation process, which in this guide is called `mgrsys`, needs its login to be hardened with TFA and a SSH key pair, while also enabling it to use the `sudo` command. This way, that user will become a proper administrative user for your system. On the other hand, after properly setting up that user, you won't really need to use `root` any more. So, in this section you'll also see how to completely disable the `root` login access to the VM.
 
-### _Enabling `sudo` to the administrative user_
+### Enabling `sudo` to the administrative user
 
-1. Log in as `root` in a `noVNC` shell on your VM, then add the `mgrsys` user to the `sudo` group.
+1. Log in as `root` in a `noVNC` shell on your VM, then add the `mgrsys` user to the `sudo` group:
 
-    ~~~bash
+    ~~~sh
     $ adduser mgrsys sudo
     ~~~
 
-    > **BEWARE!**  
-    > You won't be able to execute the `adduser` command from a SSH shell with `mgrsys`, even after becoming `root` with `su` as you've just done in the previous section. You must be in a **noVNC** shell or it won't work.
+    > [!WARNING]
+    > **You will not be able to execute the `adduser` command from a SSH shell with `mgrsys`**\
+    > I does not matter if you become `root` with `su` as you've just done in the previous section. You must be root within a **noVNC** shell or the `adduser` command won't work.
 
-2. Now login as the `mgrsys` user and test that `sudo` is working with a harmless command like `ls`.
+2. Now login as the `mgrsys` user with a regular SSH shell and test that `sudo` is working with a harmless command like `ls`:
 
-    ~~~bash
+    ~~~sh
     $ sudo ls -al
     ~~~
 
-    The command will output a warning about using `sudo`, then ask you the user's password.
+    The command will just ask you your `mgrsys`'s password.
 
-    ~~~bash
-    We trust you have received the usual lecture from the local System
-    Administrator. It usually boils down to these three things:
-
-        #1) Respect the privacy of others.
-        #2) Think before you type.
-        #3) With great power comes great responsibility.
-
+    ~~~sh
     [sudo] password for mgrsys:
     ~~~
 
     Type the password and `ls` will be executed.
 
-### _Assigning a TOTP code to the administrative user_
+### Assigning a TOTP code to the administrative user
 
-1. As your administrative user, create a TOTP token with the `google-authenticator` program as follows.
+Having a TOTP code hardens the login of your administrative user:
 
-    ~~~bash
-    $ google-authenticator -t -d -f -r 3 -R 30 -w 3 -Q UTF8 -i debiantpl.deimos.cloud -l mgrsys@debiantpl
+1. As your administrative user, create a TOTP token with the `google-authenticator` program as follows:
+
+    ~~~sh
+    $ google-authenticator -t -d -f -r 3 -R 30 -w 3 -Q UTF8 -i debiantpl.homelab.cloud -l mgrsys@debiantpl
     ~~~
 
-    > **BEWARE!**  
-    Remember to replace the values at the `-i` (issuer) and `-l` (label) options with your own!
+    > [!IMPORTANT]
+    > Remember to replace the values at the `-i` (issuer) and `-l` (label) options with your own!
 
-2. Copy all the codes given by the `google-authenticator` command in a safe location, like a password manager.
+2. Copy all the codes given by the `google-authenticator` command in a safe location, like a password manager:
 
-> **BEWARE!**  
-> The configuration for the TOTP code is saved in the HOME directory of the user, in a `.google_authenticator` file.
+> [!NOTE]
+> The configuration for the TOTP code is saved in the administrative user's `HOME` directory, in a `.google_authenticator` file.
 
-### _SSH key pair for the administrative user_
+### SSH key pair for the administrative user
 
-It's much better if you login with a SSH key pair, so let's create one for your administrative user.
+It is much better if you login as your administrative user with a SSH key pair:
 
-1. Logged in as your administrative user, execute the `ssh-keygen` command.
+1. Logged in as your administrative user, execute the `ssh-keygen` command:
 
-    ~~~bash
-    $ ssh-keygen -t rsa -b 4096 -C "mgrsys@debiantpl"
+    ~~~sh
+    $ ssh-keygen -t ed25519 -a 250 -C "mgrsys@debiantpl"
     ~~~
 
-    > **BEWARE!**  
-    The `ssh-keygen` command will ask you for a passphrase, but you can leave it empty. Also take into account that you'll use TOTP codes when connecting through ssh so, if you put a passphrase to the ssh private key, you'll have to login using both the TOTP code and the passphrase.
+    > [!NOTE]
+    > **The `ssh-keygen` command will ask you for a passphrase, but you can leave it empty**\
+    > Ideally, you want to set up a passphrase for your key pair. Still, take into account that you will also use TOTP codes when connecting through SSH after finishing this chapter. This means that, when you login, you will have to enter both the TOTP code and the passphrase, if you also specified it. Depending on the SSH client you use, this may be cumbersome depending on the time limit you set to enter the login credentials.
 
-2. Authorize the public key of your newly generated pair.
+2. Authorize the public key of your newly generated pair:
 
-    ~~~bash
+    ~~~sh
     $ cd .ssh/
     $ touch authorized_keys ; chmod 600 authorized_keys
-    $ cat id_rsa.pub >> authorized_keys
+    $ cat id_ed25519.pub >> authorized_keys
     ~~~
 
-3. Export this key pair and save it in a safe location. Remember that you'll need to generate the `.ppk` file from the private key so you can connect from Windows clients. Check out the [**G901** appendix guide](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md) to see how.
+3. Export this key pair and keep it in a safe location. Remember that you will need to generate the `.ppk` file from the private key so you can connect from Windows clients. Check out the [**G901** appendix chapter](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md) to see how.
+
+> [!WARNING]
+> **You won't be able to login as the administrative user with its new SSH key pair yet!**\
+> Since the `publickey` method is still not enabled in the `sshd` service's configuration, the SSH server in your Proxmox VE node will reject your key pair if you attempt to login with it.
+>
+> Just use the password and the TOTP code for now at this point. In the next [Hardening the `sshd` service](#hardening-the-sshd-service) section you will finally enable the `publickey` method, allowing you login remotely with your key pair.
 
 ## Hardening the `sshd` service
 
-As you did in the [**G007**](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md) and [**G009** guides](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md), you'll need to change two configuration files.
+As you did in the [**G007**](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md) and [**G009** chapters](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md), you need to change two configuration files:
 
 - `/etc/pam.d/sshd`
 - `/etc/ssh/sshd_config`
 
-Also, you'll need to create a new `pam` group for grouping the users that will connect through ssh to the VM, like the administrative user `mgrsys`.
+Also, you'll need to create a new `pam` group for grouping the users that will connect through SSH to the VM, like the administrative user `mgrsys`.
 
-### _Create group for ssh users_
+### Create group for SSH users
 
-1. Create a new group called `sshauth`.
+In a shell opened as your `mgrsys` user:
 
-    ~~~bash
+1. Create a new group called `sshauth`:
+
+    ~~~sh
     $ sudo addgroup sshauth
     ~~~
 
-2. Add the administrative user to this group.
+2. Add the administrative user to this group:
 
-    ~~~bash
+    ~~~sh
     $ sudo adduser mgrsys sshauth
     ~~~
 
-### _Backup of `sshd` configuration files_
+### Backup of `sshd` configuration files
 
-Open a terminal as your `mgrsys` user and make a backup of the current `sshd` related configuration.
+Open a terminal as your `mgrsys` user and make a backup of the current `sshd` related configuration:
 
-~~~bash
+~~~sh
 $ cd /etc/pam.d ; sudo cp sshd sshd.orig
 $ cd /etc/ssh ; sudo cp sshd_config sshd_config.orig
 ~~~
 
-### _Changes to the `/etc/pam.d/sshd` file_
+### Changes to the `/etc/pam.d/sshd` file
 
-1. Comment out the `@include common-auth` line found at at its top.
+1. Comment out the `@include common-auth` line found at at its top:
 
-    ~~~bash
+    ~~~sh
     # Standard Un*x authentication.
     #@include common-auth
     ~~~
 
-2. Append the following lines.
+2. Append the following lines:
 
-    ~~~bash
+    ~~~sh
     # Enforcing TFA with Google Authenticator tokens
     auth required pam_google_authenticator.so
     ~~~
 
-### _Changes to the `/etc/ssh/sshd_config` file_
+### Changes to the `/etc/ssh/sshd_config` file
 
-1. Edit the `/etc/ssh/sshd_config` file and replace **all** its content with the following one.
+1. Edit the `/etc/ssh/sshd_config` file and **replace all its content** with this:
 
-    ~~~bash
-    #       $OpenBSD: sshd_config,v 1.103 2018/04/09 20:41:22 tj Exp $
-
+    ~~~sh
     # This is the sshd server system-wide configuration file.  See
     # sshd_config(5) for more information.
 
-    # This sshd was compiled with PATH=/usr/bin:/bin:/usr/sbin:/sbin
+    # This sshd was compiled with PATH=/usr/local/bin:/usr/bin:/bin:/usr/games
 
     # The strategy used for options in the default sshd_config shipped with
     # OpenSSH is to specify options with their default value where
     # possible, but leave them commented.  Uncommented options override the
     # default value.
+
+    Include /etc/ssh/sshd_config.d/*.conf
 
     #Port 22
     AddressFamily inet
@@ -294,13 +348,15 @@ $ cd /etc/ssh ; sudo cp sshd_config sshd_config.orig
     # Don't read the user's ~/.rhosts and ~/.shosts files
     #IgnoreRhosts yes
 
-    # To disable tunneled clear text passwords, change to no here!
+    # To disable tunneled clear text passwords, change to "no" here!
     PasswordAuthentication no
     #PermitEmptyPasswords no
 
-    # Change to yes to enable challenge-response passwords (beware issues with
-    # some PAM modules and threads)
-    ChallengeResponseAuthentication yes
+    # Change to "yes" to enable keyboard-interactive authentication.  Depending on
+    # the system's configuration, this may involve passwords, challenge-response,
+    # one-time passwords or some combination of these and other methods.
+    # Beware issues with some PAM modules and threads.
+    KbdInteractiveAuthentication yes
 
     # Kerberos options
     #KerberosAuthentication no
@@ -316,13 +372,13 @@ $ cd /etc/ssh ; sudo cp sshd_config sshd_config.orig
 
     # Set this to 'yes' to enable PAM authentication, account processing,
     # and session processing. If this is enabled, PAM authentication will
-    # be allowed through the ChallengeResponseAuthentication and
+    # be allowed through the KbdInteractiveAuthentication and
     # PasswordAuthentication.  Depending on your PAM configuration,
-    # PAM authentication via ChallengeResponseAuthentication may bypass
-    # the setting of "PermitRootLogin without-password".
+    # PAM authentication via KbdInteractiveAuthentication may bypass
+    # the setting of "PermitRootLogin prohibit-password".
     # If you just want the PAM account and session checks to run without
     # PAM authentication, then enable this but set PasswordAuthentication
-    # and ChallengeResponseAuthentication to 'no'.
+    # and KbdInteractiveAuthentication to 'no'.
     UsePAM yes
 
     #AllowAgentForwarding yes
@@ -340,7 +396,7 @@ $ cd /etc/ssh ; sudo cp sshd_config sshd_config.orig
     #ClientAliveInterval 0
     #ClientAliveCountMax 3
     #UseDNS no
-    #PidFile /var/run/sshd.pid
+    #PidFile /run/sshd.pid
     #MaxStartups 10:30:100
     #PermitTunnel no
     #ChrootDirectory none
@@ -349,8 +405,8 @@ $ cd /etc/ssh ; sudo cp sshd_config sshd_config.orig
     # no default banner path
     #Banner none
 
-    # Allow client to pass locale environment variables
-    AcceptEnv LANG LC_*
+    # Allow client to pass locale and color environment variables
+    AcceptEnv LANG LC_* COLORTERM NO_COLOR
 
     # override default of no subsystems
     Subsystem       sftp    /usr/lib/openssh/sftp-server
@@ -373,45 +429,45 @@ $ cd /etc/ssh ; sudo cp sshd_config sshd_config.orig
             AuthenticationMethods none
     ~~~
 
-2. Save the file and restart the `sshd` service.
+2. Save the file and restart the `sshd` service:
 
-    ~~~bash
+    ~~~sh
     $ sudo systemctl restart sshd.service
     ~~~
 
-3. Try to login opening a new non-shared ssh session with your `mgrsys` user. Also, you can try to log in as `root` and verify that it's not possible to connect with that user at all through ssh.
+3. Try to login opening a new non-shared SSH session with your `mgrsys` user. Also, you can try to log in as `root` and verify that it is not possible to connect with that user at all through SSH.
 
 ## Configuring Fail2Ban for SSH connections
 
-Fail2Ban is already enabled for SSH connections in the VM, but it needs a more refined configuration, as you did back in the [**G010** guide](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md).
+Fail2Ban is already enabled for SSH connections in the VM, but it needs a more refined configuration, as you did back in the [chapter **G010**](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md).
 
-1. As `mgrsys`, `cd` to `/etc/fail2ban/jail.d` and create an empty file called `01_sshd.conf`.
+1. As `mgrsys`, `cd` to `/etc/fail2ban/jail.d` and create an empty file called `01_sshd.conf`:
 
-    ~~~bash
+    ~~~sh
     $ cd /etc/fail2ban/jail.d ; sudo touch 01_sshd.conf
     ~~~
 
-2. Edit the `01_sshd.conf` file by inserting the configuration lines below.
+2. Edit the `01_sshd.conf` file by inserting the configuration lines below:
 
-    ~~~bash
+    ~~~sh
     [sshd]
     enabled = true
     port = 22
     maxretry = 3
     ~~~
 
-    > **BEWARE!**  
-    > Remember to set the `maxretry` parameter the same as the `MaxAuthTries` in the `sshd` configuration, so they correlate.
+    > [!IMPORTANT]
+    > Remember to set the `maxretry` parameter with the same value as the `MaxAuthTries` in the `sshd` configuration!
 
-3. Save the changes and restart the fail2ban service.
+3. Save the changes and restart the fail2ban service:
 
-    ~~~bash
+    ~~~sh
     $ sudo systemctl restart fail2ban.service
     ~~~
 
-4. Check the current status of the fail2ban service with the `fail2ban-client` command.
+4. Check the current status of the fail2ban service with the `fail2ban-client` command:
 
-    ~~~bash
+    ~~~sh
     $ sudo fail2ban-client status
     Status
     |- Number of jail:      1
@@ -420,63 +476,64 @@ Fail2Ban is already enabled for SSH connections in the VM, but it needs a more r
 
 ## Disabling the `root` user login
 
-Now that your VM has an administrative `sudo` user like `mgrsys` and a hardened ssh service, you can disable the `root` user login altogether.
+Now that your Debian VM has an administrative `sudo` user like `mgrsys` and a hardened SSH service, you can disable the `root` user login altogether:
 
-1. As your administrative user, `cd` to `/etc` and check the `passwd` files present there.
+1. As your administrative user, `cd` to `/etc` and check the `passwd` files present there:
 
-    ~~~bash
+    ~~~sh
     $ cd /etc/
     $ ls -al pass*
-    -rw-r--r-- 1 root root 1452 Apr 21 13:47 passwd
-    -rw-r--r-- 1 root root 1452 Apr 21 13:47 passwd-
+    -rw-r--r-- 1 root root 1285 Sep  4 11:52 passwd
+    -rw-r--r-- 1 root root 1239 Sep  3 14:00 passwd-
     ~~~
 
     The `passwd-` is a backup made by some commands (like `adduser`) that modify the `passwd` file. Other files like `group`, `gshadow`, `shadow` and `subgid` also have backups of this kind.
 
-2. Edit the `passwd` file, by only changing the `root` line to make it look as shown below.
+2. Edit the `passwd` file, by only changing the `root` line to make it look as shown below:
 
-    ~~~bash
+    ~~~sh
     root:x:0:0:root:/root:/usr/sbin/nologin
     ~~~
 
-    With this setup, any program that requires a shell for login won't be able to do so with the `root` user.
+    With this setup, any program that requires a shell for login will not be able to do so with the `root` user.
 
-3. Then, lock the `root` password.
+3. Then, lock the `root` password:
 
-    ~~~bash
+    ~~~sh
     $ sudo passwd -l root
     ~~~
 
-    A user with the password locked can't login: the `passwd -l` command has corrupted, by putting a `!` character, the `root` password hash stored in the `/etc/shadow` file.
+    A user with the password locked cannot login at all. The `passwd -l` command corrupts, by putting a `!` character, the `root` password hash stored in the `/etc/shadow` file.
 
-    ~~~bash
+    ~~~sh
     root:!$7$HVw1KYN.qAC.lOMC$zb3vRm1oqqdR.gITdV.Lce9XuTjkv7CZ2z4R7diVsduplK.cAGeByZc1Gk3wfhQA6pzuzls3VT9/GhcjehiX70:18739:0:99999:7:::
     ~~~
 
-To check that you cannot login with the `root` user, open a noVNC terminal on the VM from the web console and try to login as `root`. You'll get a `Login incorrect` message back everytime you try.
+To check that you cannot login with the `root` user, open a noVNC terminal on the VM from the web console and try to login as `root`. You'll get a `Login incorrect` message back every time you try.
 
 ## Configuring the VM with `sysctl`
 
-Next thing to do is to harden and improve the configuration of the VM with `sysctl` settings, as you did in the [**G012**](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md) and [**G015**](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md) guides for your Proxmox VE host. Since your VM is also running a Debian system, the `sysctl` values applied here will be mostly the same as the ones applied to your PVE node.
+Next thing to do is to harden and improve the configuration of the VM with `sysctl` settings, as you did in the [**G012**](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md) and [**G015**](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md) chapters for your Proxmox VE host. Since your VM is also running a Debian system, the `sysctl` values applied here will be mostly the same as the ones applied to your PVE node.
 
-> **BEWARE!**  
-> This `sysctl` configuration is kind of generic but oriented to support virtualization and containers, as the Proxmox VE platform does. Still, later in this guide series, you'll have to change some of this settings in the VMs you'll use as nodes of your Kubernetes cluster.
+> [!NOTE]
+> **This `sysctl` configuration is kind of generic but oriented to support virtualization and containers, as the Proxmox VE platform does**\
+> In later chapters of this guide, you will have to change some of these settings in the VMs you will use as nodes of your Kubernetes cluster.
 
 So, as `mgrsys`, `cd` to `/etc/sysctl.d/` and apply the configuration files detailed in the following subsections.
 
-~~~bash
+~~~sh
 $ cd /etc/sysctl.d
 ~~~
 
-### _TCP/IP stack hardening_
+### TCP/IP stack hardening
 
-1. Create a new empty file called `80_tcp_hardening.conf`.
+1. Create a new empty file called `80_tcp_hardening.conf`:
 
-    ~~~bash
+    ~~~sh
     $ sudo touch 80_tcp_hardening.conf
     ~~~
 
-2. Edit `80_tcp_hardening.conf`, adding the following content to it.
+2. Edit `80_tcp_hardening.conf`, adding the following content to it:
 
     ~~~properties
     ## TCP/IP stack hardening
@@ -494,22 +551,18 @@ $ cd /etc/sysctl.d
     net.ipv4.tcp_fin_timeout = 10
 
     # IP loose spoofing protection or source route verification.
+    # Complements the rule set in /usr/lib/sysctl.d/pve-firewall.conf for all interfaces.
     # Set to "loose" (2) to avoid unexpected networking problems in usual scenarios.
-    net.ipv4.conf.all.rp_filter = 2
     net.ipv4.conf.default.rp_filter = 2
 
     # Ignore ICMP echo requests, or pings.
-    # Commented by default since it might be needed to do pings to this host.
+    # Commented by default since Proxmox VE or any other monitoring tool might
+    # need to do pings to this host.
     # Uncomment only if you're sure that your system won't need to respond to pings.
     # net.ipv4.icmp_echo_ignore_all = 1
     # net.ipv6.icmp.echo_ignore_all = 1
 
-    # Protect against tcp time-wait assassination hazards,
-    # drop RST packets for sockets in the time-wait state.
-    net.ipv4.tcp_rfc1337 = 1
-
     # Disable source packet routing; this system is not a router.
-    net.ipv4.conf.all.accept_source_route = 0
     net.ipv4.conf.default.accept_source_route = 0
 
     # Ignore send redirects; this system is not a router.
@@ -521,8 +574,10 @@ $ cd /etc/sysctl.d
     net.ipv4.conf.default.accept_redirects = 0
     net.ipv4.conf.all.secure_redirects = 0
     net.ipv4.conf.default.secure_redirects = 0
-    net.ipv6.conf.all.accept_redirects = 0
-    net.ipv6.conf.default.accept_redirects = 0
+
+    # Protect against tcp time-wait assassination hazards,
+    # drop RST packets for sockets in the time-wait state.
+    net.ipv4.tcp_rfc1337 = 1
 
     # Only retry creating TCP connections twice.
     # Minimize the time it takes for a connection attempt to fail.
@@ -544,21 +599,21 @@ $ cd /etc/sysctl.d
     # net.ipv4.conf.default.log_martians = 1
     ~~~
 
-3. Save the `80_tcp_hardening.conf` file and apply it in your system.
+3. Save the `80_tcp_hardening.conf` file and apply it in your system:
 
-    ~~~bash
+    ~~~sh
     $ sudo sysctl -p 80_tcp_hardening.conf
     ~~~
 
-### _Network optimizations_
+### Network optimizations
 
-1. Create a new empty file called  `85_network_optimizations.conf`.
+1. Create a new empty file called  `85_network_optimizations.conf`:
 
-    ~~~bash
+    ~~~sh
     $ sudo touch 85_network_optimizations.conf
     ~~~
 
-2. Edit the `85_network_optimizations.conf` file, adding the following content to it.
+2. Edit the `85_network_optimizations.conf` file, adding the following content to it:
 
     ~~~properties
     ## NETWORK optimizations
@@ -693,21 +748,21 @@ $ cd /etc/sysctl.d
     net.unix.max_dgram_qlen = 1024
     ~~~
 
-3. Save the `85_network_optimizations.conf` file and apply the changes.
+3. Save the `85_network_optimizations.conf` file and apply the changes:
 
-    ~~~bash
+    ~~~sh
     $ sudo sysctl -p 85_network_optimizations.conf
     ~~~
 
-### _Memory optimizations_
+### Memory optimizations
 
-1. Create a new empty file called `85_memory_optimizations.conf`.
+1. Create a new empty file called `85_memory_optimizations.conf`:
 
-    ~~~bash
+    ~~~sh
     $ sudo touch 85_memory_optimizations.conf
     ~~~
 
-2. Edit the `85_memory_optimizations.conf` file, adding the following content to it.
+2. Edit the `85_memory_optimizations.conf` file, adding the following content to it:
 
     ~~~properties
     ## Memory optimizations
@@ -773,21 +828,21 @@ $ cd /etc/sysctl.d
     vm.max_map_count = 262144
     ~~~
 
-3. Save the `85_memory_optimizations.conf` file and apply the changes.
+3. Save the `85_memory_optimizations.conf` file and apply the changes:
 
-    ~~~bash
+    ~~~sh
     $ sudo sysctl -p 85_memory_optimizations.conf
     ~~~
 
-### _Kernel optimizations_
+### Kernel optimizations
 
-1. Create a new empty file called `85_kernel_optimizations.conf`.
+1. Create a new empty file called `85_kernel_optimizations.conf`:
 
-    ~~~bash
+    ~~~sh
     $ sudo touch 85_kernel_optimizations.conf
     ~~~
 
-2. Edit the `85_kernel_optimizations.conf` file, adding the following content to it.
+2. Edit the `85_kernel_optimizations.conf` file, adding the following content to it:
 
     ~~~properties
     ## Kernel optimizations
@@ -800,12 +855,6 @@ $ cd /etc/sysctl.d
 
     # Process Scheduler related settings
     #
-    # Determines how long a migrated process has to be running before the kernel
-    # will consider migrating it again to another core. So, a higher value makes
-    # the kernel take longer before migrating again an already migrated process.
-    # Value in MILLISECONDS.
-    kernel.sched_migration_cost_ns = 5000000
-    #
     # This setting groups tasks by TTY, to improve perceived responsiveness on an
     # interactive system. On a server with a long running forking daemon, this will
     # tend to keep child processes from migrating away as soon as they should.
@@ -816,11 +865,11 @@ $ cd /etc/sysctl.d
     # than the number of containers
     kernel.keys.maxkeys = 2000
 
-    # increase kernel hardcoded defaults by a factor of 512 to allow running more
+    # Increase kernel hardcoded defaults by a factor of 512 to allow running more
     # than a very limited count of inotfiy hungry CTs (i.e., those with newer
     # systemd >= 240). This can be done as the memory used by the queued events and
     # watches is accounted to the respective memory CGroup.
-
+    #
     # 2^23
     fs.inotify.max_queued_events = 8388608
     # 2^16
@@ -829,9 +878,9 @@ $ cd /etc/sysctl.d
     fs.inotify.max_user_watches = 4194304
     ~~~
 
-3. Save the `85_kernel_optimizations.conf` file and apply the changes.
+3. Save the `85_kernel_optimizations.conf` file and apply the changes:
 
-    ~~~bash
+    ~~~sh
     $ sudo sysctl -p 85_kernel_optimizations.conf
     ~~~
 
@@ -839,54 +888,54 @@ $ cd /etc/sysctl.d
 
 Although you've applied the changes with the `sysctl -p` command, restart the VM.
 
-~~~bash
+~~~sh
 $ sudo reboot
 ~~~
 
-Then, login as `mgrsys` and check the log files (such as `syslog`) under the `/var/log` directory to look for possible errors or warnings related to your changes.
+Then, login as `mgrsys` and check the system's journal (`journalctl` command) to look for possible errors or warnings related to your changes.
 
 ## Disabling transparent hugepages on the VM
 
-Back in the [**G016** guide](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md), you disabled the transparent hugepages in your Proxmox VE host. Now you'll do the same in this VM.
+Back in the [**G016** chapter](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md), you disabled the transparent hugepages in your Proxmox VE host. Now you'll do the same in this VM.
 
-1. Check the current status of the transparent hugepages.
+1. Check the current status of the transparent hugepages:
 
-    ~~~bash
+    ~~~sh
     $ cat /sys/kernel/mm/transparent_hugepage/enabled
     [always] madvise never
     ~~~
 
     Is set as `always` active, which means that probably is already in use. Check it's current usage then.
 
-    ~~~bash
+    ~~~sh
     $ grep AnonHuge /proc/meminfo
-    AnonHugePages:      4096 kB
+    AnonHugePages:      6144 kB
     ~~~
 
-    In this case, 4 MiB are currently in use for transparent hugepages.
+    In this case, 6 MiB are currently in use for transparent hugepages.
 
-2. To switch the `/sys/kernel/mm/transparent_hugepage/enabled` value to `never`, first `cd` to `/etc/default/` and make a backup of the original `grub` file.
+2. To switch the `/sys/kernel/mm/transparent_hugepage/enabled` value to `never`, first `cd` to `/etc/default/` and make a backup of the original `grub` file:
 
-    ~~~bash
+    ~~~sh
     $ cd /etc/default/ ; sudo cp grub grub.orig
     ~~~
 
-3. Edit the `grub` file, modifying the `GRUB_CMDLINE_LINUX=""` line as follows.
+3. Edit the `grub` file, modifying the `GRUB_CMDLINE_LINUX=""` line as follows:
 
     ~~~properties
     GRUB_CMDLINE_LINUX="transparent_hugepage=never"
     ~~~
 
-4. Update the grub and reboot the system.
+4. Update the grub and reboot the system:
 
-    ~~~bash
+    ~~~sh
     $ sudo update-grub
     $ sudo reboot
     ~~~
 
-5. After the reboot, check the current status of the transparent hugepages.
+5. After the reboot, check the current status of the transparent hugepages:
 
-    ~~~bash
+    ~~~sh
     $ cat /sys/kernel/mm/transparent_hugepage/enabled
     always madvise [never]
     $ grep AnonHuge /proc/meminfo
@@ -895,11 +944,11 @@ Back in the [**G016** guide](G016%20-%20Host%20optimization%2002%20~%20Disabling
 
 ## Regarding the microcode `apt` packages for CPU vulnerabilities
 
-In the [**G013** guide](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md), you applied a microcode package to mitigate vulnerabilities found within your host's CPU. You could think that you also need to apply such package in the VM, but installing it in a VM is useless, since the hypervisor won't allow the VM to apply such microcode to the real CPU installed in your Proxmox VE host. So, don't worry about CPU microcode packages in VMs.
+In the [chapter **G013**](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md), you applied a microcode package to mitigate vulnerabilities found within your host's CPU. You could think that you also need to apply such package in the VM, but installing it in a VM is useless, since the hypervisor won't allow the VM to apply such microcode to the real CPU installed in your Proxmox VE host. In short, do not worry about installing CPU microcode packages in VMs.
 
 ## Relevant system paths
 
-### _Directories on Debian VM_
+### Directories on Debian VM
 
 - `/dev`
 - `/etc`
@@ -914,7 +963,7 @@ In the [**G013** guide](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%
 - `$HOME`
 - `$HOME/.ssh`
 
-### _Files on Debian VM_
+### Files on Debian VM
 
 - `/etc/apt/sources.list.d/debian-nonfree.list`
 - `/etc/default/grub`
@@ -936,28 +985,27 @@ In the [**G013** guide](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%
 - `/usr/sbin/qemu-ga`
 - `$HOME/.google_authenticator`
 - `$HOME/.ssh/authorized_keys`
-- `$HOME/.ssh/id_rsa`
-- `$HOME/.ssh/id_rsa.pub`
+- `$HOME/.ssh/id_ed25519`
+- `$HOME/.ssh/id_ed25519.pub`
 
 ## References
 
-### _QEMU guest agent_
+### [QEMU](https://www.qemu.org/)
 
-- [Proxmox wiki ~ Qemu-guest-agent](https://pve.proxmox.com/wiki/Qemu-guest-agent)
-- [QEMU wiki ~ Features/GuestAgent](https://wiki.qemu.org/Features/GuestAgent)
-- [QEMU](https://www.qemu.org/)
+- [QEMU. Wiki. Features/GuestAgent](https://wiki.qemu.org/Features/GuestAgent)
+- [Proxmox VE. Wiki. Qemu-guest-agent](https://pve.proxmox.com/wiki/Qemu-guest-agent)
 
-### _About `sudo`_
+### About `sudo`
 
 - [Debian superuser rights (sudo, visudo)](https://serverspace.us/support/help/debian-superuser-rights-sudo-visudo/)
 
-### _Disabling `root` login_
+### Disabling `root` login
 
 - [4 Ways to Disable Root Account in Linux](https://www.tecmint.com/disable-root-login-in-linux/)
 - [Should I disable the root account on my Debian PC for security?](https://unix.stackexchange.com/a/383309)
 - [Who creates /etc/{group,gshadow,passwd,shadow}-?](https://unix.stackexchange.com/questions/27717/who-creates-etc-group-gshadow-passwd-shadow)
 
-### _Microcode packages on VMs_
+### Microcode packages on VMs
 
 - [What if you have a microcode package installed on the VM?](https://www.reddit.com/r/debian/comments/bqk2z0/is_it_necessary_to_install_intelmicrocode_to/eo5zt6i?utm_source=share&utm_medium=web2x&context=3)
 
