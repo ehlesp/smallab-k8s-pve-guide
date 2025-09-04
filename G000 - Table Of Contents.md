@@ -201,12 +201,13 @@
 - [Relevant system paths](G020%20-%20K3s%20cluster%20setup%2003%20~%20Debian%20VM%20creation.md#relevant-system-paths)
 - [References](G020%20-%20K3s%20cluster%20setup%2003%20~%20Debian%20VM%20creation.md#references)
 
-### [**G021** - K3s cluster setup 04 ~ Debian VM configuration](G021%20-%20K3s%20cluster%20setup%2004%20~%20Debian%20VM%20configuration.md#g021-k3s-cluster-setup-04-debian-vm-configuration)
+### [**G021** - K3s cluster setup 04 ~ Debian VM configuration](G021%20-%20K3s%20cluster%20setup%2004%20~%20Debian%20VM%20configuration.md)
 
-- [Suggestion about IP configuration in your network](G021%20-%20K3s%20cluster%20setup%2004%20~%20Debian%20VM%20configuration.md#suggestion-about-ip-configuration-in-your-network)
+- [You have to configure your new Debian VM](G021%20-%20K3s%20cluster%20setup%2004%20~%20Debian%20VM%20configuration.md#you-have-to-configure-your-new-debian-vm)
+- [Suggestion about the IP organization within your LAN](G021%20-%20K3s%20cluster%20setup%2004%20~%20Debian%20VM%20configuration.md#suggestion-about-the-ip-organization-within-your-lan)
 - [Adding the `apt` sources for _non-free_ packages](G021%20-%20K3s%20cluster%20setup%2004%20~%20Debian%20VM%20configuration.md#adding-the-apt-sources-for-non-free-packages)
 - [Installing extra packages](G021%20-%20K3s%20cluster%20setup%2004%20~%20Debian%20VM%20configuration.md#installing-extra-packages)
-- [The QEMU guest agent comes enabled in Debian 11](G021%20-%20K3s%20cluster%20setup%2004%20~%20Debian%20VM%20configuration.md#the-qemu-guest-agent-comes-enabled-in-debian-11)
+- [The QEMU guest agent comes enabled in Debian](G021%20-%20K3s%20cluster%20setup%2004%20~%20Debian%20VM%20configuration.md#the-qemu-guest-agent-comes-enabled-in-debian)
 - [Hardening the VM's access](G021%20-%20K3s%20cluster%20setup%2004%20~%20Debian%20VM%20configuration.md#hardening-the-vms-access)
 - [Hardening the `sshd` service](G021%20-%20K3s%20cluster%20setup%2004%20~%20Debian%20VM%20configuration.md#hardening-the-sshd-service)
 - [Configuring Fail2Ban for SSH connections](G021%20-%20K3s%20cluster%20setup%2004%20~%20Debian%20VM%20configuration.md#configuring-fail2ban-for-ssh-connections)
