@@ -219,11 +219,12 @@
 - [Relevant system paths](G021%20-%20K3s%20cluster%20setup%2004%20~%20Debian%20VM%20configuration.md#relevant-system-paths)
 - [References](G021%20-%20K3s%20cluster%20setup%2004%20~%20Debian%20VM%20configuration.md#references)
 
-### [**G022** - K3s cluster setup 05 ~ Connecting the VM to the NUT server](G022%20-%20K3s%20cluster%20setup%2005%20~%20Connecting%20the%20VM%20to%20the%20NUT%20server.md#g022-k3s-cluster-setup-05-connecting-the-vm-to-the-nut-server)
+### [**G022** - K3s cluster setup 05 ~ Connecting the VM to the NUT server](G022%20-%20K3s%20cluster%20setup%2005%20~%20Connecting%20the%20VM%20to%20the%20NUT%20server.md)
 
-- [Reconfiguring the NUT `master` server on your **Proxmox VE host**](G022%20-%20K3s%20cluster%20setup%2005%20~%20Connecting%20the%20VM%20to%20the%20NUT%20server.md#reconfiguring-the-nut-master-server-on-your-proxmox-ve-host)
-- [Configuring the NUT `slave` client on your Debian VM](G022%20-%20K3s%20cluster%20setup%2005%20~%20Connecting%20the%20VM%20to%20the%20NUT%20server.md#configuring-the-nut-slave-client-on-your-debian-vm)
-- [Checking the connection between the VM NUT `slave` client and the PVE node NUT `master` server](G022%20-%20K3s%20cluster%20setup%2005%20~%20Connecting%20the%20VM%20to%20the%20NUT%20server.md#checking-the-connection-between-the-vm-nut-slave-client-and-the-pve-node-nut-master-server)
+- [Make your VMs aware of your UPS unit with NUT](G022%20-%20K3s%20cluster%20setup%2005%20~%20Connecting%20the%20VM%20to%20the%20NUT%20server.md#make-your-vms-aware-of-your-ups-unit-with-nut)
+- [Reconfiguring the NUT server on your Proxmox VE host](G022%20-%20K3s%20cluster%20setup%2005%20~%20Connecting%20the%20VM%20to%20the%20NUT%20server.md#reconfiguring-the-nut-server-on-your-proxmox-ve-host)
+- [Configuring the NUT client on your Debian VM](G022%20-%20K3s%20cluster%20setup%2005%20~%20Connecting%20the%20VM%20to%20the%20NUT%20server.md#configuring-the-nut-client-on-your-debian-vm)
+- [Checking the connection between the VM NUT client and the PVE node NUT server](G022%20-%20K3s%20cluster%20setup%2005%20~%20Connecting%20the%20VM%20to%20the%20NUT%20server.md#checking-the-connection-between-the-vm-nut-client-and-the-pve-node-nut-server)
 - [Testing a Forced ShutDown sequence (`FSD`) with NUT](G022%20-%20K3s%20cluster%20setup%2005%20~%20Connecting%20the%20VM%20to%20the%20NUT%20server.md#testing-a-forced-shutdown-sequence-fsd-with-nut)
 - [Relevant system paths](G022%20-%20K3s%20cluster%20setup%2005%20~%20Connecting%20the%20VM%20to%20the%20NUT%20server.md#relevant-system-paths)
 - [References](G022%20-%20K3s%20cluster%20setup%2005%20~%20Connecting%20the%20VM%20to%20the%20NUT%20server.md#references)
