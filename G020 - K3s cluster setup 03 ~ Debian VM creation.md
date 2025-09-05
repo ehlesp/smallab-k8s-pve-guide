@@ -138,7 +138,7 @@ First, you need to create and configure a new VM:
 
     The QEMU agent _"lets Proxmox VE know that it can use its features to show some more information, and complete some actions (for example, shutdown or snapshots) more intelligently"_.
 
-5. Hit on `Next` to reach the `Disks` tab:
+5. Hit on `Next` to advance to the `Disks` tab:
 
     ![Disks tab unfilled at Create VM window](images/g020/debian_vm_create_vm_disk_unfilled.webp "Disks tab unfilled at Create VM window")
 
@@ -152,7 +152,7 @@ First, you need to create and configure a new VM:
     From the many parameters showing now in this form, just pay attention to the following ones:
 
     - `Storage`\
-      Here you must choose on which storage you will place the disk image of this VM. At this point, in the list you'll only see the thinpools you created in the [**G019** chapter](G019%20-%20K3s%20cluster%20setup%2002%20~%20Storage%20setup.md).
+      Here you must choose on which storage you will place the disk image of this VM. At this point, in the list you'll only see the thinpools you created in the [chapter **G019**](G019%20-%20K3s%20cluster%20setup%2002%20~%20Storage%20setup.md).
 
     - `Disk size (GiB)`\
       How big you want the main disk for this VM, [in gibibytes](https://en.wikipedia.org/wiki/Gigabyte#Base_2_(binary)).
@@ -248,7 +248,7 @@ First, you need to create and configure a new VM:
 
     ![CPU tab filled at Create VM window](images/g020/debian_vm_create_vm_cpu_filled.webp "CPU tab filled at Create VM window")
 
-7. The next tab is `Memory`, also with advanced parameters shown:
+7. The next tab is `Memory`, with its advanced parameters already shown:
 
     ![Memory tab unfilled at Create VM window](images/g020/debian_vm_create_vm_memory_unfilled.webp "Memory tab unfilled at Create VM window")
 
@@ -270,7 +270,7 @@ First, you need to create and configure a new VM:
 
     ![Network tab default at Create VM window](images/g020/debian_vm_create_vm_network_unfilled.webp "Network tab default at Create VM window")
 
-    Notice how the `Bridge` parameter is set by default with the `vmbr0` Linux bridge. You will come back to this parameter later but, for now, you don't need to configure anything in this step, the default values are correct for this Debian template VM.
+    Notice how the `Bridge` parameter is set by default with the `vmbr0` Linux bridge. You will come back to this parameter later but, for now, you do not need to configure anything in this step, the default values are correct for this Debian template VM.
 
 9. The last tab you'll reach is `Confirm`:
 
@@ -342,7 +342,7 @@ In the VM creation wizard, Proxmox VE does not allow you to configure more than 
 
 At this point, your Debian template VM has the minimal virtual hardware setup you need for installing Debian in it.
 
-1. Go back to the `Summary` tab of your new VM and press the `Start` button to start the VM up:
+1. Go back to the `Summary` tab of your new VM so you can see its status and performance statistics, then press the `Start` button to start the VM up:
 
     ![VM Start button](images/g020/debian_vm_install_os_start_button.webp "VM Start button")
 
@@ -376,7 +376,7 @@ At this point, your Debian template VM has the minimal virtual hardware setup yo
 
     Oddly enough, it only offers the options shown in the screenshot above. In case of doubt, just stick with the default `United States - en_US.UTF-8` option.
 
-7. Next, you'll have to choose the keyboard configuration that suits you better:
+7. Next, you'll have to choose your preferred keyboard configuration:
 
     ![Configuring the keyboard](images/g020/debian_vm_install_os_installer_configuring_keyboard.webp "Configuring the keyboard")
 
@@ -444,7 +444,7 @@ At this point, your Debian template VM has the minimal virtual hardware setup yo
 
     ![Choosing timezone](images/g020/debian_vm_install_os_installer_choosing_timezone.webp "Choosing timezone")
 
-20. After a few more loading bars, you'll reach the step for disk partitioning:
+20. After a few more loading bars, you'll advance to the step for disk partitioning:
 
     ![Disk partitioning options screen](images/g020/debian_vm_install_os_installer_disk_partitioning.webp "Disk partitioning options screen")
 
@@ -462,9 +462,7 @@ At this point, your Debian template VM has the minimal virtual hardware setup yo
 
     ![Choosing the partition schema to apply on the VM storage](images/g020/debian_vm_install_os_installer_disk_partitioning_schema_setup.webp "Choosing the partition schema to apply on the VM storage")
 
-    This VM is going to be a template for servers, so you shouldn't ever need to mount a separate partition for the `home` directory. Something else could be said about the `var`. `srv` directories and swap, which they can grow notably. Therefore, better chose the option meant for servers, the third option specifying `Separate /var and /srv, swap < 1GB (for servers)`:
-
-    ![Picking the option for servers as partition schema](images/g020/debian_vm_install_os_installer_disk_partitioning_schema_for_servers.webp "Picking the option for servers as partition schema")
+    This VM is going to be a template for servers, so you shouldn't ever need to mount a separate partition for the `home` directory. Something else could be said about directories like `var` or `srv`, or even the swap, whose contents can potentially grow notably. But, since you can increase the size of the VM's storage easily from Proxmox VE, just leave the default highlighted option and press `Enter`.
 
 23. The next screen is the confirmation of the disk partitioning you've setup in the previous steps:
 
@@ -484,17 +482,17 @@ At this point, your Debian template VM has the minimal virtual hardware setup yo
 
     Choose `Yes` to allow the installer to finally write the changes to disk.
 
-26. After the partitioning is finished, you'll reach the progress bar of the base system installation:
+26. After the partitioning is finished, you'll see the progress bar for the base system installation:
 
     ![Installing the base system screen](images/g020/debian_vm_install_os_installer_base_system_installation.webp "Installing the base system screen")
 
     The Debian installer will need a bit of time to finish this task.
 
-27. When the base system is installed, you'll see the following dialog:
+27. When the base system is installed, the following dialog appears:
 
     ![Additional media scan dialog](images/g020/debian_vm_install_os_installer_additional_media.webp "Additional media scan dialog")
 
-    You do not have any additional media to use, so just answer `No` to this dialog.
+    Since you do not have any additional media to use, just answer `No` to this dialog.
 
 28. The following step is about setting the right mirror servers location for your `apt` configuration:
 
@@ -522,19 +520,21 @@ At this point, your Debian template VM has the minimal virtual hardware setup yo
 
     ![Popularity contest question screen](images/g020/debian_vm_install_os_installer_package_manager_popularity_contest.webp "Popularity contest question screen")
 
-    Choose whatever you like here, although bear in mind that the security restrictions that you'll have to apply later to this Debian VM system may end blocking that script's functionality.
+    Choose whatever you like here, although bear in mind that the security restrictions you'll have to apply in a later chapter to this Debian VM system may end blocking that script's functionality.
 
 33. After another loading bar, you'll reach the `Software selection` screen:
 
     ![Software selection screen](images/g020/debian_vm_install_os_installer_software_selection.webp "Software selection screen")
 
-    Notice that the installer has "deduced" (probably because of the "for servers" partition schema chosen in the previous step 22) that the VM is going to be a server. The installer has  already chosen the only two options that must be enabled here: `SSH server` and `standard system utilities`. This allows you to press `Continue` directly without changing anything.
+    You'll see that, by default, the installer is setting the VM to be a graphical environment. Since your VM is going to be the basic template for server VMs, you only need enabled the two last options (`SSH server` and `standard system utilities`). Change the options here to make them look like below and then press `Continue`.
 
-34. Another progress windows will show up and the installer will proceed with the remainder of the installation process:
+    ![Software selection changed to enable minimum server options](images/g020/debian_vm_install_os_installer_software_selection_changed.webp "Software selection changed to enable minimum server options")
+
+34. Another progress windows will show up and the installer will proceed with the remainder of the software installation process:
 
     ![Installation progress bar](images/g020/debian_vm_install_os_installer_executing_installation.webp "Installation progress bar")
 
-35. Within the installation process, the installer will ask you if you want to install the GRUB boot loader in the VM's primary storage drive:
+35. After finishing the software installation, the installer will ask you if you want to install the GRUB boot loader in the VM's primary storage drive:
 
     ![GRUB boot loader installation screen](images/g020/debian_vm_install_os_installer_grub_boot_loader.webp "GRUB boot loader installation screen")
 
@@ -548,23 +548,23 @@ At this point, your Debian template VM has the minimal virtual hardware setup yo
 
     ![GRUB boot loader disk sda chosen](images/g020/debian_vm_install_os_installer_grub_boot_loader_disk_sda_chosen.webp "GRUB boot loader disk sda chosen")
 
-37. After installing the GRUB boot loader, the installer will perform some remaining tasks like installing GRUB:
+37. After configuring the GRUB boot loader, the installer will perform the necessary tasks to finish the Debian installation:
 
     ![Finishing the installation screen](images/g020/debian_vm_install_os_installer_finishing_installation.webp "Finishing the installation screen")
 
 38. After the installation has finished, the installer will warn you about removing the media you used to launch the whole procedure:
 
-    ![Remove installer media screen](images/g020/debian_vm_install_os_installer_remove_media.webp "Remove installer media screen")
-
     > [!WARNING]
-    > **Keep calm, _DO NOT_ press `Enter` yet and read the following steps**\
+    > **Keep calm, _DO NOT_ press `Enter` yet and read the next steps**\
     > If you `Continue`, the VM will reboot and, if the installer media is still in place, the installer will boot up again.
 
-39. Go back to your Proxmox VE web console, and open the `Hardware` tab of your VM. Then, choose the `CD/DVD Drive` item and press the `Edit` button:
+    ![Remove installer media screen](images/g020/debian_vm_install_os_installer_remove_media.webp "Remove installer media screen")
+
+39. Go back to your Proxmox VE web console, and open the `Hardware` tab of your VM. Then, choose the `CD/DVD Drive` item and press the `Edit` button (or just double click on the item):
 
     ![Edit button on VM's hardware tab](images/g020/debian_vm_install_os_vm_hardware_tab_edit_button.webp "Edit button on VM's hardware tab")
 
-40. You'll see the Edit window for the `CD/DVD Drive` you chose:
+40. You'll see the `Edit` window for the `CD/DVD Drive` you chose:
 
     ![Edit window for CD/DVD Drive](images/g020/debian_vm_install_os_vm_hardware_tab_edit_window.webp "Edit window for CD/DVD Drive")
 

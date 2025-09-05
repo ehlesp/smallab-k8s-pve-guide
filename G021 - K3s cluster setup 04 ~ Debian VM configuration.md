@@ -25,6 +25,7 @@
 - [Reboot the VM](#reboot-the-vm)
 - [Disabling transparent hugepages on the VM](#disabling-transparent-hugepages-on-the-vm)
 - [Regarding the microcode `apt` packages for CPU vulnerabilities](#regarding-the-microcode-apt-packages-for-cpu-vulnerabilities)
+  - [The Debian installer has installed the microcode package](#the-debian-installer-has-installed-the-microcode-package)
 - [Relevant system paths](#relevant-system-paths)
   - [Directories on Debian VM](#directories-on-debian-vm)
   - [Files on Debian VM](#files-on-debian-vm)
@@ -37,7 +38,7 @@
 
 ## You have to configure your new Debian VM
 
-Now you have a functional Debian VM but, as you did with your Proxmox VE host, it needs to be configured. This chapter will show you most of the same setup procedures detailed between the [**G003**](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources%2C%20updates%20and%20extra%20tools.md) and [**G016**](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md) chapters, but in an condensed manner. It will also add some extra steps needed for setting up particular aspects on this VM.
+Now you have a functional Debian VM but, as you did with your Proxmox VE host, it needs to be configured. This chapter will show you most of the same setup procedures detailed in the chapters between [**G003**](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources%2C%20updates%20and%20extra%20tools.md) and [**G016**](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md), but in an condensed manner. It will also add some extra steps needed for setting up particular aspects on this VM.
 
 ## Suggestion about the IP organization within your LAN
 
@@ -130,7 +131,7 @@ Another important detail to take into account is the configuration of this QEMU 
 - `/usr/sbin/qemu-ga`
   The path to the agent program itself. Probably for security reason, it is setup in such a way that you will not be able to execute it like a regular command.
 
-If you want to know what concrete configuration the QEMU agent in your VM has:
+If you want to know what is the concrete configuration of the QEMU agent running in your VM:
 
 1. As `root`, cd to `/usr/sbin`:
 
@@ -163,7 +164,7 @@ If you want to know what concrete configuration the QEMU agent in your VM has:
 
 ## Hardening the VM's access
 
-The user you created in the Debian installation process, which in this guide is called `mgrsys`, needs its login to be hardened with TFA and a SSH key pair, while also enabling it to use the `sudo` command. This way, that user will become a proper administrative user for your system. On the other hand, after properly setting up that user, you won't really need to use `root` any more. So, in this section you'll also see how to completely disable the `root` login access to the VM.
+The user you created in the Debian installation process, which in this guide is called `mgrsys`, needs its login to be hardened with TFA and a SSH key pair, while also enabling it to use the `sudo` command. This way, that user will become a proper administrative user for your system. On the other hand, after properly setting up that user, you won't really need to use `root` any more in this VM. This section explains how to completely disable the `root` login access to the VM.
 
 ### Enabling `sudo` to the administrative user
 
@@ -177,7 +178,7 @@ The user you created in the Debian installation process, which in this guide is 
     > **You will not be able to execute the `adduser` command from a SSH shell with `mgrsys`**\
     > I does not matter if you become `root` with `su` as you've just done in the previous section. You must be root within a **noVNC** shell or the `adduser` command won't work.
 
-2. Now login as the `mgrsys` user with a regular SSH shell and test that `sudo` is working with a harmless command like `ls`:
+2. Now login as the `mgrsys` user with a regular SSH shell, then test that `sudo` is working with a harmless command like `ls`:
 
     ~~~sh
     $ sudo ls -al
@@ -275,7 +276,7 @@ $ cd /etc/ssh ; sudo cp sshd_config sshd_config.orig
 
 ### Changes to the `/etc/pam.d/sshd` file
 
-1. Comment out the `@include common-auth` line found at at its top:
+1. Comment out the first `@include common-auth` line found at at its top:
 
     ~~~sh
     # Standard Un*x authentication.
@@ -506,14 +507,14 @@ Now that your Debian VM has an administrative `sudo` user like `mgrsys` and a ha
     A user with the password locked cannot login at all. The `passwd -l` command corrupts, by putting a `!` character, the `root` password hash stored in the `/etc/shadow` file.
 
     ~~~sh
-    root:!$7$HVw1KYN.qAC.lOMC$zb3vRm1oqqdR.gITdV.Lce9XuTjkv7CZ2z4R7diVsduplK.cAGeByZc1Gk3wfhQA6pzuzls3VT9/GhcjehiX70:18739:0:99999:7:::
+    root:!$7$HVw1KYN.qAC.lOMC$zb3vRm1oqqdR.gITdV.Lce9XuTjkv7CZ2z4R7diVsduplK.cAGeByZc1Gk3wfhQA6pzuzls3VT9/GhcjehiX70:20336:0:99999:7:::
     ~~~
 
 To check that you cannot login with the `root` user, open a noVNC terminal on the VM from the web console and try to login as `root`. You'll get a `Login incorrect` message back every time you try.
 
 ## Configuring the VM with `sysctl`
 
-Next thing to do is to harden and improve the configuration of the VM with `sysctl` settings, as you did in the [**G012**](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md) and [**G015**](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md) chapters for your Proxmox VE host. Since your VM is also running a Debian system, the `sysctl` values applied here will be mostly the same as the ones applied to your PVE node.
+Next thing to do is to harden and improve the configuration of the VM with `sysctl` settings, as you did in the chapters [**G012**](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md) and [**G015**](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md) for your Proxmox VE host. Since your VM is also running a Debian system, the `sysctl` values applied here will be mostly the same as the ones applied to your PVE node.
 
 > [!NOTE]
 > **This `sysctl` configuration is kind of generic but oriented to support virtualization and containers, as the Proxmox VE platform does**\
@@ -944,7 +945,31 @@ Back in the [**G016** chapter](G016%20-%20Host%20optimization%2002%20~%20Disabli
 
 ## Regarding the microcode `apt` packages for CPU vulnerabilities
 
-In the [chapter **G013**](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md), you applied a microcode package to mitigate vulnerabilities found within your host's CPU. You could think that you also need to apply such package in the VM, but installing it in a VM is useless, since the hypervisor won't allow the VM to apply such microcode to the real CPU installed in your Proxmox VE host. In short, do not worry about installing CPU microcode packages in VMs.
+In the [chapter **G013**](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md), you applied a microcode package to mitigate vulnerabilities found within your host's CPU. You could think that you also need to apply such package in the VM, but installing it in a VM is useless, since the hypervisor won't allow the VM to apply such microcode to the real CPU installed in your Proxmox VE host. In short, never install CPU microcode packages in VMs.
+
+### The Debian installer has installed the microcode package
+
+While monitoring the installation of the Debian VM, I noticed that the installer installs the microcode package. This is certainly incorrect, so you should uninstall it as follows:
+
+1. Purge the microcode package with `apt`:
+
+    ~~~sh
+    $ sudo apt -y purge intel-microcode
+    ~~~
+
+    Replace `intel-microcode` for `amd-microcode` if your microcode package is the one for AMD CPUs.
+
+2. To autoremove any related packages to the purged microcode one that are no longer required in your Debian VM, use `apt` again:
+
+    ~~~sh
+    $ sudo apt -y autoremove
+    ~~~
+
+3. Reboot the VM:
+
+    ~~~sh
+    $ sudo reboot
+    ~~~
 
 ## Relevant system paths
 
