@@ -28,7 +28,7 @@ So, where in your system is the VM disk image of your VM template?
 
 1. In the Proxmox VE web console, go to your VM template's `Hardware` view, and read the `Hard Disk` line.
 
-    ![VM template's Hardware view](images/g021/pve_vm_template_hardware_hard_disk_remarked.png "VM template's Hardware view")
+    ![VM template's Hardware view](images/g906/pve_vm_template_hardware_hard_disk_remarked.png "VM template's Hardware view")
 
     Remember the `ssd_disks:base-100-disk-0` string: it's the name of the hard disk volume within your Proxmox VE node.
 

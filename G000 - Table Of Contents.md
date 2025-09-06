@@ -229,9 +229,10 @@
 - [Relevant system paths](G022%20-%20K3s%20cluster%20setup%2005%20~%20Connecting%20the%20VM%20to%20the%20NUT%20server.md#relevant-system-paths)
 - [References](G022%20-%20K3s%20cluster%20setup%2005%20~%20Connecting%20the%20VM%20to%20the%20NUT%20server.md#references)
 
-### [**G023** - K3s cluster setup 06 ~ Debian VM template and backup](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md#g023-k3s-cluster-setup-06-debian-vm-template-and-backup)
+### [**G023** - K3s cluster setup 06 ~ Debian VM template and backup](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md)
 
-- [Turning the Debian VM into a VM template](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md#turning-the-debian-vm-into-a-vm-template)
+- [Turn your Debian VM into a VM template](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md#turn-your-debian-vm-into-a-vm-template)
+- [Steps for transforming your Debian VM into a VM template](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md#steps-for-transforming-your-debian-vm-into-a-vm-template)
 - [VM template's backup](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md#vm-templates-backup)
 - [Other considerations regarding VM templates](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md#other-considerations-regarding-vm-templates)
 - [References](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md#references)
