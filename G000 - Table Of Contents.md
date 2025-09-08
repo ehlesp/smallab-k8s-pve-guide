@@ -237,18 +237,18 @@
 - [Other considerations regarding VM templates](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md#other-considerations-regarding-vm-templates)
 - [References](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md#references)
 
-### [**G024** - K3s cluster setup 07 ~ K3s node VM template setup](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md#g024-k3s-cluster-setup-07-k3s-node-vm-template-setup)
+### [**G024** - K3s cluster setup 07 ~ K3s node VM template setup](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md)
 
+- [You need a more specialized VM template for building K3s nodes](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md#you-need-a-more-specialized-vm-template-for-building-k3s-nodes)
 - [Reasons for a new VM template](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md#reasons-for-a-new-vm-template)
 - [Creating a new VM based on the Debian VM template](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md#creating-a-new-vm-based-on-the-debian-vm-template)
-- [Set an static IP for the main network device (`net0`)](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md#set-an-static-ip-for-the-main-network-device-net0)
+- [Setting an static IP for the main network device (`net0`)](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md#setting-an-static-ip-for-the-main-network-device-net0)
 - [Setting a proper hostname string](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md#setting-a-proper-hostname-string)
 - [Disabling the swap volume](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md#disabling-the-swap-volume)
 - [Changing the VG's name](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md#changing-the-vgs-name)
 - [Setting up the second network card](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md#setting-up-the-second-network-card)
 - [Setting up sysctl kernel parameters for K3s nodes](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md#setting-up-sysctl-kernel-parameters-for-k3s-nodes)
 - [Turning the VM into a VM template](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md#turning-the-vm-into-a-vm-template)
-- [Protecting VMs and VM templates in Proxmox VE](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md#protecting-vms-and-vm-templates-in-proxmox-ve)
 - [Relevant system paths](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md#relevant-system-paths)
 - [References](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md#references)
 
