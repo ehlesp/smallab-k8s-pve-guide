@@ -1564,7 +1564,7 @@ On the other hand, you might be thinking now that the NUT configuration you've d
 
 ### Warning about the Kubernetes graceful shutdown feature
 
-This feature is still considered beta, so it could give you surprises. I'll give you an example from in my experience with the older K3s release `v1.22.3+k3s1` of K3s. After a graceful reboot, the pods appeared as `Terminated` although they were actually running. This is something you can detect with `kubectl` when checking the pods like in the output below:
+This feature is still considered beta, so it could give you surprises. I'll give you an example from my experience with the older K3s release `v1.22.3+k3s1` of K3s. After a graceful reboot, the pods appeared as `Terminated` although they were actually running. This is something you can detect with `kubectl` when checking the pods like in the output below:
 
 ~~~sh
 $ kubectl get pods -n kube-system
