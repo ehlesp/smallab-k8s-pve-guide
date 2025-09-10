@@ -1,6 +1,6 @@
 # G908 - Appendix 08 ~ K3s cluster with two or more server nodes
 
-In the [**G025** guide](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md) you've seen how to create a K3s Kubernetes cluster with just one server node. This works fine and suits the constrained scenario set in this guide series. But if you want a more complete Kubernetes experience, you'll need to know how to set up two or more server nodes in your cluster.
+In the [**G025** guide](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md) you have seen how to create a K3s Kubernetes cluster with just one server node. This works fine and suits the constrained scenario set in this guide series. But if you want a more complete Kubernetes experience, you'll need to know how to set up two or more server nodes in your cluster.
 
 In this supplementary guide I'll summarize you what to add or just do differently on the procedures explained in the [**G025** guide](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md), with the goal of creating a K3s cluster with two server nodes.
 

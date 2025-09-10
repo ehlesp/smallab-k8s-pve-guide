@@ -143,7 +143,7 @@ Since this new VM is a clone of the Debian VM template you prepared before, its 
 2. Edit the `/etc/hosts` file, where you must replace the old hostname (again, `debiantpl`) with the new one. The hostname should only appear in the `127.0.1.1` line:
 
     ~~~properties
-    127.0.1.1   k3snodetpl.deimos.cloud    k3snodetpl
+    127.0.1.1   k3snodetpl.homelab.cloud    k3snodetpl
     ~~~
 
 To see all these changes applied, exit your current session and log back in. You should see that now the new hostname shows up in your shell prompt.
