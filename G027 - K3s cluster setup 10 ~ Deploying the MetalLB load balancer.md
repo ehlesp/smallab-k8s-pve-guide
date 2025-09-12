@@ -11,7 +11,7 @@
   - [Preparing the Kustomize folder structure](#preparing-the-kustomize-folder-structure)
   - [Setting up the configuration files](#setting-up-the-configuration-files)
   - [Deploying MetalLB](#deploying-metallb)
-- [MetalLB's Kustomize project attached to this guide series](#metallbs-kustomize-project-attached-to-this-guide-series)
+- [MetalLB's Kustomize project attached to this guide](#metallbs-kustomize-project-attached-to-this-guide)
 - [Relevant system paths](#relevant-system-paths)
   - [Folders on remote kubectl client](#folders-on-remote-kubectl-client)
   - [Files on remote kubectl client](#files-on-remote-kubectl-client)
@@ -257,14 +257,11 @@ kube-system   traefik      LoadBalancer   10.43.110.37   192.168.1.41   80:30963
 
 From all the services you have running at this point in your K3s cluster, the `traefik` service is the one set with the `LoadBalancer` type. Now it has an `EXTERNAL-IP` from the `default` address pool set in the MetalLB configmap. In particular, it has got the very first available IP in the `default` pool.
 
-## MetalLB's Kustomize project attached to this guide series
+## MetalLB's Kustomize project attached to this guide
 
-You can find the Kustomize project for this MetaLB deployment in the following attached folder.
+You can find the Kustomize project for this MetalLB deployment in the following attached folder:
 
 - `k8sprjs/metallb`
-
-> **BEWARE!**  
-> The main `kustomization.yaml` file has the configuration shown here, but also the only one valid from MetalLB `v0.13.0` onwards, although commented out. Be mindful of which one you want to deploy.
 
 ## Relevant system paths
 

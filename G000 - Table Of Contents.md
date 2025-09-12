@@ -283,12 +283,12 @@
 - [Relevant system paths](G026%20-%20K3s%20cluster%20setup%2009%20~%20Setting%20up%20a%20kubectl%20client%20for%20remote%20access.md#relevant-system-paths)
 - [References](G026%20-%20K3s%20cluster%20setup%2009%20~%20Setting%20up%20a%20kubectl%20client%20for%20remote%20access.md#references)
 
-### [**G027** - K3s cluster setup 10 ~ Deploying the MetalLB load balancer](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md#g027-k3s-cluster-setup-10-deploying-the-metallb-load-balancer)
+### [**G027** - K3s cluster setup 10 ~ Deploying the MetalLB load balancer](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md)
 
 - [Considerations before deploying MetalLB](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md#considerations-before-deploying-metallb)
 - [Choosing the IP ranges for MetalLB](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md#choosing-the-ip-ranges-for-metallb)
 - [Deploying MetalLB on your K3s cluster](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md#deploying-metallb-on-your-k3s-cluster)
-- [MetalLB's Kustomize project attached to this guide series](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md#metallbs-kustomize-project-attached-to-this-guide-series)
+- [MetalLB's Kustomize project attached to this guide](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md#metallbs-kustomize-project-attached-to-this-guide)
 - [Relevant system paths](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md#relevant-system-paths)
 - [References](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md#references)
 
