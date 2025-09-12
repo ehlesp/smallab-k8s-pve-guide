@@ -199,7 +199,7 @@ Again, my hostname schema, static IP assignments and ID assignments are just sug
 
 ### VM as K3s server node
 
-K3s server nodes can run workloads (apps and services), but it is more appropriate to use them just for handling your Kubernetes cluster's control plane. Acting just as a server is a heavy duty job, even in a small setup such as the one you're building with this guide series. So, you can start assigning your `k3sserver01` node low hardware specs and increase them later depending on how well the node runs. Still, be aware that if the server node has a bad performance, the whole cluster won't run properly either. In my case I left this VM with rather low capabilities to begin with:
+K3s server nodes can run workloads (apps and services), but it is more appropriate to use them just for handling your Kubernetes cluster's control plane. Acting just as a server is a heavy duty job, even in a small setup such as the one you're building with this guide. So, you can start assigning your `k3sserver01` node low hardware specs and increase them later depending on how well the node runs. Still, be aware that if the server node has a bad performance, the whole cluster won't run properly either. In my case I left this VM with rather low capabilities to begin with:
 
 - **Memory**: 1.00/1.50 GiB of RAM.
 - **Processors**: 2 vCPUs.
@@ -223,7 +223,7 @@ As it happens with the server node VM, depending on how well your agent nodes ru
 
 ### Assign a static IP to each VM
 
-After creating the VMs, go to your router or gateway and assign each a static IP. In this guide, I'll follow the criteria I explained at the beginning of this guide, so the nodes here will have the following IPs for their **primary network cards**.
+After creating the VMs, go to your router or gateway and assign each a static IP. Here I'll follow the [criteria explained earlier](#criteria-for-ips), so the nodes here will have the following IPs for their **primary network cards**.
 
 - K3s **server** node 1: `10.4.1.1`
 - K3s **agent** node 1: `10.4.2.1`
@@ -234,7 +234,7 @@ Now that you have the new VMs created, you might think that you can start creati
 
 ### Customizing the hostname
 
-As it happened when you set up the k3s node VM template, these two new VMs you have created both have the same hostname inherited from the VM template. You need to change it, as you did before, but customizing it to the role each node will play in the K3s cluster. So, if you apply the naming scheme I showed you back at the beginning of this guide, the hostname value for each VM will be as follows.
+As it happened when you set up the k3s node VM template, these two new VMs you have created both have the same hostname inherited from the VM template. You need to change it, as you did before, but customizing it to the role each node will play in the K3s cluster. So, if you apply the [naming scheme shown in a previous section](#naming-convention-for-hostnames), the hostname value for each VM will be as follows.
 
 - The K3s server VM will be called `k3sserver01`.
 - The other VM will run as an agent, so it'll be named `k3sagent01`.
@@ -409,7 +409,7 @@ As you did with both your K3s server and first agent nodes, you need to assign c
 
     - K3s **agent** node 2: `10.4.2.2`
 
-2. Change its hostname, as you've already seen before in this guide.
+2. Change its hostname, as you've already seen before in this chapter.
 
     - K3s **agent** node 2: `k3sagent02`
 
@@ -419,7 +419,7 @@ As you did with both your K3s server and first agent nodes, you need to assign c
 
 #### Exporting the TOTP codes, the SSH key-pairs and reusing passwords
 
-To ease a bit the burden of system maintenance, and reduce the madness of so many passwords and TOTP codes, let's reuse the ones you generated for the `mgrsys` user in your first agent node. It is not the safest configuration possible, true, but should be safe enough for the homelab you are building in this guide series.
+To ease a bit the burden of system maintenance, and reduce the madness of so many passwords and TOTP codes, let's reuse the ones you generated for the `mgrsys` user in your first agent node. It is not the safest configuration possible, true, but should be safe enough for the homelab you are building in this guide.
 
 The idea is that you export the TOTP code and the SSH key-pair from your `k3sagent01` VM to the `k3sagent02` one. Also, you would reuse the new password you've applied in the first agent. This way, at least you'll have different authorization codes for the different types of nodes in your K3s cluster.
 
@@ -716,7 +716,7 @@ Also know that the **K3s installer arguments take precedence over the parameters
 
 ## K3s Server node setup
 
-The very first nodes you must deploy in a Kubernetes cluster are those that run the control plane managing the cluster itself. They are the _server_ nodes in K3s jargon and, in this guide's cluster, there is only one ypu have to setup.
+The very first nodes you must deploy in a Kubernetes cluster are those that run the control plane managing the cluster itself. They are the _server_ nodes in K3s jargon and, in this guide's cluster, there is only one you have to setup.
 
 ### Folder structure for K3s configuration files
 
@@ -1538,7 +1538,7 @@ The question now is, do you have to start and shutdown the VMs of your K3s clust
 
     > [!IMPORTANT]
     > **The `Start/Shutdown order` option only works with VMs hosted in the same Proxmox VE node**\
-    > If you have a Proxmox VE cluster of two or more nodes (instead of the standalone node setup used in this guide series), this option would not be shared cluster wide. This feature just works in a node-per-node basis. To have cluster-wide ordering, you have to use the HA (High Availability) manager, which offers its own ways to do such things. Furthermore, VMs managed by HA ignore this `Start/Shutdown order` option altogether.
+    > If you have a Proxmox VE cluster of two or more nodes (instead of the standalone node setup used in this guide), this option would not be shared cluster wide. This feature just works in a node-per-node basis. To have cluster-wide ordering, you have to use the HA (High Availability) manager, which offers its own ways to do such things. Furthermore, VMs managed by HA ignore this `Start/Shutdown order` option altogether.
 
 4. Set your server node with a `Start/Shutdown order` of 1, a `Startup delay` of 10 seconds, and leave the `Shutdown timeout` with the `default` value. Press `OK` and return to the VM's `Options` page:
 
