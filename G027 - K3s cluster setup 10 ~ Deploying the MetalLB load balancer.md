@@ -209,53 +209,76 @@ Now that you have your Kustomize project ready, you're just one command away fro
 $ kubectl apply -k $HOME/k8sprjs/metallb/
 ~~~
 
-This command will look for a `kustomization.yaml` file in the folder you tell it to process. Then, it builds the whole deployment output like with the `kustomize` option but, instead of displaying it, `kubectl` takes that YAML and directly applies it on your Kubernetes cluster. In this case, the `kubectl` command will return an output like the following.
+This command will look for a `kustomization.yaml` file in the folder you specify. Then, `kubectl` builds the whole deployment output like with the `kustomize` option but, instead of displaying it, `kubectl` takes that YAML and directly applies it on your Kubernetes cluster. In this case, the `kubectl` command will return an output like the following.
 
 ~~~sh
 namespace/metallb-system created
+customresourcedefinition.apiextensions.k8s.io/bfdprofiles.metallb.io created
+customresourcedefinition.apiextensions.k8s.io/bgpadvertisements.metallb.io created
+customresourcedefinition.apiextensions.k8s.io/bgppeers.metallb.io created
+customresourcedefinition.apiextensions.k8s.io/communities.metallb.io created
+customresourcedefinition.apiextensions.k8s.io/ipaddresspools.metallb.io created
+customresourcedefinition.apiextensions.k8s.io/l2advertisements.metallb.io created
+customresourcedefinition.apiextensions.k8s.io/servicebgpstatuses.metallb.io created
+customresourcedefinition.apiextensions.k8s.io/servicel2statuses.metallb.io created
 serviceaccount/controller created
 serviceaccount/speaker created
-Warning: policy/v1beta1 PodSecurityPolicy is deprecated in v1.21+, unavailable in v1.25+
-podsecuritypolicy.policy/controller created
-podsecuritypolicy.policy/speaker created
-role.rbac.authorization.k8s.io/config-watcher created
 role.rbac.authorization.k8s.io/controller created
 role.rbac.authorization.k8s.io/pod-lister created
 clusterrole.rbac.authorization.k8s.io/metallb-system:controller created
 clusterrole.rbac.authorization.k8s.io/metallb-system:speaker created
-rolebinding.rbac.authorization.k8s.io/config-watcher created
 rolebinding.rbac.authorization.k8s.io/controller created
 rolebinding.rbac.authorization.k8s.io/pod-lister created
 clusterrolebinding.rbac.authorization.k8s.io/metallb-system:controller created
 clusterrolebinding.rbac.authorization.k8s.io/metallb-system:speaker created
-configmap/config created
+configmap/metallb-excludel2 created
+secret/metallb-webhook-cert created
+service/metallb-webhook-service created
 deployment.apps/controller created
 daemonset.apps/speaker created
+ipaddresspool.metallb.io/default-pool created
+l2advertisement.metallb.io/l2-ip created
+validatingwebhookconfiguration.admissionregistration.k8s.io/metallb-webhook-configuration created
 ~~~
 
-The lines are merely informative about the resources created by your deployment, or sporadic warnings about deprecated apis still used by the software you're installing in your cluster. So, if you don't see a lot of warnings or just errors, the deployment can be considered successful like in the output above.
+The lines inform about the resources created by your deployment. They could also show sporadic warnings about deprecated apis still used by the software you're installing in your cluster. If you don't get a lot of warnings or, worse, errors, the deployment can be considered successful like in the output above.
 
-Finally, you can check out how the MetalLB service is running in your cluster.
+Give MetalLB a couple of minutes or so to get ready, then check with `kubectl` that it's been deployed in your cluster.
 
 ~~~sh
-$ kubectl get pods -n metallb-system 
-NAME                          READY   STATUS    RESTARTS   AGE
-controller-7dcc8764f4-2bc78   1/1     Running   0          9m48s
-speaker-28nbv                 1/1     Running   0          9m48s
-speaker-2x2x5                 1/1     Running   0          9m47s
+$ kubectl get -n metallb-system all -o wide
+NAME                              READY   STATUS    RESTARTS      AGE   IP           NODE          NOMINATED NODE   READINESS GATES
+pod/controller-58fdf44d87-q6l7w   1/1     Running   1 (14m ago)   15m   10.42.1.5    k3sagent02    <none>           <none>
+pod/speaker-8rrkg                 1/1     Running   0             15m   172.16.2.1   k3sagent01    <none>           <none>
+pod/speaker-grsdm                 1/1     Running   0             15m   172.16.2.2   k3sagent02    <none>           <none>
+pod/speaker-z6dcg                 1/1     Running   0             15m   172.16.1.1   k3sserver01   <none>           <none>
+
+NAME                              TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE   SELECTOR
+service/metallb-webhook-service   ClusterIP   10.43.126.18   <none>        443/TCP   15m   component=controller
+
+NAME                     DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE   CONTAINERS   IMAGES                            SELECTOR
+daemonset.apps/speaker   3         3         3       3            3           kubernetes.io/os=linux   15m   speaker      quay.io/metallb/speaker:v0.15.2   app=metallb,component=speaker
+
+NAME                         READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES                               SELECTOR
+deployment.apps/controller   1/1     1            1           15m   controller   quay.io/metallb/controller:v0.15.2   app=metallb,component=controller
+
+NAME                                    DESIRED   CURRENT   READY   AGE   CONTAINERS   IMAGES                               SELECTOR
+replicaset.apps/controller-58fdf44d87   1         1         1       15m   controller   quay.io/metallb/controller:v0.15.2   app=metallb,component=controller,pod-template-hash=58fdf44d87
+
 ~~~
 
-The MetalLB resources are all under the `metallb-system` namespace, such as its pods. On the other hand, you can already see in your services the effects of having this load balancer available.
+The MetalLB resources are all under the `metallb-system` namespace. On the other hand, you can already see the effect on your existing services of having this load balancer running in the K3s cluster.
 
 ~~~sh
 $ kubectl get svc -A
-NAMESPACE     NAME         TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)                      AGE
-default       kubernetes   ClusterIP      10.43.0.1      <none>         443/TCP                      122m
-kube-system   kube-dns     ClusterIP      10.43.0.10     <none>         53/UDP,53/TCP,9153/TCP       122m
-kube-system   traefik      LoadBalancer   10.43.110.37   192.168.1.41   80:30963/TCP,443:32446/TCP   11m
+NAMESPACE        NAME                      TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)                      AGE
+default          kubernetes                ClusterIP      10.43.0.1      <none>        443/TCP                      3d5h
+kube-system      kube-dns                  ClusterIP      10.43.0.10     <none>        53/UDP,53/TCP,9153/TCP       3d5h
+kube-system      traefik                   LoadBalancer   10.43.174.63   10.7.0.0      80:30512/TCP,443:32647/TCP   3d5h
+metallb-system   metallb-webhook-service   ClusterIP      10.43.126.18   <none>        443/TCP                      12m
 ~~~
 
-From all the services you have running at this point in your K3s cluster, the `traefik` service is the one set with the `LoadBalancer` type. Now it has an `EXTERNAL-IP` from the `default` address pool set in the MetalLB configmap. In particular, it has got the very first available IP in the `default` pool.
+From all the services you have running at this point in your K3s cluster, the `traefik` service is the one set with the `LoadBalancer` type. Now it has an `EXTERNAL-IP` address assigned from MetalLB's `default-pool`. In particular, it has got the very first available IP (`10.7.0.0`) in the `default-pool`.
 
 ## MetalLB's Kustomize project attached to this guide
 
@@ -269,12 +292,13 @@ You can find the Kustomize project for this MetalLB deployment in the following 
 
 - `$HOME/k8sprjs`
 - `$HOME/k8sprjs/metallb`
-- `$HOME/k8sprjs/metallb/configs`
+- `$HOME/k8sprjs/metallb/resources`
 
 ### Files on remote kubectl client
 
 - `$HOME/k8sprjs/metallb/kustomization.yaml`
-- `$HOME/k8sprjs/metallb/configs/config`
+- `$HOME/k8sprjs/metallb/resources/default-pool.ipaddresspool.yaml`
+- `$HOME/k8sprjs/metallb/resources/l2-ip.l2advertisement.yaml`
 
 ## References
 
