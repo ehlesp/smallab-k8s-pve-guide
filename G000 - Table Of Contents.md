@@ -672,38 +672,36 @@
 - [Relevant system paths](G910%20-%20Appendix%2010%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md#relevant-system-paths)
 - [References](G910%20-%20Appendix%2010%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md#references)
 
-### [**G911** - Appendix 11 ~ Alternative Nextcloud web server setups](G911%20-%20Appendix%2011%20~%20Alternative%20Nextcloud%20web%20server%20setups.md#g911-appendix-11-alternative-nextcloud-web-server-setups)
+### [**G911** - Appendix 11 ~ Alternative Nextcloud web server setups](G911%20-%20Appendix%2011%20~%20Alternative%20Nextcloud%20web%20server%20setups.md)
 
 - [Ideas for the Apache setup](G911%20-%20Appendix%2011%20~%20Alternative%20Nextcloud%20web%20server%20setups.md#ideas-for-the-apache-setup)
 - [Nginx setup](G911%20-%20Appendix%2011%20~%20Alternative%20Nextcloud%20web%20server%20setups.md#nginx-setup)
 - [Relevant system paths](G911%20-%20Appendix%2011%20~%20Alternative%20Nextcloud%20web%20server%20setups.md#relevant-system-paths)
 - [References](G911%20-%20Appendix%2011%20~%20Alternative%20Nextcloud%20web%20server%20setups.md#references)
 
+### [**G912** - Appendix 12 ~ Checking the K8s API endpoints' status](G912%20-%20Appendix%2012%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md)
 
+- [References](G912%20-%20Appendix%2012%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md#references)
 
-### [**G913** - Appendix 13 ~ Checking the K8s API endpoints' status](G913%20-%20Appendix%2013%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md)
+### [**G913** - Appendix 13 ~ Post-update manual maintenance tasks for Nextcloud](G913%20-%20Appendix%2013%20~%20Post-update%20manual%20maintenance%20tasks%20for%20Nextcloud.md)
 
-- [References](G913%20-%20Appendix%2013%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md#references)
+- [Concerns](G913%20-%20Appendix%2013%20~%20Post-update%20manual%20maintenance%20tasks%20for%20Nextcloud.md#concerns)
+- [Procedure](G913%20-%20Appendix%2013%20~%20Post-update%20manual%20maintenance%20tasks%20for%20Nextcloud.md#procedure)
+- [References](G913%20-%20Appendix%2013%20~%20Post-update%20manual%20maintenance%20tasks%20for%20Nextcloud.md#references)
 
-### [**G914** - Appendix 14 ~ Post-update manual maintenance tasks for Nextcloud](G914%20-%20Appendix%2014%20~%20Post-update%20manual%20maintenance%20tasks%20for%20Nextcloud.md)
+### [**G914** - Appendix 14 ~ Updating MariaDB to a newer major version](G914%20-%20Appendix%2014%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md)
 
-- [Concerns](G914%20-%20Appendix%2014%20~%20Post-update%20manual%20maintenance%20tasks%20for%20Nextcloud.md#concerns)
-- [Procedure](G914%20-%20Appendix%2014%20~%20Post-update%20manual%20maintenance%20tasks%20for%20Nextcloud.md#procedure)
-- [References](G914%20-%20Appendix%2014%20~%20Post-update%20manual%20maintenance%20tasks%20for%20Nextcloud.md#references)
+- [Concerns](G914%20-%20Appendix%2014%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#concerns)
+- [Enabling the update procedure](G914%20-%20Appendix%2014%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#enabling-the-update-procedure)
+- [References](G914%20-%20Appendix%2014%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#references)
 
-### [**G915** - Appendix 15 ~ Updating MariaDB to a newer major version](G915%20-%20Appendix%2015%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md)
+### [**G915** - Appendix 15 ~ Updating PostgreSQL to a newer major version](G915%20-%20Appendix%2015%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md)
 
-- [Concerns](G915%20-%20Appendix%2015%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#concerns)
-- [Enabling the update procedure](G915%20-%20Appendix%2015%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#enabling-the-update-procedure)
-- [References](G915%20-%20Appendix%2015%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#references)
-
-### [**G916** - Appendix 16 ~ Updating PostgreSQL to a newer major version](G916%20-%20Appendix%2016%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md)
-
-- [Concerns](G916%20-%20Appendix%2016%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#concerns)
-- [Upgrade procedure (for Gitea's PostgreSQL instance)](G916%20-%20Appendix%2016%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#upgrade-procedure-for-gitea-s-postgresql-instance)
-- [Kustomize project only for updating PostgreSQL included in this guide series](G916%20-%20Appendix%2016%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#kustomize-project-only-for-updating-postgresql-included-in-this-guide-series)
-- [Relevant system paths](G916%20-%20Appendix%2016%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#relevant-system-paths)
-- [References](G916%20-%20Appendix%2016%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#references)
+- [Concerns](G915%20-%20Appendix%2015%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#concerns)
+- [Upgrade procedure (for Gitea's PostgreSQL instance)](G915%20-%20Appendix%2015%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#upgrade-procedure-for-gitea-s-postgresql-instance)
+- [Kustomize project only for updating PostgreSQL included in this guide series](G915%20-%20Appendix%2015%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#kustomize-project-only-for-updating-postgresql-included-in-this-guide-series)
+- [Relevant system paths](G915%20-%20Appendix%2015%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#relevant-system-paths)
+- [References](G915%20-%20Appendix%2015%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#references)
 
 ## Navigation
 

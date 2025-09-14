@@ -304,28 +304,20 @@ You can find the Kustomize project for this MetalLB deployment in the following 
 
 ### [MetalLB](https://metallb.io/)
 
+- [GitHub. MetalLB](https://github.com/metallb/metallb)
+
 - [Concepts](https://metallb.io/concepts/)
   - [MetalLB in layer 2 mode](https://metallb.io/concepts/layer2/)
   - [MetalLB in BGP mode](https://metallb.io/concepts/bgp/)
 - [Installation](https://metallb.io/installation/)
 - [MetalLB Configuration](https://metallb.io/configuration/)
 
-- [MetalLB on GitHub](https://github.com/metallb/metallb)
+### [Kustomize](https://kustomize.io/)
 
-- [Install and configure MetalLB as a load balancer for Kubernetes](https://blog.inkubate.io/install-and-configure-metallb-as-a-load-balancer-for-kubernetes/)
-- [Running metallb in Layer 2 mode](https://www.shashankv.in/kubernetes/metallb-layer2-mode/)
-- [K8S AND METALLB: A LOADBALANCER FOR ON-PREM DEPLOYMENTS](https://starkandwayne.com/blog/k8s-and-metallb-a-loadbalancer-for-on-prem-deployments/)
-- [Kubernetes Metal LB for On-Prem / BareMetal Cluster in 10 minutes](https://medium.com/@JockDaRock/kubernetes-metal-lb-for-on-prem-baremetal-cluster-in-10-minutes-c2eaeb3fe813)
-- [Configure MetalLB In Layer 2 Mode](https://docs.bitnami.com/kubernetes/infrastructure/metallb/administration/configure-layer2-mode/)
-- [K3s – lightweight kubernetes made ready for production – Part 1](https://digitalis.io/blog/kubernetes/k3s-lightweight-kubernetes-made-ready-for-production-part-1/)
-- [How to Build a Multi-Master Kubernetes Cluster on VMware with MetalLB](https://platform9.com/blog/how-to-build-a-multi-master-cluster-on-vmware-with-metallb/)
-
-### Kustomize
-
+- [Github. Kustomize](https://github.com/kubernetes-sigs/kustomize)
 - [Introduction to Kustomize](https://kubectl.docs.kubernetes.io/guides/introduction/kustomize/)
 - [Declarative Management of Kubernetes Objects Using Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/)
 - [The Kustomization File](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/)
-- [Kustomize on Github](https://github.com/kubernetes-sigs/kustomize)
 - [Kustomize Tutorial: Creating a Kubernetes app out of multiple pieces](https://www.mirantis.com/blog/introduction-to-kustomize-part-1-creating-a-kubernetes-app-out-of-multiple-pieces/)
 - [Modify your Kubernetes manifests with Kustomize](https://opensource.com/article/21/6/kustomize-kubernetes)
 - [Kustomize Best Practices](https://www.openanalytics.eu/blog/2021/02/23/kustomize-best-practices/)
