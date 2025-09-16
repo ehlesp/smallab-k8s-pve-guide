@@ -5,4 +5,4 @@ metadata:
   name: default-pool
 spec:
   addresses:
-  - 192.168.1.41-192.168.1.80
+  - 10.7.0.0-10.7.0.20
