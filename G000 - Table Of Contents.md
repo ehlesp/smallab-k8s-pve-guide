@@ -175,7 +175,7 @@
 - [Relevant system paths](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#relevant-system-paths)
 - [References](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#references)
 
-### [**G018** - K3s cluster setup 01 ~ Requirements and arrangement](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md#g018-k3s-cluster-setup-01-requirements-and-arrangement)
+### [**G018** - K3s cluster setup 01 ~ Requirements and arrangement](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md)
 
 - [Gearing up for your K3s cluster](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md#gearing-up-for-your-k3s-cluster)
 - [Requirements for the K3s cluster and the services to deploy in it](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md#requirements-for-the-k3s-cluster-and-the-services-to-deploy-in-it)
