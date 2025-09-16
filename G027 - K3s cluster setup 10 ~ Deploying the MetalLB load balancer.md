@@ -51,9 +51,9 @@ You have two ways to deal with the issue of possible IP conflicts between your d
   Doable although cumbersome since this demands the manual handling of all IP assignments in your LAN. Still, this is the one that can almost (if you also leave the dynamic IP assignment enabled, conflicts may still happen) guarantee that your devices and apps will not collide in their IP assignments. If you opt to this method, be sure of clearing a range of IPs in your router (meaning, do not assign any IP from that range to any device) that MetalLB can use freely.
 
 - **Making your private network assign IPs from the `10.0.0.0/8` range**\
-  As I already explained [back in chapter **G025**](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#criteria-for-ips), in my LAN I chose to use the biggest IPv4 range available for private networks: `10.0.0.0/8`. Still, this measure only mitigates the possibility of conflict between a device and an app exposed by MetalLB (or just with another device). This also depends on how capable your LAN's router is when handling IP assignments. The good thing is that you do not have to manually handle the IPs assigned to your devices.
+  As I already explained [back in chapter **G025**](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#criteria-for-ips), for my LAN I opted to use the biggest IPv4 range available for private networks: `10.0.0.0/8`. Still, this measure only mitigates the possibility of conflict between a device and an app exposed by MetalLB (or just with another device). This also depends on how capable your LAN's router is handling IP assignments. The good thing is that you do not have to manage manually the IPs assigned to your devices.
 
-In my case, I opted to "risk it" and stick with the dynamic IP assignment because of personal convenience.
+In my case, I opted to "risk it" and stick with the dynamic IP assignment to allow devices to connect with randomized MACs, which is the default behavior nowadays.
 
 ### Ports used by MetalLB
 
@@ -65,9 +65,9 @@ In the previous [chapter **G026**](G026%20-%20K3s%20cluster%20setup%2009%20~%20S
 
 ## Choosing the IP ranges for MetalLB
 
-You have to choose an IP range on the external network your K3s cluster is connected to. This IP range should leave out the IPs already used by the K3s nodes themselves, helping you in keeping the nodes differentiated from the services deployed in them. In this chapter, the chosen IP subrange to "reserve" for MetalLB is `10.7.0.0-10.7.0.20`. Notice that it only has twenty one IPs, enough for the small number of apps or services that are going to be exposed with external IPs in later chapters of this guide.
+You have to choose an IP range on the external network your K3s cluster is connected to. This IP range should leave out the IPs already used by the K3s nodes themselves, helping you in keeping the nodes differentiated from the services deployed in them. In this chapter, the chosen IP subrange "reserved" for MetalLB is `10.7.0.0-10.7.0.20`. Notice that it only has twenty one IPs, enough for the small number of apps or services that are going to be exposed with external IPs in later chapters of this guide.
 
-> [!NOTE]
+> [!IMPORTANT]
 > **The bigger the range, the greater the risk of having IP conflicts**\
 > In a private network where IPs are dynamically assigned to devices, you want to keep the MetalLB IP range as small as possible to reduce the chance of IP conflicts.
 
