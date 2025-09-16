@@ -1603,4 +1603,4 @@ You have to make the final changes at the `kustomization.yaml` file of this Next
 
 ## Navigation
 
-[<< Previous (**G910. Appendix 10**)](G910%20-%20Appendix%2010%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G912. Appendix 12**) >>](G912%20-%20Appendix%2012%20~%20Adapting%20MetalLB%20config%20to%20CR.md)
+[<< Previous (**G910. Appendix 10**)](G910%20-%20Appendix%2010%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G912. Appendix 12**) >>](G912%20-%20Appendix%2012%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md)

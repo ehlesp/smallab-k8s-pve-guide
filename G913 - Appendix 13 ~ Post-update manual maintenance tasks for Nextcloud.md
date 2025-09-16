@@ -1,4 +1,4 @@
-# G914 - Appendix 14 ~ Post-update manual maintenance tasks for Nextcloud
+# G913 - Appendix 13 ~ Post-update manual maintenance tasks for Nextcloud
 
 When you update your Nextcloud instance to a new minor or major version, the update can also come with changes that affect Nextcloud's database structure. Nextcloud will warn you of this in the `Administration settings > Overview` page.
 
@@ -132,7 +132,7 @@ Next, I'll show you the procedure to execute the `occ` command in the container 
 ### _Nextcloud_
 
 - [Basil's Tech Diary ~ Nextcloud: Using occ in a FreeNAS jail](https://blog.udance.com.au/2021/02/25/nextcloud-using-occ-in-a-freenas-jail/)
-- [How2itsec ~ Nextcloud repairing missing indexes in database ](https://how2itsec.blogspot.com/2021/12/nextcloud-repairing-missing-indexes-in.html)
+- [How2itsec ~ Nextcloud repairing missing indexes in database](https://how2itsec.blogspot.com/2021/12/nextcloud-repairing-missing-indexes-in.html)
 - [Some indices are missing in the database! How to add them manually](https://help.nextcloud.com/t/some-indices-are-missing-in-the-database-how-to-add-them-manually/37852)
 - [Help with occ db:add-missing-indices](https://help.nextcloud.com/t/help-with-occ-db-add-missing-indices/90696)
 
@@ -144,4 +144,4 @@ Next, I'll show you the procedure to execute the `occ` command in the container 
 
 ## Navigation
 
-[<< Previous (**G913. Appendix 13**)](G913%20-%20Appendix%2013%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G915. Appendix 15**) >>](G915%20-%20Appendix%2015%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md)
+[<< Previous (**G912. Appendix 12**)](G912%20-%20Appendix%2012%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G914. Appendix 14**) >>](G914%20-%20Appendix%2014%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md)
