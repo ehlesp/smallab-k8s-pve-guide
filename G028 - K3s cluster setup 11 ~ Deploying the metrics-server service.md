@@ -4,7 +4,7 @@
 - [Checking the metrics-server's manifest](#checking-the-metrics-servers-manifest)
 - [Deployment of metrics-server](#deployment-of-metrics-server)
 - [Checking the metrics-server service](#checking-the-metrics-server-service)
-- [Metrics-server's Kustomize project attached to this guide series](#metrics-servers-kustomize-project-attached-to-this-guide-series)
+- [Metrics-server's Kustomize project attached to this guide](#metrics-servers-kustomize-project-attached-to-this-guide)
 - [Relevant system paths](#relevant-system-paths)
   - [Folders on remote kubectl client](#folders-on-remote-kubectl-client)
   - [Files on remote kubectl client](#files-on-remote-kubectl-client)
@@ -363,9 +363,9 @@ To see the resource usage values scraped by metrics-server, you have to use the 
 
 To see all the options available for both `top` commands, use the `--help` option.
 
-## Metrics-server's Kustomize project attached to this guide series
+## Metrics-server's Kustomize project attached to this guide
 
-You can find the Kustomize project for this metrics-server deployment in the following attached folder.
+You can find the Kustomize project for this metrics-server deployment in the following attached folder:
 
 - `k8sprjs/metrics-server`
 

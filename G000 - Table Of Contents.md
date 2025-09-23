@@ -298,7 +298,7 @@
 - [Checking the metrics-server's manifest](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md#checking-the-metrics-servers-manifest)
 - [Deployment of metrics-server](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md#deployment-of-metrics-server)
 - [Checking the metrics-server service](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md#checking-the-metrics-server-service)
-- [Metrics-server's Kustomize project attached to this guide series](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md#metrics-servers-kustomize-project-attached-to-this-guide-series)
+- [Metrics-server's Kustomize project attached to this guide](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md#metrics-servers-kustomize-project-attached-to-this-guide)
 - [Relevant system paths](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md#relevant-system-paths)
 - [References](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md#references)
 
