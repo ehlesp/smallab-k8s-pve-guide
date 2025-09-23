@@ -1,17 +1,34 @@
 # G028 - K3s cluster setup 11 ~ Deploying the metrics-server service
 
-Another embedded service that was disabled in the installation of your K3s cluster was the metrics-server. This service scrapes resource usage data from your cluster nodes and offers it through its API. The problem with the embedded metrics-server, and with any other embedded service included in K3s, is that you cannot change their configuration, at least not permanently (meaning manipulation through `kubectl`), beyond what's configurable through the parameters you can set to the K3s service itself.
+- [Deploy a metric-server service that you can fully configure](#deploy-a-metric-server-service-that-you-can-fully-configure)
+- [Checking the metrics-server's manifest](#checking-the-metrics-servers-manifest)
+- [Deployment of metrics-server](#deployment-of-metrics-server)
+- [Checking the metrics-server service](#checking-the-metrics-server-service)
+- [Metrics-server's Kustomize project attached to this guide series](#metrics-servers-kustomize-project-attached-to-this-guide-series)
+- [Relevant system paths](#relevant-system-paths)
+  - [Folders on remote kubectl client](#folders-on-remote-kubectl-client)
+  - [Files on remote kubectl client](#files-on-remote-kubectl-client)
+- [References](#references)
+  - [Kubernetes](#kubernetes)
+  - [Kubernetes Metrics Server](#kubernetes-metrics-server)
+  - [Related to Kubernetes Metrics Server](#related-to-kubernetes-metrics-server)
+- [Navigation](#navigation)
 
-In particular, the embedded metrics-server comes with a default configuration that is not adequate for the setup of your K3s cluster. Since you cannot change the default configuration permanently, it's better to deploy the metrics-server independently in your cluster, but with the proper configuration already set in it.
+## Deploy a metric-server service that you can fully configure
+
+The other embedded service disabled in your K3s cluster deployment is the metrics-server. This service scrapes resource usage data from your cluster nodes and offers it through its API. The problem with the embedded metrics-server, and with any other embedded service included in K3s, is that you cannot change their configuration directly. You can adjust what's configurable through the parameters you can set to the K3s service itself, or make manual temporary changes through `kubectl`.
+
+In particular, the embedded metrics-server comes with a default configuration that is not adequate for the setup of your K3s cluster. Since you cannot change the default configuration permanently, it is better to deploy the metrics-server independently in your cluster, but with the proper configuration already set in it.
 
 ## Checking the metrics-server's manifest
 
-First you would need to check out the manifest used for deploying the metrics-server and see where you have to apply the required change. This also means that you have to be aware of which version you're going to deploy in your cluster. K3s `v1.22.1+k3s1` comes with the `v0.5.0` release of metrics-server but, at the time of writing this, there's already a `v0.5.2` available which is the one you'll see deployed in this guide.
+First you would need to check out the manifest used for deploying the metrics-server and see where you have to apply the required change. This also means that you have to be aware of which version you're going to deploy in your cluster. K3s `v1.33.4+k3s1` comes with the `v0.8.0` release of metrics-server which is, at the time of writing this, the latest version available.
 
-> **BEWARE!**  
-> As with any other software, each release of any service comes with its own particularities regarding compatibilities, in particular with the Kubernetes engine you have in your cluster. Always check that the release of a software you want to deploy in your cluster is compatible with the Kubernetes version running your cluster.
+> [!IMPORTANT]
+> **Ensure the service's version is compatible with your cluster's Kubernetes version**\
+> Each release of any service comes with its own particularities regarding compatibilities, in particular with your cluster's Kubernetes engine. Always check that the release of a software you want to deploy in your cluster is compatible with the Kubernetes version running your cluster.
 
-You'll find the yaml manifest for metrics-server `v0.5.2` in the **Assets** section found [at this Github release page](https://github.com/kubernetes-sigs/metrics-server/releases/tag/v0.5.2). It's the `components.yaml` file. Download and open it, then look for the `Deployment` object in it. It should be as the yaml below.
+Download the `components.yaml` manifest for metrics-server `v0.8.0` from the **Assets** section found [at this Github release page](https://github.com/kubernetes-sigs/metrics-server/releases/tag/v0.8.0). Open it and look for the `Deployment` object declared in it:
 
 ~~~yaml
 ---
@@ -37,11 +54,11 @@ spec:
       containers:
       - args:
         - --cert-dir=/tmp
-        - --secure-port=4443
+        - --secure-port=10250
         - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
         - --kubelet-use-node-status-port
         - --metric-resolution=15s
-        image: k8s.gcr.io/metrics-server/metrics-server:v0.5.2
+        image: registry.k8s.io/metrics-server/metrics-server:v0.8.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 3
@@ -52,7 +69,7 @@ spec:
           periodSeconds: 10
         name: metrics-server
         ports:
-        - containerPort: 4443
+        - containerPort: 10250
           name: https
           protocol: TCP
         readinessProbe:
@@ -68,9 +85,15 @@ spec:
             cpu: 100m
             memory: 200Mi
         securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
           readOnlyRootFilesystem: true
           runAsNonRoot: true
           runAsUser: 1000
+          seccompProfile:
+            type: RuntimeDefault
         volumeMounts:
         - mountPath: /tmp
           name: tmp-dir
@@ -84,35 +107,35 @@ spec:
 ---
 ~~~
 
-This is the object you'll need to modify to adapt metrics-server to your particular cluster setup. Some of the values will also be taken from the yaml manifest used by K3s to deploy this service, a yaml you'll find in [the K3s GitHub page](https://github.com/k3s-io/k3s/blob/master/manifests/metrics-server/metrics-server-deployment.yaml).
+This is the object you need to modify to adapt metrics-server to your particular cluster setup. You also have to take some values from the yaml manifest used to deploy this service embedded in K3s, a yaml you can find in [the K3s GitHub page](https://github.com/k3s-io/k3s/blob/master/manifests/metrics-server/metrics-server-deployment.yaml).
 
 ## Deployment of metrics-server
 
-As you did with MetalLB in the [**G027** guide](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md#deploying-metallb-on-your-k3s-cluster), you're going to use a Kustomize project to deploy the metrics-server in your cluster.
+As you did with MetalLB in the [previous **G027** chapter](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md#deploying-metallb-on-your-k3s-cluster), you are going to use a Kustomize project to deploy the metrics-server in your cluster:
 
-1. In your kubectl client system, create a folder structure for the Kustomize project.
+1. In your `kubectl` client system, create a folder structure for the Kustomize project:
 
-    ~~~bash
+    ~~~sh
     $ mkdir -p $HOME/k8sprjs/metrics-server/patches
     ~~~
 
-    In the command above you can see that, inside the metrics-server folder, I've created a `patches` one. The idea is to patch the default configuration of the service by adding a couple of parameters.
+    In the command above you can see that, inside the metrics-server folder, I have created a `patches` one. The idea is to patch the default configuration of the service by adding a couple of parameters.
 
-2. Create a new `metrics-server.deployment.containers.args.patch.yaml` file under the `patches` folder.
+2. Create a new `metrics-server.deployment.containers.args.patch.yaml` file under the `patches` folder:
 
-    ~~~bash
+    ~~~sh
     $ touch $HOME/k8sprjs/metrics-server/patches/metrics-server.deployment.containers.args.patch.yaml
     ~~~
 
-    Notice the structure of this yaml file's name. It has the pattern below.
+    Notice the structure of this yaml file's name, it follows this pattern:
 
-    ~~~bash
+    ~~~sh
     <metadata.name>.<kind>.[extra_details].[...].yaml
     ~~~
 
-    You can use any other pattern that suits you, but try to keep the same one so the yaml files in your Kustomize projects have names that hint you about what's inside of them.
+    You can use any other pattern that suits you, but try to keep the same one as your naming standard. This way, the yaml files in your Kustomize projects can hint their contents with their names.
 
-3. Fill `metrics-server.deployment.containers.args.patch.yaml` with the following yaml.
+3. Fill `metrics-server.deployment.containers.args.patch.yaml` with the following yaml:
 
     ~~~yaml
     apiVersion: apps/v1
@@ -129,42 +152,57 @@ As you did with MetalLB in the [**G027** guide](G027%20-%20K3s%20cluster%20setup
           - key: "node-role.kubernetes.io/control-plane"
             operator: "Exists"
             effect: "NoSchedule"
-          - key: "node-role.kubernetes.io/master"
-            operator: "Exists"
-            effect: "NoSchedule"
           containers:
           - name: metrics-server
             args:
             - --cert-dir=/tmp
-            - --secure-port=4443
+            - --secure-port=10250
             - --kubelet-preferred-address-types=InternalIP
             - --kubelet-use-node-status-port
             - --metric-resolution=15s
+            - --tls-cipher-suites=TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
     ~~~
 
-    See how the yaml manifest contains the necessary information to identify the resource to be patched, up to the container's name, and only the values to add or modify.
+    This yaml manifest only contains the necessary information to identify the resource to be patched and the properties to patch up:
 
-    - The `tolerations` section has been taken directly [from the Deployment object K3s uses](https://github.com/k3s-io/k3s/blob/master/manifests/metrics-server/metrics-server-deployment.yaml) to deploy metrics-server. These [tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) will make the metrics-server pod to be scheduled or not (`effect: "NoSchedule"`) in nodes that are tainted with those keys. For instance, remember that the server node is tainted with `"k3s-controlplane=true:NoExecute"` which restricts what pods can run on it, also excluding the metrics-server one.
+    - `tolerations`\
+      This section has been taken directly [from the `Deployment` object K3s uses](https://github.com/k3s-io/k3s/blob/master/manifests/metrics-server/metrics-server-deployment.yaml) to deploy its embedded metrics-server. These [tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) will make the metrics-server pod to be scheduled or not (`effect: "NoSchedule"`) in nodes that are tainted with those keys.
 
-    - `--cert-dir`: apparently, a directory for certificates, although I haven't found a proper explanation for this parameter.
+      For instance, since the server node is tainted with `"k3s-controlplane=true:NoExecute"` it will not run a pod for the metrics-server service (nor for other regular apps or services).
 
-    - `--secure-port`: the https port used to connect to the metrics-server server.
+    - `args`\
+      Under this section are configured certain parameters that affect how the metric-server service runs:
 
-    - `--kubelet-preferred-address-types`: indicates the priority of node address types used when determining an address for connecting to a particular node. In your cluster's case, the only one that is really needed is the internal IP, so that's the only option specified. The possible values are `Hostname,InternalDNS,InternalIP,ExternalDNS,ExternalIP`.
+      - `--cert-dir`\
+        The directory where the TLS certs are located for this service. Here set to a temporary folder, proper for a containerized service.
 
-    - `--kubelet-use-node-status-port`: I haven't found a proper explanation for this parameter, but by the name it seems that makes the metrics-server check the status port (`10250` by default) that a kubelet process opens in the node where it runs.
+      - `--secure-port`\
+        The port on which to serve HTTPS with authentication and authorization. Here is set to the same one used to connect to kubelets.
 
-    - `--metric-resolution`: the metrics-server service will scrape the resource usage stats from the kubelets every this time interval. By default, it's 60 seconds.
+      - `--kubelet-preferred-address-types`\
+        Priority of node address types used when determining an address for connecting to a particular node. In your K3s cluster's case, the only one that is really needed is the internal IP.
 
-    Notice that the parameters in the `args` list are exactly the same as in the original `components.yaml` file, except for the `kubelet-preferred-address-types`. This one is set just with the `InternalIP` value to ensure that metrics-server only communicates through the isolated secondary network you have in your setup.
+        By only setting the `InternalIP` value, you ensure that metrics-server only communicates through the isolated secondary network you have in your setup.
 
-4. Create the `kustomization.yaml` file.
+      - `--kubelet-use-node-status-port`\
+        When enabled, it makes the metrics-server check the status port (`10250` by default) that a kubelet process opens in the node where it runs.
 
-    ~~~bash
+      - `--metric-resolution`\
+        How long the metric-server will retain the last metrics scraped from the kubelets. By default is one minute.
+
+      - `tls-cipher-suites`\
+        Comma-separated list of cipher suites admitted for the server. The list specified in the yaml snippet is the one K3s applies to deploy its embedded metric-server service.
+
+      > [!NOTE]
+      > [These and other metric-server flags are explained in this help document](https://github.com/kubernetes-sigs/metrics-server/blob/master/docs/command-line-flags.txt).
+
+4. Create the `kustomization.yaml` file:
+
+    ~~~sh
     $ touch $HOME/k8sprjs/metrics-server/kustomization.yaml
     ~~~
 
-5. Put the following content in the `kustomization.yaml` file.
+5. Put the following content in the `kustomization.yaml` file:
 
     ~~~yaml
     # Metrics server setup
@@ -172,27 +210,25 @@ As you did with MetalLB in the [**G027** guide](G027%20-%20K3s%20cluster%20setup
     kind: Kustomization
 
     resources:
-    - https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.5.2/components.yaml
+    - https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.8.0/components.yaml
 
-    patchesStrategicMerge:
-    - patches/metrics-server.deployment.containers.args.patch.yaml
+    patches:
+    - path: patches/metrics-server.deployment.containers.args.patch.yaml
     ~~~
 
-    Notice the following.
-
-    - There's an `apiVersion` and a `kind` parameter specified in this `kustomization.yaml` file, unlike the one you used for deploying the MetalLB service. I haven't found an explanation about why these two parameters can be omitted for this kind of object.
+    Notice that:
 
     - In the `resources` list you have the URL to the `components.yaml` file, although you could reference here the downloaded file too.
 
-    - The `patchesStrategicMerge` section is probably the simplest way to patch in Kustomize, [read about it here](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/patchesstrategicmerge/). See how the `metrics-server.deployment.containers.args.patch.yaml` file is listed as the sole patch to apply here.
+    - The `patches` section is where you specify all the patches you want to apply over the resources you deploy in the Kustomize project. This section supports different ways to declare and apply patches on resources, [check them out in its official Kubernetes documentation](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/patches/). The method used here is probably the cleanest one, since it only needs specifying the path to the patch file.
 
-6. Test the Kustomize project with kubectl.
+6. Test the Kustomize project with kubectl:
 
-    ~~~bash
+    ~~~sh
     $ kubectl kustomize $HOME/k8sprjs/metrics-server | less
     ~~~
 
-    In the output, look for the `Deployment` object. It should have the `args` parameters and the `tolerations` set as below.
+    In the output, look for the `Deployment` object and ensure that the `args` parameters and the `tolerations` section are set as expected:
 
     ~~~yaml
     ---
@@ -218,11 +254,12 @@ As you did with MetalLB in the [**G027** guide](G027%20-%20K3s%20cluster%20setup
           containers:
           - args:
             - --cert-dir=/tmp
-            - --secure-port=4443
+            - --secure-port=10250
             - --kubelet-preferred-address-types=InternalIP
             - --kubelet-use-node-status-port
             - --metric-resolution=15s
-            image: k8s.gcr.io/metrics-server/metrics-server:v0.5.2
+            - --tls-cipher-suites=TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
+            image: registry.k8s.io/metrics-server/metrics-server:v0.8.0
             imagePullPolicy: IfNotPresent
             livenessProbe:
               failureThreshold: 3
@@ -233,7 +270,7 @@ As you did with MetalLB in the [**G027** guide](G027%20-%20K3s%20cluster%20setup
               periodSeconds: 10
             name: metrics-server
             ports:
-            - containerPort: 4443
+            - containerPort: 10250
               name: https
               protocol: TCP
             readinessProbe:
@@ -249,9 +286,15 @@ As you did with MetalLB in the [**G027** guide](G027%20-%20K3s%20cluster%20setup
                 cpu: 100m
                 memory: 200Mi
             securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                - ALL
               readOnlyRootFilesystem: true
               runAsNonRoot: true
               runAsUser: 1000
+              seccompProfile:
+                type: RuntimeDefault
             volumeMounts:
             - mountPath: /tmp
               name: tmp-dir
@@ -265,60 +308,58 @@ As you did with MetalLB in the [**G027** guide](G027%20-%20K3s%20cluster%20setup
           - effect: NoSchedule
             key: node-role.kubernetes.io/control-plane
             operator: Exists
-          - effect: NoSchedule
-            key: node-role.kubernetes.io/master
-            operator: Exists
           volumes:
           - emptyDir: {}
             name: tmp-dir
     ---
     ~~~
 
-7. Apply this Kustomize project to finally deploy metrics-server in your cluster.
+7. Apply this Kustomize project to finally deploy metrics-server in your cluster:
 
-    ~~~bash
+    ~~~sh
     $ kubectl apply -k $HOME/k8sprjs/metrics-server/
     ~~~
 
-8. After a minute or so, check if the metrics-server pod and service is running.
+8. After a minute or so, check if the metrics-server pod and service is running:
 
-    ~~~bash
+    ~~~sh
     $ kubectl get pods,svc -n kube-system | grep metrics
-    pod/metrics-server-5b45cf8dbb-nv477          1/1     Running      0               5m12s
-    service/metrics-server   ClusterIP      10.43.133.41   <none>         443/TCP                      5m13s
+    pod/metrics-server-5f87696c77-j7zgd           1/1     Running     0          41s
+    service/metrics-server   ClusterIP      10.43.50.63    <none>        443/TCP                      41s
     ~~~
 
     You should get two lines regarding metrics-server. Also notice that the metrics-server is set in the `kube-system` namespace.
 
 ## Checking the metrics-server service
 
-To see the resource usage values scraped by metrics-server, you have to use the `kubectl top` command. You can get values from nodes and from pods.
+To see the resource usage values scraped by metrics-server, you have to use the `kubectl top` command. You can get values both from nodes and pods:
 
-- Get values from nodes with `kubectl top node`.
+- Get values from nodes with `kubectl top node`:
 
-    ~~~bash
-    $ kubectl top node 
-    NAME          CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%
-    k3sagent01    200m         5%     347Mi           17%
-    k3sagent02    166m         4%     335Mi           21%
-    k3sserver01   351m         8%     647Mi           49%
+    ~~~sh
+    $ kubectl top node
+    NAME          CPU(cores)   CPU(%)   MEMORY(bytes)   MEMORY(%)   
+    k3sagent01    64m          2%       561Mi           28%         
+    k3sagent02    69m          3%       516Mi           26%         
+    k3sserver01   156m         7%       785Mi           54% 
     ~~~
 
-- Get values from pods with `kubectl top pods`, although always specifying a namespace (remember, pods are namespaced in Kubernetes).
+- Get values from pods with `kubectl top pods`, although always specifying a namespace (remember, pods are namespaced in Kubernetes):
 
-    ~~~bash
+    ~~~sh
     $ kubectl top pods -A
-    NAMESPACE        NAME                                     CPU(cores)   MEMORY(bytes)   
-    kube-system      coredns-85cb69466-9l6ws                  6m           11Mi            
-    kube-system      local-path-provisioner-64ffb68fd-zxm2v   1m           7Mi             
-    kube-system      metrics-server-5b45cf8dbb-nv477          15m          16Mi            
-    kube-system      traefik-74dd4975f9-tdv42                 2m           18Mi            
-    metallb-system   controller-7dcc8764f4-gskm7              1m           6Mi             
-    metallb-system   speaker-6rrwf                            10m          10Mi            
-    metallb-system   speaker-kntk2                            16m          10Mi
+    NAMESPACE        NAME                                      CPU(cores)   MEMORY(bytes)   
+    kube-system      coredns-64fd4b4794-phpd5                  5m           14Mi            
+    kube-system      local-path-provisioner-774c6665dc-bzp9n   1m           8Mi             
+    kube-system      metrics-server-5f87696c77-j7zgd           7m           18Mi            
+    kube-system      traefik-c98fdf6fb-z87fh                   1m           28Mi            
+    metallb-system   controller-58fdf44d87-kfc2f               5m           24Mi            
+    metallb-system   speaker-jqcxt                             12m          24Mi            
+    metallb-system   speaker-v7qkb                             12m          24Mi            
+    metallb-system   speaker-xfqft                             13m          61Mi 
     ~~~
 
-    In this case the `top pod` command has a `-A` option to get pods running in all namespaces of a cluster.
+    Here the `top pod` command has a `-A` option to get the metrics from pods running in all namespaces of the cluster.
 
 To see all the options available for both `top` commands, use the `--help` option.
 
@@ -330,33 +371,50 @@ You can find the Kustomize project for this metrics-server deployment in the fol
 
 ## Relevant system paths
 
-### _Folders on remote kubectl client_
+### Folders on remote kubectl client
 
 - `$HOME/k8sprjs`
 - `$HOME/k8sprjs/metrics-server`
 - `$HOME/k8sprjs/metrics-server/patches`
 
-### _Files on remote kubectl client_
+### Files on remote kubectl client
 
 - `$HOME/k8sprjs/metrics-server/kustomization.yaml`
 - `$HOME/k8sprjs/metrics-server/patches/metrics-server.deployment.containers.args.patch.yaml`
 
 ## References
 
-### _Kubernetes Metrics Server_
+### [Kubernetes](https://kubernetes.io/)
 
-- [Kubernetes Metrics Server](https://github.com/kubernetes-sigs/metrics-server)
-- [Kubernetes Metrics Server v0.5.2 release](https://github.com/kubernetes-sigs/metrics-server/releases/tag/v0.5.2)
-- [K3s v1.22.3+k3s1 release](https://github.com/k3s-io/k3s/releases/tag/v1.22.3+k3s1)
-- [Install Metrics Server on a Kubernetes Cluster](https://computingforgeeks.com/how-to-deploy-metrics-server-to-kubernetes-cluster/)
-- [How to troubleshoot metrics-server on kubeadm?](https://stackoverflow.com/questions/57137683/how-to-troubleshoot-metrics-server-on-kubeadm)
-- [[learner] Debugging issue with metrics-server](https://www.reddit.com/r/kubernetes/comments/ktuour/learner_debugging_issue_with_metricsserver/)
+- [Reference. Kustomize](https://kubectl.docs.kubernetes.io/references/kustomize/)
+  - [kustomization. patches](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/patches/)
+
+- [Kubernetes Documentation. Concepts](https://kubernetes.io/docs/concepts/)
+  - [Scheduling, Preemption and Eviction. Taints and Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
+
+- [Kubernetes Documentation. Reference](https://kubernetes.io/docs/reference/)
+  - [Well-Known Labels, Annotations and Taints](https://kubernetes.io/docs/reference/labels-annotations-taints/)
+
+### [Kubernetes Metrics Server](https://github.com/kubernetes-sigs/metrics-server)
+
+- [Kubernetes Metrics Server v0.8.0 release](https://github.com/kubernetes-sigs/metrics-server/releases/tag/v0.8.0)
+- [Configuration](https://github.com/kubernetes-sigs/metrics-server#configuration)
+- [command-line-flags.txt](https://github.com/kubernetes-sigs/metrics-server/blob/master/docs/command-line-flags.txt)
 - [Metrics server issue with hostname resolution of kubelet and apiserver unable to communicate with metric-server clusterIP](https://github.com/kubernetes-sigs/metrics-server/issues/131)
+
+### Related to Kubernetes Metrics Server
+
+- [K3s v1.33.4+k3s1 release](https://github.com/k3s-io/k3s/releases/tag/v1.33.4%2Bk3s1)
+
+- [How To Install Metrics Server on a Kubernetes Cluster](https://computingforgeeks.com/how-to-deploy-metrics-server-to-kubernetes-cluster/)
+
+- [How to troubleshoot metrics-server on kubeadm?](https://stackoverflow.com/questions/57137683/how-to-troubleshoot-metrics-server-on-kubeadm)
+
+- [[learner] Debugging issue with metrics-server](https://www.reddit.com/r/kubernetes/comments/ktuour/learner_debugging_issue_with_metricsserver/)
+
 - [The case of disappearing metrics in Kubernetes](https://dev.to/shyamala_u/the-case-of-disappearing-metrics-in-kubernetes-1kdh)
-- [Kubernetes Metrics Server. Configuration](https://github.com/kubernetes-sigs/metrics-server#configuration)
+
 - [Query on kubernetes metrics-server metrics values](https://stackoverflow.com/questions/55684789/query-on-kubernetes-metrics-server-metrics-values)
-- [Kubernetes Pod Created with hostNetwork](https://docs.datadoghq.com/security_platform/default_rules/kubernetes-pod-created-with-hostnetwork/)
-- [Taints and Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
 
 ## Navigation
 

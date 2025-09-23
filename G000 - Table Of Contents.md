@@ -292,8 +292,9 @@
 - [Relevant system paths](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md#relevant-system-paths)
 - [References](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md#references)
 
-### [**G028** - K3s cluster setup 11 ~ Deploying the metrics-server service](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md#g028-k3s-cluster-setup-11-deploying-the-metrics-server-service)
+### [**G028** - K3s cluster setup 11 ~ Deploying the metrics-server service](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md)
 
+- [Deploy a metric-server service that you can fully configure](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md#deploy-a-metric-server-service-that-you-can-fully-configure)
 - [Checking the metrics-server's manifest](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md#checking-the-metrics-servers-manifest)
 - [Deployment of metrics-server](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md#deployment-of-metrics-server)
 - [Checking the metrics-server service](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md#checking-the-metrics-server-service)
