@@ -1,0 +1,21 @@
+# Certificate for intermediate CA 01
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
+  name: homelab.cloud-intm-ca01-crt
+  namespace: certificates
+spec:
+  isCA: true
+  commonName: homelab.cloud-intm-ca01-crt
+  secretName: homelab.cloud-intm-ca01-crt-secret
+  duration: 4380h # 6 months
+  renewBefore: 360h # Certificates must be renewed some time before they expire (15 days)
+  privateKey:
+    algorithm: Ed25519
+    encoding: PKCS8
+    rotationPolicy: Always
+  issuerRef:
+    name: homelab.cloud-root-ca-issuer
+    kind: ClusterIssuer
+    group: cert-manager.io

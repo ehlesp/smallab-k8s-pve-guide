@@ -1,0 +1,21 @@
+# Certificate for root CA
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
+  name: homelab.cloud-root-ca-crt
+  namespace: certificates
+spec:
+  isCA: true
+  commonName: homelab.cloud-root-ca-crt
+  secretName: homelab.cloud-root-ca-crt-secret
+  duration: 8760h # 1 year
+  renewBefore: 720h # Certificates must be renewed some time before they expire (30 days)
+  privateKey:
+    algorithm: Ed25519
+    encoding: PKCS8
+    rotationPolicy: Always
+  issuerRef:
+    name: homelab.cloud-root-ca-issuer-selfsigned
+    kind: ClusterIssuer
+    group: cert-manager.io
