@@ -196,6 +196,10 @@ As you did with MetalLB in the [previous **G027** chapter](G027%20-%20K3s%20clus
       > [!NOTE]
       > [These and other metric-server flags are explained in this help document](https://github.com/kubernetes-sigs/metrics-server/blob/master/docs/command-line-flags.txt).
 
+    > [!IMPORTANT]
+    > **Review this patch whenever you update the metrics-server!**\
+    > Every time you update the metrics-server service in your setup, do not forget to see how the patched values look in the official deployment declaration of the newer version you deploy. Otherwise, you could end up having errors due to using deprecated arguments or incorrect values.
+
 4. Create the `kustomization.yaml` file:
 
     ~~~sh
@@ -418,4 +422,4 @@ You can find the Kustomize project for this metrics-server deployment in the fol
 
 ## Navigation
 
-[<< Previous (**G027. K3s cluster setup 10**)](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G029. K3s cluster setup 12**) >>](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20wildcard%20certificate.md)
+[<< Previous (**G027. K3s cluster setup 10**)](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G029. K3s cluster setup 12**) >>](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md)

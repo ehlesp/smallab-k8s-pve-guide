@@ -302,16 +302,16 @@
 - [Relevant system paths](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md#relevant-system-paths)
 - [References](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md#references)
 
-### [**G029** - K3s cluster setup 12 ~ Setting up cert-manager and wildcard certificate](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20wildcard%20certificate.md#g029-k3s-cluster-setup-12-setting-up-cert-manager-and-wildcard-certificate)
+### [**G029** - K3s cluster setup 12 ~ Setting up cert-manager and self-signed CA](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md)
 
-- [Warning about cert-manager performance](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20wildcard%20certificate.md#warning-about-cert-manager-performance)
-- [Deploying cert-manager](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20wildcard%20certificate.md#deploying-cert-manager)
-- [Reflector, a solution for syncing secrets and configmaps](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20wildcard%20certificate.md#reflector-a-solution-for-syncing-secrets-and-configmaps)
-- [Setting up a wildcard certificate for a domain](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20wildcard%20certificate.md#setting-up-a-wildcard-certificate-for-a-domain)
-- [Checking your certificate with the `kubectl` cert-manager plugin](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20wildcard%20certificate.md#checking-your-certificate-with-the-kubectl-cert-manager-plugin)
-- [Cert-manager and Reflector's Kustomize projects attached to this guide series](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20wildcard%20certificate.md#cert-manager-and-reflectors-kustomize-projects-attached-to-this-guide-series)
-- [Relevant system paths](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20wildcard%20certificate.md#relevant-system-paths)
-- [References](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20wildcard%20certificate.md#references)
+- [Use cert-manager to handle certificates in your cluster](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#use-cert-manager-to-handle-certificates-in-your-cluster)
+- [Warning about cert-manager performance](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#warning-about-cert-manager-performance)
+- [Deploying cert-manager](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#deploying-cert-manager)
+- [Setting up a self-signed CA for your cluster](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#setting-up-a-self-signed-ca-for-your-cluster)
+- [Checking your certificates with the cert-manager command line tool](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#checking-your-certificates-with-the-cert-manager-command-line-tool)
+- [Cert-manager's Kustomize project attached to this guide](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#cert-managers-kustomize-project-attached-to-this-guide)
+- [Relevant system paths](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#relevant-system-paths)
+- [References](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#references)
 
 ### [**G030** - K3s cluster setup 13 ~ Deploying the Kubernetes Dashboard](G030%20-%20K3s%20cluster%20setup%2013%20~%20Deploying%20the%20Kubernetes%20Dashboard.md#g030-k3s-cluster-setup-13-deploying-the-kubernetes-dashboard)
 

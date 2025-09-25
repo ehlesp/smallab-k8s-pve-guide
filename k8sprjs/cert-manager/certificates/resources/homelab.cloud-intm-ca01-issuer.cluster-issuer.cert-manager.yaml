@@ -1,0 +1,8 @@
+# Cluster-wide issuer using intermediate CA 01's secret
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: homelab.cloud-intm-ca01-issuer
+spec:
+  ca:
+    secretName: homelab.cloud-intm-ca01-crt-secret
