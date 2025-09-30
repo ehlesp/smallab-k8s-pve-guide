@@ -1,0 +1,11 @@
+# Headlamp service patch
+kind: Service
+apiVersion: v1
+
+metadata:
+  name: headlamp
+  namespace: kube-system
+
+spec:
+  type: LoadBalancer
+  loadBalancerIP: 10.7.0.1
