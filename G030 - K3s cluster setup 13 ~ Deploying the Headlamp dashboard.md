@@ -9,7 +9,6 @@
   - [Folders in `kubectl` client system](#folders-in-kubectl-client-system)
   - [Files in `kubectl` client system](#files-in-kubectl-client-system)
 - [References](#references)
-  - [Kubernetes Dashboard](#kubernetes-dashboard)
   - [Headlamp](#headlamp)
   - [Traefik Reference](#traefik-reference)
 - [Navigation](#navigation)
@@ -261,10 +260,6 @@ You can find the Kustomize project for this Headlamp deployment in this attached
 - `$HOME/k8sprjs/headlamp/resources/headlamp.homelab.cloud.ingressroute.traefik.yaml`
 
 ## References
-
-### [Kubernetes Dashboard](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/)
-
-- [Deploying the Dashboard UI](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/#deploying-the-dashboard-ui)
 
 ### [Headlamp](https://headlamp.dev/)
 
