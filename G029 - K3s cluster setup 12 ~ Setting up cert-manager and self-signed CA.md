@@ -359,7 +359,11 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
         secretName: homelab.cloud-intm-ca01-crt-secret
     ~~~
 
-    This is the intermediate CA issuer you will use to issue and sign the certificates for the apps and services you will deploy in later chapters. In this case, this issuer uses the corresponding secret of the intermediate CA 01's certificate declared in the previous step.
+    This is the intermediate CA cluster issuer you will use to issue and sign the certificates for the apps and services you will deploy in later chapters. In this case, this issuer uses the corresponding secret of the intermediate CA 01's certificate declared in the previous step.
+
+    > [!NOTE]
+    > **Cluster issuers can issue certificates in any namespace**\
+    > The apps and services you will deploy in later chapters of this guide are going to run in different namespaces. This makes necessary the use of a cluster issuer to issue the certificates and their corresponding secrets, since **secrets in Kubernetes are not shared among namespaces**.
 
 8. Next, create the `kustomization.yaml` file in the `certificates` folder:
 
@@ -602,4 +606,4 @@ You can find the Kustomize project for the cert-manager deployment in this folde
 
 ## Navigation
 
-[<< Previous (**G028. K3s cluster setup 11**)](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G030. K3s cluster setup 13**) >>](G030%20-%20K3s%20cluster%20setup%2013%20~%20Deploying%20the%20Kubernetes%20Dashboard.md)
+[<< Previous (**G028. K3s cluster setup 11**)](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G030. K3s cluster setup 13**) >>](G030%20-%20K3s%20cluster%20setup%2013%20~%20Deploying%20the%20Headlamp%20dashboard.md)

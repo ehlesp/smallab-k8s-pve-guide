@@ -1,0 +1,16 @@
+# Traefik IngressRoute for Headlamp
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+
+metadata:
+  name: headlamp
+  namespace: kube-system
+spec:
+  entryPoints:
+    - web # Headlamp only supports the HTTP scheme
+  routes:
+  - match: (Host(`10.7.0.1`) || Host(`headlamp.homelab.cloud`) || Host(`hdl.homelab.cloud`))
+    kind: Rule
+    services:
+    - name: headlamp
+      kind: Service

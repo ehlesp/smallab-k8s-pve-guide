@@ -313,13 +313,14 @@
 - [Relevant system paths](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#relevant-system-paths)
 - [References](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#references)
 
-### [**G030** - K3s cluster setup 13 ~ Deploying the Kubernetes Dashboard](G030%20-%20K3s%20cluster%20setup%2013%20~%20Deploying%20the%20Kubernetes%20Dashboard.md#g030-k3s-cluster-setup-13-deploying-the-kubernetes-dashboard)
+### [**G030** - K3s cluster setup 13 ~ Deploying the Headlamp dashboard](G030%20-%20K3s%20cluster%20setup%2013%20~%20Deploying%20the%20Headlamp%20dashboard.md)
 
-- [Deploying Kubernetes Dashboard](G030%20-%20K3s%20cluster%20setup%2013%20~%20Deploying%20the%20Kubernetes%20Dashboard.md#deploying-kubernetes-dashboard)
-- [Testing Kubernetes Dashboard](G030%20-%20K3s%20cluster%20setup%2013%20~%20Deploying%20the%20Kubernetes%20Dashboard.md#testing-kubernetes-dashboard)
-- [Kubernetes Dashboard's Kustomize project attached to this guide series](G030%20-%20K3s%20cluster%20setup%2013%20~%20Deploying%20the%20Kubernetes%20Dashboard.md#kubernetes-dashboards-kustomize-project-attached-to-this-guide-series)
-- [Relevant system paths](G030%20-%20K3s%20cluster%20setup%2013%20~%20Deploying%20the%20Kubernetes%20Dashboard.md#relevant-system-paths)
-- [References](G030%20-%20K3s%20cluster%20setup%2013%20~%20Deploying%20the%20Kubernetes%20Dashboard.md#references)
+- [Headlamp is an alternative to the Kubernetes Dashboard](G030%20-%20K3s%20cluster%20setup%2013%20~%20Deploying%20the%20Headlamp%20dashboard.md#headlamp-is-an-alternative-to-the-kubernetes-dashboard)
+- [Deploying Headlamp](G030%20-%20K3s%20cluster%20setup%2013%20~%20Deploying%20the%20Headlamp%20dashboard.md#deploying-headlamp)
+- [Testing Headlamp](G030%20-%20K3s%20cluster%20setup%2013%20~%20Deploying%20the%20Headlamp%20dashboard.md#testing-headlamp)
+- [Headlamp's Kustomize project attached to this guide](G030%20-%20K3s%20cluster%20setup%2013%20~%20Deploying%20the%20Headlamp%20dashboard.md#headlamps-kustomize-project-attached-to-this-guide)
+- [Relevant system paths](G030%20-%20K3s%20cluster%20setup%2013%20~%20Deploying%20the%20Headlamp%20dashboard.md#relevant-system-paths)
+- [References](G030%20-%20K3s%20cluster%20setup%2013%20~%20Deploying%20the%20Headlamp%20dashboard.md#references)
 
 ### [**G031** - K3s cluster setup 14 ~ Enabling the Traefik dashboard](G031%20-%20K3s%20cluster%20setup%2014%20~%20Enabling%20the%20Traefik%20dashboard.md#g031-k3s-cluster-setup-14-enabling-the-traefik-dashboard)
 

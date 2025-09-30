@@ -1,0 +1,12 @@
+# Headlamp setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- resources/headlamp-admin.serviceaccount.yaml
+- resources/cluster-admin-users.clusterrolebinding.yaml
+- resources/headlamp.homelab.cloud.ingressroute.traefik.yaml
+- https://raw.githubusercontent.com/kubernetes-sigs/headlamp/main/kubernetes-headlamp.yaml
+
+patches:
+- path: patches/headlamp.service.patch.yaml
