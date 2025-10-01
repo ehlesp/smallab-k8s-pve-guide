@@ -284,7 +284,7 @@ From all the services you have running at this point in your K3s cluster, the `t
 
 You can find the Kustomize project for this MetalLB deployment in the following attached folder:
 
-- `k8sprjs/metallb`
+- [`k8sprjs/metallb`](k8sprjs/metallb/)
 
 ## Relevant system paths
 

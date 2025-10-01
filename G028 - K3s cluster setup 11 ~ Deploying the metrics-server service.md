@@ -365,7 +365,7 @@ To see all the options available for both `top` commands, use the `--help` optio
 
 You can find the Kustomize project for this metrics-server deployment in the following attached folder:
 
-- `k8sprjs/metrics-server`
+- [`k8sprjs/metrics-server`](k8sprjs/metrics-server/)
 
 ## Relevant system paths
 
