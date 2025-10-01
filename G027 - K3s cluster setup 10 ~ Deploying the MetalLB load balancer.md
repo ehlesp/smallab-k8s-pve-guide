@@ -41,7 +41,7 @@ The layer 2 option is the one that fits your K3s cluster, and is the most simple
 
 ### Reserve an IP range for services
 
-You need to reserve a range, continuous if possible, of free IPs in your network. MetalLB, in layer 2 mode, will then assign IPs to each app you expose directly through it. This is to avoid collisions between services that happen to use the same ports, like the widely used 80 or 443. There is also the possibility of assigning just one IP to the load balancer, but it would imply micromanaging the ports of each service you deploy in your K3s cluster.
+You need to reserve a range, continuous if possible, of free IP addresses in your network. MetalLB, in layer 2 mode, will then assign IPs to each app you expose directly through it. This is to avoid collisions between services that happen to use the same ports, like the widely used 80 or 443. There is also the possibility of assigning just one IP to the load balancer, but it would imply micromanaging the ports of each service you deploy in your K3s cluster.
 
 On the other hand, remember that you have configured your cluster to use two networks, one for internal communications and other to face the external network. You only have to reserve an IP range in your external network (your LAN), since the internal communications will remain within your cluster. You have to ensure having enough IPs available for your services, something that could be problematic in your external network, since it is also where your other devices are connecting to.
 
@@ -102,15 +102,15 @@ Needless to say that you could use any other base path instead of `$HOME` within
 
 ### Setting up the configuration files
 
-Now you need to create the files that describe the deployment of MetalLB:
+Now you need to create the files that describe the MetalLB deployment:
 
-1. In the `resources` folder, create the files `l2-ip.l2advertisement.yaml` and `default-pool.ipaddresspool.yaml`:
+1. In the `resources` folder, create the files `l2-ip.l2advertisement.metallb.yaml` and `default-pool.ipaddresspool.metallb.yaml`:
 
     ~~~sh
-    $ touch $HOME/k8sprjs/metallb/resources/{l2-ip.l2advertisement.yaml,default-pool.ipaddresspool.yaml}
+    $ touch $HOME/k8sprjs/metallb/resources/{l2-ip.l2advertisement.metallb.yaml,default-pool.ipaddresspool.metallb.yaml}
     ~~~
 
-2. Edit the new `l2-ip.l2advertisement.yaml` to enter the following YAML lines in it:
+2. In `l2-ip.l2advertisement.metallb.yaml` you specify the operation mode and pool to use:
 
     ~~~yaml
     apiVersion: metallb.io/v1beta1
@@ -129,7 +129,7 @@ Now you need to create the files that describe the deployment of MetalLB:
 
     - The `spec.ipAddressPool` parameter points to the pools of usable IPs. In this case it is just one named `default-pool`.
 
-3. Edit the `default-pool.ipaddresspool.yaml` file and fill it with this YAML:
+3. Declare the IP address pool in `default-pool.ipaddresspool.metallb.yaml`:
 
     ~~~yaml
     apiVersion: metallb.io/v1beta1
@@ -142,11 +142,11 @@ Now you need to create the files that describe the deployment of MetalLB:
       - 10.7.0.0-10.7.0.20
     ~~~
 
-    Here you have configured a simple pool of IPs:
+    Here you have configured a simple pool of IP addresses:
 
-    - The kind `IPAddressPool` indicates that this is just a MetalLB pool of IP addresses.
+    - The kind `IPAddressPool` indicates that this is a MetalLB pool of IP addresses.
 
-    - The name is the same `default-pool` one indicated in the `l2-ip.l2advertisement.yaml`.
+    - The name is the same `default-pool` one indicated in the `l2-ip.l2advertisement.metallb.yaml`.
 
     - The `spec.addresses` parameter is a list of IP ranges that can be expressed in different ways. This is useful when you do not have a big continuous range of IPs available in your network. For instance, you could have configured the `default-pool` IP range as:
 
@@ -158,13 +158,13 @@ Now you need to create the files that describe the deployment of MetalLB:
       - 10.7.0.11-10.7.0.20
     ~~~
 
-4. Create the `kustomization.yaml` file that describes the deployment of MetalLB in `kustomize` format.
+4. Create the `kustomization.yaml` file where to describe the deployment of MetalLB in `kustomize` format:
 
     ~~~sh
     $ touch $HOME/k8sprjs/metallb/kustomization.yaml
     ~~~
 
-5. Edit your new `kustomization.yaml` file, filling it with the configuration lines below.
+5. Specify all the MetalLB resources declared in the previous steps in your new `kustomization.yaml` file:
 
     ~~~yaml
     # MetalLB setup
@@ -175,15 +175,15 @@ Now you need to create the files that describe the deployment of MetalLB:
 
     resources:
     - github.com/metallb/metallb/config/native?ref=v0.15.2
-    - resources/l2-ip.l2advertisement.yaml
-    - resources/default-pool.ipaddresspool.yaml
+    - resources/l2-ip.l2advertisement.metallb.yaml
+    - resources/default-pool.ipaddresspool.metallb.yaml
     ~~~
 
-    There are a number of things to notice in the yaml above:
+    Things to notice in this kustomization YAML:
 
     - The file is based on the one offered [in the official MetalLB documentation](https://metallb.org/installation/#installation-with-kustomize).
 
-    - The `namespace` for all the MetalLB resources deployed in your K3s cluster is going to be `metallb-system`. The resources in this project that already have a `namespace` specified will get it changed to this one, and those who doesn't have one will be set to this one too.
+    - The `namespace` for all the MetalLB resources deployed in your K3s cluster is going to be `metallb-system`. The resources in this project that already have a `namespace` specified will get it changed to this one, and those who do not have one will be set to `metallb-system` too.
 
     - The `resources` section lists the files describing the resources used to deploy MetalLB:
 
@@ -191,15 +191,15 @@ Now you need to create the files that describe the deployment of MetalLB:
 
       - The other two items point to the local YAML files you have configured previously to define the alloted IP range for MetalLB.
 
-6. You can check how the final deployment would look as a manifest yaml with `kubectl`.
+6. You can check how the final deployment would look as a YAML manifest with `kubectl`:
 
     ~~~sh
     $ kubectl kustomize $HOME/k8sprjs/metallb/ | less
     ~~~
 
-    With the `kustomize` option, `kubectl` builds the whole deployment YAML manifest resulting from processing the `kustomization.yaml` file. Since the output can be quite long, it's better to append a `| less` to the command for getting a paginated view of the YAML.
+    With the `kustomize` option, `kubectl` builds the whole deployment YAML manifest resulting from processing the `kustomization.yaml` file. Since the output can be quite long, it is better to append a `| less` to the command for getting a paginated view of the YAML.
 
-    The command takes a moment to finish because it has to download the MetalLB manifests first, then process and combine it with the other resource files found in your client system. When you finally see the result, you'll get a quite long YAML output that embeds all the specified resources. Furthermore, you may notice in the resulting YAML that MetalLB is prepared to look for `L2Advertisement` resources automatically, which means that you do not have to explicitly tell MetalLB which one to use:
+    The command takes a moment to finish because it has to download the MetalLB manifests first, then process and combine it with the other resource files found in your client system. When you finally see the result, you'll get a quite long YAML output that embeds all of the specified resources. Furthermore, you may notice in the resulting YAML that MetalLB is prepared to look for `L2Advertisement` resources automatically, which means that you do not have to explicitly tell MetalLB which one to use.
 
 ### Deploying MetalLB
 
@@ -243,7 +243,7 @@ validatingwebhookconfiguration.admissionregistration.k8s.io/metallb-webhook-conf
 
 The lines inform about the resources created by your deployment. They could also show sporadic warnings about deprecated apis still used by the software you're installing in your cluster. If you don't get a lot of warnings or, worse, errors, the deployment can be considered successful like in the output above.
 
-Give MetalLB a couple of minutes or so to get ready, then check with `kubectl` that it's been deployed in your cluster.
+Give MetalLB around a couple of minutes to get ready, then check with `kubectl` that it's been deployed in your cluster.
 
 ~~~sh
 $ kubectl get -n metallb-system all -o wide
@@ -297,8 +297,8 @@ You can find the Kustomize project for this MetalLB deployment in the following 
 ### Files on remote kubectl client
 
 - `$HOME/k8sprjs/metallb/kustomization.yaml`
-- `$HOME/k8sprjs/metallb/resources/default-pool.ipaddresspool.yaml`
-- `$HOME/k8sprjs/metallb/resources/l2-ip.l2advertisement.yaml`
+- `$HOME/k8sprjs/metallb/resources/default-pool.ipaddresspool.metallb.yaml`
+- `$HOME/k8sprjs/metallb/resources/l2-ip.l2advertisement.metallb.yaml`
 
 ## References
 
