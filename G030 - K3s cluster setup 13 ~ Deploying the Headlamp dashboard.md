@@ -10,6 +10,7 @@
   - [Files in `kubectl` client system](#files-in-kubectl-client-system)
 - [References](#references)
   - [Headlamp](#headlamp)
+  - [Kubernetes Documentation](#kubernetes-documentation)
   - [Traefik Reference](#traefik-reference)
 - [Navigation](#navigation)
 
@@ -30,6 +31,10 @@ For deploying [Headlamp v0.35.0](https://github.com/kubernetes-sigs/headlamp/rel
 - A patch to set the Headlamp service with a static IP picked from the IP range provided by MetalLB.
 
 - A Traefik IngressRoute resource that will handle the ingress to Headlamp through HTTP.
+
+  > [!NOTE]
+  > **Traefik is the default ingress controller of K3s**\
+  > The [next chapter **G031**](G031%20-%20K3s%20cluster%20setup%2014%20~%20Enabling%20the%20Traefik%20dashboard.md) explains more about this component you already have running in your K3s cluster.
 
   > [!WARNING]
   > **Headlamp does not support HTTPS requests!**\
@@ -68,7 +73,7 @@ All the components will be part of the same Kustomize project for deploying Head
 
     The only service with a EXTERNAL-IP assigned at this point is Traefik. The service has the very first IP available in MetalLB's `default-pool` IP range (`10.7.0.0` to `10.7.0.20`), autoprovided by MetalLB. This means that Headlamp can use the next IP, `10.7.0.1`.
 
-4. Create a patch to specify the static IP and port for the Headlamp service in the `patches/Headlamp.service.patch.yaml` file:
+4. Create a patch to specify the static IP and port for the Headlamp service in the `patches/headlamp.service.patch.yaml` file:
 
     ~~~yaml
     # Headlamp service patch
@@ -151,6 +156,7 @@ All the components will be part of the same Kustomize project for deploying Head
         services:
         - name: headlamp
           kind: Service
+          port: 80
     ~~~
 
     Details to highlight in this Traefik IngressRoute declaration are:
@@ -217,6 +223,11 @@ Be aware of the following:
 
 - The command outputs your `headlamp-admin`'s secret token string directly in your shell. Remember to copy and save it somewhere safe such as a password manager.
 
+- The token has a specific default lifetime "_determined by the server automatically_" [according to the Kubernetes official documentation](https://kubernetes.io/docs/reference/kubectl/generated/kubectl_create/kubectl_create_token/). It will become invalid either over time, when you reboot the K3s cluster or reinstall Headlamp. You can also set a particular non-default lifetime for the token with the `--duration` option.
+
+  > [!IMPORTANT]
+  > Whenever your old secret token for your `headlamp-admin` service account becomes invalid, execute the same `kubectl` command to produce a new secret token when necessary.
+
 ## Testing Headlamp
 
 Now that you have Headlamp deployed, you can test it:
@@ -264,6 +275,11 @@ You can find the Kustomize project for this Headlamp deployment in this attached
 ### [Headlamp](https://headlamp.dev/)
 
 - [Installation](https://headlamp.dev/docs/latest/installation/)
+
+### [Kubernetes Documentation](https://kubernetes.io/docs/)
+
+- [Reference. Command line tool (kubectl)](https://kubernetes.io/docs/reference/kubectl/)
+  - [kubectl reference. kubectl create. kubectl create token](https://kubernetes.io/docs/reference/kubectl/generated/kubectl_create/kubectl_create_token/)
 
 ### [Traefik Reference](https://doc.traefik.io/traefik/reference/)
 
