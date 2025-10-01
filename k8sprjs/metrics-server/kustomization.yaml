@@ -6,4 +6,4 @@ resources:
 - https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.8.0/components.yaml
 
 patches:
-- path: patches/metrics-server.deployment.containers.args.patch.yaml
+- path: patches/metrics-server.deployment.patch.yaml
