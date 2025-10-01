@@ -153,7 +153,7 @@ All the components will be part of the same Kustomize project for deploying Head
           kind: Service
     ~~~
 
-    Details to highlight in this declaration are:
+    Details to highlight in this Traefik IngressRoute declaration are:
 
     - The `spec.entryPoints` is set to `web` only, which corresponds to HTTP.
 
@@ -165,7 +165,7 @@ All the components will be part of the same Kustomize project for deploying Head
 
     - The `spec.routes.services` only has an entry for the Headlamp service, linking it to this IngressRoute.
 
-8. Create the `kustomization.yaml` file for the Kustomize project.
+8. Create the `kustomization.yaml` file for the Kustomize project:
 
     ~~~sh
     $ touch $HOME/k8sprjs/headlamp/kustomization.yaml
