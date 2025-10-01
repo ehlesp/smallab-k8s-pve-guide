@@ -58,13 +58,13 @@ At the time of writing this, there is no official Kustomize way for deploying ce
 
     By default, cert-manager looks for the certificates secrets in its own `cert-manager` namespace. The idea with this `certificates` namespace is to keep separated the certificates and their secrets from the cert-manager components.
 
-4. Create a `cert-manager.deployment.containers.args.patch.yaml` file under `deployment/patches`:
+4. Create a `cert-manager.deployment.patch.yaml` file under `deployment/patches`:
 
     ~~~sh
-    $ touch $HOME/k8sprjs/cert-manager/deployment/patches/cert-manager.deployment.containers.args.patch.yaml
+    $ touch $HOME/k8sprjs/cert-manager/deployment/patches/cert-manager.deployment.patch.yaml
     ~~~
 
-5. Copy this YAML into `cert-manager.deployment.containers.args.patch.yaml`:
+5. Declare this deployment patch into `cert-manager.deployment.patch.yaml`:
 
     ~~~yaml
     apiVersion: apps/v1
@@ -97,7 +97,7 @@ At the time of writing this, there is no official Kustomize way for deploying ce
     $ touch $HOME/k8sprjs/cert-manager/deployment/kustomization.yaml
     ~~~
 
-7. Edit the `kustomization.yaml` file so it has the yaml content below:
+7. Declare the cert-manager complete setup in the `kustomization.yaml` file:
 
     ~~~yaml
     # cert-manager setup
@@ -109,10 +109,8 @@ At the time of writing this, there is no official Kustomize way for deploying ce
     - https://github.com/cert-manager/cert-manager/releases/download/v1.18.2/cert-manager.yaml
 
     patches:
-    - path: patches/cert-manager.deployment.containers.args.patch.yaml
+    - path: patches/cert-manager.deployment.patch.yaml
     ~~~
-
-    Notice how the namespace resource gets declared first, then the YAML file for deploying all the cert-manager components. This is to ensure that the certificates namespace already exists when the cert-manager controller is deployed.
 
     > [!NOTE]
     > **Find the URL for the newest cert-manager version [in its official installation procedure with `kubectl`](https://cert-manager.io/docs/installation/kubectl/)**\
@@ -570,7 +568,7 @@ You can find the Kustomize project for the cert-manager deployment in this folde
 - `$HOME/bin/cmctl`
 - `$HOME/bin/kubectl-cert_manager`
 - `$HOME/k8sprjs/cert-manager/deployment/kustomization.yaml`
-- `$HOME/k8sprjs/cert-manager/deployment/patches/cert-manager.deployment.containers.args.patch.yaml`
+- `$HOME/k8sprjs/cert-manager/deployment/patches/cert-manager.deployment.patch.yaml`
 - `$HOME/k8sprjs/cert-manager/deployment/resources/certificates.namespace.yaml`
 - `$HOME/k8sprjs/cert-manager/certificates/kustomization.yaml`
 - `$HOME/k8sprjs/cert-manager/certificates/resources/homelab.cloud-intm-ca01-crt.certificate.cert-manager.yaml`

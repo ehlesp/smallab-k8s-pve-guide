@@ -7,4 +7,4 @@ resources:
 - https://github.com/cert-manager/cert-manager/releases/download/v1.18.2/cert-manager.yaml
 
 patches:
-- path: patches/cert-manager.deployment.containers.args.patch.yaml
+- path: patches/cert-manager.deployment.patch.yaml

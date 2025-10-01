@@ -119,23 +119,17 @@ As you did with MetalLB in the [previous **G027** chapter](G027%20-%20K3s%20clus
     $ mkdir -p $HOME/k8sprjs/metrics-server/patches
     ~~~
 
-    In the command above you can see that, inside the metrics-server folder, I have created a `patches` one. The idea is to patch the default configuration of the service by adding a couple of parameters.
+    In the command above you can see that, inside the `metrics-server` folder, I have created a `patches` one. The idea is to patch the default configuration of the service by adding a couple of parameters.
 
-2. Create a new `metrics-server.deployment.containers.args.patch.yaml` file under the `patches` folder:
-
-    ~~~sh
-    $ touch $HOME/k8sprjs/metrics-server/patches/metrics-server.deployment.containers.args.patch.yaml
-    ~~~
-
-    Notice the structure of this yaml file's name, it follows this pattern:
+2. Create a new `metrics-server.deployment.patch.yaml` file under the `patches` folder:
 
     ~~~sh
-    <metadata.name>.<kind>.[extra_details].[...].yaml
+    $ touch $HOME/k8sprjs/metrics-server/patches/metrics-server.deployment.patch.yaml
     ~~~
 
-    You can use any other pattern that suits you, but try to keep the same one as your naming standard. This way, the yaml files in your Kustomize projects can hint their contents with their names.
+    This file will contain only the patch to modify the metrics-server deployment object.
 
-3. Fill `metrics-server.deployment.containers.args.patch.yaml` with the following yaml:
+3. Declare in `metrics-server.deployment.patch.yaml` the patch for the metrics-server deployment:
 
     ~~~yaml
     apiVersion: apps/v1
@@ -163,7 +157,7 @@ As you did with MetalLB in the [previous **G027** chapter](G027%20-%20K3s%20clus
             - --tls-cipher-suites=TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
     ~~~
 
-    This yaml manifest only contains the necessary information to identify the resource to be patched and the properties to patch up:
+    This patch only contains the necessary information to identify the resource to be patched and the properties to add or change:
 
     - `tolerations`\
       This section has been taken directly [from the `Deployment` object K3s uses](https://github.com/k3s-io/k3s/blob/master/manifests/metrics-server/metrics-server-deployment.yaml) to deploy its embedded metrics-server. These [tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) will make the metrics-server pod to be scheduled or not (`effect: "NoSchedule"`) in nodes that are tainted with those keys.
@@ -206,7 +200,7 @@ As you did with MetalLB in the [previous **G027** chapter](G027%20-%20K3s%20clus
     $ touch $HOME/k8sprjs/metrics-server/kustomization.yaml
     ~~~
 
-5. Put the following content in the `kustomization.yaml` file:
+5. Fill the `kustomization.yaml` file like this:
 
     ~~~yaml
     # Metrics server setup
@@ -217,7 +211,7 @@ As you did with MetalLB in the [previous **G027** chapter](G027%20-%20K3s%20clus
     - https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.8.0/components.yaml
 
     patches:
-    - path: patches/metrics-server.deployment.containers.args.patch.yaml
+    - path: patches/metrics-server.deployment.patch.yaml
     ~~~
 
     Notice that:
@@ -226,7 +220,7 @@ As you did with MetalLB in the [previous **G027** chapter](G027%20-%20K3s%20clus
 
     - The `patches` section is where you specify all the patches you want to apply over the resources you deploy in the Kustomize project. This section supports different ways to declare and apply patches on resources, [check them out in its official Kubernetes documentation](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/patches/). The method used here is probably the cleanest one, since it only needs specifying the path to the patch file.
 
-6. Test the Kustomize project with kubectl:
+6. Test the Kustomize project with `kubectl`:
 
     ~~~sh
     $ kubectl kustomize $HOME/k8sprjs/metrics-server | less
@@ -318,13 +312,13 @@ As you did with MetalLB in the [previous **G027** chapter](G027%20-%20K3s%20clus
     ---
     ~~~
 
-7. Apply this Kustomize project to finally deploy metrics-server in your cluster:
+7. Apply the Kustomize project to finally deploy metrics-server in your cluster:
 
     ~~~sh
     $ kubectl apply -k $HOME/k8sprjs/metrics-server/
     ~~~
 
-8. After a minute or so, check if the metrics-server pod and service is running:
+8. After a minute or so, check if the metrics-server pod and service are running:
 
     ~~~sh
     $ kubectl get pods,svc -n kube-system | grep metrics
@@ -371,7 +365,7 @@ To see all the options available for both `top` commands, use the `--help` optio
 
 You can find the Kustomize project for this metrics-server deployment in the following attached folder:
 
-- `k8sprjs/metrics-server`
+- [`k8sprjs/metrics-server`](k8sprjs/metrics-server/)
 
 ## Relevant system paths
 
@@ -384,7 +378,7 @@ You can find the Kustomize project for this metrics-server deployment in the fol
 ### Files on remote kubectl client
 
 - `$HOME/k8sprjs/metrics-server/kustomization.yaml`
-- `$HOME/k8sprjs/metrics-server/patches/metrics-server.deployment.containers.args.patch.yaml`
+- `$HOME/k8sprjs/metrics-server/patches/metrics-server.deployment.patch.yaml`
 
 ## References
 

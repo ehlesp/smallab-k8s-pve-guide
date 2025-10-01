@@ -6,5 +6,5 @@ namespace: metallb-system
 
 resources:
 - github.com/metallb/metallb/config/native?ref=v0.15.2
-- resources/l2-ip.l2advertisement.yaml
-- resources/default-pool.ipaddresspool.yaml
+- resources/l2-ip.l2advertisement.metallb.yaml
+- resources/default-pool.ipaddresspool.metallb.yaml
