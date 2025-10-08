@@ -325,10 +325,10 @@
 ### [**G031** - K3s cluster setup 14 ~ Enabling the Traefik dashboard](G031%20-%20K3s%20cluster%20setup%2014%20~%20Enabling%20the%20Traefik%20dashboard.md#g031-k3s-cluster-setup-14-enabling-the-traefik-dashboard)
 
 - [Traefik is the embedded ingress controller of K3s](G031%20-%20K3s%20cluster%20setup%2014%20~%20Enabling%20the%20Traefik%20dashboard.md#traefik-is-the-embedded-ingress-controller-of-k3s)
-- [Creating an IngressRoute for Traefik dashboard](G031%20-%20K3s%20cluster%20setup%2014%20~%20Enabling%20the%20Traefik%20dashboard.md#creating-an-ingressroute-for-traefik-dashboard)
-- [Getting into the dashboard](G031%20-%20K3s%20cluster%20setup%2014%20~%20Enabling%20the%20Traefik%20dashboard.md#getting-into-the-dashboard)
-- [Traefik dashboard has bad performance](G031%20-%20K3s%20cluster%20setup%2014%20~%20Enabling%20the%20Traefik%20dashboard.md#traefik-dashboard-has-bad-performance)
-- [Traefik dashboard's Kustomize project attached to this guide series](G031%20-%20K3s%20cluster%20setup%2014%20~%20Enabling%20the%20Traefik%20dashboard.md#traefik-dashboards-kustomize-project-attached-to-this-guide-series)
+- [Enabling access to the Traefik dashboard](G031%20-%20K3s%20cluster%20setup%2014%20~%20Enabling%20the%20Traefik%20dashboard.md#enabling-access-to-the-traefik-dashboard)
+- [Getting into the Traefik dashboard](G031%20-%20K3s%20cluster%20setup%2014%20~%20Enabling%20the%20Traefik%20dashboard.md#getting-into-the-traefik-dashboard)
+- [What to do if Traefik's dashboard has bad performance](G031%20-%20K3s%20cluster%20setup%2014%20~%20Enabling%20the%20Traefik%20dashboard.md#what-to-do-if-traefiks-dashboard-has-bad-performance)
+- [Traefik dashboard's Kustomize project attached to this guide series](G031%20-%20K3s%20cluster%20setup%2014%20~%20Enabling%20the%20Traefik%20dashboard.md#traefik-dashboards-kustomize-project-attached-to-this-guide)
 - [Relevant system paths](G031%20-%20K3s%20cluster%20setup%2014%20~%20Enabling%20the%20Traefik%20dashboard.md#relevant-system-paths)
 - [References](G031%20-%20K3s%20cluster%20setup%2014%20~%20Enabling%20the%20Traefik%20dashboard.md#references)
 

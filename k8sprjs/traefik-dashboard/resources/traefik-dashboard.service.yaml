@@ -1,0 +1,21 @@
+# Traefik dashboard service
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: traefik-dashboard
+  namespace: kube-system
+  labels:
+    app.kubernetes.io/instance: traefik-kube-system
+    app.kubernetes.io/name: traefik-dashboard
+spec:
+  type: LoadBalancer
+  loadBalancerIP: 10.7.0.1
+  ports:
+  - name: websecure
+    port: 443
+    targetPort: websecure
+    protocol: TCP
+  selector:
+    app.kubernetes.io/instance: traefik-kube-system
+    app.kubernetes.io/name: traefik
