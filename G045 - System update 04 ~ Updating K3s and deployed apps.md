@@ -216,8 +216,8 @@ You know what steps to follow when updating any app, but in what order do you ha
 
 2. **Reflector**: deployment procedure found in [concrete section of **G029** guide](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20wildcard%20certificate.md#deploying-reflector).
 
-3. **K8sdashboard**: deployment procedure found in [**G030** guide](G030%20-%20K3s%20cluster%20setup%2013%20~%20Deploying%20the%20Kubernetes%20Dashboard.md).
-    - For this one, you created two standard Kubernetes resources to enable an administrator user. Usually, you won't need to change them but nevertheless be on the lookout for changes in k8sdashboard that may affect how this app uses them.
+3. **Headlamp**: deployment procedure found in [**G031** guide](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md).
+    - For this one, you created two standard Kubernetes resources to enable an administrator user. Usually, you won't need to change them but nevertheless be on the lookout for changes in Headlamp that may affect how this app uses them.
 
 4. **MetalLB**: deployment procedure found in [**G027** guide](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md).
     > **BEWARE!**  

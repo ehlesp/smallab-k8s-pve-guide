@@ -1,4 +1,4 @@
-# G030 - K3s cluster setup 13 ~ Deploying the Headlamp dashboard
+# G031 - K3s cluster setup 14 ~ Deploying the Headlamp dashboard
 
 - [Headlamp is an alternative to the Kubernetes Dashboard](#headlamp-is-an-alternative-to-the-kubernetes-dashboard)
 - [Deploying Headlamp](#deploying-headlamp)
@@ -240,11 +240,11 @@ Now that you have Headlamp deployed, you can test it:
 
 2. After authenticating, you get into Headlamp's `Clusters` page:
 
-    ![Headlamp Clusters main page](images/g030/headlamp-clusters-view.webp "Headlamp Clusters main page")
+    ![Headlamp Clusters main page](images/g031/headlamp-clusters-view.webp "Headlamp Clusters main page")
 
     You can consider this the main page of Headlamp. It provides you with a summarized view of your cluster status, including statistics about resources usage and a listing of events that have happened in your cluster. Try out the other views Headlamp offers to get familiarized with this tool. In particular, you may like to try out the `Map`:
 
-    ![Headlamp Map view of cluster components](images/g030/headlamp-map-view.webp "Headlamp Map view of cluster components")
+    ![Headlamp Map view of cluster components](images/g031/headlamp-map-view.webp "Headlamp Map view of cluster components")
 
     This view provides a zoomable map that can show your cluster components grouped under three different criteria: by namespace, by instance, or by node. This feature will help you to locate more easily any component deployed in your K3s cluster.
 
@@ -288,4 +288,4 @@ You can find the Kustomize project for this Headlamp deployment in this attached
 
 ## Navigation
 
-[<< Previous (**G029. K3s cluster setup 12**)](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G031. K3s cluster setup 14**) >>](G031%20-%20K3s%20cluster%20setup%2014%20~%20Enabling%20the%20Traefik%20dashboard.md)
+[<< Previous (**G030. K3s cluster setup 13**)](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G032. Deploying services 01**) >>](G032%20-%20Deploying%20services%2001%20~%20Considerations.md)

@@ -259,7 +259,7 @@ The Nextcloud server you configured in the guide is directly reachable through a
           port: 443
     ~~~
 
-    This yaml might look familiar to you, since it's very similar to the one you created for accessing the Traefik Dashboard, back in the [**G031** guide](G031%20-%20K3s%20cluster%20setup%2014%20~%20Enabling%20the%20Traefik%20dashboard.md#enabling-the-ingressroute).
+    This yaml might look familiar to you, since it's very similar to the one you created for accessing the Traefik dashboard, back in the [**G030** guide](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md#kustomize-project-for-enabling-access-to-the-traefik-dashboard).
 
     - This `IngressRoute` references the secret of your wildcard certificate, encrypting the traffic with the referenced `server-apache-nextcloud` service.
 

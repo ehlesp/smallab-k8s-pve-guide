@@ -1,4 +1,4 @@
-# G031 - K3s cluster setup 14 ~ Enabling the Traefik dashboard
+# G030 - K3s cluster setup 13 ~ Enabling the Traefik dashboard
 
 - [Traefik is the embedded ingress controller of K3s](#traefik-is-the-embedded-ingress-controller-of-k3s)
 - [Enabling access to the Traefik dashboard](#enabling-access-to-the-traefik-dashboard)
@@ -341,11 +341,11 @@ Let's suppose you do not have the subdomains you've defined as `Host` enabled in
 
 2. Right after accepting "the risk" in the security warning, a generic login window will pop up in your browser:
 
-    ![Traefik dashboard window for basic authentication](images/g031/traefik-dashboard_sign-in.webp "Traefik dashboard window for basic authentication")
+    ![Traefik dashboard window for basic authentication](images/g030/traefik-dashboard_sign-in.webp "Traefik dashboard window for basic authentication")
 
 3. Type your user and password, press on `Sign in` and you will be redirected to the Traefik dashboard's main page available under the `/dashboard/#/` path:
 
-    ![Traefik dashboard main page](images/g031/traefik-dashboard_main-page.webp "Traefik dashboard main page")
+    ![Traefik dashboard main page](images/g030/traefik-dashboard_main-page.webp "Traefik dashboard main page")
 
 Finally, when you have the subdomain or subdomains for your traefik's external IP ready in your network, or in the `hosts` file of your client systems, try accessing the Traefik dashboard using them.
 
@@ -431,4 +431,4 @@ Find the Kustomize project for this Traefik dashboard deployment in the followin
 
 ## Navigation
 
-[<< Previous (**G030. K3s cluster setup 13**)](G030%20-%20K3s%20cluster%20setup%2013%20~%20Deploying%20the%20Headlamp%20dashboard.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G032. Deploying services 01**) >>](G032%20-%20Deploying%20services%2001%20~%20Considerations.md)
+[<< Previous (**G029. K3s cluster setup 12**)](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G031. K3s cluster setup 14**) >>](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md)
