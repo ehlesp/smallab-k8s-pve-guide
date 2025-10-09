@@ -95,15 +95,19 @@ The next steps set up and deploy the Kustomize project enabling access to your T
 4. Using `kubectl`, see the current external IP MetalLB has assigned to the services running in your cluster:
 
     ~~~sh
-    $ kubectl -n kube-system get svc
-    NAME             TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
-    kube-dns         ClusterIP      10.43.0.10      <none>        53/UDP,53/TCP,9153/TCP       22d
-    metrics-server   ClusterIP      10.43.50.63     <none>        443/TCP                      9d
-    traefik          LoadBalancer   10.43.174.63    10.7.0.0      80:30512/TCP,443:32647/TCP   22d
-
+    $ kubectl get svc -A
+    NAMESPACE        NAME                      TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
+    cert-manager     cert-manager              ClusterIP      10.43.113.216   <none>        9402/TCP                     13d
+    cert-manager     cert-manager-cainjector   ClusterIP      10.43.206.23    <none>        9402/TCP                     13d
+    cert-manager     cert-manager-webhook      ClusterIP      10.43.118.166   <none>        443/TCP,9402/TCP             13d
+    default          kubernetes                ClusterIP      10.43.0.1       <none>        443/TCP                      28d
+    kube-system      kube-dns                  ClusterIP      10.43.0.10      <none>        53/UDP,53/TCP,9153/TCP       28d
+    kube-system      metrics-server            ClusterIP      10.43.50.63     <none>        443/TCP                      15d
+    kube-system      traefik                   LoadBalancer   10.43.174.63    10.7.0.0      80:30512/TCP,443:32647/TCP   28d
+    metallb-system   metallb-webhook-service   ClusterIP      10.43.126.18    <none>        443/TCP                      25d
     ~~~
 
-    At this point, the only service with an external IP assigned is Traefik, but you cannot use that address even if you want to access its own dashboard. You have to pick the next IP available [in the address pool you enabled in MetalLB](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md#choosing-the-ip-ranges-for-metallb), which for this guide's setup is `10.7.0.1`.
+    At this point, the only service with an external IP assigned is Traefik, but you cannot use that address even for accessing its own dashboard. You have to pick the next IP available [in the address pool you enabled in MetalLB](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md#choosing-the-ip-ranges-for-metallb), which for this guide's setup is `10.7.0.1`.
 
     > [!NOTE]
     > **The Traefik dashboard is not accessible through the existing `traefik` service**\
