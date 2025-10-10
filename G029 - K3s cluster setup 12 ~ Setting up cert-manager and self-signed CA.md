@@ -1,7 +1,6 @@
 # G029 - K3s cluster setup 12 ~ Setting up cert-manager and self-signed CA
 
 - [Use cert-manager to handle certificates in your cluster](#use-cert-manager-to-handle-certificates-in-your-cluster)
-- [Warning about cert-manager performance](#warning-about-cert-manager-performance)
 - [Deploying cert-manager](#deploying-cert-manager)
   - [Verifying the deployment of cert-manager](#verifying-the-deployment-of-cert-manager)
   - [Installing the cert-manager plugin in your `kubectl` client system](#installing-the-cert-manager-plugin-in-your-kubectl-client-system)
@@ -21,83 +20,25 @@
 
 Although Traefik has some capabilities to handle certificates, it's better to use a service specialized on such task. Enter **cert-manager**, a popular certificate management service in the Kubernetes landscape.
 
-## Warning about cert-manager performance
-
-The first time I tried to deploy cert-manager, the deployment failed because the nodes (in particular the server node) didn't have enough CPU cores to run the process properly. And when I managed to deploy cert-manager successfully, I noticed how my cluster's performance degraded severely. Eventually, I could fix these performance issues just by increasing the cores assigned as vCPUs to each VM in my K3s cluster.
-
-Therefore, if you face the same performance issues, improve the hardware capabilities (CPU in particular) assigned to your cluster VMs to deploy and run cert-manager.
-
 ## Deploying cert-manager
 
-At the time of writing this, there is no official Kustomize way for deploying cert-manager. The default method is by applying a yaml manifest, but you can build your own Kustomize procedure with it (as you've done for the `metrics-server` deployment in the [previous **G028** guide](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md#deployment-of-metrics-server)).
+At the time of writing this, there is no official Kustomize way for deploying cert-manager. The closest method is by applying a YAML manifest, but you can build your own Kustomize procedure with it (as you've done for the `metrics-server` deployment in the [previous **G028** guide](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md#deployment-of-metrics-server)).
 
-1. In your `kubectl` client system, create a folder structure for cert-manager:
+1. In your `kubectl` client system, create a folder structure for the cert-manager deployment project:
 
     ~~~sh
-    $ mkdir -p $HOME/k8sprjs/cert-manager/deployment/{patches,resources}
+    $ mkdir -p $HOME/k8sprjs/cert-manager/deployment/
     ~~~
 
     The deployment project has to be put in its own `deployment` subfolder because, later, you will need to create another project for creating a self-signed root CA ([_Certificate Authority_](https://en.wikipedia.org/wiki/Certificate_authority)).
 
-2. Create a `certificates.namespace.yaml` file under `deployment/resources`:
-
-    ~~~sh
-    $ touch $HOME/k8sprjs/cert-manager/deployment/resources/certificates.namespace.yaml
-    ~~~
-
-3. Declare a `certificates` namespace in the `certificates.namespace.yaml` file:
-
-    ~~~yaml
-    # Namespace for certificates
-    apiVersion: v1
-    kind: Namespace
-
-    metadata:
-      name: certificates
-    ~~~
-
-    By default, cert-manager looks for the certificates secrets in its own `cert-manager` namespace. The idea with this `certificates` namespace is to keep separated the certificates and their secrets from the cert-manager components.
-
-4. Create a `cert-manager.deployment.patch.yaml` file under `deployment/patches`:
-
-    ~~~sh
-    $ touch $HOME/k8sprjs/cert-manager/deployment/patches/cert-manager.deployment.patch.yaml
-    ~~~
-
-5. Declare this deployment patch into `cert-manager.deployment.patch.yaml`:
-
-    ~~~yaml
-    apiVersion: apps/v1
-    kind: Deployment
-    metadata:
-      name: cert-manager
-      namespace: cert-manager
-    spec:
-      template:
-        spec:
-          containers:
-            - name: cert-manager-controller
-              args:
-              - --v=2
-              - --cluster-resource-namespace=certificates
-              - --leader-election-namespace=kube-system
-              - --acme-http01-solver-image=quay.io/jetstack/cert-manager-acmesolver:v1.18.2
-              - --max-concurrent-challenges=60
-    ~~~
-
-    This is a patch to make cert-manager look for the certificates' secrets in the `certificates` namespace. The argument to edit to adjust this namespace is `--cluster-resource-namespace`, while the others are left with the values they have in the original deployment declaration for the cert-manager _controller_ component.
-
-    > [!IMPORTANT]
-    > **Review this patch whenever you update the cert-manager!**\
-    > Every time you update the cert-manager service in your setup, do not forget to see how the patched values look in the official deployment declaration of the newer version you deploy. Otherwise, you could end up having errors due to using deprecated arguments or incorrect values.
-
-6. Create a `kustomization.yaml` file in the `deployment` subfolder:
+2. Create a `kustomization.yaml` file in the `deployment` subfolder:
 
     ~~~sh
     $ touch $HOME/k8sprjs/cert-manager/deployment/kustomization.yaml
     ~~~
 
-7. Declare the cert-manager complete setup in the `kustomization.yaml` file:
+3. Declare the cert-manager setup in the `kustomization.yaml` file:
 
     ~~~yaml
     # cert-manager setup
@@ -105,18 +46,14 @@ At the time of writing this, there is no official Kustomize way for deploying ce
     kind: Kustomization
 
     resources:
-    - resources/certificates.namespace.yaml
-    - https://github.com/cert-manager/cert-manager/releases/download/v1.18.2/cert-manager.yaml
-
-    patches:
-    - path: patches/cert-manager.deployment.patch.yaml
+    - https://github.com/cert-manager/cert-manager/releases/download/v1.19.0/cert-manager.yaml
     ~~~
 
     > [!NOTE]
     > **Find the URL for the newest cert-manager version [in its official installation procedure with `kubectl`](https://cert-manager.io/docs/installation/kubectl/)**\
     > You can also find the YAML file in the assets list of [each release](https://github.com/jetstack/cert-manager/releases).
 
-8. Deploy cert-manager with `kubectl`:
+4. Deploy cert-manager with `kubectl`:
 
     ~~~sh
     $ kubectl apply -k $HOME/k8sprjs/cert-manager/deployment/
@@ -146,7 +83,6 @@ Notice the namespace `cert-manager` specified with the `-n` option in the `kubec
 > $ kubectl get namespaces
 > NAME              STATUS   AGE
 > cert-manager      Active   94s
-> certificates      Active   94s
 > default           Active   14d
 > kube-node-lease   Active   14d
 > kube-public       Active   14d
@@ -160,7 +96,7 @@ To help you to manage the certificates you put in your cluster, [cert-manager of
 
 You can install this cert-manager command line tool in a `kubectl` client system like the one configured in the [**G026** chapter](G026%20-%20K3s%20cluster%20setup%2009%20~%20Setting%20up%20a%20kubectl%20client%20for%20remote%20access.md) as follows:
 
-1. From the [cert-manager command line tool GitHub releases page](https://github.com/cert-manager/cmctl/releases), download the `tar.gz` file that corresponds to the cert-manager version you installed in your cluster and to your `kubectl` client system:
+1. From the [cert-manager command line tool GitHub releases page](https://github.com/cert-manager/cmctl/releases), download the `tar.gz` file of the latest release available (v2.3.0 when writing this):
 
     ~~~sh
     $ wget https://github.com/cert-manager/cmctl/releases/download/v2.3.0/cmctl_linux_amd64.tar.gz -O $HOME/bin/cmctl_linux_amd64.tar.gz
@@ -202,7 +138,7 @@ You can install this cert-manager command line tool in a `kubectl` client system
     ~~~sh
     $ kubectl cert-manager version
     Client Version: util.Version{GitVersion:"v2.3.0", GitCommit:"29b59b934c5a6f533b2d278f4541dca89d1eb288", GitTreeState:"", GoVersion:"go1.24.5", Compiler:"gc", Platform:"linux/amd64"}
-    Server Version: &versionchecker.Version{Detected:"v1.18.2", Sources:map[string]string{"crdLabelVersion":"v1.18.2"}}
+    Server Version: &versionchecker.Version{Detected:"v1.19.0", Sources:map[string]string{"crdLabelVersion":"v1.19.0"}}
     ~~~
 
 6. You can also check if the cert-manager API is accessible:
@@ -227,15 +163,15 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
 2. In the `resources` directory, create five empty YAML files:
 
     ~~~sh
-    $ touch $HOME/k8sprjs/cert-manager/certificates/resources/{homelab.cloud-root-ca-issuer-selfsigned.cluster-issuer.cert-manager.yaml,homelab.cloud-root-ca-crt.certificate.cert-manager.yaml,homelab.cloud-root-ca-issuer.cluster-issuer.cert-manager.yaml,homelab.cloud-intm-ca01-crt.certificate.cert-manager.yaml,homelab.cloud-intm-ca01-issuer.cluster-issuer.cert-manager.yaml}
+    $ touch $HOME/k8sprjs/cert-manager/certificates/resources/{homelab.cloud-root-ca-issuer-selfsigned.cluster-issuer.cert-manager.yaml,homelab.cloud-root-ca-tls.certificate.cert-manager.yaml,homelab.cloud-root-ca-issuer.cluster-issuer.cert-manager.yaml,homelab.cloud-intm-ca01-tls.certificate.cert-manager.yaml,homelab.cloud-intm-ca01-issuer.cluster-issuer.cert-manager.yaml}
     ~~~
 
     Each YAML will describe a particular resource required for setting up the root CA properly.
 
-3. In the `homelab.cloud-root-ca-issuer-selfsigned.cluster-issuer.cert-manager.yaml` file enter this YAML:
+3. In the `resources/homelab.cloud-root-ca-issuer-selfsigned.cluster-issuer.cert-manager.yaml` file, configure the self-signed root CA `ClusterIssuer` for your entire cluster:
 
     ~~~yaml
-    # # Self-signed cluster-wide issuer for the root CA's certificate
+    # Self-signed cluster-wide issuer for the root CA's certificate
     apiVersion: cert-manager.io/v1
     kind: ClusterIssuer
 
@@ -245,7 +181,7 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
       selfSigned: {}
     ~~~
 
-    This is the issuer that will "self-sign" your root CA's certificate:
+    This cluster issuer will be dedicated only to "self-sign" your root CA's certificate:
 
     - The `apiVersion` points to the cert-manager API, not to the Kubernetes one.
 
@@ -255,7 +191,7 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
 
     - Within the `spec` section, you see the empty parameter `selfSigned`. This means that this issuer is of the simplest type you can have, the self-signed one. **It is not trusted by browsers**, but it is enough to generate certificates that you can use within your own local or home network.
 
-4. Copy in `homelab-cloud-root-ca-crt.certificate.cert-manager.yaml` this YAML:
+4. Issue a certificate with the self-signed root CA issuer in `resources/homelab.cloud-root-ca-tls.certificate.cert-manager.yaml`:
 
     ~~~yaml
     # Certificate for root CA
@@ -263,12 +199,12 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
     kind: Certificate
 
     metadata:
-      name: homelab.cloud-root-ca-crt
-      namespace: certificates
+      name: homelab.cloud-root-ca-tls
+      namespace: cert-manager
     spec:
       isCA: true
-      commonName: homelab.cloud-root-ca-crt
-      secretName: homelab.cloud-root-ca-crt-secret
+      commonName: homelab.cloud-root-ca-tls
+      secretName: homelab.cloud-root-ca-tls
       duration: 8760h # 1 year
       renewBefore: 720h # Certificates must be renewed some time before they expire (30 days)
       privateKey:
@@ -287,7 +223,7 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
 
     - Here the API is also a cert-manager one. Be careful of the `apiVersion` you use. Cert-manager has several, [each with its own API documentation](https://cert-manager.io/docs/reference/api-docs/).
 
-    - The `namespace` is the one declared in the deployment of cert-manager, `certificates`. As intended, this certificate for the root CA and its secret will be kept under the `certificates` namespace together with other certificates.
+    - The `namespace` is the same one where cert-manager has been deployed. Therefore, both this certificate and its associated secret will be kept under the `cert-manager` namespace of your cluster, which is also where cert-manager looks for certificates by default.
 
     - This certificate is not associated to any particular domain for security reasons. Root CA certificates are not meant to be exposed in any HTTPS communication, they are only used to sign other certificates.
 
@@ -301,22 +237,23 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
 
     - In the `spec.issuerRef` you specify the issuer of this certificate, in this case the `homelab.cloud-root-ca-issuer-selfsigned` one you created in previous steps. Be careful of always also specifying its `kind`, in particular for `ClusterIssuer` types, so you know clearly what kind of issuer you are using with each certificate.
 
-5. Fill the `homelab.cloud-root-ca-issuer.cluster-issuer.cert-manager.yaml` file like this:
+5. Declare another `ClusterIssuer` in the `resources/homelab.cloud-root-ca-issuer.cluster-issuer.cert-manager.yaml` file:
 
     ~~~yaml
     # Cluster-wide issuer using root CA's secret
     apiVersion: cert-manager.io/v1
     kind: ClusterIssuer
+
     metadata:
       name: homelab.cloud-root-ca-issuer
     spec:
       ca:
-        secretName: homelab.cloud-root-ca-crt-secret
+        secretName: homelab.cloud-root-ca-tls
     ~~~
 
-    This is a different cluster wide issuer that uses the root CA's secret to issue and sign other certificates.
+    This is a different cluster wide issuer that uses the root CA's `homelab.cloud-root-ca-tls` secret to issue and sign other certificates. In particular, you will use this issuer only to issue intermediate CA certificates.
 
-6. Put the following YAML in the `homelab.cloud-intm-ca01-crt.certificate.cert-manager.yaml`:
+6. Declare a certificate for an intermediate CA in the `resources/homelab.cloud-intm-ca01-tls.certificate.cert-manager.yaml`:
 
     ~~~yaml
     # Certificate for intermediate CA 01
@@ -324,12 +261,12 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
     kind: Certificate
 
     metadata:
-      name: homelab.cloud-intm-ca01-crt
-      namespace: certificates
+      name: homelab.cloud-intm-ca01-tls
+      namespace: cert-manager
     spec:
       isCA: true
-      commonName: homelab.cloud-intm-ca01-crt
-      secretName: homelab.cloud-intm-ca01-crt-secret
+      commonName: homelab.cloud-intm-ca01-tls
+      secretName: homelab.cloud-intm-ca01-tls
       duration: 4380h # 6 months
       renewBefore: 360h # Certificates must be renewed some time before they expire (15 days)
       privateKey:
@@ -342,26 +279,27 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
         group: cert-manager.io
     ~~~
 
-    This certificate is like the one for the root CA, but is meant to be an _intermediate_ CA. Since this certificate's secret will be the one used to issue and sign the certificates for the services you will deploy in later chapters, it has a shorter `duration` and `renewBefore` time periods. Also notice that this certificate's name is numbered (`01`), hinting at the possibility of having more than one intermediate CA. And like the root CA's certificate, see how this certificate is not attached to any particular domain.
+    This certificate is like the one for the root CA issuer, but is meant for an _intermediate_ CA issuer. Since this certificate's secret will be the one used to issue and sign the certificates for the apps you will deploy in later chapters, it has a shorter `duration` and `renewBefore` time periods. Also notice that this certificate's name is numbered (`01`), hinting at the possibility of having more than one intermediate CA. And like the root CA's certificate, see how this certificate is not attached to any particular domain.
 
-7. Copy in `homelab.cloud-intm-ca01-issuer.cluster-issuer.cert-manager.yaml` this other YAML:
+7. Declare in `resources/homelab.cloud-intm-ca01-issuer.cluster-issuer.cert-manager.yaml` an intermediate CA cluster issuer:
 
     ~~~yaml
     # Cluster-wide issuer using intermediate CA 01's secret
     apiVersion: cert-manager.io/v1
     kind: ClusterIssuer
+
     metadata:
       name: homelab.cloud-intm-ca01-issuer
     spec:
       ca:
-        secretName: homelab.cloud-intm-ca01-crt-secret
+        secretName: homelab.cloud-intm-ca01-tls
     ~~~
 
-    This is the intermediate CA cluster issuer you will use to issue and sign the certificates for the apps and services you will deploy in later chapters. In this case, this issuer uses the corresponding secret of the intermediate CA 01's certificate declared in the previous step.
+    This is the intermediate CA cluster issuer you will use to issue and sign the "leaf" certificates for the apps and services you will deploy in later chapters. In this case, this issuer uses the corresponding secret of the intermediate CA 01's certificate declared in the previous step.
 
     > [!NOTE]
     > **Cluster issuers can issue certificates in any namespace**\
-    > The apps and services you will deploy in later chapters of this guide are going to run in different namespaces. This makes necessary the use of a cluster issuer to issue the certificates and their corresponding secrets, since **secrets in Kubernetes are not shared among namespaces**.
+    > The apps and services you will deploy in later chapters of this guide are going to run in other namespaces than `cert-manager`. This makes necessary the use of a cluster issuer to issue the certificates and their corresponding secrets, since **secrets in Kubernetes are not shared among namespaces**.
 
 8. Next, create the `kustomization.yaml` file in the `certificates` folder:
 
@@ -378,13 +316,13 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
 
     resources:
     - resources/homelab.cloud-root-ca-issuer-selfsigned.cluster-issuer.cert-manager.yaml
-    - resources/homelab.cloud-root-ca-crt.certificate.cert-manager.yaml
+    - resources/homelab.cloud-root-ca-tls.certificate.cert-manager.yaml
     - resources/homelab.cloud-root-ca-issuer.cluster-issuer.cert-manager.yaml
-    - resources/homelab.cloud-intm-ca01-crt.certificate.cert-manager.yaml
+    - resources/homelab.cloud-intm-ca01-tls.certificate.cert-manager.yaml
     - resources/homelab.cloud-intm-ca01-issuer.cluster-issuer.cert-manager.yaml
     ~~~
 
-    See how the resources are ordered to ensure that first the root CA is created, then the intermediate CA 01.
+    The resources are ordered to ensure that the issuer created first is the root CA, then the intermediate CA 01.
 
 10. Apply the Kustomize project into your cluster:
 
@@ -397,19 +335,20 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
     ~~~sh
     $ kubectl -n kube-system get clusterissuer
     NAME                                      READY   AGE
-    homelab.cloud-intm-ca01-issuer            True    36s
-    homelab.cloud-root-ca-issuer              True    36s
-    homelab.cloud-root-ca-issuer-selfsigned   True    36s
+    homelab.cloud-intm-ca01-issuer            True    24s
+    homelab.cloud-root-ca-issuer              True    24s
+    homelab.cloud-root-ca-issuer-selfsigned   True    24s
 
-    $ kubectl -n certificates get certificate
-    NAME                          READY   SECRET                               AGE
-    homelab.cloud-intm-ca01-crt   True    homelab.cloud-intm-ca01-crt-secret   67s
-    homelab.cloud-root-ca-crt     True    homelab.cloud-root-ca-crt-secret     67s
+    $ kubectl -n cert-manager get certificates
+    NAME                          READY   SECRET                        AGE
+    homelab.cloud-intm-ca01-tls   True    homelab.cloud-intm-ca01-tls   60s
+    homelab.cloud-root-ca-tls     True    homelab.cloud-root-ca-tls     59s
 
-    $ kubectl -n certificates get secrets
-    NAME                                 TYPE                DATA   AGE
-    homelab.cloud-intm-ca01-crt-secret   kubernetes.io/tls   3      100s
-    homelab.cloud-root-ca-crt-secret     kubernetes.io/tls   3      101s
+    $ kubectl -n cert-manager get secrets
+    NAME                          TYPE                DATA   AGE
+    cert-manager-webhook-ca       Opaque              3      45m
+    homelab.cloud-intm-ca01-tls   kubernetes.io/tls   3      73s
+    homelab.cloud-root-ca-tls     kubernetes.io/tls   3      73s
     ~~~
 
 12. As a final verification, use `kubectl` to get a detailed description of your new issuers' current status:
@@ -423,16 +362,16 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
     API Version:  cert-manager.io/v1
     Kind:         ClusterIssuer
     Metadata:
-      Creation Timestamp:  2025-09-25T10:12:17Z
+      Creation Timestamp:  2025-10-10T10:33:47Z
       Generation:          1
-      Resource Version:    58766
-      UID:                 56bc5d19-b6e5-4f98-8a16-677923e09d1d
+      Resource Version:    191304
+      UID:                 649e52c3-2be0-4f35-8adf-5b20d45e70ee
     Spec:
       Ca:
-        Secret Name:  homelab.cloud-intm-ca01-crt-secret
+        Secret Name:  homelab.cloud-intm-ca01-tls
     Status:
       Conditions:
-        Last Transition Time:  2025-09-25T10:12:18Z
+        Last Transition Time:  2025-10-10T10:33:47Z
         Message:               Signing CA verified
         Observed Generation:   1
         Reason:                KeyPairVerified
@@ -441,9 +380,9 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
     Events:
       Type     Reason           Age                    From                         Message
       ----     ------           ----                   ----                         -------
-      Warning  ErrGetKeyPair    5m23s (x2 over 5m23s)  cert-manager-clusterissuers  Error getting keypair for CA issuer: secrets "homelab.cloud-intm-ca01-crt-secret" not found
-      Warning  ErrInitIssuer    5m23s (x2 over 5m23s)  cert-manager-clusterissuers  Error initializing issuer: secrets "homelab.cloud-intm-ca01-crt-secret" not found
-      Normal   KeyPairVerified  5m18s (x3 over 5m22s)  cert-manager-clusterissuers  Signing CA verified
+      Warning  ErrGetKeyPair    2m52s (x2 over 2m52s)  cert-manager-clusterissuers  Error getting keypair for CA issuer: secrets "homelab.cloud-intm-ca01-tls" not found
+      Warning  ErrInitIssuer    2m52s (x2 over 2m52s)  cert-manager-clusterissuers  Error initializing issuer: secrets "homelab.cloud-intm-ca01-tls" not found
+      Normal   KeyPairVerified  2m47s (x3 over 2m52s)  cert-manager-clusterissuers  Signing CA verified
 
 
     Name:         homelab.cloud-root-ca-issuer
@@ -453,16 +392,16 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
     API Version:  cert-manager.io/v1
     Kind:         ClusterIssuer
     Metadata:
-      Creation Timestamp:  2025-09-25T10:12:17Z
+      Creation Timestamp:  2025-10-10T10:33:47Z
       Generation:          1
-      Resource Version:    58755
-      UID:                 8c23cbc5-abf0-44f8-abf4-6240e6ce9149
+      Resource Version:    191295
+      UID:                 bb097533-12c0-43d5-b07c-4e59b9b68113
     Spec:
       Ca:
-        Secret Name:  homelab.cloud-root-ca-crt-secret
+        Secret Name:  homelab.cloud-root-ca-tls
     Status:
       Conditions:
-        Last Transition Time:  2025-09-25T10:12:17Z
+        Last Transition Time:  2025-10-10T10:33:47Z
         Message:               Signing CA verified
         Observed Generation:   1
         Reason:                KeyPairVerified
@@ -471,9 +410,9 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
     Events:
       Type     Reason           Age                    From                         Message
       ----     ------           ----                   ----                         -------
-      Warning  ErrGetKeyPair    5m23s (x2 over 5m23s)  cert-manager-clusterissuers  Error getting keypair for CA issuer: secrets "homelab.cloud-root-ca-crt-secret" not found
-      Warning  ErrInitIssuer    5m23s (x2 over 5m23s)  cert-manager-clusterissuers  Error initializing issuer: secrets "homelab.cloud-root-ca-crt-secret" not found
-      Normal   KeyPairVerified  5m18s (x3 over 5m23s)  cert-manager-clusterissuers  Signing CA verified
+      Warning  ErrGetKeyPair    2m52s (x2 over 2m52s)  cert-manager-clusterissuers  Error getting keypair for CA issuer: secrets "homelab.cloud-root-ca-tls" not found
+      Warning  ErrInitIssuer    2m52s (x2 over 2m52s)  cert-manager-clusterissuers  Error initializing issuer: secrets "homelab.cloud-root-ca-tls" not found
+      Normal   KeyPairVerified  2m47s (x3 over 2m52s)  cert-manager-clusterissuers  Signing CA verified
 
 
     Name:         homelab.cloud-root-ca-issuer-selfsigned
@@ -483,15 +422,15 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
     API Version:  cert-manager.io/v1
     Kind:         ClusterIssuer
     Metadata:
-      Creation Timestamp:  2025-09-25T10:12:17Z
+      Creation Timestamp:  2025-10-10T10:33:47Z
       Generation:          1
-      Resource Version:    58724
-      UID:                 25a212c9-5353-443d-a209-19cdce8b8e4a
+      Resource Version:    191265
+      UID:                 74f8fc02-1d86-40d9-be3f-5965670309c0
     Spec:
       Self Signed:
     Status:
       Conditions:
-        Last Transition Time:  2025-09-25T10:12:17Z
+        Last Transition Time:  2025-10-10T10:33:47Z
         Observed Generation:   1
         Reason:                IsReady
         Status:                True
@@ -499,27 +438,27 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
     Events:                    <none>
     ~~~
 
-    The three issuers are ready, although the `homelab.cloud-intm-ca01-issuer` and `homelab.cloud-root-ca-issuer` ones had initialization problems (reported as `Warning` events) due probably to the delay in the creation of the secrets they use.
+    The three issuers are ready, although the `homelab.cloud-intm-ca01-issuer` and `homelab.cloud-root-ca-issuer` ones had initialization problems (reported as `Warning` events) due probably to a delay in the creation of the secrets they use.
 
 ## Checking your certificates with the cert-manager command line tool
 
-Remember that the cert-manager command line tool can help you in handling your certificates. For instance, you can execute the following command to see the status of the root CA certificate you have created before:
+Remember that the cert-manager command line tool can help you in handling your certificates. For instance, you can execute the following command to see the status of the root CA `homelab.cloud-root-ca-tls` certificate you have created before:
 
 ~~~sh
-$ kubectl cert-manager status certificate -n certificates homelab.cloud-root-CA-crt
-Name: homelab.cloud-root-ca-crt
-Namespace: certificates
-Created at: 2025-09-25T12:12:17+02:00
+$ kubectl cert-manager status certificate -n cert-manager homelab.cloud-root-ca-tls
+Name: homelab.cloud-root-ca-tls
+Namespace: cert-manager
+Created at: 2025-10-10T12:33:47+02:00
 Conditions:
   Ready: True, Reason: Ready, Message: Certificate is up to date and has not expired
 DNS Names:
 Events:
-  Type    Reason     Age   From                                       Message
-  ----    ------     ----  ----                                       -------
-  Normal  Issuing    17m   cert-manager-certificates-trigger          Issuing certificate as Secret does not exist
-  Normal  Generated  17m   cert-manager-certificates-key-manager      Stored new private key in temporary Secret resource "homelab.cloud-root-ca-crt-qg2gw"
-  Normal  Requested  17m   cert-manager-certificates-request-manager  Created new CertificateRequest resource "homelab.cloud-root-ca-crt-1"
-  Normal  Issuing    17m   cert-manager-certificates-issuing          The certificate has been successfully issued
+  Type    Reason     Age    From                                       Message
+  ----    ------     ----   ----                                       -------
+  Normal  Issuing    5m20s  cert-manager-certificates-trigger          Issuing certificate as Secret does not exist
+  Normal  Generated  5m20s  cert-manager-certificates-key-manager      Stored new private key in temporary Secret resource "homelab.cloud-root-ca-tls-bc4dl"
+  Normal  Requested  5m20s  cert-manager-certificates-request-manager  Created new CertificateRequest resource "homelab.cloud-root-ca-tls-1"
+  Normal  Issuing    5m20s  cert-manager-certificates-issuing          The certificate has been successfully issued
 Issuer:
   Name: homelab.cloud-root-ca-issuer-selfsigned
   Kind: ClusterIssuer
@@ -527,21 +466,21 @@ Issuer:
     Ready: True, Reason: IsReady, Message: 
   Events:  <none>
 Secret:
-  Name: homelab.cloud-root-ca-crt-secret
+  Name: homelab.cloud-root-ca-tls
   Issuer Country: 
   Issuer Organisation: 
-  Issuer Common Name: homelab.cloud-root-ca-crt
+  Issuer Common Name: homelab.cloud-root-ca-tls
   Key Usage: Digital Signature, Key Encipherment, Cert Sign
   Extended Key Usages: 
   Public Key Algorithm: Ed25519
   Signature Algorithm: Ed25519
-  Subject Key ID: aa363d5fa86d4c050ed1c1c03e288cf69ee86065
+  Subject Key ID: 7156a59ffd7553cec1c9d424b959ef41fc5521ed
   Authority Key ID: 
-  Serial Number: 0f41d655e213c9f7c6a9edcb1c6c4cda
+  Serial Number: 2e656bafa35257d9aba094782966b0e10868c232
   Events:  <none>
-Not Before: 2025-09-25T12:12:17+02:00
-Not After: 2026-09-25T12:12:17+02:00
-Renewal Time: 2026-08-26T12:12:17+02:00
+Not Before: 2025-10-10T12:33:47+02:00
+Not After: 2026-10-10T12:33:47+02:00
+Renewal Time: 2026-09-10T12:33:47+02:00
 No CertificateRequest found for this Certificate
 ~~~
 
@@ -568,14 +507,12 @@ You can find the Kustomize project for the cert-manager deployment in this folde
 - `$HOME/bin/cmctl`
 - `$HOME/bin/kubectl-cert_manager`
 - `$HOME/k8sprjs/cert-manager/deployment/kustomization.yaml`
-- `$HOME/k8sprjs/cert-manager/deployment/patches/cert-manager.deployment.patch.yaml`
-- `$HOME/k8sprjs/cert-manager/deployment/resources/certificates.namespace.yaml`
 - `$HOME/k8sprjs/cert-manager/certificates/kustomization.yaml`
-- `$HOME/k8sprjs/cert-manager/certificates/resources/homelab.cloud-intm-ca01-crt.certificate.cert-manager.yaml`
 - `$HOME/k8sprjs/cert-manager/certificates/resources/homelab.cloud-intm-ca01-issuer.cluster-issuer.cert-manager.yaml`
-- `$HOME/k8sprjs/cert-manager/certificates/resources/homelab.cloud-root-ca-crt.certificate.cert-manager.yaml`
-- `$HOME/k8sprjs/cert-manager/certificates/resources/homelab.cloud-root-ca-issuer.cluster-issuer.cert-manager.yaml`
+- `$HOME/k8sprjs/cert-manager/certificates/resources/homelab.cloud-intm-ca01-tls.certificate.cert-manager.yaml`
 - `$HOME/k8sprjs/cert-manager/certificates/resources/homelab.cloud-root-ca-issuer-selfsigned.cluster-issuer.cert-manager.yaml`
+- `$HOME/k8sprjs/cert-manager/certificates/resources/homelab.cloud-root-ca-issuer.cluster-issuer.cert-manager.yaml`
+- `$HOME/k8sprjs/cert-manager/certificates/resources/homelab.cloud-root-ca-tls.certificate.cert-manager.yaml`
 
 ## References
 
