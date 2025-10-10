@@ -96,7 +96,7 @@ To help you to manage the certificates you put in your cluster, [cert-manager of
 
 You can install this cert-manager command line tool in a `kubectl` client system like the one configured in the [**G026** chapter](G026%20-%20K3s%20cluster%20setup%2009%20~%20Setting%20up%20a%20kubectl%20client%20for%20remote%20access.md) as follows:
 
-1. From the [cert-manager command line tool GitHub releases page](https://github.com/cert-manager/cmctl/releases), download the `tar.gz` file from the latest release available (v2.3.0 when writing this):
+1. From the [cert-manager command line tool GitHub releases page](https://github.com/cert-manager/cmctl/releases), download the `tar.gz` file of the latest release available (v2.3.0 when writing this):
 
     ~~~sh
     $ wget https://github.com/cert-manager/cmctl/releases/download/v2.3.0/cmctl_linux_amd64.tar.gz -O $HOME/bin/cmctl_linux_amd64.tar.gz
@@ -191,7 +191,7 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
 
     - Within the `spec` section, you see the empty parameter `selfSigned`. This means that this issuer is of the simplest type you can have, the self-signed one. **It is not trusted by browsers**, but it is enough to generate certificates that you can use within your own local or home network.
 
-4. Issue a certificate with the root CA in `resources/homelab.cloud-root-ca-tls.certificate.cert-manager.yaml`:
+4. Issue a certificate with the self-signed root CA issuer in `resources/homelab.cloud-root-ca-tls.certificate.cert-manager.yaml`:
 
     ~~~yaml
     # Certificate for root CA
@@ -281,7 +281,7 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
 
     This certificate is like the one for the root CA issuer, but is meant for an _intermediate_ CA issuer. Since this certificate's secret will be the one used to issue and sign the certificates for the apps you will deploy in later chapters, it has a shorter `duration` and `renewBefore` time periods. Also notice that this certificate's name is numbered (`01`), hinting at the possibility of having more than one intermediate CA. And like the root CA's certificate, see how this certificate is not attached to any particular domain.
 
-7. Copy in `resources/homelab.cloud-intm-ca01-issuer.cluster-issuer.cert-manager.yaml` this other YAML:
+7. Declare in `resources/homelab.cloud-intm-ca01-issuer.cluster-issuer.cert-manager.yaml` an intermediate CA cluster issuer:
 
     ~~~yaml
     # Cluster-wide issuer using intermediate CA 01's secret
