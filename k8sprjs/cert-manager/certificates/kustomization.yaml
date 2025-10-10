@@ -4,7 +4,7 @@ kind: Kustomization
 
 resources:
 - resources/homelab.cloud-root-ca-issuer-selfsigned.cluster-issuer.cert-manager.yaml
-- resources/homelab.cloud-root-ca-crt.certificate.cert-manager.yaml
+- resources/homelab.cloud-root-ca-tls.certificate.cert-manager.yaml
 - resources/homelab.cloud-root-ca-issuer.cluster-issuer.cert-manager.yaml
-- resources/homelab.cloud-intm-ca01-crt.certificate.cert-manager.yaml
+- resources/homelab.cloud-intm-ca01-tls.certificate.cert-manager.yaml
 - resources/homelab.cloud-intm-ca01-issuer.cluster-issuer.cert-manager.yaml

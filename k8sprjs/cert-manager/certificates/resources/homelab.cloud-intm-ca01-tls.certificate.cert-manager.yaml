@@ -3,12 +3,12 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 
 metadata:
-  name: homelab.cloud-intm-ca01-crt
-  namespace: certificates
+  name: homelab.cloud-intm-ca01-tls
+  namespace: cert-manager
 spec:
   isCA: true
-  commonName: homelab.cloud-intm-ca01-crt
-  secretName: homelab.cloud-intm-ca01-crt-secret
+  commonName: homelab.cloud-intm-ca01-tls
+  secretName: homelab.cloud-intm-ca01-tls
   duration: 4380h # 6 months
   renewBefore: 360h # Certificates must be renewed some time before they expire (15 days)
   privateKey:
