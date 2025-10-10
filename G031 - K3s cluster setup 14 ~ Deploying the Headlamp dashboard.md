@@ -44,7 +44,7 @@ All the components will be part of the same Kustomize project for deploying Head
 2. Create the necessary files under the `patches` and `resources` folder:
 
     ~~~sh
-    $ touch $HOME/k8sprjs/headlamp/patches/headlamp.service.patch.yaml $HOME/k8sprjs/headlamp/resources/{headlamp-admin.serviceaccount.yaml,cluster-admin-users.clusterrolebinding.yaml,headlamp.homelab.cloud-cert.certificate.cert-manager.yaml,headlamp.ingressroute.traefik.yaml}
+    $ touch $HOME/k8sprjs/headlamp/patches/headlamp.service.patch.yaml $HOME/k8sprjs/headlamp/resources/{headlamp-admin.serviceaccount.yaml,cluster-admin-users.clusterrolebinding.yaml,headlamp.homelab.cloud-tls.certificate.cert-manager.yaml,headlamp.ingressroute.traefik.yaml}
     ~~~
 
 3. Check out with `kubectl` which external IPs your cluster's services are using at this point:
@@ -128,7 +128,7 @@ All the components will be part of the same Kustomize project for deploying Head
 
     - In `subjects` you list all the users you want bounded to the role indicated in `roleRef`. In this case, there is only the `headlamp-admin` service account.
 
-7. Declare a self-signed "leaf" certificate to encrypt the HTTPS access to Headlamp in `resources/headlamp.homelab.cloud-cert.certificate.cert-manager.yaml`:_
+7. Declare a self-signed "leaf" certificate to encrypt the HTTPS access to Headlamp in `resources/headlamp.homelab.cloud-tls.certificate.cert-manager.yaml`:_
 
     ~~~yaml
     # Certificate for Headlamp
@@ -136,11 +136,11 @@ All the components will be part of the same Kustomize project for deploying Head
     kind: Certificate
 
     metadata:
-      name: headlamp.homelab.cloud-crt
+      name: headlamp.homelab.cloud-tls
       namespace: kube-system
     spec:
       isCA: false
-      secretName: headlamp.homelab.cloud-crt-secret
+      secretName: headlamp.homelab.cloud-tls
       duration: 2190h # 3 months
       renewBefore: 168h # Certificates must be renewed some time before they expire (7 days)
       dnsNames:
@@ -226,7 +226,7 @@ All the components will be part of the same Kustomize project for deploying Head
     resources:
     - resources/headlamp-admin.serviceaccount.yaml
     - resources/cluster-admin-users.clusterrolebinding.yaml
-    - resources/headlamp.homelab.cloud-cert.certificate.cert-manager.yaml
+    - resources/headlamp.homelab.cloud-tls.certificate.cert-manager.yaml
     - resources/headlamp.ingressroute.traefik.yaml
     - https://raw.githubusercontent.com/kubernetes-sigs/headlamp/main/kubernetes-headlamp.yaml
 
