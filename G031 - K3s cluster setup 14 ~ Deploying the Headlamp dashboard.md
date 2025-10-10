@@ -12,11 +12,12 @@
   - [Headlamp](#headlamp)
   - [Kubernetes Documentation](#kubernetes-documentation)
   - [Traefik Reference](#traefik-reference)
+  - [Cert-manager](#cert-manager)
 - [Navigation](#navigation)
 
 ## Headlamp is an alternative to the Kubernetes Dashboard
 
-To monitor what's going on in your K3s cluster in a more visual manner, [Kubernetes offers its own native web-based dashboard](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/). The problem is that, at the time of writing this, [the Kubernetes Dashboard can only be deployed with Helm charts](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/#deploying-the-dashboard-ui). Since this guide sticks to the Kustomize way of deploying apps in the K3s cluster, I picked [Headlamp](https://headlamp.dev/) as an alternative that allows its deployment with `kubectl`.
+To monitor what's going on in your K3s cluster in a more visual manner, [Kubernetes offers its own native web-based dashboard](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/). The problem is that, at the time of writing this, [the Kubernetes Dashboard can only be deployed with Helm charts](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/#deploying-the-dashboard-ui). Since this guide sticks to the Kustomize way of deploying apps in the K3s cluster, I picked [Headlamp](https://headlamp.dev/) as an alternative dashboard since it can be deployed with `kubectl`.
 
 > [!WARNING]
 > **Ensure having the metrics-server service running in your cluster first!**\
@@ -24,23 +25,13 @@ To monitor what's going on in your K3s cluster in a more visual manner, [Kuberne
 
 ## Deploying Headlamp
 
-For deploying [Headlamp v0.35.0](https://github.com/kubernetes-sigs/headlamp/releases/tag/v0.35.0) (the _latest_ version at the time of writing this) in your homelab cluster, you need:
+For deploying [Headlamp v0.36.0](https://github.com/kubernetes-sigs/headlamp/releases/tag/v0.36.0) (the _latest_ version at the time of writing this) in your homelab cluster, you need:
 
 - A user with the cluster administrator role.
 
 - A patch to set the Headlamp service with a static IP picked from the IP range provided by MetalLB.
 
 - A Traefik IngressRoute resource that will handle the ingress to Headlamp through HTTP.
-
-  > [!NOTE]
-  > **Traefik is the default ingress controller of K3s**\
-  > The [next chapter **G031**](G031%20-%20K3s%20cluster%20setup%2014%20~%20Enabling%20the%20Traefik%20dashboard.md) explains more about this component you already have running in your K3s cluster.
-
-  > [!WARNING]
-  > **Headlamp does not support HTTPS requests!**\
-  > Headlamp offers a basic secret-token-based login system and also integration with more advanced authorization and authentication mechanisms (which are outside the scope of this guide). Still, it does not support communications encrypted with a certificate through HTTPS, only open communications through the old HTTP's port 80.
-  >
-  > Be very aware of this since Headlamp provides you with critical information of your cluster and could be eavesdropped.
 
 All the components will be part of the same Kustomize project for deploying Headlamp:
 
@@ -53,27 +44,28 @@ All the components will be part of the same Kustomize project for deploying Head
 2. Create the necessary files under the `patches` and `resources` folder:
 
     ~~~sh
-    $ touch $HOME/k8sprjs/headlamp/patches/headlamp.service.patch.yaml $HOME/k8sprjs/headlamp/resources/{headlamp-admin.serviceaccount.yaml,cluster-admin-users.clusterrolebinding.yaml,headlamp.homelab.cloud.ingressroute.traefik.yaml}
+    $ touch $HOME/k8sprjs/headlamp/patches/headlamp.service.patch.yaml $HOME/k8sprjs/headlamp/resources/{headlamp-admin.serviceaccount.yaml,cluster-admin-users.clusterrolebinding.yaml,headlamp.homelab.cloud-cert.certificate.cert-manager.yaml,headlamp.ingressroute.traefik.yaml}
     ~~~
 
-3. Check out which IPs are available from the MetalLB IP address pool. The only way is by seeing with `kubectl` which external IPs have been assigned to the services currently running in your cluster:
+3. Check out with `kubectl` which external IPs your cluster's services are using at this point:
 
     ~~~sh
     $ kubectl get services -A
     NAMESPACE        NAME                      TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
-    cert-manager     cert-manager              ClusterIP      10.43.113.216   <none>        9402/TCP                     4d2h
-    cert-manager     cert-manager-cainjector   ClusterIP      10.43.206.23    <none>        9402/TCP                     4d2h
-    cert-manager     cert-manager-webhook      ClusterIP      10.43.118.166   <none>        443/TCP,9402/TCP             4d2h
-    default          kubernetes                ClusterIP      10.43.0.1       <none>        443/TCP                      18d
-    kube-system      kube-dns                  ClusterIP      10.43.0.10      <none>        53/UDP,53/TCP,9153/TCP       18d
-    kube-system      metrics-server            ClusterIP      10.43.50.63     <none>        443/TCP                      5d23h
-    kube-system      traefik                   LoadBalancer   10.43.174.63    10.7.0.0      80:30512/TCP,443:32647/TCP   18d
-    metallb-system   metallb-webhook-service   ClusterIP      10.43.126.18    <none>        443/TCP                      15d
+    cert-manager     cert-manager              ClusterIP      10.43.113.216   <none>        9402/TCP                     13d
+    cert-manager     cert-manager-cainjector   ClusterIP      10.43.206.23    <none>        9402/TCP                     13d
+    cert-manager     cert-manager-webhook      ClusterIP      10.43.118.166   <none>        443/TCP,9402/TCP             13d
+    default          kubernetes                ClusterIP      10.43.0.1       <none>        443/TCP                      28d
+    kube-system      kube-dns                  ClusterIP      10.43.0.10      <none>        53/UDP,53/TCP,9153/TCP       28d
+    kube-system      metrics-server            ClusterIP      10.43.50.63     <none>        443/TCP                      15d
+    kube-system      traefik                   LoadBalancer   10.43.174.63    10.7.0.0      80:30512/TCP,443:32647/TCP   28d
+    kube-system      traefik-dashboard         LoadBalancer   10.43.216.2     10.7.0.1      443:30384/TCP                21h
+    metallb-system   metallb-webhook-service   ClusterIP      10.43.126.18    <none>        443/TCP                      25d
     ~~~
 
-    The only service with a EXTERNAL-IP assigned at this point is Traefik. The service has the very first IP available in MetalLB's `default-pool` IP range (`10.7.0.0` to `10.7.0.20`), autoprovided by MetalLB. This means that Headlamp can use the next IP, `10.7.0.1`.
+    After enabling the Traefik dashboard in the [previous chapter **G030**](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md), you have two Traefik-related services with external IPs assigned. Pick the next IP available in MetalLB's `default-pool` IP range for Headlamp, which in this guide's setup is `10.7.0.2`.
 
-4. Create a patch to specify the static IP and port for the Headlamp service in the `patches/headlamp.service.patch.yaml` file:
+4. Create a patch to specify the static IP for the Headlamp service in the `patches/headlamp.service.patch.yaml` file:
 
     ~~~yaml
     # Headlamp service patch
@@ -86,10 +78,10 @@ All the components will be part of the same Kustomize project for deploying Head
 
     spec:
       type: LoadBalancer
-      loadBalancerIP: 10.7.0.1
+      loadBalancerIP: 10.7.0.2
     ~~~
 
-    This patch ensures that the Headlamp service uses the static IP `10.7.0.1` provided by the MetalLB load balancer.
+    This patch ensures that the Headlamp service uses the static IP `10.7.0.2` provided by the MetalLB load balancer.
 
 5. In `resources/headlamp-admin.serviceaccount.yaml`, declare the `headlamp-admin` service account:
 
@@ -130,14 +122,59 @@ All the components will be part of the same Kustomize project for deploying Head
       namespace: kube-system
     ~~~
 
-    This declaration
-
     With this declaration, you make the `headlamp-admin` account an administrator of your cluster under the `kube-system` namespace:
 
     - The `roleRef` attribute specifies that the cluster role to be bound is `cluster-admin`.
-    - In `subjects` you list all the users you want bounded to the role indicated in roleRef. In this case, there is only the `headlamp-admin` service account.
 
-7. In `resources/headlamp.homelab.cloud.ingressroute.traefik.yaml`, specify the Traefik IngressRoute resource for accessing Headlamp through HTTPS:
+    - In `subjects` you list all the users you want bounded to the role indicated in `roleRef`. In this case, there is only the `headlamp-admin` service account.
+
+7. Declare a self-signed "leaf" certificate to encrypt the HTTPS access to Headlamp in `resources/headlamp.homelab.cloud-cert.certificate.cert-manager.yaml`:_
+
+    ~~~yaml
+    # Certificate for Headlamp
+    apiVersion: cert-manager.io/v1
+    kind: Certificate
+
+    metadata:
+      name: headlamp.homelab.cloud-crt
+      namespace: kube-system
+    spec:
+      isCA: false
+      secretName: headlamp.homelab.cloud-crt-secret
+      duration: 2190h # 3 months
+      renewBefore: 168h # Certificates must be renewed some time before they expire (7 days)
+      dnsNames:
+        - headlamp.homelab.cloud
+        - hdl.homelab.cloud
+      ipAddresses:
+        - 10.7.0.2
+      privateKey:
+        algorithm: Ed25519
+        encoding: PKCS8
+        rotationPolicy: Always
+      issuerRef:
+        name: homelab.cloud-intm-ca01-issuer
+        kind: ClusterIssuer
+        group: cert-manager.io
+    ~~~
+
+    This certificate is similar to the ones created for the [self-signed CA issuers already explained in the chapter **G029**](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md), except for:
+
+    - The namespace is `kube-system`, meaning that this certificate and its associated secret will be created in the same namespace where the Headlamp service will be deployed and run. This is necessary to ensure that the secret is accessible by the ingress route resource you will create in the next step.
+
+    - The `spec.isCA` parameter set to `false` makes this certificate a "leaf" one that cannot be used to issue other certificates.
+
+    - There is no `spec.commonName` because the official cert-manager documentation recommends setting this attribute only in CA certificates, and avoid it in "leaf" certificates.
+
+    - Its `duration` and `renewBefore` values are half of the ones set to the certificate of the intermediate CA issuing this Headlamp certificate.
+
+    - The list in `spec.dnsNames` specifies which domains this certificate corresponds to.
+
+    - The list in `spec.ipAddresses` indicates the IP addresses this certificate corresponds to.
+
+    - The `spec.issuerRef` invokes the intermediate CA already available in your cluster as issuer of this Headlamp certificate.
+
+8. In `resources/headlamp.ingressroute.traefik.yaml`, specify the Traefik IngressRoute resource for accessing Headlamp through HTTPS:
 
     ~~~yaml
     # Traefik IngressRoute for Headlamp
@@ -149,19 +186,19 @@ All the components will be part of the same Kustomize project for deploying Head
       namespace: kube-system
     spec:
       entryPoints:
-        - web # Headlamp only supports the HTTP scheme
+        - websecure
       routes:
-      - match: (Host(`10.7.0.1`) || Host(`headlamp.homelab.cloud`) || Host(`hdl.homelab.cloud`))
+      - match: Host(`10.7.0.2`) || Host(`headlamp.homelab.cloud`) || Host(`hdl.homelab.cloud`)
         kind: Rule
         services:
         - name: headlamp
           kind: Service
-          port: 80
+          port: 443
     ~~~
 
     Details to highlight in this Traefik IngressRoute declaration are:
 
-    - The `spec.entryPoints` is set to `web` only, which corresponds to HTTP.
+    - The `spec.entryPoints` is set to `websecure` only, which corresponds to HTTPS.
 
     - The `spec.routes.match` is a list that informs Traefik of the possible routes to call Headlamp, including its static IP.
 
@@ -171,13 +208,15 @@ All the components will be part of the same Kustomize project for deploying Head
 
     - The `spec.routes.services` only has an entry for the Headlamp service, linking it to this IngressRoute.
 
-8. Create the `kustomization.yaml` file for the Kustomize project:
+    - The `spec.tls.secretName` points to the secret associated to the Headlamp certificate declared in the previous step.
+
+9. Create the `kustomization.yaml` file for the Kustomize project:
 
     ~~~sh
     $ touch $HOME/k8sprjs/headlamp/kustomization.yaml
     ~~~
 
-9. Put in the `kustomization.yaml` file the following lines:
+10. Put in the `kustomization.yaml` file the following lines:
 
     ~~~yaml
     # Headlamp setup
@@ -187,20 +226,21 @@ All the components will be part of the same Kustomize project for deploying Head
     resources:
     - resources/headlamp-admin.serviceaccount.yaml
     - resources/cluster-admin-users.clusterrolebinding.yaml
-    - resources/headlamp.homelab.cloud.ingressroute.traefik.yaml
+    - resources/headlamp.homelab.cloud-cert.certificate.cert-manager.yaml
+    - resources/headlamp.ingressroute.traefik.yaml
     - https://raw.githubusercontent.com/kubernetes-sigs/headlamp/main/kubernetes-headlamp.yaml
 
     patches:
     - path: patches/headlamp.service.patch.yaml
     ~~~
 
-10. Apply the Kustomize project to your cluster:
+11. Apply the Kustomize project to your cluster:
 
     ~~~sh
     $ kubectl apply -k $HOME/k8sprjs/headlamp
     ~~~
 
-11. Give Headlamp about a minute to boot up, then verify that its corresponding pod and service are running in the `kube-system` namespace:
+12. Give Headlamp about a minute to boot up, then verify that its corresponding pod and service are running in the `kube-system` namespace:
 
     ~~~sh
     $ kubectl get pods,svc -n kube-system | grep headlamp
@@ -275,6 +315,8 @@ You can find the Kustomize project for this Headlamp deployment in this attached
 ### [Headlamp](https://headlamp.dev/)
 
 - [Installation](https://headlamp.dev/docs/latest/installation/)
+  - [In-Cluster. Optional TLS Backend Termination](https://headlamp.dev/docs/latest/installation/in-cluster/#optional-tls-backend-termination)
+  - [In-Cluster. TLS and TLS pass through](https://headlamp.dev/docs/latest/installation/in-cluster/tls)
 
 ### [Kubernetes Documentation](https://kubernetes.io/docs/)
 
@@ -285,6 +327,12 @@ You can find the Kustomize project for this Headlamp deployment in this attached
 
 - [Routing Configuration](https://doc.traefik.io/traefik/reference/routing-configuration/)
   - [Kubernetes. Kubernetes CRD. HTTP. IngressRoute](https://doc.traefik.io/traefik/reference/routing-configuration/kubernetes/crd/http/ingressroute/)
+
+### [Cert-manager](https://cert-manager.io/docs/)
+
+- [Requesting Certificates. Certificate resource](https://cert-manager.io/docs/usage/certificate/)
+- [Reference. API Reference. cert-manager.io/v1](https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1)
+  - [CertificateSpec](https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.CertificateSpec)
 
 ## Navigation
 
