@@ -23,7 +23,7 @@ I'll remind you here all the tools you have to monitor the usage of resources in
 
         Notice that `top pod` requires specyfing the namespace, while `top node` doesn't (cluster nodes are not namespaced).
 
-    - Use the Kubernetes Dashboard, which you deployed and browsed into in the [**G030** guide](G030%20-%20K3s%20cluster%20setup%2013%20~%20Deploying%20the%20Kubernetes%20Dashboard.md).
+    - Use the Headlamp dashboard you deployed and browsed into [back in the **G031** guide](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md).
 
 ## Checking the logs
 

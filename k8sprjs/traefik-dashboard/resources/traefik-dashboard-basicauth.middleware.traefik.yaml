@@ -1,0 +1,10 @@
+# Basic authentication method for Traefik dashboard
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+
+metadata:
+  name: traefik-dashboard-basicauth
+  namespace: kube-system
+spec:
+  basicAuth:
+    secret: traefik-dashboard-basicauth-secret

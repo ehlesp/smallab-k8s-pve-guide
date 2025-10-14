@@ -7,10 +7,13 @@ metadata:
   namespace: kube-system
 spec:
   entryPoints:
-    - web # Headlamp only supports the HTTP scheme
+    - web
   routes:
-  - match: (Host(`10.7.0.1`) || Host(`headlamp.homelab.cloud`) || Host(`hdl.homelab.cloud`))
+  - match: Host(`10.7.0.2`) || Host(`headlamp.homelab.cloud`) || Host(`hdl.homelab.cloud`)
     kind: Rule
     services:
     - name: headlamp
       kind: Service
+      port: 80
+  tls:
+    secretName: headlamp.homelab.cloud-tls

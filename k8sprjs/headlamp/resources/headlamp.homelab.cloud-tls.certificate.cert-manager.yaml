@@ -1,0 +1,25 @@
+# Certificate for Headlamp
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
+  name: headlamp.homelab.cloud-tls
+  namespace: kube-system
+spec:
+  isCA: false
+  secretName: headlamp.homelab.cloud-tls
+  duration: 2190h # 3 months
+  renewBefore: 168h # Certificates must be renewed some time before they expire (7 days)
+  dnsNames:
+    - headlamp.homelab.cloud
+    - hdl.homelab.cloud
+  ipAddresses:
+    - 10.7.0.2
+  privateKey:
+    algorithm: Ed25519
+    encoding: PKCS8
+    rotationPolicy: Always
+  issuerRef:
+    name: homelab.cloud-intm-ca01-issuer
+    kind: ClusterIssuer
+    group: cert-manager.io

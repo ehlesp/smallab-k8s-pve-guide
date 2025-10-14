@@ -1,0 +1,16 @@
+# Traefik dashboard setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- resources/traefik-dashboard-basicauth.middleware.traefik.yaml
+- resources/traefik-dashboard.service.yaml
+- resources/traefik-dashboard.ingressroute.traefik.yaml
+
+secretGenerator:
+- name: traefik-dashboard-basicauth-secret
+  namespace: kube-system
+  files:
+  - secrets/users
+  options:
+    disableNameSuffixHash: true

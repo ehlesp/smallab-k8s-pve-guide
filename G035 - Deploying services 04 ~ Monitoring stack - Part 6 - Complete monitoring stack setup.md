@@ -1341,7 +1341,7 @@ Since it's not the intention of this guide series to go as deep as explaining ho
 
 ### _On Prometheus_
 
-As you've seen, a basic installation of Prometheus doesn't have any kind of security. If you want to enforce login with a user, you can do as you already did when you configured the access to the Traefik web dashboard [in the **G031** guide](G031%20-%20K3s%20cluster%20setup%2014%20~%20Enabling%20the%20Traefik%20dashboard.md#enabling-the-ingressroute): by enabling a basic auth login directly in the IngressRoute of your Prometheus server.
+As you've seen, a basic installation of Prometheus doesn't have any kind of security. If you want to enforce login with a user, you can do as you already did when you configured the access to the Traefik web dashboard [in the **G030** guide](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md#kustomize-project-for-enabling-access-to-the-traefik-dashboard): by enabling a basic auth login directly in the IngressRoute of your Prometheus server.
 
 This will protect a bit the external accesses to your Prometheus dashboard, while it won't affect the connections through the internal networking of your cluster. To enforce more advanced security methods, you'll have to check out [the official Prometheus documentation](https://prometheus.io/docs/prometheus/2.35/configuration/https/) and see what security options are available.
 

@@ -426,7 +426,7 @@ To make the Prometheus server's service reachable only through HTTPS from outsid
           scheme: http
     ~~~
 
-    The yaml above is like the one describing the access to the Traefik Dashboard, back in the [**G031** guide](G031%20-%20K3s%20cluster%20setup%2014%20~%20Enabling%20the%20Traefik%20dashboard.md#enabling-the-ingressroute).
+    The yaml above is like the one describing the access to the Traefik dashboard, back in the [**G030** guide](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md#kustomize-project-for-enabling-access-to-the-traefik-dashboard).
 
     - The `IngressRoute` points (`tls.secretName` parameter) to the secret of your wildcard certificate, encrypting the traffic coming and going to the `server-prometheus` service.
 
