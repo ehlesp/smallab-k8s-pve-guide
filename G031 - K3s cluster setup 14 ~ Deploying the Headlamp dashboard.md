@@ -2,7 +2,7 @@
 
 - [Headlamp is an alternative to the Kubernetes Dashboard](#headlamp-is-an-alternative-to-the-kubernetes-dashboard)
 - [Deploying Headlamp](#deploying-headlamp)
-  - [Getting the administrator user's secret token](#getting-the-administrator-users-secret-token)
+  - [Getting the administrator user's service account token](#getting-the-administrator-users-service-account-token)
 - [Testing Headlamp](#testing-headlamp)
 - [Headlamp's Kustomize project attached to this guide](#headlamps-kustomize-project-attached-to-this-guide)
 - [Relevant system paths](#relevant-system-paths)
@@ -52,18 +52,18 @@ All the components will be part of the same Kustomize project for deploying Head
     ~~~sh
     $ kubectl get services -A
     NAMESPACE        NAME                      TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
-    cert-manager     cert-manager              ClusterIP      10.43.113.216   <none>        9402/TCP                     13d
-    cert-manager     cert-manager-cainjector   ClusterIP      10.43.206.23    <none>        9402/TCP                     13d
-    cert-manager     cert-manager-webhook      ClusterIP      10.43.118.166   <none>        443/TCP,9402/TCP             13d
-    default          kubernetes                ClusterIP      10.43.0.1       <none>        443/TCP                      28d
-    kube-system      kube-dns                  ClusterIP      10.43.0.10      <none>        53/UDP,53/TCP,9153/TCP       28d
-    kube-system      metrics-server            ClusterIP      10.43.50.63     <none>        443/TCP                      15d
-    kube-system      traefik                   LoadBalancer   10.43.174.63    10.7.0.0      80:30512/TCP,443:32647/TCP   28d
-    kube-system      traefik-dashboard         LoadBalancer   10.43.216.2     10.7.0.1      443:30384/TCP                21h
-    metallb-system   metallb-webhook-service   ClusterIP      10.43.126.18    <none>        443/TCP                      25d
+    cert-manager     cert-manager              ClusterIP      10.43.153.243   <none>        9402/TCP                     3d23h
+    cert-manager     cert-manager-cainjector   ClusterIP      10.43.131.203   <none>        9402/TCP                     3d23h
+    cert-manager     cert-manager-webhook      ClusterIP      10.43.118.87    <none>        443/TCP,9402/TCP             3d23h
+    default          kubernetes                ClusterIP      10.43.0.1       <none>        443/TCP                      33d
+    kube-system      kube-dns                  ClusterIP      10.43.0.10      <none>        53/UDP,53/TCP,9153/TCP       33d
+    kube-system      metrics-server            ClusterIP      10.43.50.63     <none>        443/TCP                      20d
+    kube-system      traefik                   LoadBalancer   10.43.174.63    10.7.0.0      80:30512/TCP,443:32647/TCP   33d
+    kube-system      traefik-dashboard         LoadBalancer   10.43.216.2     10.7.0.1      443:31622/TCP                5d22h
+    metallb-system   metallb-webhook-service   ClusterIP      10.43.126.18    <none>        443/TCP                      30d
     ~~~
 
-    After enabling the Traefik dashboard in the [previous chapter **G030**](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md), you have two Traefik-related services with external IPs assigned. Pick the next IP available in MetalLB's `default-pool` IP range for Headlamp, which in this guide's setup is `10.7.0.2`.
+    After enabling the Traefik dashboard in the [previous chapter **G030**](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md), you have two Traefik-related services with external IPs assigned. Pick the next IP available in MetalLB's `default-pool` IP range for Headlamp, which for this guide's setup is `10.7.0.2`.
 
 4. Create a patch to specify the static IP for the Headlamp service in the `patches/headlamp.service.patch.yaml` file:
 
@@ -95,13 +95,17 @@ All the components will be part of the same Kustomize project for deploying Head
       namespace: kube-system
     ~~~
 
-    About this service account, know that:
+    This service account will be your administrator user for Headlamp:
 
-    - The name `headlamp-admin` is the one expected in the official Headlamp installation. Its deployment YAML already declares a secret token for a service account called `headlamp-admin`.
+    - The name `headlamp-admin` is the one expected in the official Headlamp installation. Its deployment YAML already points to a secret token for a service account called `headlamp-admin`.
 
     - The `kube-system` namespace is where the Headlamp service is going to be deployed. The service account must be in the same namespace as Headlamp to authorize this service to access the cluster information it needs to work.
 
     - This declaration only creates the `headlamp-admin` service account without any special privileges in the cluster. The account needs to be bound to a cluster role to be authorized to access your K3s cluster information, something you will declare in the next step.
+
+    > [!IMPORTANT]
+    > **Service accounts are not meant for regular users**\
+    > For Kubernetes, [user accounts are for humans and service accounts are for application processes](https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#user-accounts-versus-service-accounts). Still, [Headlamp's official installation documentation explicitly **recommends** (at the time of writing this) using a service account](https://headlamp.dev/docs/latest/installation/).
 
 6. In `resources/cluster-admin-users.clusterrolebinding.yaml`, bind the `headlamp-admin` with the `cluster-admin` cluster role:
 
@@ -128,7 +132,7 @@ All the components will be part of the same Kustomize project for deploying Head
 
     - In `subjects` you list all the users you want bounded to the role indicated in `roleRef`. In this case, there is only the `headlamp-admin` service account.
 
-7. Declare a self-signed "leaf" certificate to encrypt the HTTPS access to Headlamp in `resources/headlamp.homelab.cloud-tls.certificate.cert-manager.yaml`:_
+7. Declare a self-signed "leaf" certificate in `resources/headlamp.homelab.cloud-tls.certificate.cert-manager.yaml`:_
 
     ~~~yaml
     # Certificate for Headlamp
@@ -164,7 +168,7 @@ All the components will be part of the same Kustomize project for deploying Head
 
     - The `spec.isCA` parameter set to `false` makes this certificate a "leaf" one that cannot be used to issue other certificates.
 
-    - There is no `spec.commonName` because the official cert-manager documentation recommends setting this attribute only in CA certificates, and avoid it in "leaf" certificates.
+    - There is no `spec.commonName` because the official cert-manager documentation recommends setting this attribute only in CA certificates, and leaving it unset in "leaf" certificates.
 
     - Its `duration` and `renewBefore` values are half of the ones set to the certificate of the intermediate CA issuing this Headlamp certificate.
 
@@ -186,19 +190,21 @@ All the components will be part of the same Kustomize project for deploying Head
       namespace: kube-system
     spec:
       entryPoints:
-        - websecure
+        - web
       routes:
       - match: Host(`10.7.0.2`) || Host(`headlamp.homelab.cloud`) || Host(`hdl.homelab.cloud`)
         kind: Rule
         services:
         - name: headlamp
           kind: Service
-          port: 443
+          port: 80
+      tls:
+        secretName: headlamp.homelab.cloud-tls
     ~~~
 
     Details to highlight in this Traefik IngressRoute declaration are:
 
-    - The `spec.entryPoints` is set to `websecure` only, which corresponds to HTTPS.
+    - The `spec.entryPoints` is set to `web` only, which corresponds to HTTP.
 
     - The `spec.routes.match` is a list that informs Traefik of the possible routes to call Headlamp, including its static IP.
 
@@ -208,7 +214,7 @@ All the components will be part of the same Kustomize project for deploying Head
 
     - The `spec.routes.services` only has an entry for the Headlamp service, linking it to this IngressRoute.
 
-    - The `spec.tls.secretName` points to the secret associated to the Headlamp certificate declared in the previous step.
+    - The `spec.tls.secretName` points to the secret associated to the Headlamp certificate declared in the previous step. This enables the TLS termination at the ingress level, while the communication with Headlamp will still be done in HTTP.
 
 9. Create the `kustomization.yaml` file for the Kustomize project:
 
@@ -244,45 +250,49 @@ All the components will be part of the same Kustomize project for deploying Head
 
     ~~~sh
     $ kubectl get pods,svc -n kube-system | grep headlamp
-    pod/headlamp-747b5f4d5-j9l66                  1/1     Running     0          52s
-    service/headlamp         LoadBalancer   10.43.234.223   10.7.0.1      80:30179/TCP                 52s
+    pod/headlamp-747b5f4d5-g92rf                  1/1     Running     0          107s
+    service/headlamp            LoadBalancer   10.43.119.9    10.7.0.2      80:31146/TCP                 108s
     ~~~
 
-### Getting the administrator user's secret token
+### Getting the administrator user's service account token
 
-To log in Headlamp with the `headlamp-admin` user you created in its deployment, you need to use its secret token for authenticating in the app. Create this token with the following `kubectl` command:
+To log in Headlamp with the `headlamp-admin` user you created in its deployment, you need to authenticate with a service account token associated to that user. This is a secret token you can create with `kubectl`:
 
 ~~~sh
-$ kubectl -n kube-system create token headlamp-admin
+$ kubectl -n kube-system create token headlamp-admin --duration=8760h
 eyJhbGciOiJSUzI1NiIsImtpZCI6ImtxNzh0bmk3cDAzVU4zXzFnMVgwZXVSR3c0U1FnNVZ3OUtSdDBSTkw2WmsifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlcm5ldGVzLWRhc2hib2FyZCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJhZG1pbi11c2VyLXRva2VuLXFiMnQ1Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImFkbWluLXVzZXIiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiI4MjU4Mjc4ZC02YjBmLTQwZDItOTI1Yy1kMzEwMmY3MTkxYzQiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6a3ViZXJuZXRlcy1kYXNoYm9hcmQ6YWRtaW4tdXNlciJ9.PG-4qfeT3C6vFfwhdGDoXVmjDEU7TJDTftcmIa2kQO0HtWM8ZN45wDGk4ZSWUR5mO5HlXpYORiGkKHq6GNPFRr_qCo4tKIONyZbgXtV98P6OpOIrfDTJCwxjFf0aqOmEs1N3BqViFs3MgBRCLElx98rD6AXehdxPADXlAksnaypKKx6q1WFgNmOTHfC9WrpQzX-qoo8CbRRCuSyTagm3qkpa5hV5RjyKjE7IaOqQGwFOSbTqMy6eghTYSufC-uUxcOWw3OPVa9QzINOn9_tioxj7tH7rpw_eOHzUW_-Cr_HE89DygnuZAqQEsWxBLfYcrBKtnMhxn49E22SyCaJldA
 ~~~
 
 Be aware of the following:
 
-- This secret token is linked to the `headlamp-admin` service account which exists in the `default` namespace. This is why the command specifies `-n default` rather than `-n kube-system`.
+- This service account token is associated to the `headlamp-admin` service account which exists in the `kube-system` namespace.
 
-- The command outputs your `headlamp-admin`'s secret token string directly in your shell. Remember to copy and save it somewhere safe such as a password manager.
+- **The command outputs your `headlamp-admin`'s secret token string directly in your shell**. Remember to copy and save it somewhere safe such as a password manager.
 
-- The token has a specific default lifetime "_determined by the server automatically_" [according to the Kubernetes official documentation](https://kubernetes.io/docs/reference/kubectl/generated/kubectl_create/kubectl_create_token/). It will become invalid either over time, when you reboot the K3s cluster or reinstall Headlamp. You can also set a particular non-default lifetime for the token with the `--duration` option.
+- The `--duration=8760h` makes this token last for 365 days, although you may prefer it to expire sooner for security reasons. [By default, a service account token
+  expires after one hour, but it can also expire when the associated pod is deleted](https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#bound-service-account-token-volume). By setting a specific duration, the token will last for the time period set with `--duration`, regardless of what happens to the pod.
 
   > [!IMPORTANT]
-  > Whenever your old secret token for your `headlamp-admin` service account becomes invalid, execute the same `kubectl` command to produce a new secret token when necessary.
+  > **Use the `kubectl create token` command again for refreshing the service account token**\
+  > Whenever your current secret token for your `headlamp-admin` service account becomes invalid, generate a new service account token with the same `kubectl` command.
 
 ## Testing Headlamp
 
 Now that you have Headlamp deployed, you can test it:
 
-1. Open a browser in your client system and go to `http://headlamp.homelab.cloud/` (or whatever URL or static IP you may have configured). You'll see the following form:
+1. Open a browser in your client system and go to `http://headlamp.homelab.cloud/` (or whatever URL or static IP you may have configured). The browser will warn you about the connection being insecure. Accept the warning and you'll reach Headlamp's authentication form:
 
-    ![Headlamp authentication form with secret token](images/g030/headlamp-authentication-token.webp "Headlamp authentication form with secret token")
+    ![Headlamp authentication form with secret token](images/g031/headlamp-authentication-token.webp "Headlamp authentication form with secret token")
 
-    See that this form requests an authentication token for signing into Headlamp. Use the secret token you generated previously for the `headlamp-admin` service account and get into Headlamp.
+    This form requests an authentication token for signing into Headlamp. Use the `headlamp-admin` service account's token you generated previously to authenticate into Headlamp.
 
-2. After authenticating, you get into Headlamp's `Clusters` page:
+2. After authenticating, you get directly into Headlamp's `Clusters` page:
 
     ![Headlamp Clusters main page](images/g031/headlamp-clusters-view.webp "Headlamp Clusters main page")
 
-    You can consider this the main page of Headlamp. It provides you with a summarized view of your cluster status, including statistics about resources usage and a listing of events that have happened in your cluster. Try out the other views Headlamp offers to get familiarized with this tool. In particular, you may like to try out the `Map`:
+    This the main page of Headlamp. It provides you with a summarized view of your cluster status, including statistics about resources usage and a listing of events that have happened in your cluster. If you happen to have warning events, this page will automatically enable the "Only warnings" mode to show you just warning events.
+
+    Try out the other views Headlamp offers to get familiarized with this tool. In particular, you may like to try out the `Map`:
 
     ![Headlamp Map view of cluster components](images/g031/headlamp-map-view.webp "Headlamp Map view of cluster components")
 
@@ -315,10 +325,12 @@ You can find the Kustomize project for this Headlamp deployment in this attached
 ### [Headlamp](https://headlamp.dev/)
 
 - [Installation](https://headlamp.dev/docs/latest/installation/)
-  - [In-Cluster. Optional TLS Backend Termination](https://headlamp.dev/docs/latest/installation/in-cluster/#optional-tls-backend-termination)
-  - [In-Cluster. TLS and TLS pass through](https://headlamp.dev/docs/latest/installation/in-cluster/tls)
 
 ### [Kubernetes Documentation](https://kubernetes.io/docs/)
+
+- [Reference. API Access Control. Managing Service Accounts](https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/)
+  - [User accounts versus service accounts](https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#user-accounts-versus-service-accounts)
+  - [Bound service account token volume mechanism](https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#bound-service-account-token-volume)
 
 - [Reference. Command line tool (kubectl)](https://kubernetes.io/docs/reference/kubectl/)
   - [kubectl reference. kubectl create. kubectl create token](https://kubernetes.io/docs/reference/kubectl/generated/kubectl_create/kubectl_create_token/)
