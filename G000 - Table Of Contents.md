@@ -331,10 +331,11 @@
 - [Relevant system paths](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md#relevant-system-paths)
 - [References](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md#references)
 
-### [**G032** - Deploying services 01 ~ Considerations](G032%20-%20Deploying%20services%2001%20~%20Considerations.md#g032-deploying-services-01-considerations)
+### [**G032** - Deploying services 01 ~ Considerations](G032%20-%20Deploying%20services%2001%20~%20Considerations.md)
 
+- [Upcoming chapters are about deploying services in your K3s cluster](G032%20-%20Deploying%20services%2001%20~%20Considerations.md#upcoming-chapters-are-about-deploying-services-in-your-k3s-cluster)
 - [Be watchful of your system's resources usage](G032%20-%20Deploying%20services%2001%20~%20Considerations.md#be-watchful-of-your-systems-resources-usage)
-- [Don't fill your setup up to the brim](G032%20-%20Deploying%20services%2001%20~%20Considerations.md#dont-fill-your-setup-up-to-the-brim)
+- [Do not fill your cluster up to the brim](G032%20-%20Deploying%20services%2001%20~%20Considerations.md#do-not-fill-your-cluster-up-to-the-brim)
 
 ### [**G033** - Deploying services 02 ~ **Nextcloud - Part 1** - Outlining setup, arranging storage and choosing service IPs](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%201%20-%20Outlining%20setup%2C%20arranging%20storage%20and%20choosing%20service%20IPs.md#g033-deploying-services-02-nextcloud-part-1-outlining-setup-arranging-storage-and-choosing-service-ips)
 
