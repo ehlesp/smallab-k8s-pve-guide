@@ -25,7 +25,7 @@ Remember that you can get the resource usages from your setup in these ways:
   This will give you the view on resources usage from within your K3s cluster.
 
 - **Headlamp**\
-  The Headlamp dashboard deployed in the [previous chapter **G031**](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md) also provides a view on how resources are being used from within the K3s cluster.
+  The Headlamp dashboard you deployed in the [previous chapter **G031**](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md) offers a resources usage overview in its main `Clusters` page.
 
 ## Do not fill your cluster up to the brim
 
