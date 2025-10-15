@@ -337,10 +337,11 @@
 - [Be watchful of your system's resources usage](G032%20-%20Deploying%20services%2001%20~%20Considerations.md#be-watchful-of-your-systems-resources-usage)
 - [Do not fill your cluster up to the brim](G032%20-%20Deploying%20services%2001%20~%20Considerations.md#do-not-fill-your-cluster-up-to-the-brim)
 
-### [**G033** - Deploying services 02 ~ **Nextcloud - Part 1** - Outlining setup, arranging storage and choosing service IPs](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%201%20-%20Outlining%20setup%2C%20arranging%20storage%20and%20choosing%20service%20IPs.md#g033-deploying-services-02-nextcloud-part-1-outlining-setup-arranging-storage-and-choosing-service-ips)
+### [**G033** - Deploying services 02 ~ **Nextcloud - Part 1** - Outlining setup, arranging storage and choosing service IPs](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%201%20-%20Outlining%20setup%2C%20arranging%20storage%20and%20choosing%20service%20IPs.md)
 
+- [Beginning with Nextcloud](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%201%20-%20Outlining%20setup%2C%20arranging%20storage%20and%20choosing%20service%20IPs.md#beginning-with-nextcloud)
 - [Outlining Nextcloud's setup](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%201%20-%20Outlining%20setup%2C%20arranging%20storage%20and%20choosing%20service%20IPs.md#outlining-nextclouds-setup)
-- [Setting up new storage drives in the K3s agent](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%201%20-%20Outlining%20setup%2C%20arranging%20storage%20and%20choosing%20service%20IPs.md#setting-up-new-storage-drives-in-the-k3s-agent)
+- [Setting up new storage drives in the K3s agent node](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%201%20-%20Outlining%20setup%2C%20arranging%20storage%20and%20choosing%20service%20IPs.md#setting-up-new-storage-drives-in-the-k3s-agent-node)
 - [Choosing static cluster IPs for Nextcloud related services](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%201%20-%20Outlining%20setup%2C%20arranging%20storage%20and%20choosing%20service%20IPs.md#choosing-static-cluster-ips-for-nextcloud-related-services)
 - [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%201%20-%20Outlining%20setup%2C%20arranging%20storage%20and%20choosing%20service%20IPs.md#relevant-system-paths)
 
