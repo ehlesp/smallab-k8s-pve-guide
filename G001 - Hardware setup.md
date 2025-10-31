@@ -9,7 +9,7 @@
 
 ## You just need a capable enough computer
 
-In the [README](README.md) I talk about a small or low-end consumer-grade computer, meaning that you don't need the latest and fastest machine available in the market. Any relatively modern small tower or mini PC, or even a normal laptop, could be adequate. Still, your computer must meet certain minimum requirements, or it won't be able to run the Kubernetes cluster the way it's explained in this guide.
+In this project's [README](README.md) I talk about a small or low-end consumer-grade computer, meaning that you don't need the latest and fastest machine available in the market. Any relatively modern small tower or mini PC, or even a normal laptop, could be adequate. Still, your computer must meet certain minimum requirements, or it won't be able to run the Kubernetes cluster the way it's explained in this guide.
 
 > [!NOTE]
 > **Virtualizing the Proxmox VE setup is problematic**\
@@ -19,7 +19,7 @@ In the [README](README.md) I talk about a small or low-end consumer-grade comput
 
 ## The reference hardware setup
 
-The hardware used in this guide is an upgraded [Packard Bell iMedia S2883 desktop computer](https://archive.org/details/manualzilla-id-7098831) from around 2014. This quite old and rather limited computer has the following specifications (after the upgrade):
+The hardware used in this guide is an upgraded [Packard Bell iMedia S2883 desktop computer](https://archive.org/details/manualzilla-id-7098831) from around 2014. This quite old and limited computer has the following specifications (after the upgrade):
 
 - The BIOS firmware is UEFI (Secure Boot) but also provides a CSM mode.
 

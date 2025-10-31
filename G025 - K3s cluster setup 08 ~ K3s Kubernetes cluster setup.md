@@ -107,7 +107,7 @@ A server can also act as an agent at the same time, but this chapter only explai
 
 ### Criteria for IPs
 
-I'll assume the most simple scenario, which is a single local network behind one router. This means that everything falls within a [private network IPv4 range](https://en.wikipedia.org/wiki/Reserved_IP_addresses#IPv4) such as `10.0.0.0/8`, and no other subnets are present.
+This guide's assume the most simple scenario, which is a single local network behind one router. This means that everything falls within a [private network IPv4 range](https://en.wikipedia.org/wiki/Reserved_IP_addresses#IPv4) such as `10.0.0.0/8`, and no other subnets are present.
 
 > [!NOTE]
 > **I picked a big private network IP range to minimize conflicts**\

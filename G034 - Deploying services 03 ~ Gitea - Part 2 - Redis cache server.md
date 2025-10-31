@@ -30,7 +30,7 @@ Prepare the `redis.conf` file that will specify some configuration values for yo
     maxmemory-policy allkeys-lru
     ~~~
 
-    The parameters are exactly the same ones you set up in the [part 2 of the Nextcloud guide](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Redis%20cache%20server.md#redis-configuration-file), go back to it if you don't remember the meaning of the values above.
+    The parameters are exactly the same ones you set up in the [part 2 of the Nextcloud guide](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Valkey%20cache%20server.md#redis-configuration-file), go back to it if you don't remember the meaning of the values above.
 
 ## Redis password
 
@@ -129,7 +129,7 @@ Since this Redis instance will only work with data in memory, you can set it up 
                   topologyKey: "kubernetes.io/hostname"
     ~~~
 
-    This `Deployment` resource is almost identical to the one described in the [part 2 of the Nextcloud guide](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Redis%20cache%20server.md#redis-deployment-resource). The only difference is in the `labelSelector` block set in the `affinity.podAffinity` section: the `key` is the same, `app`, but the value has been changed to `server-gitea`.
+    This `Deployment` resource is almost identical to the one described in the [part 2 of the Nextcloud guide](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Valkey%20cache%20server.md#redis-deployment-resource). The only difference is in the `labelSelector` block set in the `affinity.podAffinity` section: the `key` is the same, `app`, but the value has been changed to `server-gitea`.
 
 ## Redis Service resource
 
@@ -163,7 +163,7 @@ To expose Redis you need a `Service` resource.
         name: metrics
     ~~~
 
-    This `Service` resource is the same as the one declared [in the Nextcloud guide](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Redis%20cache%20server.md#redis-service-resource), except that it doesn't have a `clusterIP` explicitly set to a particular internal IP. And, since that cluster IP can change everytime the Service is restarted, you'll have to invoke it by its FQDN.
+    This `Service` resource is the same as the one declared [in the Nextcloud guide](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Valkey%20cache%20server.md#redis-service-resource), except that it doesn't have a `clusterIP` explicitly set to a particular internal IP. And, since that cluster IP can change everytime the Service is restarted, you'll have to invoke it by its FQDN.
 
 ### _Redis `Service`'s FQDN or DNS record_
 
@@ -225,7 +225,7 @@ The last piece is the `kustomization.yaml` file that describes this Gitea's Redi
       - redis-password=secrets/redis.pwd
     ~~~
 
-    This `kustomization.yaml` is exactly the same as the one you declared for [the Nextcloud's Redis service](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Redis%20cache%20server.md#redis-kustomize-project). No value needs to be changed here.
+    This `kustomization.yaml` is exactly the same as the one you declared for [the Nextcloud's Redis service](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Valkey%20cache%20server.md#redis-kustomize-project). No value needs to be changed here.
 
 ### _Checking the Kustomize yaml output_
 

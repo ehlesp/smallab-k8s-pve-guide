@@ -58,7 +58,7 @@ The core software used in this guide to build the homelab is:
 
 After setting up the Kubernetes cluster, the idea is to deploy in it the following software:
 
-- File cloud: [Nextcloud](https://nextcloud.com/).
+- File syncing and sharing platform: [Seafile](https://www.seafile.com/).
 - Lightweight git server: [Gitea](https://gitea.io/).
 - Kubernetes cluster monitoring stack: set of monitoring modules including [Prometheus](https://prometheus.io/), [Grafana](https://grafana.com/grafana/) and a couple of other related services.
 
@@ -75,7 +75,7 @@ All the chapters and their main sections are easily accessible through the [Tabl
 - [Proxmox Virtual Environment](https://www.proxmox.com/en/)
 - [Rancher K3s](https://k3s.io/)
 - [Kubernetes](https://kubernetes.io/)
-- [Nextcloud](https://nextcloud.com/)
+- [Seafile](https://www.seafile.com/)
 - [Gitea](https://gitea.io/)
 - [Prometheus](https://prometheus.io/)
 - [Grafana](https://grafana.com/grafana/)
