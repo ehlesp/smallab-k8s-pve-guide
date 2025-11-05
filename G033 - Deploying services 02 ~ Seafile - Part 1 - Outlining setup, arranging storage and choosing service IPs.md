@@ -21,7 +21,7 @@
 
 ## Beginning with Seafile
 
-From the services listed in the [chapter **G018**](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md#seafile), let's begin with the **Seafile** file-sharing platform. Since deploying it requires the configuration and deployment of several different components, I have split the Seafile guide in five parts, being this the first one of them. In this part, you'll see how to outline the setup of your Nextcloud platform, then work in the arrangement of the storage drives needed to store Nextcloud's data, and finally choose some required IPs.
+From the services listed in the [chapter **G018**](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md#seafile), let's begin with the **Seafile** file-sharing platform. Since deploying it requires the configuration and deployment of several different components, I have split the Seafile guide in five parts, being this the first one of them. In this part, you will see how to outline the setup of your Nextcloud platform, then work in the arrangement of the storage drives needed to store Nextcloud's data, and finally choose some required IPs.
 
 ## Outlining Seafile's setup
 
@@ -435,4 +435,4 @@ See that I've also chosen a cluster IP for the Seafile server. With the internal
 
 ## Navigation
 
-[<< Previous (**G032. Deploying services 01**)](G032%20-%20Deploying%20services%2001%20~%20Considerations.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G033. Deploying services 02. Nextcloud Part 2**) >>](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Redis%20cache%20server.md)
+[<< Previous (**G032. Deploying services 01**)](G032%20-%20Deploying%20services%2001%20~%20Considerations.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G033. Deploying services 02. Seafile Part 2**) >>](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%202%20-%20Valkey%20cache%20server.md)
