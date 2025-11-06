@@ -346,17 +346,18 @@
 - [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%201%20-%20Outlining%20setup,%20arranging%20storage%20and%20choosing%20service%20IPs#relevant-system-paths)
 - [References](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%201%20-%20Outlining%20setup,%20arranging%20storage%20and%20choosing%20service%20IPs#references)
 
-### [**G033** - Deploying services 02 ~ **Nextcloud - Part 2** - Valkey cache server](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Valkey%20cache%20server.md)
+### [**G033** - Deploying services 02 ~ **Nextcloud - Part 2** - Valkey cache server](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%202%20-%20Valkey%20cache%20server.md)
 
-- [Kustomize project folders for Nextcloud and Redis](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Valkey%20cache%20server.md#kustomize-project-folders-for-nextcloud-and-redis)
-- [Redis configuration file](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Valkey%20cache%20server.md#redis-configuration-file)
-- [Redis password](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Valkey%20cache%20server.md#redis-password)
-- [Redis Deployment resource](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Valkey%20cache%20server.md#redis-deployment-resource)
-- [Redis Service resource](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Valkey%20cache%20server.md#redis-service-resource)
-- [Redis Kustomize project](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Valkey%20cache%20server.md#redis-kustomize-project)
-- [Don't deploy this Redis project on its own](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Valkey%20cache%20server.md#dont-deploy-this-redis-project-on-its-own)
-- [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Valkey%20cache%20server.md#relevant-system-paths)
-- [References](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Valkey%20cache%20server.md#references)
+- [You can use Valkey instead of Redis as caching server for Seafile](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%202%20-%20Valkey%20cache%20server.md#you-can-use-valkey-instead-of-redis-as-caching-server-for-seafile)
+- [Kustomize project folders for Seafile and Valkey](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%202%20-%20Valkey%20cache%20server.md#kustomize-project-folders-for-seafile-and-valkey)
+- [Valkey configuration file](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-configuration-file)
+- [Valkey password](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-password)
+- [Valkey Deployment resource](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-deployment-resource)
+- [Valkey Service resource](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-service-resource)
+- [Valkey Kustomize project](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-kustomize-project)
+- [Do not deploy this Valkey project on its own](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%202%20-%20Valkey%20cache%20server.md#do-not-deploy-this-valkey-project-on-its-own)
+- [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%202%20-%20Valkey%20cache%20server.md#relevant-system-paths)
+- [References](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%202%20-%20Valkey%20cache%20server.md#references)
 
 ### [**G033** - Deploying services 02 ~ **Nextcloud - Part 3** - MariaDB database server](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%203%20-%20MariaDB%20database%20server.md#g033-deploying-services-02-nextcloud-part-3-mariadb-database-server)
 
