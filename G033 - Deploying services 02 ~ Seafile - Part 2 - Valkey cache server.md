@@ -298,7 +298,7 @@ What remains to setup is the main `kustomization.yaml` file that describes the w
 2. Enter the following `Kustomization` declaration in the `kustomization.yaml` file:
 
     ~~~yaml
-    # Valkey setup
+    # Seafile Valkey setup
     apiVersion: kustomize.config.k8s.io/v1beta1
     kind: Kustomization
 
@@ -508,7 +508,7 @@ With everything in place, you can check out the YAML resulting from the Seafile 
     Notice the `-summary` option in the shell command above. It is what makes the `kubeconform` command print a results summary when it finishes.
 
     > [!NOTE]
-    > **kubeconform does not produce an output when the input is valid**\
+    > **`kubeconform` does not produce an output when the input is valid**\
     > With a completely valid input as in this case and no option specified, `kubeconform` does not print anything in the shell.
     >
     > On the other hand, `kubeconform` (at least, in the version `0.7.0` installed with this guide) is not yet able to understand Kustomize projects and ends up finding errors in them.
@@ -616,4 +616,4 @@ Although you technically can deploy this Valkey Kustomize project, wait until yo
 
 ## Navigation
 
-[<< Previous (**G033. Deploying services 02. Seafile Part 1**)](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%201%20-%20Outlining%20setup,%20arranging%20storage%20and%20choosing%20service%20IPs.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G033. Deploying services 02. Seafile Part 3**) >>](G033)
+[<< Previous (**G033. Deploying services 02. Seafile Part 1**)](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%201%20-%20Outlining%20setup,%20arranging%20storage%20and%20choosing%20service%20IPs.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G033. Deploying services 02. Seafile Part 3**) >>](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%203%20-%20MariaDB%20database%20server.md)
