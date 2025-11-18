@@ -151,7 +151,7 @@ All the components will be part of the same Kustomize project for deploying Head
         - headlamp.homelab.cloud
         - hdl.homelab.cloud
       ipAddresses:
-        - 10.7.0.2
+        - 10.7.0.3
       privateKey:
         algorithm: Ed25519
         encoding: PKCS8

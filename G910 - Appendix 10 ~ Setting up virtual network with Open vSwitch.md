@@ -20,7 +20,7 @@ Log in the PVE web console and go to the `System > Network` tab of your `pve` no
 
 In the capture above you can see the initial setup on my PVE host, which I already explained (and reconfigured) in the [G017 guide](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md).
 
-### _Backing up the current network interfaces configuration_
+### Backing up the current network interfaces configuration
 
 Before going forward with the new OVS-based configuration, make a backup of your current network intefaces setup. To do so, open a shell on your PVE host with your `mgrsys` user and do the following.
 
@@ -28,7 +28,7 @@ Before going forward with the new OVS-based configuration, make a backup of your
 $ sudo cp /etc/network/interfaces /etc/network/interfaces.bkp
 ~~~
 
-### _Setting up the OVS bridge_
+### Setting up the OVS bridge
 
 Go back to the web console and, again, in the `System > Network` screen of your PVE node do the following.
 
@@ -109,18 +109,18 @@ Go back to the web console and, again, in the `System > Network` screen of your 
 
 ## Relevant system paths
 
-### _Directories_
+### Directories
 
 - `/etc/network`
 
-### _Files_
+### Files
 
 - `/etc/network/interfaces`
 - `/etc/network/interfaces.bkp`
 
 ## References
 
-### _Virtual networking with Open vSwitch (OVS)_
+### Virtual networking with Open vSwitch (OVS)
 
 - [Open vSwitch](https://www.openvswitch.org/)
 - [Open vSwitch in Proxmox VE wiki](https://pve.proxmox.com/wiki/Open_vSwitch)
@@ -129,4 +129,4 @@ Go back to the web console and, again, in the `System > Network` screen of your 
 
 ## Navigation
 
-[<< Previous (**G909. Appendix 09**)](G909%20-%20Appendix%2009%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G911. Appendix 11**) >>](G911%20-%20Appendix%2011%20~%20Alternative%20Nextcloud%20web%20server%20setups.md)
+[<< Previous (**G909. Appendix 09**)](G909%20-%20Appendix%2009%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G911. Appendix 11**) >>](G911%20-%20Appendix%2011%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md)

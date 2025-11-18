@@ -20,7 +20,7 @@
   - [MariaDB](#mariadb)
     - [MySQL Server Exporter](#mysql-server-exporter)
   - [Kubernetes](#kubernetes)
-    - [ConfigMaps and Secrets](#configmaps-and-secrets)
+    - [ConfigMaps](#configmaps)
     - [Related contents about ConfigMaps and Secrets](#related-contents-about-configmaps-and-secrets)
     - [Storage](#storage)
     - [Related contents about Kubernetes storage](#related-contents-about-kubernetes-storage)
@@ -36,7 +36,7 @@ Seafile specifies in its official documentation to use [MySQL](https://www.mysql
 
 Since the MariaDB database is just another component of your Seafile platform, you have to put its corresponding folders within the `seafile/components` path you already created in [the previous chapter about the Valkey cache server](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%202%20-%20Valkey%20cache%20server.md#kustomize-project-folders-for-seafile-and-valkey).
 
-~~~bash
+~~~sh
 $ mkdir -p $HOME/k8sprjs/seafile/components/db-mariadb/{configs,resources,secrets}
 ~~~
 
@@ -60,7 +60,7 @@ The `my.cnf` is the default configuration file for MariaDB, where you can adjust
     $ touch $HOME/k8sprjs/seafile/components/db-mariadb/configs/my.cnf
     ~~~
 
-2. Set the following configuration in your `my.cnf` file:
+2. Set the following configuration in your `configs/my.cnf` file:
 
     ~~~properties
     [client]
@@ -113,7 +113,7 @@ There are a few names you need to specify in your database setup. Those names ar
     $ touch $HOME/k8sprjs/seafile/components/db-mariadb/configs/dbnames.properties
     ~~~
 
-2. Copy the following parameter lines into `dbnames.properties`:
+2. Copy the following parameter lines into `configs/dbnames.properties`:
 
     ~~~properties
     seafile-db-name=seafile-db
@@ -144,7 +144,7 @@ To solve this issue, you can use a initializer shell script that creates that ex
     $ touch $HOME/k8sprjs/seafile/components/db-mariadb/configs/initdb.sh
     ~~~
 
-2. Fill the `initdb.sh` file with the following shell script:
+2. Fill the `configs/initdb.sh` file with the following shell script:
 
     ~~~sh
     #!/bin/sh
@@ -173,7 +173,7 @@ For convenience, declare all of these passwords as variables in the same propert
     $ touch $HOME/k8sprjs/seafile/components/db-mariadb/secrets/dbusers.pwd
     ~~~
 
-2. Fill `dbusers.pwd` with the following variables:
+2. Specify your passwords as key-value pairs in `secrets/dbusers.pwd`:
 
     ~~~properties
     root-password=l0nG.Pl4in_T3xt_sEkRet_p4s5wORD-FoR_rOo7_uZ3r!
@@ -187,7 +187,7 @@ For convenience, declare all of these passwords as variables in the same propert
 
 ## MariaDB storage
 
-Storage in Kubernetes has essentially two sides: enabling storage as persistent volumes (PVs), and the claims (PVCs) on each of those persistent volumes. For your Seafile's MariaDB instance you need one persistent volume, declared in the last part of this Seafile guide, and the claim on that particular PV that is declared next:
+Storage in Kubernetes has essentially two sides: enabling storage as persistent volumes (PVs), and the claims (PVCs) on each of those persistent volumes. For your Seafile's MariaDB instance you need one persistent volume (declared in the last part of this Seafile deployment procedure), and the claim on that particular PV that is declared next:
 
 1. A persistent volume claim is a resource, so create a `db-mariadb.persistentvolumeclaim.yaml` file under the `resources` folder:
 
@@ -195,7 +195,7 @@ Storage in Kubernetes has essentially two sides: enabling storage as persistent 
     $ touch $HOME/k8sprjs/seafile/components/db-mariadb/resources/db-mariadb.persistentvolumeclaim.yaml
     ~~~
 
-2. Declare Seafile's `PersistentVolumeClaim` in the `db-mariadb.persistentvolumeclaim.yaml` file:
+2. Declare Seafile's `PersistentVolumeClaim` in the `resources/db-mariadb.persistentvolumeclaim.yaml` file:
 
     ~~~yaml
     apiVersion: v1
@@ -241,7 +241,7 @@ Instead of using a `Deployment` resource to put MariaDB in your Kubernetes clust
     $ touch $HOME/k8sprjs/seafile/components/db-mariadb/resources/db-mariadb.statefulset.yaml
     ~~~
 
-2. Declare the `StatefulSet` for your Seafile's MariaDB server in `db-mariadb.statefulset.yaml`:
+2. Declare the `StatefulSet` for your Seafile's MariaDB server in `resources/db-mariadb.statefulset.yaml`:
 
     ~~~yaml
     apiVersion: apps/v1
@@ -292,6 +292,7 @@ Instead of using a `Deployment` resource to put MariaDB in your Kubernetes clust
                   key: prometheus-exporter-password
             resources:
               limits:
+                cpu: "0.75"
                 memory: 320Mi
             volumeMounts:
             - name: mariadb-config 
@@ -351,6 +352,7 @@ Instead of using a `Deployment` resource to put MariaDB in your Kubernetes clust
               value: "$(MARIADB_PROMETHEUS_EXPORTER_USERNAME):$(MARIADB_PROMETHEUS_EXPORTER_PASSWORD)@(localhost:3306)/"
             resources:
               limits:
+                cpu: "0.25"
                 memory: 32Mi
           volumes:
           - name: mariadb-config
@@ -423,7 +425,7 @@ The previous `StatefulSet` requires a `Service` named `db-mariadb` to run, so yo
     $ touch $HOME/k8sprjs/seafile/components/db-mariadb/resources/db-mariadb.service.yaml
     ~~~
 
-2. Declare the `Service` exposing your Seafile's MariaDB instance in `db-mariadb.service.yaml`:
+2. Declare the `Service` exposing your Seafile's MariaDB instance in `resources/db-mariadb.service.yaml`:
 
     ~~~yaml
     apiVersion: v1
@@ -802,7 +804,7 @@ This MariaDB setup is missing one critical element, the persistent volume it nee
 
 ### [Kubernetes](https://kubernetes.io/docs/)
 
-#### ConfigMaps and Secrets
+#### ConfigMaps
 
 - [Kubernetes Documentation. Concepts. Configuration](https://kubernetes.io/docs/concepts/configuration/)
   - [ConfigMaps](https://kubernetes.io/docs/concepts/configuration/configmap/)
@@ -860,4 +862,4 @@ This MariaDB setup is missing one critical element, the persistent volume it nee
 
 ## Navigation
 
-[<< Previous (**G033. Deploying services 02. Seafile Part 2**)](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%202%20-%20Valkey%20cache%20server.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G033. Deploying services 02. Seafile Part 4**) >>](G033)
+[<< Previous (**G033. Deploying services 02. Seafile Part 2**)](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%202%20-%20Valkey%20cache%20server.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G033. Deploying services 02. Seafile Part 4**) >>](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md)

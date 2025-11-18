@@ -1,4 +1,4 @@
-# G912 - Appendix 12 ~ Checking the K8s API endpoints' status
+# G911 - Appendix 11 ~ Checking the K8s API endpoints' status
 
 If you want or need to know the status of your Kubernetes cluster's API endpoints, you can do it with the `kubectl` command. The trick is about invoking directly certain URLs active in your cluster with the `get` action and the `--raw` flag.
 
@@ -129,4 +129,4 @@ Notice the deprecation notice in the commands output, and also that is not reall
 
 ## Navigation
 
-[<< Previous (**G911. Appendix 11**)](G911%20-%20Appendix%2011%20~%20Alternative%20Nextcloud%20web%20server%20setups.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G913. Appendix 13**) >>](G913%20-%20Appendix%2013%20~%20Post-update%20manual%20maintenance%20tasks%20for%20Nextcloud.md)
+[<< Previous (**G910. Appendix 10**)](G910%20-%20Appendix%2010%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G912. Appendix 12**) >>](G912%20-%20Appendix%2012%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md)

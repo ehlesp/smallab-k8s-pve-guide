@@ -7,7 +7,7 @@
 - [Valkey Deployment resource](#valkey-deployment-resource)
 - [Valkey Service resource](#valkey-service-resource)
 - [Valkey Kustomize project](#valkey-kustomize-project)
-  - [Validating the Kustomize yaml output](#validating-the-kustomize-yaml-output)
+  - [Validating the Kustomize YAML output](#validating-the-kustomize-yaml-output)
 - [Do not deploy this Valkey project on its own](#do-not-deploy-this-valkey-project-on-its-own)
 - [Relevant system paths](#relevant-system-paths)
   - [Folders in `kubectl` client system](#folders-in-kubectl-client-system)
@@ -42,7 +42,7 @@ You need a main Kustomize project for the deployment of your Seafile platform. I
 $ mkdir -p $HOME/k8sprjs/seafile/components/cache-valkey/{configs,resources,secrets}
 ~~~
 
-The main folder for the Valkey Kustomize project, `cache-valkey`, is named following the pattern `<component function>-<software name>` which I'll use also to name the main directories for the remaining component subprojects. This Valkey project will not only have some resources to deploy, but also a configuration file and a secret, thus the need for the `configs`, `resources` and `secrets` subfolders.
+The main folder for the Valkey Kustomize subproject, `cache-valkey`, is named following the pattern `<component function>-<software name>` which I'll use also to name the main directories for the remaining component subprojects. This Valkey project will not only have some resources to deploy, but also a configuration file and a secret, thus the need for the `configs`, `resources` and `secrets` subfolders.
 
 ## Valkey configuration file
 
@@ -155,6 +155,7 @@ The next thing to do is setting up the `Deployment` resource that will install V
             - containerPort: 6379
             resources:
               limits:
+                cpu: "0.5"
                 memory: 64Mi
             volumeMounts:
             - name: valkey-config
@@ -170,6 +171,7 @@ The next thing to do is setting up the `Deployment` resource that will install V
                   key: valkey-password
             resources:
               limits:
+                cpu: "0.25"
                 memory: 32Mi
             ports:
             - containerPort: 9121
@@ -207,13 +209,13 @@ The next thing to do is setting up the `Deployment` resource that will install V
         - Container `server`\
           Container that runs the Valkey server itself:
 
-          - The Docker `image` used is the Alpine Linux variant of [the most recent 9.0 version](https://hub.docker.com/r/valkey/valkey).
+          - The container `image` used is the Alpine Linux variant of [the most recent 9.0 version](https://hub.docker.com/r/valkey/valkey).
 
           - In the `command` section you can see how the configuration file path is directly specified to the service, and also how the Valkey password is obtained from a `cache-valkey` secret (which you will declare later), then turned into an environment variable (`env` section) to be passed to the `--requirepass` option.
 
           - The `containerPort` is the same as the `port` set in the `valkey.conf` file.
 
-          - The container is set with a RAM usage limit in the `resources` section.
+          - The container is set with a RAM and CPU usage limit in the `resources` section.
 
         - Container `metrics`\
           Container that runs a service specialized in getting statistics from the Valkey server in a format that a Prometheus server can read:
@@ -224,7 +226,7 @@ The next thing to do is setting up the `Deployment` resource that will install V
 
           - In the `env` section, the Valkey password is set as the `REDIS_PASSWORD` environment parameter so the exporter can pick it from the pod's environment and authenticate with it in the Valkey server.
 
-          - It also has limited RAM `resources`, and its `containerPort` is the one used by default by the exporter and also matches the one you will see declared [in the next section within the corresponding Valkey's `Service` resource](#valkey-service-resource).
+          - It also has limited RAM and CPU `resources`, and its `containerPort` is the one used by default by the exporter and also matches the one you will see declared [in the next section within the corresponding Valkey's `Service` resource](#valkey-service-resource).
 
       - `spec.volumes`\
         Here the `valkey.conf` item, taken from a yet-to-be-defined `cache-valkey` [ConfigMap object](https://kubernetes.io/docs/concepts/configuration/configmap/), is declared as a volume so it can be mounted by the `server` container, under its `volumeMounts` section.
@@ -349,7 +351,7 @@ What remains to setup is the main `kustomization.yaml` file that describes the w
 
       - None of these generator blocks have the `disableNameSuffixHash` option enabled, because the name of the resources they generate is only used in standard Kubernetes parameters that are recognized by Kustomize.
 
-### Validating the Kustomize yaml output
+### Validating the Kustomize YAML output
 
 With everything in place, you can check out the YAML resulting from the Seafile Valkey' Kustomize subproject:
 
@@ -488,7 +490,7 @@ With everything in place, you can check out the YAML resulting from the Seafile 
             name: valkey-config
     ~~~
 
-    There are a few things to highlight in the yaml output above:
+    There are a few things to highlight in the YAML output above:
 
     - You might have noticed this in the previous Kustomize projects you have deployed before, but the generated YAML output has the parameters within each resource sorted alphabetically. Be aware of this when you compare this output with the files you created and your expected results.
 

@@ -373,20 +373,21 @@
 - [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%203%20-%20MariaDB%20database%20server.md#relevant-system-paths)
 - [References](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%203%20-%20MariaDB%20database%20server.md#references)
 
-### [**G033** - Deploying services 02 ~ **Nextcloud - Part 4** - Nextcloud server](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#g033-deploying-services-02-nextcloud-part-4-nextcloud-server)
+### [**G033** - Deploying services 02 ~ **Seafile - Part 4** - Seafile server](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md)
 
-- [Considerations about the Nextcloud server](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#considerations-about-the-nextcloud-server)
-- [Nextcloud server Kustomize project's folders](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#nextcloud-server-kustomize-projects-folders)
-- [Nextcloud server configuration files](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#nextcloud-server-configuration-files)
-- [Nextcloud server password](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#nextcloud-server-password)
-- [Nextcloud server storage](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#nextcloud-server-storage)
-- [Nextcloud server Stateful resource](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#nextcloud-server-stateful-resource)
-- [Nextcloud server Service resource](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#nextcloud-server-service-resource)
-- [Nextcloud server Kustomize project](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#nextcloud-server-kustomize-project)
-- [Don't deploy this Nextcloud server project on its own](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#dont-deploy-this-nextcloud-server-project-on-its-own)
-- [Background jobs on Nextcloud](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#background-jobs-on-nextcloud)
-- [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#relevant-system-paths)
-- [References](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#references)
+- [Seafile server is deployed as another component](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md#seafile-server-is-deployed-as-another-component)
+- [Considerations about the Seafile server](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md#considerations-about-the-seafile-server)
+- [Seafile server Kustomize subproject's folders](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md#seafile-server-kustomize-subprojects-folders)
+- [Seafile server configuration file](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md#seafile-server-configuration-file)
+- [Seafile server secrets](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md#seafile-server-secrets)
+- [Seafile server storage](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md#seafile-server-storage)
+- [Seafile server TLS certificate](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md#seafile-server-tls-certificate)
+- [Seafile server StatefulSet resource](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md#seafile-server-statefulset-resource)
+- [Seafile server Service resource](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md#seafile-server-service-resource)
+- [Seafile server Kustomize project](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md#seafile-server-kustomize-project)
+- [Do not deploy this Seafile server project on its own](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md#do-not-deploy-this-seafile-server-project-on-its-own)
+- [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md#relevant-system-paths)
+- [References](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md#references)
 
 ### [**G033** - Deploying services 02 ~ **Nextcloud - Part 5** - Complete Nextcloud platform](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md#g033-deploying-services-02-nextcloud-part-5-complete-nextcloud-platform)
 
@@ -679,36 +680,23 @@
 - [Relevant system paths](G910%20-%20Appendix%2010%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md#relevant-system-paths)
 - [References](G910%20-%20Appendix%2010%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md#references)
 
-### [**G911** - Appendix 11 ~ Alternative Nextcloud web server setups](G911%20-%20Appendix%2011%20~%20Alternative%20Nextcloud%20web%20server%20setups.md)
-
-- [Ideas for the Apache setup](G911%20-%20Appendix%2011%20~%20Alternative%20Nextcloud%20web%20server%20setups.md#ideas-for-the-apache-setup)
-- [Nginx setup](G911%20-%20Appendix%2011%20~%20Alternative%20Nextcloud%20web%20server%20setups.md#nginx-setup)
-- [Relevant system paths](G911%20-%20Appendix%2011%20~%20Alternative%20Nextcloud%20web%20server%20setups.md#relevant-system-paths)
-- [References](G911%20-%20Appendix%2011%20~%20Alternative%20Nextcloud%20web%20server%20setups.md#references)
-
-### [**G912** - Appendix 12 ~ Checking the K8s API endpoints' status](G912%20-%20Appendix%2012%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md)
+### [**G911** - Appendix 11 ~ Checking the K8s API endpoints' status](G912%20-%20Appendix%2012%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md)
 
 - [References](G912%20-%20Appendix%2012%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md#references)
 
-### [**G913** - Appendix 13 ~ Post-update manual maintenance tasks for Nextcloud](G913%20-%20Appendix%2013%20~%20Post-update%20manual%20maintenance%20tasks%20for%20Nextcloud.md)
+### [**G912** - Appendix 12 ~ Updating MariaDB to a newer major version](G912%20-%20Appendix%2012%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md)
 
-- [Concerns](G913%20-%20Appendix%2013%20~%20Post-update%20manual%20maintenance%20tasks%20for%20Nextcloud.md#concerns)
-- [Procedure](G913%20-%20Appendix%2013%20~%20Post-update%20manual%20maintenance%20tasks%20for%20Nextcloud.md#procedure)
-- [References](G913%20-%20Appendix%2013%20~%20Post-update%20manual%20maintenance%20tasks%20for%20Nextcloud.md#references)
+- [Concerns](G912%20-%20Appendix%2012%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#concerns)
+- [Enabling the update procedure](G912%20-%20Appendix%2012%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#enabling-the-update-procedure)
+- [References](G912%20-%20Appendix%2012%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#references)
 
-### [**G914** - Appendix 14 ~ Updating MariaDB to a newer major version](G914%20-%20Appendix%2014%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md)
+### [**G913** - Appendix 13 ~ Updating PostgreSQL to a newer major version](G913%20-%20Appendix%2013%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md)
 
-- [Concerns](G914%20-%20Appendix%2014%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#concerns)
-- [Enabling the update procedure](G914%20-%20Appendix%2014%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#enabling-the-update-procedure)
-- [References](G914%20-%20Appendix%2014%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#references)
-
-### [**G915** - Appendix 15 ~ Updating PostgreSQL to a newer major version](G915%20-%20Appendix%2015%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md)
-
-- [Concerns](G915%20-%20Appendix%2015%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#concerns)
-- [Upgrade procedure (for Gitea's PostgreSQL instance)](G915%20-%20Appendix%2015%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#upgrade-procedure-for-gitea-s-postgresql-instance)
-- [Kustomize project only for updating PostgreSQL included in this guide series](G915%20-%20Appendix%2015%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#kustomize-project-only-for-updating-postgresql-included-in-this-guide-series)
-- [Relevant system paths](G915%20-%20Appendix%2015%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#relevant-system-paths)
-- [References](G915%20-%20Appendix%2015%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#references)
+- [Concerns](G913%20-%20Appendix%2013%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#concerns)
+- [Upgrade procedure (for Gitea's PostgreSQL instance)](G913%20-%20Appendix%2013%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#upgrade-procedure-for-gitea-s-postgresql-instance)
+- [Kustomize project only for updating PostgreSQL included in this guide series](G913%20-%20Appendix%2013%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#kustomize-project-only-for-updating-postgresql-included-in-this-guide-series)
+- [Relevant system paths](G913%20-%20Appendix%2013%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#relevant-system-paths)
+- [References](G913%20-%20Appendix%2013%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#references)
 
 ## Navigation
 

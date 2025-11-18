@@ -1,4 +1,4 @@
-# G915 - Appendix 15 ~ Updating PostgreSQL to a newer major version
+# G913 - Appendix 13 ~ Updating PostgreSQL to a newer major version
 
 PostgreSQL runs well as a containerized instance and can be upgraded easily to new minor or debug versions. However, updating it to a new _MAJOR_ version is not a straightforward affair. Still, there's a way that simplifies this process a bit, and I'll show it to you in this guide.
 
@@ -948,7 +948,7 @@ You can find the Kustomize project meant **only for updating PostgreSQL database
 
 ## Relevant system paths
 
-### _Folders in `kubectl` client system_
+### Folders in `kubectl` client system
 
 - `$HOME`
 - `$HOME/k8sprjs/gitea`
@@ -959,7 +959,7 @@ You can find the Kustomize project meant **only for updating PostgreSQL database
 - `$HOME/k8sprjs/postgres-upgrade/configs`
 - `$HOME/k8sprjs/postgres-upgrade/resources`
 
-### _Files in `kubectl` client system_
+### Files in `kubectl` client system
 
 - `$HOME/gitea-db-postgres.log`
 - `$HOME/postgres-upgrade.log`
@@ -977,13 +977,13 @@ You can find the Kustomize project meant **only for updating PostgreSQL database
 - `$HOME/k8sprjs/postgres-upgrade/resources/postgres-upgrade.persistentvolumeclaim.yaml`
 - `$HOME/k8sprjs/postgres-upgrade/resources/postgres-upgrade.statefulset.yaml`
 
-### _Folders in the K3s agent node_
+### Folders in the K3s agent node
 
 - `/mnt/gitea-ssd/db/k3smnt/`
 - `/mnt/gitea-ssd/db/k3smnt/14`
 - `/mnt/gitea-ssd/db/k3smnt/15`
 
-### _Files in the K3s agent node_
+### Files in the K3s agent node
 
 - `/mnt/gitea-ssd/db/k3smnt/14/pg_hba.conf`
 - `/mnt/gitea-ssd/db/k3smnt/14/pg_ident.conf`
@@ -996,7 +996,7 @@ You can find the Kustomize project meant **only for updating PostgreSQL database
 - `/mnt/gitea-ssd/db/k3smnt/15/postgresql.conf`
 - `/mnt/gitea-ssd/db/k3smnt/15/postmaster.opts`
 
-### _Folders in the PostgreSQL container_
+### Folders in the PostgreSQL container
 
 - `/var/lib/postgresql/data`
 - `/var/lib/postgresql/data/14`
@@ -1004,7 +1004,7 @@ You can find the Kustomize project meant **only for updating PostgreSQL database
 
 ## References
 
-### _PostgreSQL_
+### PostgreSQL
 
 - [PostgreSQL's official page](https://www.postgresql.org/)
 - [Upgrading a PostgreSQL Cluster](https://www.postgresql.org/docs/current/upgrading.html)
@@ -1018,17 +1018,17 @@ You can find the Kustomize project meant **only for updating PostgreSQL database
 - [PostgreSQL Docker image. Quick reference. `PGDATA` environmental variable](https://github.com/docker-library/docs/blob/master/postgres/README.md#pgdata)
 - [The `pg_hba.conf` File](https://www.postgresql.org/docs/current/auth-pg-hba-conf.html)
 
-### _Tianon Gravi's PostgreSQL upgrade Docker image_
+### Tianon Gravi's PostgreSQL upgrade Docker image
 
 - [pg_upgrade, Docker style on Hub Docker](https://hub.docker.com/r/tianon/postgres-upgrade/)
 - [pg_upgrade, Docker style on GitHub](https://github.com/tianon/docker-postgres-upgrade)
 - [Docker image version 14-to-15](https://hub.docker.com/layers/tianon/postgres-upgrade/14-to-15/images/sha256-18da581c7839388bb25fd3f8b3170b540556ef3eb69d9afcc0662fcaa52d864e?context=explore)
 - [Tianon Gravi on GitHub](https://github.com/tianon)
 
-### _Gitea_
+### Gitea
 
 - [Installation. Database Preparation](https://docs.gitea.io/en-us/database-prep/)
 
 ## Navigation
 
-[<< Previous (**G914. Appendix 14**)](G914%20-%20Appendix%2014%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md)
+[<< Previous (**G912. Appendix 12**)](G912%20-%20Appendix%2012%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md)
