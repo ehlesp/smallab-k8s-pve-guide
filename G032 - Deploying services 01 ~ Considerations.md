@@ -11,7 +11,7 @@ The next chapters of this guide will show you how to deploy in your K3s cluster 
 
 ## Be watchful of your system's resources usage
 
-Your K3s Kubernetes cluster is not running "empty" at this point, it already has a fair number of services running which already eat up a good chunk of your hardware's resources. Be always aware of the current resources usage in your setup before you deploy any new app or service in your cluster.
+Your K3s Kubernetes cluster is not running "empty" at this point. It has a number of services running that already eat up a good chunk of your hardware's resources. Be always aware of the current resources usage in your setup before you deploy any new app or service in your cluster.
 
 Remember that you can get the resource usages from your setup in these ways:
 

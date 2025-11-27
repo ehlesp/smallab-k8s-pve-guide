@@ -337,67 +337,17 @@
 - [Be watchful of your system's resources usage](G032%20-%20Deploying%20services%2001%20~%20Considerations.md#be-watchful-of-your-systems-resources-usage)
 - [Do not fill your cluster up to the brim](G032%20-%20Deploying%20services%2001%20~%20Considerations.md#do-not-fill-your-cluster-up-to-the-brim)
 
-### [**G033** - Deploying services 02 ~ **Seafile - Part 1** - Outlining setup, arranging storage and choosing service IPs](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%201%20-%20Outlining%20setup,%20arranging%20storage%20and%20choosing%20service%20IPs.md)
+### [**G033** - Deploying services 02 ~ **Ghost - Part 1** - Outlining setup, arranging storage and choosing service IPs](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%201%20-%20Outlining%20setup,%20arranging%20storage%20and%20choosing%20service%20IPs.md)
 
-- [Beginning with Seafile](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%201%20-%20Outlining%20setup,%20arranging%20storage%20and%20choosing%20service%20IPs#beginning-with-seafile)
-- [Outlining Seafile's setup](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%201%20-%20Outlining%20setup,%20arranging%20storage%20and%20choosing%20service%20IPs#outlining-seafiles-setup)
-- [Setting up new storage drives in the K3s agent node](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%201%20-%20Outlining%20setup,%20arranging%20storage%20and%20choosing%20service%20IPs#setting-up-new-storage-drives-in-the-k3s-agent-node)
-- [Choosing static cluster IPs for Seafile-related services](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%201%20-%20Outlining%20setup,%20arranging%20storage%20and%20choosing%20service%20IPs#choosing-static-cluster-ips-for-seafile-related-services)
-- [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%201%20-%20Outlining%20setup,%20arranging%20storage%20and%20choosing%20service%20IPs#relevant-system-paths)
-- [References](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%201%20-%20Outlining%20setup,%20arranging%20storage%20and%20choosing%20service%20IPs#references)
 
-### [**G033** - Deploying services 02 ~ **Seafile - Part 2** - Valkey cache server](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%202%20-%20Valkey%20cache%20server.md)
 
-- [You can use Valkey instead of Redis as caching server for Seafile](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%202%20-%20Valkey%20cache%20server.md#you-can-use-valkey-instead-of-redis-as-caching-server-for-seafile)
-- [Kustomize project folders for Seafile and Valkey](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%202%20-%20Valkey%20cache%20server.md#kustomize-project-folders-for-seafile-and-valkey)
-- [Valkey configuration file](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-configuration-file)
-- [Valkey password](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-password)
-- [Valkey Deployment resource](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-deployment-resource)
-- [Valkey Service resource](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-service-resource)
-- [Valkey Kustomize project](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-kustomize-project)
-- [Do not deploy this Valkey project on its own](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%202%20-%20Valkey%20cache%20server.md#do-not-deploy-this-valkey-project-on-its-own)
-- [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%202%20-%20Valkey%20cache%20server.md#relevant-system-paths)
-- [References](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%202%20-%20Valkey%20cache%20server.md#references)
 
-### [**G033** - Deploying services 02 ~ **Seafile - Part 3** - MariaDB database server](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%203%20-%20MariaDB%20database%20server.md)
 
-- [You can use MariaDB instead of MySQL as database server for Seafile](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%203%20-%20MariaDB%20database%20server.md#you-can-use-mariadb-instead-of-mysql-as-database-server-for-seafile)
-- [MariaDB Kustomize project's folders](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-kustomize-subprojects-folders)
-- [MariaDB configuration files](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-configuration-files)
-- [MariaDB passwords](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-passwords)
-- [MariaDB storage](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-storage)
-- [MariaDB StatefulSet resource](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-statefulset-resource)
-- [MariaDB Service resource](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-service-resource)
-- [MariaDB Kustomize project](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-kustomize-project)
-- [Do not deploy this MariaDB project on its own](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%203%20-%20MariaDB%20database%20server.md#do-not-deploy-this-mariadb-project-on-its-own)
-- [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%203%20-%20MariaDB%20database%20server.md#relevant-system-paths)
-- [References](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%203%20-%20MariaDB%20database%20server.md#references)
 
-### [**G033** - Deploying services 02 ~ **Seafile - Part 4** - Seafile server](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md)
 
-- [Seafile server is deployed as another component](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md#seafile-server-is-deployed-as-another-component)
-- [Considerations about the Seafile server](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md#considerations-about-the-seafile-server)
-- [Seafile server Kustomize subproject's folders](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md#seafile-server-kustomize-subprojects-folders)
-- [Seafile server configuration file](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md#seafile-server-configuration-file)
-- [Seafile server secrets](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md#seafile-server-secrets)
-- [Seafile server storage](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md#seafile-server-storage)
-- [Seafile server TLS certificate](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md#seafile-server-tls-certificate)
-- [Seafile server StatefulSet resource](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md#seafile-server-statefulset-resource)
-- [Seafile server Service resource](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md#seafile-server-service-resource)
-- [Seafile server Kustomize project](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md#seafile-server-kustomize-project)
-- [Do not deploy this Seafile server project on its own](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md#do-not-deploy-this-seafile-server-project-on-its-own)
-- [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md#relevant-system-paths)
-- [References](G033%20-%20Deploying%20services%2002%20~%20Seafile%20-%20Part%204%20-%20Seafile%20server.md#references)
 
-### [**G033** - Deploying services 02 ~ **Nextcloud - Part 5** - Complete Nextcloud platform](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md#g033-deploying-services-02-nextcloud-part-5-complete-nextcloud-platform)
 
-- [Preparing pending Nextcloud platform elements](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md#preparing-pending-nextcloud-platform-elements)
-- [Kustomize project for Nextcloud platform](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md#kustomize-project-for-nextcloud-platform)
-- [Logging and checking the background jobs configuration on your Nextcloud platform](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md#logging-and-checking-the-background-jobs-configuration-on-your-nextcloud-platform)
-- [Security considerations in Nextcloud](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md#security-considerations-in-nextcloud)
-- [Nextcloud platform's Kustomize project attached to this guide series](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md#nextcloud-platforms-kustomize-project-attached-to-this-guide-series)
-- [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md#relevant-system-paths)
-- [References](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md#references)
+
 
 ### [**G034** - Deploying services 03 ~ **Gitea - Part 1** - Outlining setup and arranging storage](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#g034-deploying-services-03-gitea-part-1-outlining-setup-and-arranging-storage)
 

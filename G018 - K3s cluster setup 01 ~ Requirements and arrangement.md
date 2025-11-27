@@ -3,7 +3,7 @@
 - [Gearing up for your K3s cluster](#gearing-up-for-your-k3s-cluster)
 - [Requirements for the K3s cluster and the services to deploy in it](#requirements-for-the-k3s-cluster-and-the-services-to-deploy-in-it)
   - [Rancher K3s Kubernetes cluster](#rancher-k3s-kubernetes-cluster)
-  - [Seafile](#seafile)
+  - [Ghost](#ghost)
   - [Gitea](#gitea)
   - [Kubernetes cluster monitoring stack](#kubernetes-cluster-monitoring-stack)
     - [Prometheus](#prometheus)
@@ -12,7 +12,7 @@
 - [References](#references)
   - [About Kubernetes](#about-kubernetes)
   - [About Rancher K3s](#about-rancher-k3s)
-  - [About Seafile](#about-seafile)
+  - [About Ghost](#about-ghost)
   - [About Gitea](#about-gitea)
   - [About Prometheus](#about-prometheus)
   - [About Grafana](#about-grafana)
@@ -37,18 +37,18 @@ Since the virtual hardware I'm using in this guide series is rather limited, ins
 | Server | 2 cores |  2 GB  |
 | Agent  | 1 core  | 512 MB |
 
-### Seafile
+### Ghost
 
-[Seafile](https://www.seafile.com/) is a software mainly for file syncing and sharing, so its main requirement will always be storage room for saving data. The version that this guide deploys is the Community Edition (CE), which has its own [minimal system requirements](https://manual.seafile.com/latest/setup/system_requirements/):
+The [Ghost](https://ghost.org/) publishing platform [has a different set of prerequisites specified in its official documentation depending on how it is installed](https://docs.ghost.org/install). Next are listed the particular minimum requirements (extracted from the mentioned prerequisites) that are relevant to this guide:
 
-- RAM: 2GB.
-- CPU : 2 cores with more than 2GHz.
-- Database: MariaDB.
-- Caching platform: Redis.
+- RAM: 1GB.
+- CPU: 1 core.
+- OS: Ubuntu 22.04 or 24.04.
+- Database: MySQL 8.
 
 ### Gitea
 
-[Gitea](https://gitea.io/) is a lightweight self-hosted git service, so its main requirement will be storage space:
+[Gitea](https://gitea.io/) is a lightweight self-hosted git service that requires the following:
 
 - Database: PostgreSQL (>= 12), MySQL (>= 8.0), MariaDB (>= 10.4), SQLite (builtin), and MSSQL (>= 2012 SP4).
 - Git version >= 2.0.
@@ -93,10 +93,11 @@ If your hardware setup has more RAM and cores than the one used in this guide, y
 
 - [Docs. Installation. Requirements](https://docs.k3s.io/installation/requirements#hardware)
 
-### About [Seafile](https://www.seafile.com/)
+### About [Ghost](https://ghost.org/)
 
-- [Seafile Admin Manual](https://manual.seafile.com/latest/)
-  - [Setup. System requirements](https://manual.seafile.com/latest/setup/system_requirements/)
+- [Getting Started. How To Install Ghost](https://docs.ghost.org/install)
+  - [Documentation. How To Install Ghost On Ubuntu](https://docs.ghost.org/install/ubuntu)
+  - [How To Install Ghost With Docker (preview)](https://docs.ghost.org/install/docker)
 
 ### About [Gitea](https://gitea.io/)
 
