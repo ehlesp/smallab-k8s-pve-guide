@@ -21,7 +21,7 @@
 
 ## Beginning with Ghost
 
-From the services listed in the [**G018** guide](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md#ghost), let's begin with the publishing platform **Ghost**. Since deploying it requires the configuration and deployment of several different components, the procedure for deploying Ghost is split in five parts, being this chapter the first one of them.
+From the services listed in the [chapter **G018**](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md#ghost), let's begin with the publishing platform **Ghost**. Since deploying it requires the configuration and deployment of several different components, the procedure for deploying Ghost is split in five parts, being this chapter the first one of them.
 
 In this part, you will see how to outline the setup of your Ghost platform, then work in the arrangement of the storage drives needed to store Ghost's data, and finally choose some required IPs.
 
@@ -381,7 +381,7 @@ If, after a time using and filling up these volumes, you need to increase their 
 
 ## Choosing static cluster IPs for Ghost-related services
 
-For all the main components of your Ghost setup, you are going to create `Service` resources. To make them reachable internally for any pod within your Kubernetes cluster, one way is by assigning them a static cluster IP. With it, you get to know beforehand which internal IP the services have, allowing you pointing the Seafile server instance to the right ones. To determine which cluster IP to g to those future services, you need to take a look with `kubectl` at which cluster IPs are currently in use in your Kubernetes cluster:
+For all the main components of your Ghost setup, you are going to create `Service` resources. To make them reachable internally for any pod within your Kubernetes cluster, one way is by assigning them a static cluster IP. With it, you get to know beforehand which internal IP the services have, allowing you pointing the Ghost server instance to the right ones. To determine which cluster IP to assign to those services, take a look with `kubectl` at which cluster IPs are currently in use in your Kubernetes cluster:
 
 ~~~sh
 $ kubectl get svc -A
@@ -398,16 +398,14 @@ kube-system      traefik-dashboard         LoadBalancer   10.43.216.2     10.7.0
 metallb-system   metallb-webhook-service   ClusterIP      10.43.126.18    <none>        443/TCP                      47d
 ~~~
 
-Check the values under the `CLUSTER-IP` column, and notice how all of them fall under the `10.43` subnet. What you have to do now is just choose IPs that fall into that subnet but do not collide with the ones currently in use by other services. Let's say you choose the following ones:
+Check the values under the `CLUSTER-IP` column, and notice how all of them are in the `10.43` subnet. What you have to do now is just choose IPs that fall into that subnet but do not collide with the ones currently in use by other services. Let's say you choose the following ones:
 
 - `10.43.100.1` for the Ghost server instance.
 - `10.43.100.2` for the Valkey cache server instance.
 - `10.43.100.3` for the MariaDB database server instance.
 
-See that I have also chosen a cluster IP for the Ghost platform server. With the internal cluster IPs known, in a later chapter you will see how Ghost will be able to point at the components it needs to run.
-
 > [!IMPORTANT]
-> **Remember that the internal cluster communications run in a separated network**\
+> **Remember that the internal Kubernetes cluster communications run in a separated virtual  network**\
 > In this guide's setup, the cluster IPs will not collide in any way with the external IPs because they exist in completely separated virtual networks run through independent virtual bridges.
 
 ## Relevant system paths
@@ -455,4 +453,4 @@ See that I have also chosen a cluster IP for the Ghost platform server. With the
 
 ## Navigation
 
-[<< Previous (**G032. Deploying services 01**)](G032%20-%20Deploying%20services%2001%20~%20Considerations.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G033. Deploying services 02. Ghost Part 2**) >>](G033)
+[<< Previous (**G032. Deploying services 01**)](G032%20-%20Deploying%20services%2001%20~%20Considerations.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G033. Deploying services 02. Ghost Part 2**) >>](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md)
