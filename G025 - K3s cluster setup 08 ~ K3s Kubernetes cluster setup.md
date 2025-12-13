@@ -996,9 +996,9 @@ The command will find the `config.yaml` file in the default path on the VM, and 
 
     ~~~sh
     $ wget -qO - https://get.k3s.io | INSTALL_K3S_VERSION="v1.33.4+k3s1" sh -s - server
-    [INFO]  Using v1.22.3+k3s1 as release
-    [INFO]  Downloading hash https://github.com/k3s-io/k3s/releases/download/v1.22.3+k3s1/sha256sum-amd64.txt
-    [INFO]  Downloading binary https://github.com/k3s-io/k3s/releases/download/v1.22.3+k3s1/k3s
+    [INFO]  Using v1.33.4+k3s1 as release
+    [INFO]  Downloading hash https://github.com/k3s-io/k3s/releases/download/v1.33.4+k3s1/sha256sum-amd64.txt
+    [INFO]  Downloading binary https://github.com/k3s-io/k3s/releases/download/v1.33.4+k3s1/k3s
     [INFO]  Verifying binary download
     [INFO]  Installing k3s to /usr/local/bin/k3s
     [INFO]  Skipping installation of SELinux RPM
@@ -1570,7 +1570,7 @@ On the other hand, you might be thinking now that the NUT configuration you've d
 
 ### Warning about the Kubernetes graceful shutdown feature
 
-This feature is still considered beta, so it could give you surprises. I'll give you an example from my experience with the older K3s release `v1.22.3+k3s1` of K3s. After a graceful reboot, the pods appeared as `Terminated` although they were actually running. This is something you can detect with `kubectl` when checking the pods like in the output below:
+This feature is still considered beta, so it could give you surprises. I'll give you an example from my experience with the older K3s release `v1.33.4+k3s1` of K3s. After a graceful reboot, the pods appeared as `Terminated` although they were actually running. This is something you can detect with `kubectl` when checking the pods like in the output below:
 
 ~~~sh
 $ kubectl get pods -n kube-system

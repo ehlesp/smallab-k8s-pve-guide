@@ -1,15 +1,14 @@
-# G033 - Deploying services 02 ~ Ghost - Part 1 - Outlining setup, arranging storage and choosing service IPs
+# G033 - Deploying services 02 ~ Ghost - Part 1 - Outlining setup and arranging storage
 
 - [Beginning with Ghost](#beginning-with-ghost)
 - [Outlining Ghost's setup](#outlining-ghosts-setup)
-  - [Choosing the K3s agent](#choosing-the-k3s-agent)
+- [Choosing the K3s agent node for running Ghost](#choosing-the-k3s-agent-node-for-running-ghost)
 - [Setting up new storage drives in the K3s agent node](#setting-up-new-storage-drives-in-the-k3s-agent-node)
   - [Adding the new storage drives to the K3s agent node's VM](#adding-the-new-storage-drives-to-the-k3s-agent-nodes-vm)
   - [LVM storage set up](#lvm-storage-set-up)
   - [Formatting and mounting the new LVs](#formatting-and-mounting-the-new-lvs)
   - [Storage mount points for the Ghost pods](#storage-mount-points-for-the-ghost-pods)
   - [About increasing the size of volumes](#about-increasing-the-size-of-volumes)
-- [Choosing static cluster IPs for Ghost-related services](#choosing-static-cluster-ips-for-ghost-related-services)
 - [Relevant system paths](#relevant-system-paths)
   - [Folders in K3s agent node's VM](#folders-in-k3s-agent-nodes-vm)
   - [Files in K3s agent node's VM](#files-in-k3s-agent-nodes-vm)
@@ -23,7 +22,7 @@
 
 From the services listed in the [chapter **G018**](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md#ghost), let's begin with the publishing platform **Ghost**. Since deploying it requires the configuration and deployment of several different components, the procedure for deploying Ghost is split in five parts, being this chapter the first one of them.
 
-In this part, you will see how to outline the setup of your Ghost platform, then work in the arrangement of the storage drives needed to store Ghost's data, and finally choose some required IPs.
+In this part, you will see how to outline the setup of your Ghost platform, then work in the arrangement of the storage drives needed to store Ghost's data.
 
 ## Outlining Ghost's setup
 
@@ -43,14 +42,14 @@ This guide solves the previous points as follows.
 - **Cache server**\
   Ghost can work with [Redis](https://redis.io/), but this guide rather opts for the compatible alternative [Valkey](https://valkey.io/) configured to have data persistence on a local SSD storage drive.
 
-- **Ghost server's data**\
-  Stored in a persistent volume prepared on a local HDD storage drive.
+- **Ghost server**\
+  Its contents data will be stored in a persistent volume prepared on a local HDD storage drive.
 
 Also be aware that all the services making up this Ghost platform will run in the same K3s agent node. This is because all the local storage will be setup in one agent node, and Kubernetes applies the affinity rule of making its pods run in the same nodes that provide their storage.
 
-### Choosing the K3s agent
+## Choosing the K3s agent node for running Ghost
 
-Your cluster has only two K3s agent nodes, and the two of them are already running services. Choose the one that currently has the lowest CPU and RAM usage of the two. The node picked in this guide is the `k3sagent02` node.
+Your cluster has only two K3s agent nodes, and the two of them are already running services. For running the whole Ghost setup, choose the one that currently has the lowest CPU and RAM usage of the two. The node picked in this guide is the `k3sagent02` node.
 
 ## Setting up new storage drives in the K3s agent node
 
@@ -378,35 +377,6 @@ Kubernetes pods can change the owner user and group, and also the permission mod
 ### About increasing the size of volumes
 
 If, after a time using and filling up these volumes, you need to increase their size, take a look to the [appendix chapter **G907**](G907%20-%20Appendix%2007%20~%20Resizing%20a%20root%20LVM%20volume.md). It shows you how to extend a partition and the LVM filesystem within it, although in that case it is done on a LV volume that happens to be also the root filesystem of a VM.
-
-## Choosing static cluster IPs for Ghost-related services
-
-For all the main components of your Ghost setup, you are going to create `Service` resources. To make them reachable internally for any pod within your Kubernetes cluster, one way is by assigning them a static cluster IP. With it, you get to know beforehand which internal IP the services have, allowing you pointing the Ghost server instance to the right ones. To determine which cluster IP to assign to those services, take a look with `kubectl` at which cluster IPs are currently in use in your Kubernetes cluster:
-
-~~~sh
-$ kubectl get svc -A
-NAMESPACE        NAME                      TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
-cert-manager     cert-manager              ClusterIP      10.43.153.243   <none>        9402/TCP                     21d
-cert-manager     cert-manager-cainjector   ClusterIP      10.43.131.203   <none>        9402/TCP                     21d
-cert-manager     cert-manager-webhook      ClusterIP      10.43.118.87    <none>        443/TCP,9402/TCP             21d
-default          kubernetes                ClusterIP      10.43.0.1       <none>        443/TCP                      51d
-kube-system      headlamp                  LoadBalancer   10.43.119.9     10.7.0.2      80:31146/TCP                 17d
-kube-system      kube-dns                  ClusterIP      10.43.0.10      <none>        53/UDP,53/TCP,9153/TCP       51d
-kube-system      metrics-server            ClusterIP      10.43.50.63     <none>        443/TCP                      38d
-kube-system      traefik                   LoadBalancer   10.43.174.63    10.7.0.0      80:30512/TCP,443:32647/TCP   51d
-kube-system      traefik-dashboard         LoadBalancer   10.43.216.2     10.7.0.1      443:31622/TCP                23d
-metallb-system   metallb-webhook-service   ClusterIP      10.43.126.18    <none>        443/TCP                      47d
-~~~
-
-Check the values under the `CLUSTER-IP` column, and notice how all of them are in the `10.43` subnet. What you have to do now is just choose IPs that fall into that subnet but do not collide with the ones currently in use by other services. Let's say you choose the following ones:
-
-- `10.43.100.1` for the Ghost server instance.
-- `10.43.100.2` for the Valkey cache server instance.
-- `10.43.100.3` for the MariaDB database server instance.
-
-> [!IMPORTANT]
-> **Remember that the internal Kubernetes cluster communications run in a separated virtual  network**\
-> In this guide's setup, the cluster IPs will not collide in any way with the external IPs because they exist in completely separated virtual networks run through independent virtual bridges.
 
 ## Relevant system paths
 
