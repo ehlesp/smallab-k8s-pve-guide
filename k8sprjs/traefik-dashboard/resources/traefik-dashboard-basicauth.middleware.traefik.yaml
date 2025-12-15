@@ -4,7 +4,6 @@ kind: Middleware
 
 metadata:
   name: traefik-dashboard-basicauth
-  namespace: kube-system
 spec:
   basicAuth:
     secret: traefik-dashboard-basicauth-secret
