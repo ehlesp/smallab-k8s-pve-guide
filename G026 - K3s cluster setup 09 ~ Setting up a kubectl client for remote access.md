@@ -21,7 +21,7 @@
 
 ## Never handle your Kubernetes cluster directly from server nodes
 
-To manage a K3s Kubernetes cluster through `kubectl` is recommended not to do it directly from the server nodes, but to connect remotely from another client computer. This way, you don't have to copy your `.yaml` files describing your deployments or configurations directly on any of your server nodes.
+To manage a K3s Kubernetes cluster through `kubectl` is recommended not to do it directly from the server nodes, but to connect remotely from another client computer. This way, you do not have to copy your `.yaml` files describing your deployments or configurations directly on any of your server nodes.
 
 ## Description of the `kubectl` client system
 
@@ -35,7 +35,7 @@ $ sudo apt install -y curl
 
 The first thing you must know is the version of the K3s cluster you're going to connect to. This is important because `kubectl` is guaranteed to be compatible only with its own correlative version or those that are at one _minor_ version of difference from it.
 
-For instance, at the time of writing this chapter, the latest `kubectl` _minor_ version is 1.34, meaning that it's compatible with the 1.33, 1.34 and future 1.35 versions of the Kubernetes api. K3s follows the same versioning system, since it is "just" a particular distribution of Kubernetes.
+For instance, at the time of writing this chapter, the latest `kubectl` _minor_ version is 1.34, meaning that it's compatible with the 1.33, 1.34 and 1.35 versions of the Kubernetes api. K3s follows the same versioning system, since it is "just" a particular distribution of Kubernetes.
 
 Open a shell to your `k3sserver01` server node and check your K3s software version with this `k3s` command:
 

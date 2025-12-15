@@ -2,7 +2,7 @@
 
 - [Traefik is the embedded ingress controller of K3s](#traefik-is-the-embedded-ingress-controller-of-k3s)
 - [Enabling access to the Traefik dashboard](#enabling-access-to-the-traefik-dashboard)
-  - [Defining a user for the Traefik dashboard](#defining-a-user-for-the-traefik-dashboard)
+  - [Creating a user for the Traefik dashboard](#creating-a-user-for-the-traefik-dashboard)
   - [Kustomize project for enabling access to the Traefik dashboard](#kustomize-project-for-enabling-access-to-the-traefik-dashboard)
 - [Getting into the Traefik dashboard](#getting-into-the-traefik-dashboard)
 - [What to do if Traefik's dashboard has bad performance](#what-to-do-if-traefiks-dashboard-has-bad-performance)
@@ -28,13 +28,12 @@ Traefik in K3s comes with its embedded web dashboard enabled by default, but rea
 
 This chapter shows you how to enable HTTPS access to your Traefik dashboard by doing the following:
 
-1. Defining a user to restrict access to the Traefik dashboard.
-2. Declaring a `Service` pointing to the websecure `443` port of the pod running Traefik in your cluster.
-3. Declaring an `IngressRoute` to the Traefik dashboard `Service` enabling access to Traefik's websecure port.
+1. Creating a user to restrict access into the Traefik dashboard.
+2. Declaring an `IngressRoute` that enables access to a `TraefikService` where the dashboard is available. This `IngressRoute` enforces authentication with the user created in the previous step.
 
-The first step is just the execution of a command on your `kubectl` client. The other two go together in the corresponding Kustomize project.
+The first step is just the execution of a command on your `kubectl` client. The other is resolved in the corresponding Kustomize project.
 
-### Defining a user for the Traefik dashboard
+### Creating a user for the Traefik dashboard
 
 Secure the access to your Traefik dashboard by defining at least one user with a password. Traefik demands passwords hashed using MD5, SHA1, or BCrypt, and recommends using the `htpasswd` command to generate them:
 
@@ -72,10 +71,10 @@ The next steps set up and deploy the Kustomize project enabling access to your T
 2. Create the following files within the Kustomize project:
 
     ~~~sh
-    $ touch $HOME/k8sprjs/traefik-dashboard/resources/{traefik-dashboard-basicauth.middleware.traefik.yaml,traefik-dashboard.ingressroute.traefik.yaml,traefik-dashboard.service.yaml} $HOME/k8sprjs/traefik-dashboard/secrets/users
+    $ touch $HOME/k8sprjs/traefik-dashboard/resources/{traefik-dashboard-basicauth.middleware.traefik.yaml,traefik-dashboard.ingressroute.traefik.yaml} $HOME/k8sprjs/traefik-dashboard/secrets/users
     ~~~
 
-3. In `resources/traefik-dashboard-basicauth.middleware.traefik.yaml` declare the authorization method that will be used for login in the Traefik dashboard:
+3. In `resources/traefik-dashboard-basicauth.middleware.traefik.yaml` declare the authorization method to use for login in the Traefik dashboard:
 
     ~~~yaml
     # Basic authentication method for Traefik dashboard
@@ -84,142 +83,31 @@ The next steps set up and deploy the Kustomize project enabling access to your T
 
     metadata:
       name: traefik-dashboard-basicauth
-      namespace: kube-system
     spec:
       basicAuth:
         secret: traefik-dashboard-basicauth-secret
     ~~~
 
-    A `Middleware` is a custom Traefik resource, used in this case for configuring a basic authentication method (a user and password login system). In the `spec.basicAuth.secret` parameter, this middleware invokes a `secret` resource which you'll declare in a later step of this procedure.
+    A `Middleware` is a custom Traefik resource, used in this case for configuring a basic authentication method (a user and password login system). In the `spec.basicAuth.secret` parameter, this middleware invokes a `secret` resource which you will declare in a later step of this procedure.
 
-4. Using `kubectl`, see the current external IP MetalLB has assigned to the services running in your cluster:
-
-    ~~~sh
-    $ kubectl get svc -A
-    NAMESPACE        NAME                      TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
-    cert-manager     cert-manager              ClusterIP      10.43.113.216   <none>        9402/TCP                     13d
-    cert-manager     cert-manager-cainjector   ClusterIP      10.43.206.23    <none>        9402/TCP                     13d
-    cert-manager     cert-manager-webhook      ClusterIP      10.43.118.166   <none>        443/TCP,9402/TCP             13d
-    default          kubernetes                ClusterIP      10.43.0.1       <none>        443/TCP                      28d
-    kube-system      kube-dns                  ClusterIP      10.43.0.10      <none>        53/UDP,53/TCP,9153/TCP       28d
-    kube-system      metrics-server            ClusterIP      10.43.50.63     <none>        443/TCP                      15d
-    kube-system      traefik                   LoadBalancer   10.43.174.63    10.7.0.0      80:30512/TCP,443:32647/TCP   28d
-    metallb-system   metallb-webhook-service   ClusterIP      10.43.126.18    <none>        443/TCP                      25d
-    ~~~
-
-    At this point, the only service with an external IP assigned is Traefik, but you cannot use that address even for accessing its own dashboard. You have to pick the next IP available [in the address pool you enabled in MetalLB](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md#choosing-the-ip-ranges-for-metallb), which for this guide's setup is `10.7.0.1`.
-
-    > [!NOTE]
-    > **The Traefik dashboard is not accessible through the existing `traefik` service**\
-    > It is not possible to reach the Traefik dashboard through the already present `traefik` `Service` object in the K3s setup. You need to create a different service with its own IP address to access the dashboard, as declared in the next step.
-
-5. Declare the `Service` object for the Traefik dasboard in `traefik-dashboard.service.yaml`:
+4. Declare in `resources/traefik-dashboard.ingressroute.traefik.yaml` the `IngressRoute` resource enabling access to the Traefik dashboard:
 
     ~~~yaml
-    # Traefik dashboard service
-    apiVersion: v1
-    kind: Service
-
-    metadata:
-      name: traefik-dashboard
-      namespace: kube-system
-      labels:
-        app.kubernetes.io/instance: traefik-kube-system
-        app.kubernetes.io/name: traefik-dashboard
-    spec:
-      type: LoadBalancer
-      loadBalancerIP: 10.7.0.1
-      ports:
-      - name: websecure
-        port: 443
-        targetPort: websecure
-        protocol: TCP
-      selector:
-        app.kubernetes.io/instance: traefik-kube-system
-        app.kubernetes.io/name: traefik
-    ~~~
-
-    This `Service` has the following particularities:
-
-    - In its `metadata` section there are `labels`:
-
-      - `app.kubernetes.io/instance`\
-        The `traefik-kube-system` value groups this service in the same instance as the pod and service already existing in your cluster.
-
-      - `app.kubernetes.io/name`\
-        The `traefik-dashboard` string identifies this service within the Traefik instance.
-
-    - The `spec.type` makes this `Service` managed by your cluster's load balancer (MetalLB). This is required to be able to use the `spec.loadBalancerIP` property to specify the IP you want for this `Service` from those provided by MetalLB.
-
-    - The `ports` configuration exposes the `websecure` port of the Traefik pod through the `443` (HTTPS) `port`.
-
-      > [!NOTE]
-      > **Traefik's pod has four named ports opened**\
-      > To check those ports out, first discover the name of the `Running` Traefik pod:
-      >
-      > ~~~sh
-      > $ kubectl -n kube-system get pods | grep traefik
-      > traefik-c98fdf6fb-ndqbk                   1/1     Running     0             25m
-      > traefik-c98fdf6fb-t8bkp                   0/1     Completed   0             44h
-      > traefik-c98fdf6fb-vdwbf                   0/1     Completed   0             43h
-      > ~~~
-      >
-      > You can have several pods listed for Traefik, but most of them are just references to old pods that you can remove from your cluster with the `kubectl -n kube-system delete pods` command. Copy the name for the `Running` Traefik pod, then extract the ports information from the pod's description:
-      >
-      > ~~~sh
-      > $ kubectl -n kube-system describe pod traefik-c98fdf6fb-ndqbk | grep Ports
-      >     Ports:         9100/TCP (metrics), 8080/TCP (traefik), 8000/TCP (web), 8443/TCP (websecure)
-      >     Host Ports:    0/TCP (metrics), 0/TCP (traefik), 0/TCP (web), 0/TCP (websecure)
-      > ~~~
-      >
-      > You could also get this same information from older `Completed` pods, but it is better to get the most up-to-date details from a currently `Running` pod.
-
-    - The `selector` links this `Service` object with the running Traefik pod that has been labeled with the same specified tags.
-
-      > [!NOTE]
-      > **See the labels applied to the running Traefik pod**\
-      > Check out the [labels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#label-selectors) applied to the running Traefik pod with `kubectl`:
-      >
-      > ~~~sh
-      > $ kubectl -n kube-system describe pods traefik-c98fdf6fb-ndqbk 
-      > Name:                 traefik-c98fdf6fb-ndqbk
-      > Namespace:            kube-system
-      > Priority:             2000000000
-      > Priority Class Name:  system-cluster-critical
-      > Service Account:      traefik
-      > Node:                 k3sagent02/172.16.2.2
-      > Start Time:           Wed, 08 Oct 2025 09:00:04 +0200
-      > Labels:               app.kubernetes.io/instance=traefik-kube-system
-      >                       app.kubernetes.io/managed-by=Helm
-      >                       app.kubernetes.io/name=traefik
-      >                       helm.sh/chart=traefik-34.2.1_up34.2.0
-      >                       pod-template-hash=c98fdf6fb
-      > ...
-      > ~~~
-      >
-      > In the output, look at the `Labels` section to find there the labels `app.kubernetes.io/instance` and `app.kubernetes.io/name`. Also notice that the labels applied are [equality-based ones](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#equality-based-requirement).
-
-6. Declare in `resources/traefik-dashboard.ingressroute.traefik.yaml` the `IngressRoute` resource for enabling access to the Traefik dashboard:
-
-    ~~~yaml
-    # Ingress for Traefik's dashboard
+    # HTTPS ingress for Traefik dashboard and API
     apiVersion: traefik.io/v1alpha1
     kind: IngressRoute
 
     metadata:
       name: traefik-dashboard
-      namespace: kube-system
     spec:
-      entryPoints:
-        - websecure
       routes:
-        - kind: Rule
-          match: Host(`10.7.0.1`) || Host(`traefik.homelab.cloud`) || Host(`tfk.homelab.cloud`)
-          services:
-            - name: api@internal
-              kind: TraefikService
-          middlewares:
-            - name: traefik-dashboard-basicauth
+      - kind: Rule
+        match: Host(`traefik.homelab.cloud`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+        services:
+        - name: api@internal
+          kind: TraefikService
+        middlewares:
+        - name: traefik-dashboard-basicauth
     ~~~
 
     This is a Traefik `IngressRoute` resource defining the route and the authentication method to access your Traefik dashboard:
@@ -232,9 +120,9 @@ The next steps set up and deploy the Kustomize project enabling access to your T
 
     - The `spec.routes.match` parameter indicates to Traefik the valid URL patterns reachable through this `IngressRoute`:
 
-      - The external IP of the Traefik service is added as a possible `Host` that can appear in the route. If you do not add it, you will not be able to access this route with that address.
+      - First in the pattern is the hostname of the Traefik service set as `Host` value. Next go the possible paths in Traefik, one for its API and the other for the Traefik dashboard.
 
-      - Two subdomains are setup as possible `Host` values. This way, you can put any number of alternative subdomains that can lead to the same web resource.
+        Notice the logic operators `&&` (and) and `||` (or) that allow connecting the hostname with the available paths in the service.
 
         > [!NOTE]
         > **The domains or subdomains you set up as `Host` values will not work just by being put there**\
@@ -242,50 +130,52 @@ The next steps set up and deploy the Kustomize project enabling access to your T
 
       - Do not forget any of the backticks characters ( \` ) enclosing the strings in the `Host` directives.
 
-      - The `spec.routes.services` links the `IngressRoute` with the `traefik-dashboard` `Service` declared earlier.
+      - The `spec.routes.services` links the `IngressRoute` with the `TraefikService` (a custom Traefik-specific type of Kubernetes `Service`) called `api@internal` through which you can access the Traefik dashboard. Also notice that no service port is specified.
 
         > [!NOTE]
-        > **This is invoking an `api@internal` `TraefikService` resource, not the `traefik-dashboard` `Service` object!**\
-        > Why it works this way is something I have not found an explanation for.
+        > **I have not found a proper explanation for this `api@internal` `TraefikService`**\
+        > My bet is for `api@internal` to be some sort of alias or wrapper of the real `traefik` `Service` running in the K3s cluster. This may also explain why it is not necessary to specify which port to connect to in the service.
 
       - The `spec.routes.match.middlewares` only invokes the basic authentication middleware.
 
-7. In the `secrets/users` file, just paste the encrypted string you got from the `htpasswd` command earlier:
+5. In the `secrets/users` file, just paste the encrypted string you got from the `htpasswd` command earlier:
 
     ~~~sh
     tfkuser:$2y$17$0mdP4WLdbj8BWj1lIJMDb.bXyYK75qR5AfRNzuunZuCamvAlqDlo.
     ~~~
 
-8. Generate a `kustomization.yaml` file at the root folder of this Kustomization project:
+6. Generate a `kustomization.yaml` file at the root folder of this Kustomization project:
 
     ~~~sh
     $ touch $HOME/k8sprjs/traefik-dashboard/kustomization.yaml
     ~~~
 
-9. In the `kustomization.yaml` file declare your Kustomization project for enabling the Traefik dashboard:
+7. In the `kustomization.yaml` file declare your `Kustomization` object for enabling the Traefik dashboard:
 
     ~~~yaml
-    # Traefik dashboard setup
+    # Traefik dashboard ingress setup
     apiVersion: kustomize.config.k8s.io/v1beta1
     kind: Kustomization
 
+    namespace: kube-system
+
     resources:
     - resources/traefik-dashboard-basicauth.middleware.traefik.yaml
-    - resources/traefik-dashboard.service.yaml
     - resources/traefik-dashboard.ingressroute.traefik.yaml
 
     secretGenerator:
     - name: traefik-dashboard-basicauth-secret
-      namespace: kube-system
       files:
       - secrets/users
       options:
         disableNameSuffixHash: true
     ~~~
 
-    See that there is a `secretGenerator` block in this Kustomization declaration:
+    See that there is a `secretGenerator` block in this `Kustomization` declaration:
 
     - This is a Kustomize feature that generates `Secret` objects in a Kubernetes cluster from a given configuration.
+
+    - The `namespace` makes all the resources and the secret generated by this Kustomize project to be put under the `kube-system` namespace.
 
     - The secret is configured with a concrete `name` and `namespace`.  It also has under `files` a reference to the `users` file you created previously under the `secrets` subfolder.
 
@@ -301,7 +191,7 @@ The next steps set up and deploy the Kustomize project enabling access to your T
     $ kubectl kustomize $HOME/k8sprjs/traefik-dashboard | less
     ~~~
 
-    Look for the `Secret` object in the resulting paginated yaml, it should look like below:
+    Look for the `Secret` object in the resulting paginated YAML, it should look like below:
 
     ~~~yaml
     apiVersion: v1
@@ -331,7 +221,7 @@ The next steps set up and deploy the Kustomize project enabling access to your T
 
     - The `type` `Opaque` means that the content under `data` is base64-encoded.
 
-10. At last, apply this Kustomization project:
+8. At last, apply this `Kustomization`:
 
     ~~~sh
     $ kubectl apply -k $HOME/k8sprjs/traefik-dashboard
@@ -339,9 +229,9 @@ The next steps set up and deploy the Kustomize project enabling access to your T
 
 ## Getting into the Traefik dashboard
 
-Let's suppose you do not have the subdomains you've defined as `Host` enabled in your network. You will have to access the dashboard using traefik service's external IP. In this case, the external IP happens to be `10.7.0.1` so browse to `https://10.7.0.1/`.
+Assuming you have enabled the subdomain for the Traefik service as `traefik.homelab.cloud` in your LAN, try to access the URL `https://traefik.homelab.cloud/dashboard`:
 
-1. The first thing you'll probably see is a warning by your browser telling you that the connection is not secure because the certificate isn't either. If you check the certificate's information, you will see that it is one self-generated by Traefik itself ("verified" by `CN=TRAEFIK DEFAULT CERT`).
+1. The first thing you will probably see is a browser warning telling you that the connection is not secure because the certificate is not either. If you check the certificate's information, you will see it being one self-generated by Traefik itself ("verified" by `CN=TRAEFIK DEFAULT CERT`).
 
 2. Right after accepting "the risk" in the security warning, a generic login window will pop up in your browser:
 
@@ -350,8 +240,6 @@ Let's suppose you do not have the subdomains you've defined as `Host` enabled in
 3. Type your user and password, press on `Sign in` and you will be redirected to the Traefik dashboard's main page available under the `/dashboard/#/` path:
 
     ![Traefik dashboard main page](images/g030/traefik-dashboard_main-page.webp "Traefik dashboard main page")
-
-Finally, when you have the subdomain or subdomains for your traefik's external IP ready in your network, or in the `hosts` file of your client systems, try accessing the Traefik dashboard using them.
 
 ## What to do if Traefik's dashboard has bad performance
 
@@ -366,7 +254,7 @@ If your Traefik dashboard seems to load extremely slowly, or just returning a bl
     $ kubectl apply -k $HOME/k8sprjs/traefik-dashboard
     ~~~
 
-    The `delete` command is to make sure that the `IngressRoute` resource is regenerated with the change applied.
+    The `delete` command is just to make sure that the `IngressRoute` resource is regenerated with the change applied.
 
 3. Try to access your Traefik dashboard and see how it runs now.
 

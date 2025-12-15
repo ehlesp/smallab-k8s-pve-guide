@@ -1,18 +1,15 @@
-# Ingress for Traefik's dashboard
+# HTTPS ingress for Traefik dashboard and API
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 
 metadata:
   name: traefik-dashboard
-  namespace: kube-system
 spec:
-  entryPoints:
-    - websecure
   routes:
-    - kind: Rule
-      match: Host(`10.7.0.1`) || Host(`traefik.homelab.cloud`) || Host(`tfk.homelab.cloud`)
-      services:
-        - name: api@internal
-          kind: TraefikService
-      middlewares:
-        - name: traefik-dashboard-basicauth
+  - kind: Rule
+    match: Host(`traefik.homelab.cloud`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+    services:
+    - name: api@internal
+      kind: TraefikService
+    middlewares:
+    - name: traefik-dashboard-basicauth

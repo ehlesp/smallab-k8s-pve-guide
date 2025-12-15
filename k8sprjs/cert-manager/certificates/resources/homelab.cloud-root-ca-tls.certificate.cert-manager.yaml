@@ -12,7 +12,8 @@ spec:
   duration: 8760h # 1 year
   renewBefore: 720h # Certificates must be renewed some time before they expire (30 days)
   privateKey:
-    algorithm: Ed25519
+    algorithm: ECDSA
+    size: 521
     encoding: PKCS8
     rotationPolicy: Always
   issuerRef:
