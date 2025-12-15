@@ -44,7 +44,7 @@ All these components will be part of the same Kustomize project for deploying He
 2. Create the necessary files under the `resources` folder:
 
     ~~~sh
-    $ touch $HOME/k8sprjs/headlamp/resources/{headlamp-admin.serviceaccount,cluster-admin-users.clusterrolebinding,headlamp.homelab.cloud-tls.certificate.cert-manager,headlamp.ingressroutetcp.traefik}.yaml
+    $ touch $HOME/k8sprjs/headlamp/resources/{headlamp-admin.serviceaccount,cluster-admin-users.clusterrolebinding,headlamp.homelab.cloud-tls.certificate.cert-manager,headlamp.ingressroute.traefik}.yaml
     ~~~
 
 3. In `resources/headlamp-admin.serviceaccount.yaml`, declare the `headlamp-admin` service account:
@@ -271,7 +271,7 @@ You can find the Kustomize project for this Headlamp deployment in this attached
 - `$HOME/k8sprjs/headlamp/resources/cluster-admin-users.clusterrolebinding.yaml`
 - `$HOME/k8sprjs/headlamp/resources/headlamp-admin.serviceaccount.yaml`
 - `$HOME/k8sprjs/headlamp/resources/headlamp.homelab.cloud-tls.certificate.cert-manager.yaml`
-- `$HOME/k8sprjs/headlamp/resources/headlamp.homelab.cloud.ingressroute.traefik.yaml`
+- `$HOME/k8sprjs/headlamp/resources/headlamp.ingressroute.traefik.yaml`
 
 ## References
 
