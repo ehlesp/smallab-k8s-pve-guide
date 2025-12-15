@@ -18,7 +18,7 @@
 
 ## Use cert-manager to handle certificates in your cluster
 
-Although Traefik has some capabilities to handle certificates, it's better to use a service specialized on such task. Enter **cert-manager**, a popular certificate management service in the Kubernetes landscape.
+Although Traefik has some capabilities to handle certificates, it is better to use a service specialized on such task. Enter **cert-manager**, a popular certificate management service in the Kubernetes landscape.
 
 ## Deploying cert-manager
 
@@ -163,7 +163,7 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
 2. In the `resources` directory, create five empty YAML files:
 
     ~~~sh
-    $ touch $HOME/k8sprjs/cert-manager/certificates/resources/{homelab.cloud-root-ca-issuer-selfsigned.cluster-issuer.cert-manager.yaml,homelab.cloud-root-ca-tls.certificate.cert-manager.yaml,homelab.cloud-root-ca-issuer.cluster-issuer.cert-manager.yaml,homelab.cloud-intm-ca01-tls.certificate.cert-manager.yaml,homelab.cloud-intm-ca01-issuer.cluster-issuer.cert-manager.yaml}
+    $ touch $HOME/k8sprjs/cert-manager/certificates/resources/{homelab.cloud-root-ca-issuer-selfsigned.cluster-issuer.cert-manager,homelab.cloud-root-ca-tls.certificate.cert-manager,homelab.cloud-root-ca-issuer.cluster-issuer.cert-manager,homelab.cloud-intm-ca01-tls.certificate.cert-manager,homelab.cloud-intm-ca01-issuer.cluster-issuer.cert-manager}.yaml
     ~~~
 
     Each YAML will describe a particular resource required for setting up the root CA properly.
@@ -208,7 +208,8 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
       duration: 8760h # 1 year
       renewBefore: 720h # Certificates must be renewed some time before they expire (30 days)
       privateKey:
-        algorithm: Ed25519
+        algorithm: ECDSA
+        size: 521
         encoding: PKCS8
         rotationPolicy: Always
       issuerRef:
@@ -217,7 +218,7 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
         group: cert-manager.io
     ~~~
 
-    To know more about all the parameters shown above, check [the cert-manager v1 api document here](https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1). Still, I'll explain you some particularities of this certificate declaration:
+    To know more about all the parameters shown above, check [the cert-manager v1 api document here](https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1). Still, here you have an explanation of some particularities of this certificate declaration:
 
     - Many of the parameters are optional, and there are more that are not used here.
 
@@ -233,7 +234,11 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
 
     - The parameter `spec.isCA` allows you to turn a certificate into a Certificate Authority. When the value is `true`, you can use this certificate to sign other certificates issued by other issuers that rely on this CA's secret.
 
-    - In the `spec.privateKey` section, be careful of always having `rotationPolicy` set as `Always`. This makes cert-manager regenerate the certificate's secret rather than reusing the current one. This policy about private key rotation is also [described in the cert-manager documentation](https://cert-manager.io/docs/usage/certificate/#configuring-private-key-rotation).
+    - In the `spec.privateKey` section, be careful of:
+
+      - Configuring an algorithm supported by all current browsers. For instance, at the time of writing this, the algorithm `Ed25519` is not supported neither by Firefox nor Chrome, nor any browser based on them.
+
+      - Always having `rotationPolicy` set as `Always`. This makes cert-manager regenerate the certificate's secret rather than reusing the current one. This policy about private key rotation is also [described in the cert-manager documentation](https://cert-manager.io/docs/usage/certificate/#configuring-private-key-rotation).
 
     - In the `spec.issuerRef` you specify the issuer of this certificate, in this case the `homelab.cloud-root-ca-issuer-selfsigned` one you created in previous steps. Be careful of always also specifying its `kind`, in particular for `ClusterIssuer` types, so you know clearly what kind of issuer you are using with each certificate.
 
@@ -270,7 +275,8 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
       duration: 4380h # 6 months
       renewBefore: 360h # Certificates must be renewed some time before they expire (15 days)
       privateKey:
-        algorithm: Ed25519
+        algorithm: ECDSA
+        size: 521
         encoding: PKCS8
         rotationPolicy: Always
       issuerRef:
@@ -364,8 +370,8 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
     Metadata:
       Creation Timestamp:  2025-10-10T10:33:47Z
       Generation:          1
-      Resource Version:    191304
-      UID:                 649e52c3-2be0-4f35-8adf-5b20d45e70ee
+      Resource Version:    397675
+      UID:                 bd1632cb-6d45-4f4d-9d3a-1beb1fef5f47
     Spec:
       Ca:
         Secret Name:  homelab.cloud-intm-ca01-tls
@@ -378,11 +384,9 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
         Status:                True
         Type:                  Ready
     Events:
-      Type     Reason           Age                    From                         Message
-      ----     ------           ----                   ----                         -------
-      Warning  ErrGetKeyPair    2m52s (x2 over 2m52s)  cert-manager-clusterissuers  Error getting keypair for CA issuer: secrets "homelab.cloud-intm-ca01-tls" not found
-      Warning  ErrInitIssuer    2m52s (x2 over 2m52s)  cert-manager-clusterissuers  Error initializing issuer: secrets "homelab.cloud-intm-ca01-tls" not found
-      Normal   KeyPairVerified  2m47s (x3 over 2m52s)  cert-manager-clusterissuers  Signing CA verified
+      Type    Reason           Age                    From                         Message
+      ----    ------           ----                   ----                         -------
+      Normal  KeyPairVerified  5m14s (x2 over 5m14s)  cert-manager-clusterissuers  Signing CA verified
 
 
     Name:         homelab.cloud-root-ca-issuer
@@ -394,8 +398,8 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
     Metadata:
       Creation Timestamp:  2025-10-10T10:33:47Z
       Generation:          1
-      Resource Version:    191295
-      UID:                 bb097533-12c0-43d5-b07c-4e59b9b68113
+      Resource Version:    397679
+      UID:                 7d64cd39-01a9-4481-941d-56e09f35b8d2
     Spec:
       Ca:
         Secret Name:  homelab.cloud-root-ca-tls
@@ -408,11 +412,9 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
         Status:                True
         Type:                  Ready
     Events:
-      Type     Reason           Age                    From                         Message
-      ----     ------           ----                   ----                         -------
-      Warning  ErrGetKeyPair    2m52s (x2 over 2m52s)  cert-manager-clusterissuers  Error getting keypair for CA issuer: secrets "homelab.cloud-root-ca-tls" not found
-      Warning  ErrInitIssuer    2m52s (x2 over 2m52s)  cert-manager-clusterissuers  Error initializing issuer: secrets "homelab.cloud-root-ca-tls" not found
-      Normal   KeyPairVerified  2m47s (x3 over 2m52s)  cert-manager-clusterissuers  Signing CA verified
+      Type    Reason           Age                    From                         Message
+      ----    ------           ----                   ----                         -------
+      Normal  KeyPairVerified  5m14s (x2 over 5m14s)  cert-manager-clusterissuers  Signing CA verified
 
 
     Name:         homelab.cloud-root-ca-issuer-selfsigned
@@ -424,8 +426,8 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
     Metadata:
       Creation Timestamp:  2025-10-10T10:33:47Z
       Generation:          1
-      Resource Version:    191265
-      UID:                 74f8fc02-1d86-40d9-be3f-5965670309c0
+      Resource Version:    397682
+      UID:                 d74b321f-dbdb-4b3c-a124-435542899a7e
     Spec:
       Self Signed:
     Status:
@@ -452,13 +454,7 @@ Created at: 2025-10-10T12:33:47+02:00
 Conditions:
   Ready: True, Reason: Ready, Message: Certificate is up to date and has not expired
 DNS Names:
-Events:
-  Type    Reason     Age    From                                       Message
-  ----    ------     ----   ----                                       -------
-  Normal  Issuing    5m20s  cert-manager-certificates-trigger          Issuing certificate as Secret does not exist
-  Normal  Generated  5m20s  cert-manager-certificates-key-manager      Stored new private key in temporary Secret resource "homelab.cloud-root-ca-tls-bc4dl"
-  Normal  Requested  5m20s  cert-manager-certificates-request-manager  Created new CertificateRequest resource "homelab.cloud-root-ca-tls-1"
-  Normal  Issuing    5m20s  cert-manager-certificates-issuing          The certificate has been successfully issued
+Events:  <none>
 Issuer:
   Name: homelab.cloud-root-ca-issuer-selfsigned
   Kind: ClusterIssuer
@@ -472,8 +468,8 @@ Secret:
   Issuer Common Name: homelab.cloud-root-ca-tls
   Key Usage: Digital Signature, Key Encipherment, Cert Sign
   Extended Key Usages: 
-  Public Key Algorithm: Ed25519
-  Signature Algorithm: Ed25519
+  Public Key Algorithm: ECDSA
+  Signature Algorithm: ECDSA-SHA512
   Subject Key ID: 7156a59ffd7553cec1c9d424b959ef41fc5521ed
   Authority Key ID: 
   Serial Number: 2e656bafa35257d9aba094782966b0e10868c232

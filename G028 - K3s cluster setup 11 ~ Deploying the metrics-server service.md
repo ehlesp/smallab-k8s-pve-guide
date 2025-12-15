@@ -326,7 +326,7 @@ As you did with MetalLB in the [previous **G027** chapter](G027%20-%20K3s%20clus
     service/metrics-server   ClusterIP      10.43.50.63    <none>        443/TCP                      41s
     ~~~
 
-    You should get two lines regarding metrics-server. Also notice that the metrics-server is set in the `kube-system` namespace.
+    You should get two lines regarding metrics-server. Also notice that the metrics-server is set in the `kube-system` namespace and that it does not have an external IP, only a internal cluster IP (`10.43.50.63` in the snippet above).
 
 ## Checking the metrics-server service
 

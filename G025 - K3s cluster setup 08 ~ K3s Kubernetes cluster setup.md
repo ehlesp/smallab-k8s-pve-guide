@@ -996,22 +996,6 @@ The command will find the `config.yaml` file in the default path on the VM, and 
 
     ~~~sh
     $ wget -qO - https://get.k3s.io | INSTALL_K3S_VERSION="v1.33.4+k3s1" sh -s - server
-    [INFO]  Using v1.22.3+k3s1 as release
-    [INFO]  Downloading hash https://github.com/k3s-io/k3s/releases/download/v1.22.3+k3s1/sha256sum-amd64.txt
-    [INFO]  Downloading binary https://github.com/k3s-io/k3s/releases/download/v1.22.3+k3s1/k3s
-    [INFO]  Verifying binary download
-    [INFO]  Installing k3s to /usr/local/bin/k3s
-    [INFO]  Skipping installation of SELinux RPM
-    [INFO]  Creating /usr/local/bin/kubectl symlink to k3s
-    [INFO]  Creating /usr/local/bin/crictl symlink to k3s
-    [INFO]  Creating /usr/local/bin/ctr symlink to k3s
-    [INFO]  Creating killall script /usr/local/bin/k3s-killall.sh
-    [INFO]  Creating uninstall script /usr/local/bin/k3s-uninstall.sh
-    [INFO]  env: Creating environment file /etc/systemd/system/k3s.service.env
-    [INFO]  systemd: Creating service file /etc/systemd/system/k3s.service
-    [INFO]  systemd: Enabling k3s unit
-    Created symlink /etc/systemd/system/multi-user.target.wants/k3s.service → /etc/systemd/system/k3s.service.
-    [INFO]  systemd: Starting k3s
     ~~~
 
 2. The installer does not take too long to do its job. Still, give some time to the `k3s.service`, which will start at the end of the installation, to setup itself. Open another shell session to this VM and check with the `kubectl` command the current status of this new K3s server node:

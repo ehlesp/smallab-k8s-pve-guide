@@ -1,15 +1,15 @@
-# Traefik dashboard setup
+# Traefik dashboard ingress setup
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+namespace: kube-system
+
 resources:
 - resources/traefik-dashboard-basicauth.middleware.traefik.yaml
-- resources/traefik-dashboard.service.yaml
 - resources/traefik-dashboard.ingressroute.traefik.yaml
 
 secretGenerator:
 - name: traefik-dashboard-basicauth-secret
-  namespace: kube-system
   files:
   - secrets/users
   options:
