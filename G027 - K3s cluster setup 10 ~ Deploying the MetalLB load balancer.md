@@ -292,7 +292,9 @@ From all the services you have running at this point in your K3s cluster, the `t
 
 > [!NOTE]
 > **Traefik makes services available through its own external IP**\
-> All services configured to be accessed with a Traefik-based ingress, will be reachable only through the same Traefik external IP. In other words, Traefik is the exclusive ingress method for accessing all the services behind it.
+> All services configured to be accessed with a Traefik-based ingress, will be reachable only through the same Traefik external IP.
+>
+> In other words, you will need to associate the DNS name or hostname of any service served through Traefik to the Traefik service's IP. Do this in your client systems' host file or in your LAN DNS system.
 
 ## MetalLB's Kustomize project attached to this guide
 

@@ -232,7 +232,17 @@ Be aware of the following:
 
 ## Testing Headlamp
 
-Now that you have Headlamp deployed, you can test it:
+Now that you have Headlamp deployed, you can test it if you have enabled its DNS name or hostname in your LAN. In this guide, Headlamp will have the hostname `headlamp.homelab.cloud`:
+
+> [!NOTE]
+> **Associate the Headlamp's DNS name or hostname to your Traefik service's IP**\
+> Since Headlamp is served through Traefik, you have to associate its DNS name to the Traefik service's IP. In your client system's host file, you would do it like this with the values used in this guide:
+>
+> ~~~txt
+> 10.7.0.1 traefik.homelab.cloud headlamp.homelab.cloud
+> ~~~
+>
+> See how Headlamp's DNS name goes after the one for Traefik. The Traefik service can figure out where to redirect clients depending on the DNS name indicated in their requests.
 
 1. Open a browser in your client system and go to `https://headlamp.homelab.cloud/`, or whatever hostname you may have configured for your Headlamp dashboard. The browser will warn you about the connection being insecure. Accept the warning to reach Headlamp's authentication form:
 
