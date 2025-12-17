@@ -1,0 +1,23 @@
+# Ghost platform setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: ghost
+
+labels:
+  - pairs:
+      platform: ghost
+    includeSelectors: true
+    includeTemplates: true
+
+resources:
+- resources/ghost-hdd-srv.persistentvolume.yaml
+- resources/ghost-ssd-cache.persistentvolume.yaml
+- resources/ghost-ssd-db.persistentvolume.yaml
+- resources/ghost.homelab.cloud-tls.certificate.cert-manager.yaml
+- resources/ghostadmin.ipwhitelist.middleware.traefik.yaml
+- resources/ghost.homelab.cloud.ingressroute.traefik.yaml
+- resources/ghost.namespace.yaml
+- components/cache-valkey
+- components/db-mariadb
+- components/server-ghost

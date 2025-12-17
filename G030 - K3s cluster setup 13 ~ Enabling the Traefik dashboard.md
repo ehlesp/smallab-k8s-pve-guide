@@ -233,7 +233,7 @@ Assuming you have enabled the DNS name or hostname for the Traefik service as `t
 
 > [!NOTE]
 > **Remember to associate your Traefik service's IP to the DNS name or hostname you have chosen for it**\
-> The fastest way is usually adding an entry in the `host` file of the client system you are using. For the Traefik service's IP and DNS name used in this guide, that entry would look like this:
+> The fastest way is usually adding an entry in the `hosts` file of the client system you are using. For the Traefik service's IP and DNS name used in this guide, that entry would look like this:
 >
 > ~~~txt
 > 10.7.0.1 traefik.homelab.cloud

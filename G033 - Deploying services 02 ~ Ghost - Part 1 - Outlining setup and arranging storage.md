@@ -22,7 +22,7 @@
 
 From the services listed in the [chapter **G018**](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md#ghost), let's begin with the publishing platform **Ghost**. Since deploying it requires the configuration and deployment of several different components, the procedure for deploying Ghost is split in five parts, being this chapter the first one of them.
 
-In this part, you will see how to outline the setup of your Ghost platform, then work in the arrangement of the storage drives needed to store Ghost's data.
+In this first part, you will see how to outline the setup of your Ghost platform, then work in the arrangement of the storage drives needed to store Ghost's data.
 
 ## Outlining Ghost's setup
 
@@ -37,7 +37,7 @@ First, you must define how you want to setup Ghost in your cluster. This means t
 This guide solves the previous points as follows.
 
 - **Database**\
-  [Ghost's documentation indicates](https://docs.ghost.org/install/ubuntu) using [MySQL](https://www.mysql.com/) as database, but this guide will use the compatible alternative [MariaDB](https://mariadb.org/) instead with its data saved in a local SSD storage drive.
+  [Ghost's documentation specifies](https://docs.ghost.org/install/ubuntu) [MySQL](https://www.mysql.com/) as the database of choice, but this guide will use instead the compatible alternative [MariaDB](https://mariadb.org/) with its data saved in a local SSD storage drive.
 
 - **Cache server**\
   Ghost can work with [Redis](https://redis.io/), but this guide rather opts for the compatible alternative [Valkey](https://valkey.io/) configured to have data persistence on a local SSD storage drive.
@@ -45,7 +45,7 @@ This guide solves the previous points as follows.
 - **Ghost server**\
   Its contents data will be stored in a persistent volume prepared on a local HDD storage drive.
 
-Also be aware that all the services making up this Ghost platform will run in the same K3s agent node. This is because all the local storage will be setup in one agent node, and Kubernetes applies the affinity rule of making its pods run in the same nodes that provide their storage.
+Also be aware that all the services making up this Ghost platform will run in the same K3s agent node. This is because all the local storage will be setup in one agent node, and Kubernetes applies the affinity rule of making pods run in the node that provides their storage.
 
 ## Choosing the K3s agent node for running Ghost
 
@@ -336,9 +336,9 @@ Your new LVs need to be formatted as ext4 filesystems and then mounted in the K3
 
 > [!WARNING]
 > **Create an inner mount point for pods**\
-> Do not use the directories where you have mounted the new storage volumes as mount points for the persistent volumes you'll enable later for the Ghost deployment.
+> Do not use the directories where you have mounted the new storage volumes as mount points for the persistent volumes you will enable later for the Ghost deployment.
 
-Kubernetes pods can change the owner user and group, and also the permission mode, applied to those folders. This can cause a failure when, after a reboot, your K3s agent node tries to mount again its storage volumes. The issue will happen because it will not have the right user or permissions anymore to access the mount point folders. The best thing to do then is to create another folder within each storage volume that can be used safely as mount point by the Ghost pods:
+Kubernetes pods can change the owner user and group, and also the permissions, applied to those folders. This can cause a failure when, after a reboot, your K3s agent node tries to mount again its storage volumes. The issue will happen because it will not have the right user or permissions anymore to access the mount point folders. The best thing to do then is to create another folder within each storage volume that can be used safely as mount point by the Ghost pods:
 
 1. For the LVM storage volumes created before, you have to execute a `mkdir` command like this:
 

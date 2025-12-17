@@ -1,0 +1,10 @@
+# White list of external IPs allowed to access the Ghost administration
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+
+metadata:
+  name: ghostadmin.ipwhitelist
+spec:
+  ipWhiteList:
+    sourceRange:
+    - 10.0.0.0/8

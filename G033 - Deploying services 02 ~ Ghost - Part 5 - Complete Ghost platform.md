@@ -2,36 +2,41 @@
 
 - [Putting together the whole Ghost platform](#putting-together-the-whole-ghost-platform)
 - [Create a folder for the pending Ghost platform resources](#create-a-folder-for-the-pending-ghost-platform-resources)
-- [Persistent volumes](#persistent-volumes)
-- [TLS certificate](#tls-certificate)
+- [Ghost platform's persistent volumes](#ghost-platforms-persistent-volumes)
+- [Ghost platform's TLS certificate](#ghost-platforms-tls-certificate)
 - [Traefik IngressRoute for enabling HTTPS access to the Ghost platform](#traefik-ingressroute-for-enabling-https-access-to-the-ghost-platform)
-  - [Ghost Namespace resource](#ghost-namespace-resource)
+  - [Ghost Namespace](#ghost-namespace)
 - [Main Kustomize project for the Ghost platform](#main-kustomize-project-for-the-ghost-platform)
+- [Browsing into Ghost](#browsing-into-ghost)
+- [Ghost platform's Kustomize project attached to this guide series](#ghost-platforms-kustomize-project-attached-to-this-guide-series)
 - [Relevant system paths](#relevant-system-paths)
   - [Folders in `kubectl` client system](#folders-in-kubectl-client-system)
   - [Files in `kubectl` client system](#files-in-kubectl-client-system)
+- [References](#references)
+  - [Ghost](#ghost)
+  - [SREDevOps.org](#sredevopsorg)
 - [Navigation](#navigation)
 
 ## Putting together the whole Ghost platform
 
 This is the final part of the Ghost platform deployment procedure. Here you will declare:
 
-- The persistent volumes to be claimed by all components.
+- The persistent storage volumes claimed by the Ghost components.
 - The TLS certificate for encrypting client communications with the Ghost platform.
 - The Traefik ingress resource that enables HTTPS access to the Ghost platform.
-- The common namespace for the whole Ghost platform's Kubernetes setup.
+- The namespace for the whole Ghost platform's Kubernetes setup.
 
-You will put all these elements together with the components Kustomize subprojects you have already created in a single main Kustomize project. Furthermore, this part will also show you how to check out your Ghost platform and its containers.
+You will put all these elements together with the components Kustomize subprojects you have already created under a single main Kustomize project. Furthermore, this part will also show you how to check out your Ghost platform and its containers.
 
 ## Create a folder for the pending Ghost platform resources
 
-The elements still missing in this Ghost platform deployment are all resources. Therefore, start by creating a folder where to put their YAML declarations together under the root folder of the Ghost platform Kustomize project:
+The pieces that have not been declared yet in this Ghost platform deployment are all resources. Start by creating a folder where to put their YAML declarations together under the root folder of the Ghost platform Kustomize project:
 
 ~~~sh
 $ mkdir -p $HOME/k8sprjs/ghost/resources
 ~~~
 
-## Persistent volumes
+## Ghost platform's persistent volumes
 
 A `PersistentVolume` is the Kubernetes resource for enabling in your K3s cluster the LVM storage volumes you arranged in [the first part of this Ghost deployment procedure](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#setting-up-new-storage-drives-in-the-k3s-agent-node):
 
@@ -44,6 +49,7 @@ A `PersistentVolume` is the Kubernetes resource for enabling in your K3s cluster
 2. Declare the persistent volume for the Valkey cache server instance in `ghost-ssd-cache.persistentvolume.yaml`:
 
     ~~~yaml
+    # Persistent storage volume for the Ghost cache
     apiVersion: v1
     kind: PersistentVolume
 
@@ -72,6 +78,7 @@ A `PersistentVolume` is the Kubernetes resource for enabling in your K3s cluster
 3. Declare the persistent volume for the MariaDB server instance in `ghost-ssd-db.persistentvolume.yaml`:
 
     ~~~yaml
+    # Persistent storage volume for the Ghost database
     apiVersion: v1
     kind: PersistentVolume
 
@@ -97,9 +104,10 @@ A `PersistentVolume` is the Kubernetes resource for enabling in your K3s cluster
               - k3sagent02
     ~~~
 
-3. Declare the persistent volume for the Ghost server instance in `ghost-hdd-srv.persistentvolume.yaml`:
+4. Declare the persistent volume for the Ghost server instance in `ghost-hdd-srv.persistentvolume.yaml`:
 
     ~~~yaml
+    # Persistent storage volume for the Ghost server
     apiVersion: v1
     kind: PersistentVolume
 
@@ -163,7 +171,7 @@ All these `PersistentVolume` declarations use exactly the same parameters:
 
     In the YAML declarations above, you can see how in all the PVs there is only one node affinity rule that looks for the hostname of the node (the `key` in the `matchExpressions` section), and checks if it is `In` (the `operator` parameter) the list of admitted `values`. Since the `k3sagent02` node is the only one with the storage ready for those volumes, its hostname is the only value in the list.
 
-## TLS certificate
+## Ghost platform's TLS certificate
 
 To encrypt the communications between your Ghost platform and its clients, you need a TLS certificate [like the one created previously in the deployment of Headlamp back in the chapter **G031**](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md#deploying-headlamp).
 
@@ -176,7 +184,7 @@ To encrypt the communications between your Ghost platform and its clients, you n
 2. Declare the certificate in `resources/ghost.homelab.cloud-tls.certificate.cert-manager.yaml`:
 
     ~~~yaml
-    # Certificate for Ghost
+    # TLS certificate for Ghost
     apiVersion: cert-manager.io/v1
     kind: Certificate
 
@@ -190,10 +198,9 @@ To encrypt the communications between your Ghost platform and its clients, you n
       dnsNames:
         - ghost.homelab.cloud
         - ghostadmin.homelab.cloud
-      ipAddresses:
-        - 10.7.0.3
       privateKey:
-        algorithm: Ed25519
+        algorithm: ECDSA
+        size: 521
         encoding: PKCS8
         rotationPolicy: Always
       issuerRef:
@@ -202,11 +209,11 @@ To encrypt the communications between your Ghost platform and its clients, you n
         group: cert-manager.io
     ~~~
 
-    This certificate is adjusted to work with the DNS name and external IP address the Ghost server ([the same load balancer IP assigned to its `Service` resource in the previous part](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#ghost-server-service-resource)) will have in the local network. It also includes [the alternative DNS name configured in the Ghost server](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#ghost-server-configuration-file) for accessing the Admin API.
+    This certificate is adjusted to work with the DNS name the Ghost server is expected to have in the local network. It also includes [the alternative DNS name configured in the Ghost server](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#ghost-server-configuration-file) for accessing the Admin API.
 
 ## Traefik IngressRoute for enabling HTTPS access to the Ghost platform
 
-Rather than just allow access directly to the Ghost platform through its `Service`, better handle it with a Traefik `IngressRoute`. This will allow you to provide a proper HTTPS access that uses [the TLS certificate you have declared in the previous section](#tls-certificate). Also, this `IngressRoute` will have a `Middleware` enabling a white list of IPs restricting access to the Ghost Admin API path:
+As you did with the [Traefik dashboard](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md) or [Headlamp](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md), better handle the ingress into your Ghost platform with a Traefik `IngressRoute`. This will allow you to provide a proper HTTPS access that uses [the TLS certificate you have declared in the previous section](#tls-certificate). Also, this `IngressRoute` will have a `Middleware` enabling a white list of external IPs restricting access to the Ghost Admin API path:
 
 1. Create the `ghost.homelab.cloud.ingressroute.traefik.yaml` and  files in the `resources` folder:
 
@@ -217,6 +224,7 @@ Rather than just allow access directly to the Ghost platform through its `Servic
 2. Declare the Traefik `Middleware` object that will contain the IP white list in `resources/ghostadmin.ipwhitelist.middleware.traefik.yaml`:
 
     ~~~yaml
+    # White list of external IPs allowed to access the Ghost administration
     apiVersion: traefik.io/v1alpha1
     kind: Middleware
 
@@ -225,14 +233,19 @@ Rather than just allow access directly to the Ghost platform through its `Servic
     spec:
       ipWhiteList:
         sourceRange:
-        - 10.0.0.0/24
+        - 10.0.0.0/8
     ~~~
 
-    The IP white list declared in this Traefik middleware is just an example that you must adapt to fit your particular local network setup. Remember that this white list is only for restricting clients from your local network to access your Ghost server Admin API. This white list will not affect in any way the internal networking of this guide's K3s cluster.
+    The IP white list declared in this Traefik middleware is just an example that you must adapt to fit your particular local network setup. Remember that this white list is only for restricting clients from your local network to access your Ghost server Admin API. Also be aware that you can list specific client IPs, not just ranges like the one specified (`10.0.0.0/8`) in the YAML declaration above.
+
+    > [!NOTE]
+    > **This white list only restricts traffic to external IPs (the ones coming from the LAN)**\
+    > This white list will not affect in any way the internal networking of this guide's K3s cluster.
 
 3. Declare the Traefik `IngressRoute` object in `resources/ghost.homelab.cloud.ingressroute.traefik.yaml`:
 
     ~~~yaml
+    # HTTPS ingress for Ghost
     apiVersion: traefik.io/v1alpha1
     kind: IngressRoute
 
@@ -276,11 +289,11 @@ Rather than just allow access directly to the Ghost platform through its `Servic
 
         Also see in this second rule how it invokes the `ghostadmin.ipwhitelist` middleware for enabling the IP white list restricting which clients can access this Ghost Admin API route.
 
-      - Both rules invoke the same `server-ghost` service and call its port by name (which was `server`). Also enable forwarding the client's Host header to the Ghost server with the `passHostHeader` option and specify that requests have the http `scheme`.
+      - Both rules invoke the same `server-ghost` service and call its port by name (which is named `server`). Also enable forwarding the client's Host header to the Ghost server with the `passHostHeader` option and specify that requests have the http `scheme`.
 
     - The TLS certificate is set in the `tls.secretName` parameter.
 
-### Ghost Namespace resource
+### Ghost Namespace
 
 To avoid naming conflicts with any other resources you could have running in your K3s cluster, it is better to put all the components of your Ghost platform under their own exclusive namespace:
 
@@ -293,6 +306,7 @@ To avoid naming conflicts with any other resources you could have running in you
 2. Declare the `Namespace` resource in `resources/ghost.namespace.yaml`:
 
     ~~~yaml
+    # Namespace for the Ghost components
     apiVersion: v1
     kind: Namespace
 
@@ -342,11 +356,14 @@ With every required element declared or configured, now you need to put everythi
 
     Be aware of the following details:
 
-    - The `ghost` namespace is applied to all the resources coming out of this Kustomize project, except the `Namespace` resource itself.
+    - The `ghost` namespace is applied to all the namespaced resources coming out of this Kustomize project, except:
+
+      - The `Namespace` object itself.
+      - The `PersistentVolume` resources.
 
     - The `labels` will brand all the resources part of this Kustomize project with a `platform` label. Remember that you already set an `app` label within each component.
 
-    - In the `resources` list you have yaml files and also the directories of the components you have configured in the previous parts of this guide.
+    - In the `resources` list you have YAML files and also the directories of the components you have configured in the previous parts of this guide.
 
       > [!NOTE]
       > **Kustomize projects can be added as resources**\
@@ -492,54 +509,54 @@ With every required element declared or configured, now you need to put everythi
         IsCiAgICAiZnJvbSI6ICJpbmZvQGdob3N0LmhvbWVsYWIuY2xvdWQiLAogICAgIm9wdGlv
         bnMiOiB7CiAgICAgICJzZXJ2aWNlIjogIkdvb2dsZSIsCiAgICAgICJob3N0IjogInNtdH
         AuZ21haWwuY29tIiwKICAgICAgInBvcnQiOiA0NjUsCiAgICAgICJzZWN1cmUiOiB0cnVl
-        LAogICAgICAiYXV0aCI6IHsKICAgICAgICAidXNlciI6ICJ5b3VyX2dob3N0X2VtYWlsQG
-        dtYWlsLmNvbSIsCiAgICAgICAgInBhc3MiOiAiWTB1cl82aE81dF9lTTQxbF9QNFNzdnZv
-        UmQiCiAgICAgIH0KICAgIH0KICB9LAogICJhZGFwdGVycyI6IHsKICAgICJjYWNoZSI6IH
-        sKICAgICAgIlJlZGlzIjogewogICAgICAgICJob3N0IjogImNhY2hlLXZhbGtleS5naG9z
-        dCIsCiAgICAgICAgInBvcnQiOiA2Mzc5LAogICAgICAgICJ1c2VybmFtZSI6ICJnaG9zdG
-        NhY2hlIiwKICAgICAgICAicGFzc3dvcmQiOiAicEFTMndPUlRfZjByX1QjZV9HaDA1VF9V
-        czNSIiwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0OiIsCiAgICAgICAgInR0bCI6ID
-        M2MDAsCiAgICAgICAgInJldXNlQ29ubmVjdGlvbiI6IHRydWUsCiAgICAgICAgInJlZnJl
-        c2hBaGVhZEZhY3RvciI6IDAuOCwKICAgICAgICAiZ2V0VGltZW91dE1pbGxpc2Vjb25kcy
-        I6IDUwMDAsCiAgICAgICAgInN0b3JlQ29uZmlnIjogewogICAgICAgICAgInJldHJ5Q29u
-        bmVjdFNlY29uZHMiOiAxMCwKICAgICAgICAgICJsYXp5Q29ubmVjdCI6IHRydWUsCiAgIC
-        AgICAgICAiZW5hYmxlT2ZmbGluZVF1ZXVlIjogdHJ1ZSwKICAgICAgICAgICJtYXhSZXRy
-        aWVzUGVyUmVxdWVzdCI6IDMKICAgICAgICB9CiAgICAgIH0sCiAgICAgICJnc2NhbiI6IH
-        sKICAgICAgICAiYWRhcHRlciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6IDQzMjAwLAog
-        ICAgICAgICJyZWZyZXNoQWhlYWRGYWN0b3IiOiAwLjksCiAgICAgICAgImtleVByZWZpeC
-        I6ICJnaG9zdDpnc2Nhbi4iCiAgICAgIH0sCiAgICAgICJpbWFnZVNpemVzIjogewogICAg
-        ICAgICJhZGFwdGVyIjogIlJlZGlzIiwKICAgICAgICAidHRsIjogODY0MDAsCiAgICAgIC
-        AgInJlZnJlc2hBaGVhZEZhY3RvciI6IDAuOTUsCiAgICAgICAgImtleVByZWZpeCI6ICJn
-        aG9zdDppbWFnZVNpemVzLiIKICAgICAgfSwKICAgICAgImxpbmtSZWRpcmVjdHNQdWJsaW
-        MiOiB7CiAgICAgICAgImFkYXB0ZXIiOiAiUmVkaXMiLAogICAgICAgICJ0dGwiOiA3MjAw
-        LAogICAgICAgICJyZWZyZXNoQWhlYWRGYWN0b3IiOiAwLjksCiAgICAgICAgImtleVByZW
-        ZpeCI6ICJnaG9zdDpsaW5rUmVkaXJlY3RzUHVibGljLiIKICAgICAgfSwKICAgICAgInBv
-        c3RzUHVibGljIjogewogICAgICAgICJhZGFwdGVyIjogIlJlZGlzIiwKICAgICAgICAidH
-        RsIjogMTgwMCwKICAgICAgICAicmVmcmVzaEFoZWFkRmFjdG9yIjogMC43LAogICAgICAg
-        ICJrZXlQcmVmaXgiOiAiZ2hvc3Q6cG9zdHNQdWJsaWMuIgogICAgICB9LAogICAgICAic3
-        RhdHMiOiB7CiAgICAgICAgImFkYXB0ZXIiOiAiUmVkaXMiLAogICAgICAgICJ0dGwiOiA5
-        MDAsCiAgICAgICAgInJlZnJlc2hBaGVhZEZhY3RvciI6IDAuOCwKICAgICAgICAia2V5UH
-        JlZml4IjogImdob3N0OnN0YXRzLiIKICAgICAgfSwKICAgICAgInRhZ3NQdWJsaWMiOiB7
-        CiAgICAgICAgImFkYXB0ZXIiOiAiUmVkaXMiLAogICAgICAgICJ0dGwiOiAzNjAwLAogIC
-        AgICAgICJyZWZyZXNoQWhlYWRGYWN0b3IiOiAwLjgsCiAgICAgICAgImtleVByZWZpeCI6
-        ICJnaG9zdDp0YWdzUHVibGljLiIKICAgICAgfQogICAgfQogIH0sCiAgImhvc3RTZXR0aW
-        5ncyI6IHsKICAgICJsaW5rUmVkaXJlY3RzUHVibGljQ2FjaGUiOiB7CiAgICAgICJlbmFi
-        bGVkIjogdHJ1ZQogICAgfSwKICAgICJwb3N0c1B1YmxpY0NhY2hlIjogewogICAgICAiZW
-        5hYmxlZCI6IHRydWUKICAgIH0sCiAgICAic3RhdHNDYWNoZSI6IHsKICAgICAgImVuYWJs
-        ZWQiOiB0cnVlCiAgICB9LAogICAgInRhZ3NQdWJsaWNDYWNoZSI6IHsKICAgICAgImVuYW
-        JsZWQiOiB0cnVlCiAgICB9CiAgfSwKICAiZGF0YWJhc2UiOiB7CiAgICAiY2xpZW50Ijog
-        Im15c3FsIiwKICAgICJjb25uZWN0aW9uIjogewogICAgICAiaG9zdCI6ICJkYi1tYXJpYW
-        RiLmdob3N0IiwKICAgICAgInVzZXIiOiAiZ2hvc3RkYiIsCiAgICAgICJwYXNzd29yZCI6
-        ICJsMG5HLlBsNGluX1QzeHRfc0VrUmV0X3A0czV3T1JELUZvUl82aDBzVF91WjNyISIsCi
-        AgICAgICJkYXRhYmFzZSI6ICJnaG9zdC1kYiIsCiAgICAgICJwb3J0IjogIjMzMDYiCiAg
-        ICB9CiAgfSwKICAicHJvY2VzcyI6ICJsb2NhbCIsCiAgInBhdGhzIjogewogICAgImNvbn
-        RlbnRQYXRoIjogIi9ob21lL25vbnJvb3QvYXBwL2dob3N0L2NvbnRlbnQiCiAgfQp9
+        LAogICAgICAiYXV0aCI6IHsKICAgICAgICAidXNlciI6ICJ2YXJpZWRyb0BnbWFpbC5jb2
+        0iLAogICAgICAgICJwYXNzIjogIkQzczFnTmVSITpsRTdhdl9BLiIKICAgICAgfQogICAg
+        fQogIH0sCiAgImFkYXB0ZXJzIjogewogICAgImNhY2hlIjogewogICAgICAiUmVkaXMiOi
+        B7CiAgICAgICAgImhvc3QiOiAiY2FjaGUtdmFsa2V5Lmdob3N0IiwKICAgICAgICAicG9y
+        dCI6IDYzNzksCiAgICAgICAgInVzZXJuYW1lIjogImdob3N0Y2FjaGUiLAogICAgICAgIC
+        JwYXNzd29yZCI6ICJwQVMyd09SVF9mMHJfVCNlX0doMDVUX1VzM1IiLAogICAgICAgICJr
+        ZXlQcmVmaXgiOiAiZ2hvc3Q6IiwKICAgICAgICAidHRsIjogMzYwMCwKICAgICAgICAicm
+        V1c2VDb25uZWN0aW9uIjogdHJ1ZSwKICAgICAgICAicmVmcmVzaEFoZWFkRmFjdG9yIjog
+        MC44LAogICAgICAgICJnZXRUaW1lb3V0TWlsbGlzZWNvbmRzIjogNTAwMCwKICAgICAgIC
+        Aic3RvcmVDb25maWciOiB7CiAgICAgICAgICAicmV0cnlDb25uZWN0U2Vjb25kcyI6IDEw
+        LAogICAgICAgICAgImxhenlDb25uZWN0IjogdHJ1ZSwKICAgICAgICAgICJlbmFibGVPZm
+        ZsaW5lUXVldWUiOiB0cnVlLAogICAgICAgICAgIm1heFJldHJpZXNQZXJSZXF1ZXN0Ijog
+        MwogICAgICAgIH0KICAgICAgfSwKICAgICAgImdzY2FuIjogewogICAgICAgICJhZGFwdG
+        VyIjogIlJlZGlzIiwKICAgICAgICAidHRsIjogNDMyMDAsCiAgICAgICAgInJlZnJlc2hB
+        aGVhZEZhY3RvciI6IDAuOSwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0OmdzY2FuLi
+        IKICAgICAgfSwKICAgICAgImltYWdlU2l6ZXMiOiB7CiAgICAgICAgImFkYXB0ZXIiOiAi
+        UmVkaXMiLAogICAgICAgICJ0dGwiOiA4NjQwMCwKICAgICAgICAicmVmcmVzaEFoZWFkRm
+        FjdG9yIjogMC45NSwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0OmltYWdlU2l6ZXMu
+        IgogICAgICB9LAogICAgICAibGlua1JlZGlyZWN0c1B1YmxpYyI6IHsKICAgICAgICAiYW
+        RhcHRlciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6IDcyMDAsCiAgICAgICAgInJlZnJl
+        c2hBaGVhZEZhY3RvciI6IDAuOSwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0Omxpbm
+        tSZWRpcmVjdHNQdWJsaWMuIgogICAgICB9LAogICAgICAicG9zdHNQdWJsaWMiOiB7CiAg
+        ICAgICAgImFkYXB0ZXIiOiAiUmVkaXMiLAogICAgICAgICJ0dGwiOiAxODAwLAogICAgIC
+        AgICJyZWZyZXNoQWhlYWRGYWN0b3IiOiAwLjcsCiAgICAgICAgImtleVByZWZpeCI6ICJn
+        aG9zdDpwb3N0c1B1YmxpYy4iCiAgICAgIH0sCiAgICAgICJzdGF0cyI6IHsKICAgICAgIC
+        AiYWRhcHRlciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6IDkwMCwKICAgICAgICAicmVm
+        cmVzaEFoZWFkRmFjdG9yIjogMC44LAogICAgICAgICJrZXlQcmVmaXgiOiAiZ2hvc3Q6c3
+        RhdHMuIgogICAgICB9LAogICAgICAidGFnc1B1YmxpYyI6IHsKICAgICAgICAiYWRhcHRl
+        ciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6IDM2MDAsCiAgICAgICAgInJlZnJlc2hBaG
+        VhZEZhY3RvciI6IDAuOCwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0OnRhZ3NQdWJs
+        aWMuIgogICAgICB9CiAgICB9CiAgfSwKICAiaG9zdFNldHRpbmdzIjogewogICAgImxpbm
+        tSZWRpcmVjdHNQdWJsaWNDYWNoZSI6IHsKICAgICAgImVuYWJsZWQiOiB0cnVlCiAgICB9
+        LAogICAgInBvc3RzUHVibGljQ2FjaGUiOiB7CiAgICAgICJlbmFibGVkIjogdHJ1ZQogIC
+        AgfSwKICAgICJzdGF0c0NhY2hlIjogewogICAgICAiZW5hYmxlZCI6IHRydWUKICAgIH0s
+        CiAgICAidGFnc1B1YmxpY0NhY2hlIjogewogICAgICAiZW5hYmxlZCI6IHRydWUKICAgIH
+        0KICB9LAogICJkYXRhYmFzZSI6IHsKICAgICJjbGllbnQiOiAibXlzcWwiLAogICAgImNv
+        bm5lY3Rpb24iOiB7CiAgICAgICJob3N0IjogImRiLW1hcmlhZGIuZ2hvc3QiLAogICAgIC
+        AidXNlciI6ICJnaG9zdGRiIiwKICAgICAgInBhc3N3b3JkIjogImwwbkcuUGw0aW5fVDN4
+        dF9zRWtSZXRfcDRzNXdPUkQtRm9SXzZoMHNUX3VaM3IhIiwKICAgICAgImRhdGFiYXNlIj
+        ogImdob3N0LWRiIiwKICAgICAgInBvcnQiOiAiMzMwNiIKICAgIH0KICB9LAogICJwcm9j
+        ZXNzIjogImxvY2FsIiwKICAicGF0aHMiOiB7CiAgICAiY29udGVudFBhdGgiOiAiL2hvbW
+        Uvbm9ucm9vdC9hcHAvZ2hvc3QvY29udGVudCIKICB9Cn0=
     kind: Secret
     metadata:
       labels:
         app: server-ghost
         platform: ghost
-      name: server-ghost-config-fg789722ch
+      name: server-ghost-config-k6b85fg6bb
       namespace: ghost
     type: Opaque
     ---
@@ -606,7 +623,7 @@ With every required element declared or configured, now you need to put everythi
       name: server-ghost
       namespace: ghost
     spec:
-      loadBalancerIP: 10.7.0.3
+      clusterIP: None
       ports:
       - name: server
         port: 2368
@@ -615,7 +632,7 @@ With every required element declared or configured, now you need to put everythi
       selector:
         app: server-ghost
         platform: ghost
-      type: LoadBalancer
+      type: ClusterIP
     ---
     apiVersion: v1
     kind: PersistentVolume
@@ -805,7 +822,7 @@ With every required element declared or configured, now you need to put everythi
             persistentVolumeClaim:
               claimName: cache-valkey
           - configMap:
-              defaultMode: 292
+              defaultMode: 444
               items:
               - key: valkey.conf
                 path: valkey.conf
@@ -813,7 +830,7 @@ With every required element declared or configured, now you need to put everythi
             name: valkey-config
           - name: valkey-acl
             secret:
-              defaultMode: 292
+              defaultMode: 444
               items:
               - key: users.acl
                 path: users.acl
@@ -947,6 +964,7 @@ With every required element declared or configured, now you need to put everythi
             persistentVolumeClaim:
               claimName: db-mariadb
           - configMap:
+              defaultMode: 444
               items:
               - key: initdb.sh
                 path: initdb.sh
@@ -1033,6 +1051,11 @@ With every required element declared or configured, now you need to put everythi
               subPath: config.production.json
             - mountPath: /tmp
               name: tmp
+          hostAliases:
+          - hostnames:
+            - ghost.homelab.cloud
+            - ghostadmin.homelab.cloud
+            ip: 10.7.0.1
           initContainers:
           - command:
             - /bin/sh
@@ -1080,7 +1103,7 @@ With every required element declared or configured, now you need to put everythi
               items:
               - key: config.production.json
                 path: config.production.json
-              secretName: server-ghost-config-fg789722ch
+              secretName: server-ghost-config-k6b85fg6bb
           - emptyDir:
               sizeLimit: 64Mi
             name: tmp
@@ -1097,17 +1120,16 @@ With every required element declared or configured, now you need to put everythi
       - ghost.homelab.cloud
       - ghostadmin.homelab.cloud
       duration: 2190h
-      ipAddresses:
-      - 10.7.0.3
       isCA: false
       issuerRef:
         group: cert-manager.io
         kind: ClusterIssuer
         name: homelab.cloud-intm-ca01-issuer
       privateKey:
-        algorithm: Ed25519
+        algorithm: ECDSA
         encoding: PKCS8
         rotationPolicy: Always
+        size: 521
       renewBefore: 168h
       secretName: ghost.homelab.cloud-tls
     ---
@@ -1153,10 +1175,10 @@ With every required element declared or configured, now you need to put everythi
     spec:
       ipWhiteList:
         sourceRange:
-        - 10.0.0.0/24
+        - 10.0.0.0/8
     ~~~
 
-    The most important thing here is to verify that the resources that get their names modified by Kustomize with an autogenereated suffix, in particular `ConfigMaps` and `Secrets`, are invoked by their modified name wherever they are used in this setup. Remember that Kustomize will not change the names if they have been put in non-standard Kubernetes parameters, and it might be possible that Kustomize may not even touch values in certain particular standard ones.
+    The most important thing here is to verify that the resources that get their names modified by Kustomize with an autogenerated suffix, in particular `ConfigMaps` and `Secrets`, are called by their modified name wherever they are used in this setup. Remember that Kustomize will not change the names if they have been put in non-standard Kubernetes parameters, and it might be possible that Kustomize may not even touch values in certain particular standard ones.
 
     On the other hand, notice how Kustomize has grouped all the resources together according to their kind and ordered them alphabetically by `metadata.name`. Also see how the `ghost` namespace has been set in all resources except in the `PersistentVolume` ones because those in particular are not namespaced.
 
@@ -1176,84 +1198,89 @@ With every required element declared or configured, now you need to put everythi
 
     ~~~sh
     NAME                               CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                STORAGECLASS   VOLUMEATTRIBUTESCLASS   REASON   AGE   VOLUMEMODE
-    persistentvolume/ghost-hdd-srv     9300M      RWO            Retain           Bound    ghost/server-ghost   local-path     <unset>                          5s    Filesystem
-    persistentvolume/ghost-ssd-cache   2800M      RWO            Retain           Bound    ghost/cache-valkey   local-path     <unset>                          5s    Filesystem
-    persistentvolume/ghost-ssd-db      6500M      RWO            Retain           Bound    ghost/db-mariadb     local-path     <unset>                          5s    Filesystem
+    persistentvolume/ghost-hdd-srv     9300M      RWO            Retain           Bound    ghost/server-ghost   local-path     <unset>                          11s   Filesystem
+    persistentvolume/ghost-ssd-cache   2800M      RWO            Retain           Bound    ghost/cache-valkey   local-path     <unset>                          11s   Filesystem
+    persistentvolume/ghost-ssd-db      6500M      RWO            Retain           Bound    ghost/db-mariadb     local-path     <unset>                          11s   Filesystem
 
-    NAME                                 STATUS    VOLUME            CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE   VOLUMEMODE
-    persistentvolumeclaim/cache-valkey   Bound     ghost-ssd-cache   2800M      RWO            local-path     <unset>                 6s    Filesystem
-    persistentvolumeclaim/db-mariadb     Pending   ghost-ssd-db      0                         local-path     <unset>                 6s    Filesystem
-    persistentvolumeclaim/server-ghost   Bound     ghost-hdd-srv     9300M      RWO            local-path     <unset>                 6s    Filesystem
+    NAME                                 STATUS   VOLUME            CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE   VOLUMEMODE
+    persistentvolumeclaim/cache-valkey   Bound    ghost-ssd-cache   2800M      RWO            local-path     <unset>                 12s   Filesystem
+    persistentvolumeclaim/db-mariadb     Bound    ghost-ssd-db      6500M      RWO            local-path     <unset>                 12s   Filesystem
+    persistentvolumeclaim/server-ghost   Bound    ghost-hdd-srv     9300M      RWO            local-path     <unset>                 12s   Filesystem
 
     NAME                                         DATA   AGE
-    configmap/cache-valkey-config-c86dc4fh5d     1      9s
-    configmap/db-mariadb-config-t9c84t7h62       5      9s
-    configmap/kube-root-ca.crt                   1      9s
-    configmap/server-ghost-env-vars-9ggkgtdt7b   3      8s
+    configmap/cache-valkey-config-c86dc4fh5d     1      14s
+    configmap/db-mariadb-config-t9c84t7h62       5      14s
+    configmap/kube-root-ca.crt                   1      14s
+    configmap/server-ghost-env-vars-9ggkgtdt7b   3      14s
 
     NAME                                           TYPE                DATA   AGE
-    secret/cache-valkey-acl-k2bm2h5fgk             Opaque              1      9s
-    secret/cache-valkey-exporter-user-4thcmd49m2   Opaque              2      9s
-    secret/db-mariadb-passwords-8g2hdgch72         Opaque              3      9s
-    secret/ghost.homelab.cloud-tls                 kubernetes.io/tls   3      6s
-    secret/server-ghost-config-k6b85fg6bb          Opaque              1      9s
+    secret/cache-valkey-acl-k2bm2h5fgk             Opaque              1      14s
+    secret/cache-valkey-exporter-user-4thcmd49m2   Opaque              2      14s
+    secret/db-mariadb-passwords-8g2hdgch72         Opaque              3      14s
+    secret/ghost.homelab.cloud-tls                 kubernetes.io/tls   3      10s
+    secret/server-ghost-config-k6b85fg6bb          Opaque              1      14s
 
     NAME                            READY   AGE   CONTAINERS       IMAGES
-    statefulset.apps/cache-valkey   1/1     9s    server,metrics   valkey/valkey:9.0-alpine,oliver006/redis_exporter:v1.80.0-alpine
-    statefulset.apps/db-mariadb     0/1     9s    server,metrics   mariadb:11.8-noble,prom/mysqld-exporter:v0.18.0
-    statefulset.apps/server-ghost   0/1     8s    server           ghcr.io/sredevopsorg/ghost-on-kubernetes:main
+    statefulset.apps/cache-valkey   1/1     14s   server,metrics   valkey/valkey:9.0-alpine,oliver006/redis_exporter:v1.80.0-alpine
+    statefulset.apps/db-mariadb     1/1     13s   server,metrics   mariadb:11.8-noble,prom/mysqld-exporter:v0.18.0
+    statefulset.apps/server-ghost   0/1     13s   server           ghcr.io/sredevopsorg/ghost-on-kubernetes:main
 
     NAME                 READY   STATUS    RESTARTS   AGE   IP            NODE         NOMINATED NODE   READINESS GATES
-    pod/cache-valkey-0   2/2     Running   0          10s   10.42.1.171   k3sagent02   <none>           <none>
-    pod/db-mariadb-0     0/2     Pending   0          10s   <none>        <none>       <none>           <none>
-    pod/server-ghost-0   0/1     Running   0          9s    10.42.1.172   k3sagent02   <none>           <none>
+    pod/cache-valkey-0   2/2     Running   0          13s   10.42.1.193   k3sagent02   <none>           <none>
+    pod/db-mariadb-0     2/2     Running   0          13s   10.42.1.195   k3sagent02   <none>           <none>
+    pod/server-ghost-0   0/1     Running   0          12s   10.42.1.194   k3sagent02   <none>           <none>
 
-    NAME                   TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)             AGE   SELECTOR
-    service/cache-valkey   ClusterIP      None            <none>        6379/TCP,9121/TCP   12s   app=cache-valkey,platform=ghost
-    service/db-mariadb     ClusterIP      None            <none>        3306/TCP,9104/TCP   12s   app=db-mariadb,platform=ghost
-    service/server-ghost   LoadBalancer   10.43.107.239   10.7.0.3      2368:32429/TCP      12s   app=server-ghost,platform=ghost
+    NAME                   TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)             AGE   SELECTOR
+    service/cache-valkey   ClusterIP   None         <none>        6379/TCP,9121/TCP   14s   app=cache-valkey,platform=ghost
+    service/db-mariadb     ClusterIP   None         <none>        3306/TCP,9104/TCP   14s   app=db-mariadb,platform=ghost
+    service/server-ghost   ClusterIP   None         <none>        2368/TCP            14s   app=server-ghost,platform=ghost
     ~~~
 
     There are a number of details about this Ghost platform deployment you must realize, based on this `kubectl` output:
 
-    - First are the persistent volumes with all their details. Notice how the values under the `CAPACITY` column are in megabytes (`M`), although those sizes were specified in gigabytes (`G`) in the yaml description. Also see how there's no information about to which node are the volumes associated to. The status `Bound` means that the volume has been claimed, so its not free at the moment.
+    - The components shown first are the persistent volumes with all their main details. Notice how the values under the `CAPACITY` column are in megabytes (`M`), although those sizes were specified in gigabytes (`G`) in their YAML manifests. Also see how there is no information about to which node are the volumes associated to. The status `Bound` means that the volume has been claimed, so it is not free at the moment.
 
-    - Right below the persistent volumes you got the persistent volume claims, and all of them appear with `Bound` status and with the name of the `VOLUME` they're bounded to. And, as it happened with the PVs, the PVCs' requested `CAPACITY` is shown in megabytes (`M`) rather than gigabytes (`G`).
+    - Right below the persistent volumes you got the persistent volume claims, and all of them appear with `Bound` status and with the name of the `VOLUME` they're bound to. And, as it happened with the PVs, the PVCs' requested `CAPACITY` is shown in megabytes (`M`) rather than gigabytes (`G`).
 
-    - The `Deployment` resource for Redis appears indicating that 1 out of 1 required `ReplicaSet`s are `READY`, among other details.
+    - All the config maps declared in this Ghost project are listed next, with their corresponding Kubernetes-autogenerated suffix attached to their names. Among them appears a `kube-root-ca.crt`, which is a public TLS CA certificate used internally to verify the identity of the cluster's Kubernetes API server.
 
-    - What comes out of a `Deployment` resource is a `ReplicaSet`, like the one named `nxcd-cache-redis-68984788b7`. See how the name has an hexadecimal number as a suffix, which is added by Kubernetes automatically. This replica set will give its name to the pods that come out of to it. On the other hand, notice instead of using one `READY` column like in its parent `Deployment` resource, it has a `DESIRED`, `CURRENT` and `READY` to tell you about how many of its pods are running.
+    - Right below the config maps appear all the secrets declared in the Ghost project, also with autogenerated suffixes appended to their names, except for the secret related to the Ghost platform TLS certificate.
 
-    - The `StatefulSet`s appear with their names as they are in their yaml descriptions, next to other values that inform you of the pods they have running (`READY` column) and a few other related details.
+    - The `StatefulSet`s appear with their names as they are in their YAML descriptions, next to other values that inform you of the pods they have running (`READY` column) and a few other related details.
 
-    - The resources are apparently fine, and all the expected pods are accounted for and with `Running` in their `STATUS` column. But if, for some reason, a pod is missing some resource they need, they'll remain in `ContainerCreating` or `Pending` status till they get what they require to run.
-        - For instance, let's suppose the wildcard certificate's secret is not available in the `nextcloud` namespace yet. This would force the `nxcd-server-apache-nextcloud-0` pod to wait with `ContainerCreating` status till that resource becomes available in the namespace.
+      In the sample output above, the `server-ghost` StatefulSet is the one still not ready because the only pod it produces is not either.
 
-        > **BEWARE!**  
-        > Remember that, probably due to a bug related to the graceful shutdown feature in the particular K3s version you've installed in this guide series (`v1.22.3+k3s1`), after a reboot the pods may not appear with status `Running` but `Terminated`.
+    - The pods are listed with the number of containers they have `READY`. In the particular case of Ghost server's pod (`pod/server-ghost-0`), notice that its only container is still not ready but the pod itself has a `Running` status nevertheless. This is because the pod is really running but its readiness probe informs that it is not ready yet.
 
-    - Notice a particularity about how pods are named.
-        - The pods from regular Deployment resources (such as `nxcd-cache-redis-68984788b7-npjz9`) get their _unique_ name from their parent replica set combined with an autogenerated string.
-        - The pods from stateful sets (`nxcd-db-mariadb-0` and `nxcd-server-apache-nextcloud-0` in this case) get their names from their parent stateful set, plus a number as a suffix. When a stateful set requires to run more than one replica, each generated pod will have a different but consecutive number. Check more about stateful sets behaviour [in the official Kubernetes documentation](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/).
+      See how all pods have a cluster IP assigned, and how all of them are running in the `k3sagent02` K3s node of the cluster. Remember that this is due to the affinity configuration declared [in their corresponding persistent volumes](#persistent-volumes).
 
-    - At the `Service` resources list, you can see that all services have their cluster IP and the one for the Nextcloud server also has the expected external IP for accessing the platform later. On the other hand, notice that the pods also have an IP which is on a different internal cluster subnet.
+      Also be aware of a particularity about how pods are named automatically by Kubernetes's control plane:
 
-    - Finally, see how the pods are all assigned to the `k3sagent02` node of your K3s cluster, due mainly to the rules of affinity applied to the persistent volumes. Services that store data (_state_) have to be deployed where their storage is available. Redis, on the other hand, has its affinity to the Nextcloud server itself, so it ended being deployed in the same node too.
+      - Pods from `StatefulSet`s get their names from their parent stateful set, plus an integer number as a suffix. When a stateful set requires to run more than one replica, each generated pod will have a different but consecutive number. Check more about stateful sets behaviour [in the official Kubernetes documentation](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/).
 
+      - Pods from regular `Deployment`s get a _unique_ name from their parent replica set combined with an autogenerated suffix string (like `-68984788b7-npjz9`).
 
+    - The last components listed are `Service`s, and you can see them listed all as headless (no cluster IP assigned) ones with no external IP whatsoever. Also worth mentioning the list of `PORT(S)` each of them have open, and how the labels applied to them appear in the `SELECTOR` column.
 
+## Browsing into Ghost
 
+When the pod for the Ghost server is listed as READY, browse to your Ghost platform (found in `https://ghost.homelab.cloud` for this guide) and you will be met with its basic empty homepage:
 
+![Ghost platform empty homepage](images/g033/ghost-empty-homepage.webp "Ghost platform empty homepage")
 
+Also, you can try to access the administrator URL (found in `https://ghostadmin.homelab.cloud/ghost/api/admin` for this guide) but you will be met with a "Forbidden" warning returned by the Ghost server.
 
+Neither in the [official Ghost documentation](https://docs.ghost.org/introduction), nor [in the SREDevOps.org contents this Ghost platform deployment is based on](https://www.sredevops.org/en/how-to-deploy-ghost-cms-on-kubernetes/) is explained how to enable an administrator or how to perform administration tasks. I will not cover those details here, since they are outside of the scope of this guide.
 
+> [!NOTE]
+> **Get help in the [Ghost forum](https://forum.ghost.org/)**\
+> Given the gaps in the official documentation, try asking in the Ghost forum. In particular, it has a [specific category for questions about using Ghost](https://forum.ghost.org/c/general/14).
 
+## Ghost platform's Kustomize project attached to this guide series
 
+You can find the Kustomize project for this Ghost platform deployment in the following attached folder.
 
-
-
-
-
+- [`k8sprjs/ghost`](k8sprjs/ghost)
 
 ## Relevant system paths
 
@@ -1268,9 +1295,33 @@ With every required element declared or configured, now you need to put everythi
 
 ### Files in `kubectl` client system
 
+- `$HOME/k8sprjs/ghost/kustomization.yaml`
+- `$HOME/k8sprjs/ghost/resources/ghost-hdd-srv.persistentvolume.yaml`
+- `$HOME/k8sprjs/ghost/resources/ghost-ssd-cache.persistentvolume.yaml`
+- `$HOME/k8sprjs/ghost/resources/ghost-ssd-db.persistentvolume.yaml`
+- `$HOME/k8sprjs/ghost/resources/ghost.homelab.cloud-tls.certificate.cert-manager.yaml`
+- `$HOME/k8sprjs/ghost/resources/ghost.homelab.cloud.ingressroute.traefik.yaml`
+- `$HOME/k8sprjs/ghost/resources/ghost.namespace.yaml`
+- `$HOME/k8sprjs/ghost/resources/ghostadmin.ipwhitelist.middleware.traefik.yaml`
 
+## References
 
+### [Ghost](https://ghost.org/)
 
+- [Documentation](https://docs.ghost.org/)
+  - [Getting Started. Introduction](https://docs.ghost.org/introduction)
+  - [Advanced Tools. Admin API](https://docs.ghost.org/admin-api)
+    - [Structure. Base URL](https://docs.ghost.org/admin-api#base-url)
+
+- [Forum](https://forum.ghost.org/)
+  - [Using Ghost](https://forum.ghost.org/c/general/14)
+  - [HOWTO: Deploy ghost with helm on kubernetes](https://forum.ghost.org/t/howto-deploy-ghost-with-helm-on-kubernetes/47053)
+
+### [SREDevOps.org](https://www.sredevops.org/)
+
+- [How to deploy Ghost CMS on Kubernetes](www.sredevops.org/en/how-to-deploy-ghost-cms-on-kubernetes/)
+
+- [GitHub. Ghost on Kubernetes](https://github.com/sredevopsorg/ghost-on-kubernetes)
 
 ## Navigation
 

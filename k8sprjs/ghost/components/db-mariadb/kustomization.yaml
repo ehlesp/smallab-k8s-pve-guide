@@ -1,0 +1,37 @@
+# Ghost MariaDB setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+labels:
+  - pairs:
+      app: db-mariadb
+    includeSelectors: true
+    includeTemplates: true
+
+resources:
+- resources/db-mariadb.persistentvolumeclaim.yaml
+- resources/db-mariadb.service.yaml
+- resources/db-mariadb.statefulset.yaml
+
+replicas:
+- name: db-mariadb
+  count: 1
+
+images:
+- name: mariadb
+  newTag: 11.8-noble
+- name: prom/mysqld-exporter
+  newTag: v0.18.0
+
+configMapGenerator:
+- name: db-mariadb-config
+  envs:
+  - configs/dbnames.properties
+  files:
+  - configs/initdb.sh
+  - configs/my.cnf
+
+secretGenerator:
+- name: db-mariadb-passwords
+  envs:
+  - secrets/dbusers.pwd

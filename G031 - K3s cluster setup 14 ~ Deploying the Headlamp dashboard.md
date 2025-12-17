@@ -236,7 +236,7 @@ Now that you have Headlamp deployed, you can test it if you have enabled its DNS
 
 > [!NOTE]
 > **Associate the Headlamp's DNS name or hostname to your Traefik service's IP**\
-> Since Headlamp is served through Traefik, you have to associate its DNS name to the Traefik service's IP. In your client system's host file, you would do it like this with the values used in this guide:
+> Since Headlamp is served through Traefik, you have to associate its DNS name to the Traefik service's IP. In your client system's `hosts` file, you would do it like this with the values used in this guide:
 >
 > ~~~txt
 > 10.7.0.1 traefik.homelab.cloud headlamp.homelab.cloud

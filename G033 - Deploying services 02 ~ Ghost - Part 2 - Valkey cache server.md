@@ -6,9 +6,9 @@
 - [Valkey secrets](#valkey-secrets)
   - [Valkey ACL user list](#valkey-acl-user-list)
   - [User for Prometheus metrics exporter](#user-for-prometheus-metrics-exporter)
-- [Valkey storage](#valkey-storage)
-- [Valkey StatefulSet resource](#valkey-statefulset-resource)
-- [Valkey Service resource](#valkey-service-resource)
+- [Valkey persistent storage claim](#valkey-persistent-storage-claim)
+- [Valkey StatefulSet](#valkey-statefulset)
+- [Valkey Service](#valkey-service)
 - [Valkey Kustomize project](#valkey-kustomize-project)
   - [Validating the Kustomize YAML output](#validating-the-kustomize-yaml-output)
 - [Do not deploy this Valkey project on its own](#do-not-deploy-this-valkey-project-on-its-own)
@@ -38,13 +38,13 @@ This second part of the Ghost deployment procedure is where you begin working wi
 
 ## Kustomize project folders for Ghost and Valkey
 
-You need a main Kustomize project for the deployment of your Ghost platform. In it, you will contain the subprojects for components like Valkey. Start by executing the following `mkdir` command to create the necessary project folder structure for this part:
+You need a main Kustomize project for the deployment of your Ghost platform. In it, you will contain the subprojects for its components like the Valkey cache server. Start by executing the following `mkdir` command to create the necessary project folder structure for this part:
 
 ~~~sh
 $ mkdir -p $HOME/k8sprjs/ghost/components/cache-valkey/{configs,resources,secrets}
 ~~~
 
-The main folder for the Valkey Kustomize subproject, `cache-valkey`, is named following the pattern `<component function>-<software name>` this guide will use also to name the root directories for the remaining component subprojects. There are also a `configs`, a `resources` and a `secrets` subfolders to better differentiate the files declaring the Kubernetes resources from those related to configurations or secret.
+The main folder for the Valkey Kustomize subproject, `cache-valkey`, is named following the pattern `<component function>-<software name>` which this guide will use also to name the root directories for the remaining component subprojects. There is also a `configs`, a `resources` and a `secrets` subfolder to better differentiate between the YAML manifests declaring the Kubernetes resources from those related to configurations or secret.
 
 ## Valkey configuration file
 
@@ -202,7 +202,7 @@ Running in the same pod as the Valkey server, there is going to be a Prometheus 
     > **The password in this `secrets/default_user_env.properties` file is a plain unencrypted string**\
     > Be careful of who can access this `default_user_env.properties` file.
 
-## Valkey storage
+## Valkey persistent storage claim
 
 Storage in Kubernetes has two sides: enabling storage as persistent volumes (PVs), and the claims (PVCs) on each of those persistent volumes. For your Ghost's Valkey instance you need one persistent volume (to be declared in the last part of this Ghost deployment procedure), and the claim on that particular PV. See next how to declare the `PersistentVolumeClaim` resource for your Valkey instance:
 
@@ -215,7 +215,7 @@ Storage in Kubernetes has two sides: enabling storage as persistent volumes (PVs
 2. Declare Seafile's `PersistentVolumeClaim` in the `resources/cache-valkey.persistentvolumeclaim.yaml` file:
 
     ~~~yaml
-
+    # Ghost Valkey claim of persistent storage
     apiVersion: v1
     kind: PersistentVolumeClaim
 
@@ -247,13 +247,9 @@ Storage in Kubernetes has two sides: enabling storage as persistent volumes (PVs
 
     - In a claim is also mandatory to specify how much storage is requested, hence the need to put the `spec.resources.requests.storage` parameter there. Be careful of not requesting more space than what is truly available in the volume.
 
-    > [!IMPORTANT]
-    > **The persistent volume and its claim must correlate**\
-    > The persistent volume related to this PVC must correspond to the values set here.
+## Valkey StatefulSet
 
-## Valkey StatefulSet resource
-
-The next thing to do is setting up the `StatefulSet` resource that will deploy Valkey in your K3s cluster. It has to be a `StatefulSet` rather than a `Deployment` because stateful sets are the resources meant for deploying in Kubernetes apps or services that persist data (their _state_) in a persistent storage. Valkey could be run purely on memory, but it would force it to repopulate its database every time, leading to some delay when booting up:
+The next thing to do is setting up the `StatefulSet` declaration that will deploy Valkey in your K3s cluster. It has to be a `StatefulSet` rather than a `Deployment` because stateful sets are the resources meant for deploying in Kubernetes apps or services that persist data (their _state_) in a persistent storage. Valkey could be run purely on memory, but it would force it to repopulate its database every time, leading to some delay when booting up:
 
 1. Create a `cache-valkey.statefulset.yaml` file under the `resources` subfolder:
 
@@ -264,6 +260,7 @@ The next thing to do is setting up the `StatefulSet` resource that will deploy V
 2. Declare the `StatefulSet` resource for the Valkey instance in `resources/cache-valkey.statefulset.yaml`:
 
     ~~~yaml
+    # Ghost Valkey StatefulSet for a sidecar server pod
     apiVersion: apps/v1
     kind: StatefulSet
 
@@ -317,14 +314,14 @@ The next thing to do is setting up the `StatefulSet` resource that will deploy V
           - name: valkey-config
             configMap:
               name: cache-valkey-config
-              defaultMode: 0444
+              defaultMode: 444
               items:
               - key: valkey.conf
                 path: valkey.conf
           - name: valkey-acl
             secret:
               secretName: cache-valkey-acl
-              defaultMode: 0444
+              defaultMode: 444
               items:
               - key: users.acl
                 path: users.acl
@@ -340,7 +337,7 @@ The next thing to do is setting up the `StatefulSet` resource that will deploy V
 
       > [!IMPORTANT]
       > **The pod gets a predictable hostname within the cluster**\
-      > Check out the [section about the corresponding `Service` resource](#valkey-service-resource) for more information. In particular, read about the `spec.clusterIP` parameter to understand how the pod's predictable hostname looks like.
+      > Check out the [section about the corresponding `Service` resource](#valkey-service) for more information. In particular, read about the `spec.clusterIP` parameter to understand how the pod's predictable hostname looks like.
 
     - `template`\
       Describes how the pod resulting from this `StatefulSet` should be:
@@ -382,7 +379,7 @@ The next thing to do is setting up the `StatefulSet` resource that will deploy V
 
           - In the `envFrom` section, the `cache-valkey-exporter-user` `Secret` resource contains the `default_user_env.properties` file where the `default` username and password are declared for this Prometheus metrics exporter. [You will declare the `Secret` in the Kustomize declaration for this Ghost's Valkey subproject](#valkey-kustomize-project).
 
-          - This container also has minimum requirements of RAM and CPU `resources`. Its `containerPort` has a `name` too, and its number is the one used by default by the exporter, matching the one you will see declared [in the next section within the corresponding Valkey's `Service` resource](#valkey-service-resource).
+          - This container also has minimum requirements of RAM and CPU `resources`. Its `containerPort` has a `name` too, and its number is the one used by default by the exporter, matching the one you will see declared [in the next section within the corresponding Valkey's `Service` resource](#valkey-service).
 
       - `spec.volumes`\
         This section declares the volumes that can be mounted in the pod. In particular, here are enabled all the volumes mounted in the Valkey container:
@@ -396,11 +393,11 @@ The next thing to do is setting up the `StatefulSet` resource that will deploy V
         - `valkey-acl`\
           Enables the `users.acl` file being kept in a yet-to-be-defined `cache-valkey-acl` `Secret` object as a volume so it can be mounted by the `server` container in its `volumeMounts` section.
 
-        Pay attention to the `defaultMode` parameter in the `valkey-config` and `valkey-acl` entries. It sets a particular permission mode by default for the items contained in them. In both cases, the parameter sets a read-only permission for all users with mode `0444` but only for the listed `items`.
+        Pay attention to the `defaultMode` parameter in the `valkey-config` and `valkey-acl` entries. It sets a particular permission mode by default for the items contained in them. In both cases, the parameter sets a read-only permission for all users with the `444` mode but only for the listed `items`.
 
         Also know that, in the items list, the `key` parameter is the name identifying the file present inside the `ConfigMap` or `Secret` object, and the `path` is the relative path assigned to the item.
 
-## Valkey Service resource
+## Valkey Service
 
 You have declared the pod that will execute the containers running the Valkey server and its Prometheus statistics exporter, now you need to define the `Service` resource that will give access to them:
 
@@ -413,6 +410,7 @@ You have declared the pod that will execute the containers running the Valkey se
 2. Declare the Valkey `Service` resource in `resources/cache-valkey.service.yaml`:
 
     ~~~yaml
+    # Ghost Valkey headless service
     apiVersion: v1
     kind: Service
 
@@ -450,7 +448,7 @@ You have declared the pod that will execute the containers running the Valkey se
       <service name>.<namespace>
       ~~~
 
-      In the case of the Valkey service the hostname would be `cache-valkey.ghost`, and you will use it to make the Ghost platform connect with its Valkey instance.
+      For the Valkey service the hostname would be `cache-valkey.ghost`, and you will use it to make the Ghost platform connect with its Valkey instance.
 
     - `spec.ports`\
       Describe the ports open in this service. Notice how I made the `name` and `port` on each port of this `Service` to match the ones already defined for the containers in the previous `Deployment` resource.
@@ -509,7 +507,7 @@ What remains to declare is the main `kustomization.yaml` file that describes the
       - secrets/users.acl
     ~~~
 
-    This `kustomization.yaml` file has elements you've already seen in previous deployments, plus a few extra ones:
+    This `kustomization.yaml` file has elements you have already seen in previous deployments, plus a few extra ones:
 
     - With `labels` you can set up [labels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) to all the resources generated from this `kustomization.yaml` file. In this case, there is only one label `app: cache-valkey` to indicate that the resources declared in this Kustomize project belong to the Valkey caching server.
 
@@ -571,7 +569,7 @@ With everything in place, you can check out the YAML resulting from the Seafile 
     metadata:
       labels:
         app: cache-valkey
-      name: cache-valkey-acl-bcc5gh9d6g
+      name: cache-valkey-acl-k2bm2h5fgk
     type: Opaque
     ---
     apiVersion: v1
@@ -582,7 +580,7 @@ With everything in place, you can check out the YAML resulting from the Seafile 
     metadata:
       labels:
         app: cache-valkey
-      name: cache-valkey-exporter-user-6mdd99ft8d
+      name: cache-valkey-exporter-user-4thcmd49m2
     type: Opaque
     ---
     apiVersion: v1
@@ -667,7 +665,7 @@ With everything in place, you can check out the YAML resulting from the Seafile 
               subPath: users.acl
           - envFrom:
             - secretRef:
-                name: cache-valkey-exporter-user-6mdd99ft8d
+                name: cache-valkey-exporter-user-4thcmd49m2
             image: oliver006/redis_exporter:v1.80.0-alpine
             name: metrics
             ports:
@@ -682,7 +680,7 @@ With everything in place, you can check out the YAML resulting from the Seafile 
             persistentVolumeClaim:
               claimName: cache-valkey
           - configMap:
-              defaultMode: 292
+              defaultMode: 444
               items:
               - key: valkey.conf
                 path: valkey.conf
@@ -690,11 +688,11 @@ With everything in place, you can check out the YAML resulting from the Seafile 
             name: valkey-config
           - name: valkey-acl
             secret:
-              defaultMode: 292
+              defaultMode: 444
               items:
               - key: users.acl
                 path: users.acl
-              secretName: cache-valkey-acl-bcc5gh9d6g
+              secretName: cache-valkey-acl-k2bm2h5fgk
     ~~~
 
     There are a few things to highlight in the YAML output above:
@@ -703,15 +701,13 @@ With everything in place, you can check out the YAML resulting from the Seafile 
 
     - The names of the `cache-valkey-config` config map, `cache-valkey-acl` and `cache-valkey-exporter-user` secrets have a hash as a suffix, added by Kustomize. The hash is calculated from the content of the renamed resources.
 
-    - Both `cache-valkey-exporter-user` and `cache-valkey-acl` secrets are printed obfuscated in base64 format, but in different ways:
+    - Both `cache-valkey-exporter-user` and `cache-valkey-acl` secrets are printed obfuscated in base64 format, but in slightly different ways:
 
       - Since the `cache-valkey-exporter-user` secret is a set of environment variables, only their values are obfuscated.
 
       - The `cache-valkey-acl` secret is declared as a file, so its whole content is printed obfuscated.
 
     - Another detail to notice is how the label `app: cache-valkey` appears not only as label in the `metadata` section of all the resources, but Kustomize has also set it as `selector` both in the `Service` and the `StatefulSet` resources declarations.
-
-    - There's also a particularity that might seem odd. The `defaultMode` of the `valkey-config` and `valkey-acl` volumes is shown as `292` instead of the `0444` value set in the `StatefulSet` resource declaration. It is not a mistake, just the way the permission value is translated into Kubernetes. The file will have the permission mode set as it is specified in the original `Deployment` resource.
 
 3. If you installed the `kubeconform` command in your `kubectl` client system (as explained in the [G026 guide](G026%20-%20K3s%20cluster%20setup%2009%20~%20Setting%20up%20a%20kubectl%20client%20for%20remote%20access.md#validate-kubernetes-configuration-files-with-kubeconform)), you can validate the Kustomize output with it. So, assuming you have dumped the output in a `cache-valkey.k.output.yaml` file, execute the following:
 
@@ -723,7 +719,7 @@ With everything in place, you can check out the YAML resulting from the Seafile 
     Notice the `-summary` option in the shell command above. It is what makes the `kubeconform` command print a results summary when it finishes.
 
     > [!NOTE]
-    > **`kubeconform` does not produce an output when the input is valid**\
+    > **`kubeconform` does not produce an output when it considers the input valid**\
     > With a completely valid input as in this case and no option specified, `kubeconform` does not print anything in the shell.
     >
     > On the other hand, `kubeconform` (at least, in the version `0.7.0` installed with this guide) is not yet able to understand Kustomize projects and ends up finding errors in them.

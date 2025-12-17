@@ -1,0 +1,24 @@
+# Persistent storage volume for the Ghost server
+apiVersion: v1
+kind: PersistentVolume
+
+metadata:
+  name: ghost-hdd-srv
+spec:
+  capacity:
+    storage: 9.3G
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: local-path
+  persistentVolumeReclaimPolicy: Retain
+  local:
+    path: /mnt/ghost-hdd/srv/k3smnt
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - k3sagent02

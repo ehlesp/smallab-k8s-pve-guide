@@ -1,0 +1,65 @@
+# Ghost Valkey StatefulSet for a sidecar server pod
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: cache-valkey
+spec:
+  replicas: 1
+  serviceName: cache-valkey
+  template:
+    spec:
+      containers:
+      - name: server
+        image: valkey/valkey:9.0-alpine
+        command:
+        - valkey-server
+        - "/etc/valkey/valkey.conf"
+        ports:
+        - name: server
+          containerPort: 6379
+        resources:
+          requests:
+            cpu: "0.5"
+            memory: 64Mi
+        volumeMounts:
+        - name: valkey-storage
+          mountPath: /data
+        - name: valkey-config
+          readOnly: true
+          subPath: valkey.conf
+          mountPath: /etc/valkey/valkey.conf
+        - name: valkey-acl
+          readOnly: true
+          subPath: users.acl
+          mountPath: /etc/valkey/users.acl
+      - name: metrics
+        image: oliver006/redis_exporter:v1.80.0-alpine
+        envFrom:
+        - secretRef:
+            name: cache-valkey-exporter-user
+        resources:
+          requests:
+            cpu: "0.25"
+            memory: 16Mi
+        ports:
+        - name: metrics
+          containerPort: 9121
+      volumes:
+      - name: valkey-storage
+        persistentVolumeClaim:
+          claimName: cache-valkey
+      - name: valkey-config
+        configMap:
+          name: cache-valkey-config
+          defaultMode: 444
+          items:
+          - key: valkey.conf
+            path: valkey.conf
+      - name: valkey-acl
+        secret:
+          secretName: cache-valkey-acl
+          defaultMode: 444
+          items:
+          - key: users.acl
+            path: users.acl

@@ -352,9 +352,9 @@
 - [Kustomize project folders for Ghost and Valkey](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#kustomize-project-folders-for-ghost-and-valkey)
 - [Valkey configuration file](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-configuration-file)
 - [Valkey secrets](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-secrets)
-- [Valkey storage](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-storage)
-- [Valkey StatefulSet resource](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-statefulset-resource)
-- [Valkey Service resource](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-service-resource)
+- [Valkey persistent storage claim](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-persistent-storage-claim)
+- [Valkey StatefulSet](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-statefulset)
+- [Valkey Service](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-service)
 - [Valkey Kustomize project](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-kustomize-project)
 - [Do not deploy this Valkey project on its own](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#do-not-deploy-this-valkey-project-on-its-own)
 - [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#relevant-system-paths)
@@ -366,9 +366,9 @@
 - [MariaDB Kustomize subproject's folders](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-kustomize-subprojects-folders)
 - [MariaDB configuration files](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-configuration-files)
 - [MariaDB passwords](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-passwords)
-- [MariaDB storage](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-storage)
-- [MariaDB StatefulSet resource](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-statefulset-resource)
-- [MariaDB Service resource](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-service-resource)
+- [MariaDB persistent storage claim](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-persistent-storage-claim)
+- [MariaDB StatefulSet](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-statefulset)
+- [MariaDB Service](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-service)
 - [MariaDB Kustomize project](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-kustomize-project)
 - [Do not deploy this MariaDB project on its own](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#do-not-deploy-this-mariadb-project-on-its-own)
 - [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#relevant-system-paths)
@@ -381,9 +381,9 @@
 - [Ghost server Kustomize subproject's folders](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#ghost-server-kustomize-subprojects-folders)
 - [Ghost server configuration file](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#ghost-server-configuration-file)
 - [Ghost server environment variables](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#ghost-server-environment-variables)
-- [Ghost server storage](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#ghost-server-storage)
-- [Ghost server StatefulSet resource](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#ghost-server-statefulset-resource)
-- [Ghost server Service resource](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#ghost-server-service-resource)
+- [Ghost server persistent storage claim](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#ghost-server-persistent-storage-claim)
+- [Ghost server StatefulSet](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#ghost-server-statefulset)
+- [Ghost server Service](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#ghost-server-service)
 - [Ghost server Kustomize project](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#ghost-server-kustomize-project)
 - [Do not deploy this Ghost server project on its own](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#do-not-deploy-this-ghost-server-project-on-its-own)
 - [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#relevant-system-paths)
@@ -391,14 +391,16 @@
 
 ### [G033 - Deploying services 02 ~ Ghost - Part 5 - Complete Ghost platform](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md)
 
-
-
-
-
-
-
-
-
+- [Putting together the whole Ghost platform](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#putting-together-the-whole-ghost-platform)
+- [Create a folder for the pending Ghost platform resources](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#create-a-folder-for-the-pending-ghost-platform-resources)
+- [Ghost platform's persistent volumes](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#ghost-platforms-persistent-volumes)
+- [Ghost platform's TLS certificate](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#ghost-platforms-tls-certificate)
+- [Traefik IngressRoute for enabling HTTPS access to the Ghost platform](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#traefik-ingressroute-for-enabling-https-access-to-the-ghost-platform)
+- [Main Kustomize project for the Ghost platform](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#main-kustomize-project-for-the-ghost-platform)
+- [Browsing into Ghost](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#browsing-into-ghost)
+- [Ghost platform's Kustomize project attached to this guide series](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#ghost-platforms-kustomize-project-attached-to-this-guide-series)
+- [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#relevant-system-paths)
+- [References](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#references)
 
 ### [G034 - Deploying services 03 ~ Gitea - Part 1 - Outlining setup and arranging storage](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#g034-deploying-services-03-gitea-part-1-outlining-setup-and-arranging-storage)
 

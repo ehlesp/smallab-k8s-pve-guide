@@ -1,0 +1,34 @@
+# Ghost server setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+labels:
+  - pairs:
+      app: server-ghost
+    includeSelectors: true
+    includeTemplates: true
+
+resources:
+- resources/server-ghost.persistentvolumeclaim.yaml
+- resources/server-ghost.service.yaml
+- resources/server-ghost.statefulset.yaml
+
+replicas:
+- name: server-ghost
+  count: 1
+
+images:
+- name: docker.io/busybox
+  newTag: stable-musl
+- name: ghcr.io/sredevopsorg/ghost-on-kubernetes
+  newTag: main
+
+configMapGenerator:
+- name: server-ghost-env-vars
+  envs:
+  - configs/env.properties
+
+secretGenerator:
+- name: server-ghost-config
+  files:
+  - secrets/config.production.json

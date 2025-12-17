@@ -5,9 +5,9 @@
 - [Ghost server Kustomize subproject's folders](#ghost-server-kustomize-subprojects-folders)
 - [Ghost server configuration file](#ghost-server-configuration-file)
 - [Ghost server environment variables](#ghost-server-environment-variables)
-- [Ghost server storage](#ghost-server-storage)
-- [Ghost server StatefulSet resource](#ghost-server-statefulset-resource)
-- [Ghost server Service resource](#ghost-server-service-resource)
+- [Ghost server persistent storage claim](#ghost-server-persistent-storage-claim)
+- [Ghost server StatefulSet](#ghost-server-statefulset)
+- [Ghost server Service](#ghost-server-service)
 - [Ghost server Kustomize project](#ghost-server-kustomize-project)
   - [Validating the Kustomize YAML output](#validating-the-kustomize-yaml-output)
 - [Do not deploy this Ghost server project on its own](#do-not-deploy-this-ghost-server-project-on-its-own)
@@ -193,6 +193,17 @@ The whole configuration of Ghost goes into a single JSON file. Among other param
     - `admin.url`\
       Ghost instance's alternative url only for accessing its [Admin API](https://docs.ghost.org/admin-api). This is a hardening measure to allow differentiate between the regular traffic towards the Ghost instance and requests meant only for the Admin API. Notice that the domain name for the Admin API is different from the one in the `url` parameter set before.
 
+      > [!NOTE]
+      > **Remember to associate the hostnames in both URLs to the Traefik service's IP**\
+      > As you could have done for accessing the Traefik dashboard or Headlamp, you can add in the `hosts` file of your client system another entry right below the one you may have setup already:
+      >
+      > ~~~txt
+      > 10.7.0.1 traefik.homelab.cloud headlamp.homelab.cloud
+      > 10.7.0.1 ghost.homelab.cloud ghostadmin.homelab.cloud
+      > ~~~
+      >
+      > This way, rather than having one bloated `hosts` line with all the DNS names related to the Traefik service IP, you can have those hostnames separated for clarity.
+
     - `server`\
       This block has the parameters declaring through which IP (the `host` value) and `port` the Ghost instance has to listen. In this case, Ghost will listen through all available IPs (`0.0.0.0`) in the port 2368, which is the default one for Ghost.
 
@@ -238,6 +249,10 @@ The whole configuration of Ghost goes into a single JSON file. Among other param
     - `paths.contentPath`\
       This path is where Ghost will keep contents like data, images, logs and adapters. The path specified here is correlated to the ones you will see configured in the custom Ghost container image specified in the `StateFulSet` declared later in this part.
 
+    > [!WARNING]
+    > **The passwords are put in `secrets/config.production.json` as plain unencrypted text**\
+    > Be careful of who can access this `config.production.json` file.
+
 ## Ghost server environment variables
 
 There are a few environment variables you will have to declare in the Ghost server deployment that are better put together in one configuration file:
@@ -267,7 +282,7 @@ There are a few environment variables you will have to declare in the Ghost serv
     - `NODE_ENV`\
       Determines the mode in which the Ghost server is going to run. Ghost supports the `production` and `development` modes which, among other details, determine which type of database is used with Ghost. In `production` mode, Ghost requires using a MySQL database, whereas in `development` mode it is possible to use an SQLite one.
 
-## Ghost server storage
+## Ghost server persistent storage claim
 
 Here you will declare the `PersistentVolumeClaim` that links your Ghost server with the persistent volume (declared in the last part of this Ghost deployment procedure) that will hold its contents:
 
@@ -280,6 +295,7 @@ Here you will declare the `PersistentVolumeClaim` that links your Ghost server w
 2. Declare the `PersistentVolumeClaim` in `resources/server-ghost.persistentvolumeclaim.yaml` with the declaration next:
 
     ~~~yaml
+    # Ghost server claim of persistent storage
     apiVersion: v1
     kind: PersistentVolumeClaim
 
@@ -297,7 +313,7 @@ Here you will declare the `PersistentVolumeClaim` that links your Ghost server w
 
     The most relevant thing to notice is that this claim uses the persistent volume you will declare later (in the last part of this Ghost deployment procedure) on the LVM light volume created in the Proxmox VE host's HDD drive.
 
-## Ghost server StatefulSet resource
+## Ghost server StatefulSet
 
 The Ghost server stores content, making necessary to deploy it as a `StatefulSet` rather than a `Deployment` resource:
 
@@ -310,6 +326,7 @@ The Ghost server stores content, making necessary to deploy it as a `StatefulSet
 2. Declare the `StatefulSet` for the Ghost server in `resources/server-ghost.statefulset.yaml`:
 
     ~~~yaml
+    # Ghost server StatefulSet for an initialized regular pod
     apiVersion: apps/v1
     kind: StatefulSet
 
@@ -414,6 +431,11 @@ The Ghost server stores content, making necessary to deploy it as a `StatefulSet
               runAsNonRoot: true
               runAsUser: 65532
           automountServiceAccountToken: false
+          hostAliases:
+          - ip: "10.7.0.1"
+            hostnames:
+            - "ghost.homelab.cloud"
+            - "ghostadmin.homelab.cloud"
           volumes:
           - name: ghost-storage
             persistentVolumeClaim:
@@ -510,6 +532,10 @@ The Ghost server stores content, making necessary to deploy it as a `StatefulSet
 
     - The `automountServiceAccountToken` is another security option related to how Kubernetes gives access to its control plane API. For pods that are not supposed to use the control plane API, you can block their access to that API by not linking them with [the security token of the default `ServiceAccount` existing in their namespace](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/). This essentially disables the capacity of the pod to authenticate with the Kubernetes control plane, effectively blocking its access to such API.
 
+    - The `hostAliases` block allows adding entries to the `/etc/hosts` file of the pod generated by this StatefulSet. Since Ghost needs to find its own `url` active, and there is no external DNS service resolving its hostname, it is necessary to enable it within the pod's `/etc/hosts` file.
+
+      The `ip` value is the static IP of the Traefik service through which the Ghost server will be reachable. The `hostnames` list has the two hostnames entered [in the `url` and `admin.url` parameters of the Ghost configuration file](#ghost-server-configuration-file).
+
     - In the `volumes` block you have the three storage resources needed in this Ghost server pod:
 
       - The `ghost-storage` item links to the claim of the persistent volume enabling the LVM existing in the K3s agent node.
@@ -518,7 +544,7 @@ The Ghost server stores content, making necessary to deploy it as a `StatefulSet
 
       - The `tmp` entry is an emptyDir that enables the ephemeral in-memory storage for temporary operations happening in the Ghost server.
 
-## Ghost server Service resource
+## Ghost server Service
 
 Your Ghost server's `StatefulSet` requires a `Service` called `server-ghost` to run:
 
@@ -531,6 +557,7 @@ Your Ghost server's `StatefulSet` requires a `Service` called `server-ghost` to 
 2. Declare the `Service` for the Ghost server in `resources/server-ghost.service.yaml`:
 
     ~~~yaml
+    # Ghost server headless service
     apiVersion: v1
     kind: Service
 
@@ -640,53 +667,53 @@ As with the other components, you should check the output generated by the Ghost
         IsCiAgICAiZnJvbSI6ICJpbmZvQGdob3N0LmhvbWVsYWIuY2xvdWQiLAogICAgIm9wdGlv
         bnMiOiB7CiAgICAgICJzZXJ2aWNlIjogIkdvb2dsZSIsCiAgICAgICJob3N0IjogInNtdH
         AuZ21haWwuY29tIiwKICAgICAgInBvcnQiOiA0NjUsCiAgICAgICJzZWN1cmUiOiB0cnVl
-        LAogICAgICAiYXV0aCI6IHsKICAgICAgICAidXNlciI6ICJ5b3VyX2dob3N0X2VtYWlsQG
-        dtYWlsLmNvbSIsCiAgICAgICAgInBhc3MiOiAiWTB1cl82aE81dF9lTTQxbF9QNFNzdnZv
-        UmQiCiAgICAgIH0KICAgIH0KICB9LAogICJhZGFwdGVycyI6IHsKICAgICJjYWNoZSI6IH
-        sKICAgICAgIlJlZGlzIjogewogICAgICAgICJob3N0IjogImNhY2hlLXZhbGtleS5naG9z
-        dCIsCiAgICAgICAgInBvcnQiOiA2Mzc5LAogICAgICAgICJ1c2VybmFtZSI6ICJnaG9zdG
-        NhY2hlIiwKICAgICAgICAicGFzc3dvcmQiOiAicEFTMndPUlRfZjByX1QjZV9HaDA1VF9V
-        czNSIiwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0OiIsCiAgICAgICAgInR0bCI6ID
-        M2MDAsCiAgICAgICAgInJldXNlQ29ubmVjdGlvbiI6IHRydWUsCiAgICAgICAgInJlZnJl
-        c2hBaGVhZEZhY3RvciI6IDAuOCwKICAgICAgICAiZ2V0VGltZW91dE1pbGxpc2Vjb25kcy
-        I6IDUwMDAsCiAgICAgICAgInN0b3JlQ29uZmlnIjogewogICAgICAgICAgInJldHJ5Q29u
-        bmVjdFNlY29uZHMiOiAxMCwKICAgICAgICAgICJsYXp5Q29ubmVjdCI6IHRydWUsCiAgIC
-        AgICAgICAiZW5hYmxlT2ZmbGluZVF1ZXVlIjogdHJ1ZSwKICAgICAgICAgICJtYXhSZXRy
-        aWVzUGVyUmVxdWVzdCI6IDMKICAgICAgICB9CiAgICAgIH0sCiAgICAgICJnc2NhbiI6IH
-        sKICAgICAgICAiYWRhcHRlciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6IDQzMjAwLAog
-        ICAgICAgICJyZWZyZXNoQWhlYWRGYWN0b3IiOiAwLjksCiAgICAgICAgImtleVByZWZpeC
-        I6ICJnaG9zdDpnc2Nhbi4iCiAgICAgIH0sCiAgICAgICJpbWFnZVNpemVzIjogewogICAg
-        ICAgICJhZGFwdGVyIjogIlJlZGlzIiwKICAgICAgICAidHRsIjogODY0MDAsCiAgICAgIC
-        AgInJlZnJlc2hBaGVhZEZhY3RvciI6IDAuOTUsCiAgICAgICAgImtleVByZWZpeCI6ICJn
-        aG9zdDppbWFnZVNpemVzLiIKICAgICAgfSwKICAgICAgImxpbmtSZWRpcmVjdHNQdWJsaW
-        MiOiB7CiAgICAgICAgImFkYXB0ZXIiOiAiUmVkaXMiLAogICAgICAgICJ0dGwiOiA3MjAw
-        LAogICAgICAgICJyZWZyZXNoQWhlYWRGYWN0b3IiOiAwLjksCiAgICAgICAgImtleVByZW
-        ZpeCI6ICJnaG9zdDpsaW5rUmVkaXJlY3RzUHVibGljLiIKICAgICAgfSwKICAgICAgInBv
-        c3RzUHVibGljIjogewogICAgICAgICJhZGFwdGVyIjogIlJlZGlzIiwKICAgICAgICAidH
-        RsIjogMTgwMCwKICAgICAgICAicmVmcmVzaEFoZWFkRmFjdG9yIjogMC43LAogICAgICAg
-        ICJrZXlQcmVmaXgiOiAiZ2hvc3Q6cG9zdHNQdWJsaWMuIgogICAgICB9LAogICAgICAic3
-        RhdHMiOiB7CiAgICAgICAgImFkYXB0ZXIiOiAiUmVkaXMiLAogICAgICAgICJ0dGwiOiA5
-        MDAsCiAgICAgICAgInJlZnJlc2hBaGVhZEZhY3RvciI6IDAuOCwKICAgICAgICAia2V5UH
-        JlZml4IjogImdob3N0OnN0YXRzLiIKICAgICAgfSwKICAgICAgInRhZ3NQdWJsaWMiOiB7
-        CiAgICAgICAgImFkYXB0ZXIiOiAiUmVkaXMiLAogICAgICAgICJ0dGwiOiAzNjAwLAogIC
-        AgICAgICJyZWZyZXNoQWhlYWRGYWN0b3IiOiAwLjgsCiAgICAgICAgImtleVByZWZpeCI6
-        ICJnaG9zdDp0YWdzUHVibGljLiIKICAgICAgfQogICAgfQogIH0sCiAgImhvc3RTZXR0aW
-        5ncyI6IHsKICAgICJsaW5rUmVkaXJlY3RzUHVibGljQ2FjaGUiOiB7CiAgICAgICJlbmFi
-        bGVkIjogdHJ1ZQogICAgfSwKICAgICJwb3N0c1B1YmxpY0NhY2hlIjogewogICAgICAiZW
-        5hYmxlZCI6IHRydWUKICAgIH0sCiAgICAic3RhdHNDYWNoZSI6IHsKICAgICAgImVuYWJs
-        ZWQiOiB0cnVlCiAgICB9LAogICAgInRhZ3NQdWJsaWNDYWNoZSI6IHsKICAgICAgImVuYW
-        JsZWQiOiB0cnVlCiAgICB9CiAgfSwKICAiZGF0YWJhc2UiOiB7CiAgICAiY2xpZW50Ijog
-        Im15c3FsIiwKICAgICJjb25uZWN0aW9uIjogewogICAgICAiaG9zdCI6ICJkYi1tYXJpYW
-        RiLmdob3N0IiwKICAgICAgInVzZXIiOiAiZ2hvc3RkYiIsCiAgICAgICJwYXNzd29yZCI6
-        ICJsMG5HLlBsNGluX1QzeHRfc0VrUmV0X3A0czV3T1JELUZvUl82aDBzVF91WjNyISIsCi
-        AgICAgICJkYXRhYmFzZSI6ICJnaG9zdC1kYiIsCiAgICAgICJwb3J0IjogIjMzMDYiCiAg
-        ICB9CiAgfSwKICAicHJvY2VzcyI6ICJsb2NhbCIsCiAgInBhdGhzIjogewogICAgImNvbn
-        RlbnRQYXRoIjogIi9ob21lL25vbnJvb3QvYXBwL2dob3N0L2NvbnRlbnQiCiAgfQp9
+        LAogICAgICAiYXV0aCI6IHsKICAgICAgICAidXNlciI6ICJ2YXJpZWRyb0BnbWFpbC5jb2
+        0iLAogICAgICAgICJwYXNzIjogIkQzczFnTmVSITpsRTdhdl9BLiIKICAgICAgfQogICAg
+        fQogIH0sCiAgImFkYXB0ZXJzIjogewogICAgImNhY2hlIjogewogICAgICAiUmVkaXMiOi
+        B7CiAgICAgICAgImhvc3QiOiAiY2FjaGUtdmFsa2V5Lmdob3N0IiwKICAgICAgICAicG9y
+        dCI6IDYzNzksCiAgICAgICAgInVzZXJuYW1lIjogImdob3N0Y2FjaGUiLAogICAgICAgIC
+        JwYXNzd29yZCI6ICJwQVMyd09SVF9mMHJfVCNlX0doMDVUX1VzM1IiLAogICAgICAgICJr
+        ZXlQcmVmaXgiOiAiZ2hvc3Q6IiwKICAgICAgICAidHRsIjogMzYwMCwKICAgICAgICAicm
+        V1c2VDb25uZWN0aW9uIjogdHJ1ZSwKICAgICAgICAicmVmcmVzaEFoZWFkRmFjdG9yIjog
+        MC44LAogICAgICAgICJnZXRUaW1lb3V0TWlsbGlzZWNvbmRzIjogNTAwMCwKICAgICAgIC
+        Aic3RvcmVDb25maWciOiB7CiAgICAgICAgICAicmV0cnlDb25uZWN0U2Vjb25kcyI6IDEw
+        LAogICAgICAgICAgImxhenlDb25uZWN0IjogdHJ1ZSwKICAgICAgICAgICJlbmFibGVPZm
+        ZsaW5lUXVldWUiOiB0cnVlLAogICAgICAgICAgIm1heFJldHJpZXNQZXJSZXF1ZXN0Ijog
+        MwogICAgICAgIH0KICAgICAgfSwKICAgICAgImdzY2FuIjogewogICAgICAgICJhZGFwdG
+        VyIjogIlJlZGlzIiwKICAgICAgICAidHRsIjogNDMyMDAsCiAgICAgICAgInJlZnJlc2hB
+        aGVhZEZhY3RvciI6IDAuOSwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0OmdzY2FuLi
+        IKICAgICAgfSwKICAgICAgImltYWdlU2l6ZXMiOiB7CiAgICAgICAgImFkYXB0ZXIiOiAi
+        UmVkaXMiLAogICAgICAgICJ0dGwiOiA4NjQwMCwKICAgICAgICAicmVmcmVzaEFoZWFkRm
+        FjdG9yIjogMC45NSwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0OmltYWdlU2l6ZXMu
+        IgogICAgICB9LAogICAgICAibGlua1JlZGlyZWN0c1B1YmxpYyI6IHsKICAgICAgICAiYW
+        RhcHRlciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6IDcyMDAsCiAgICAgICAgInJlZnJl
+        c2hBaGVhZEZhY3RvciI6IDAuOSwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0Omxpbm
+        tSZWRpcmVjdHNQdWJsaWMuIgogICAgICB9LAogICAgICAicG9zdHNQdWJsaWMiOiB7CiAg
+        ICAgICAgImFkYXB0ZXIiOiAiUmVkaXMiLAogICAgICAgICJ0dGwiOiAxODAwLAogICAgIC
+        AgICJyZWZyZXNoQWhlYWRGYWN0b3IiOiAwLjcsCiAgICAgICAgImtleVByZWZpeCI6ICJn
+        aG9zdDpwb3N0c1B1YmxpYy4iCiAgICAgIH0sCiAgICAgICJzdGF0cyI6IHsKICAgICAgIC
+        AiYWRhcHRlciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6IDkwMCwKICAgICAgICAicmVm
+        cmVzaEFoZWFkRmFjdG9yIjogMC44LAogICAgICAgICJrZXlQcmVmaXgiOiAiZ2hvc3Q6c3
+        RhdHMuIgogICAgICB9LAogICAgICAidGFnc1B1YmxpYyI6IHsKICAgICAgICAiYWRhcHRl
+        ciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6IDM2MDAsCiAgICAgICAgInJlZnJlc2hBaG
+        VhZEZhY3RvciI6IDAuOCwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0OnRhZ3NQdWJs
+        aWMuIgogICAgICB9CiAgICB9CiAgfSwKICAiaG9zdFNldHRpbmdzIjogewogICAgImxpbm
+        tSZWRpcmVjdHNQdWJsaWNDYWNoZSI6IHsKICAgICAgImVuYWJsZWQiOiB0cnVlCiAgICB9
+        LAogICAgInBvc3RzUHVibGljQ2FjaGUiOiB7CiAgICAgICJlbmFibGVkIjogdHJ1ZQogIC
+        AgfSwKICAgICJzdGF0c0NhY2hlIjogewogICAgICAiZW5hYmxlZCI6IHRydWUKICAgIH0s
+        CiAgICAidGFnc1B1YmxpY0NhY2hlIjogewogICAgICAiZW5hYmxlZCI6IHRydWUKICAgIH
+        0KICB9LAogICJkYXRhYmFzZSI6IHsKICAgICJjbGllbnQiOiAibXlzcWwiLAogICAgImNv
+        bm5lY3Rpb24iOiB7CiAgICAgICJob3N0IjogImRiLW1hcmlhZGIuZ2hvc3QiLAogICAgIC
+        AidXNlciI6ICJnaG9zdGRiIiwKICAgICAgInBhc3N3b3JkIjogImwwbkcuUGw0aW5fVDN4
+        dF9zRWtSZXRfcDRzNXdPUkQtRm9SXzZoMHNUX3VaM3IhIiwKICAgICAgImRhdGFiYXNlIj
+        ogImdob3N0LWRiIiwKICAgICAgInBvcnQiOiAiMzMwNiIKICAgIH0KICB9LAogICJwcm9j
+        ZXNzIjogImxvY2FsIiwKICAicGF0aHMiOiB7CiAgICAiY29udGVudFBhdGgiOiAiL2hvbW
+        Uvbm9ucm9vdC9hcHAvZ2hvc3QvY29udGVudCIKICB9Cn0=
     kind: Secret
     metadata:
       labels:
         app: server-ghost
-      name: server-ghost-config-fg789722ch
+      name: server-ghost-config-6dbcdffbdc
     type: Opaque
     ---
     apiVersion: v1
@@ -696,7 +723,7 @@ As with the other components, you should check the output generated by the Ghost
         app: server-ghost
       name: server-ghost
     spec:
-      loadBalancerIP: 10.7.0.3
+      clusterIP: None
       ports:
       - name: server
         port: 2368
@@ -704,7 +731,7 @@ As with the other components, you should check the output generated by the Ghost
         targetPort: server
       selector:
         app: server-ghost
-      type: LoadBalancer
+      type: ClusterIP
     ---
     apiVersion: v1
     kind: PersistentVolumeClaim
@@ -795,6 +822,11 @@ As with the other components, you should check the output generated by the Ghost
               subPath: config.production.json
             - mountPath: /tmp
               name: tmp
+          hostAliases:
+          - hostnames:
+            - ghost.homelab.cloud
+            - ghostadmin.homelab.cloud
+            ip: 10.7.0.1
           initContainers:
           - command:
             - /bin/sh
@@ -842,7 +874,7 @@ As with the other components, you should check the output generated by the Ghost
               items:
               - key: config.production.json
                 path: config.production.json
-              secretName: server-ghost-config-fg789722ch
+              secretName: server-ghost-config-6dbcdffbdc
           - emptyDir:
               sizeLimit: 64Mi
             name: tmp
@@ -901,6 +933,9 @@ Again I must tell you to wait to the upcoming final part of this Ghost deploymen
 - [Documentation. Advanced Tools. Admin API](https://docs.ghost.org/admin-api)
   - [Structure. Base URL](https://docs.ghost.org/admin-api#base-url)
   - [Endpoints](https://docs.ghost.org/admin-api#endpoints)
+
+- [Forum](https://forum.ghost.org/)
+  - [HOWTO: Deploy ghost with helm on kubernetes](https://forum.ghost.org/t/howto-deploy-ghost-with-helm-on-kubernetes/47053)
 
 ### [SREDevOps.org](https://www.sredevops.org/)
 

@@ -1,0 +1,14 @@
+# Ghost server headless service
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: server-ghost
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+  - port: 2368
+    targetPort: server
+    protocol: TCP
+    name: server

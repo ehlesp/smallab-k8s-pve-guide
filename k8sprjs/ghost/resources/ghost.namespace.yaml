@@ -1,0 +1,6 @@
+# Namespace for the Ghost components
+apiVersion: v1
+kind: Namespace
+
+metadata:
+  name: ghost

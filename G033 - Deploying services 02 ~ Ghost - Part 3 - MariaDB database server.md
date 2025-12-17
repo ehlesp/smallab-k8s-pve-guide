@@ -7,9 +7,9 @@
   - [Properties file `dbnames.properties`](#properties-file-dbnamesproperties)
   - [Initializer shell script `initdb.sh`](#initializer-shell-script-initdbsh)
 - [MariaDB passwords](#mariadb-passwords)
-- [MariaDB storage](#mariadb-storage)
-- [MariaDB StatefulSet resource](#mariadb-statefulset-resource)
-- [MariaDB Service resource](#mariadb-service-resource)
+- [MariaDB persistent storage claim](#mariadb-persistent-storage-claim)
+- [MariaDB StatefulSet](#mariadb-statefulset)
+- [MariaDB Service](#mariadb-service)
 - [MariaDB Kustomize project](#mariadb-kustomize-project)
   - [Checking the Kustomize YAML output](#checking-the-kustomize-yaml-output)
 - [Do not deploy this MariaDB project on its own](#do-not-deploy-this-mariadb-project-on-its-own)
@@ -40,7 +40,7 @@ Since the MariaDB database is just another component of your Ghost platform, you
 $ mkdir -p $HOME/k8sprjs/ghost/components/db-mariadb/{configs,resources,secrets}
 ~~~
 
-Like Valkey, MariaDB also has configurations, secrets and resources making up its Kustomize setup.
+Like the Valkey server, MariaDB also has configurations, secrets and resources in its Kustomize setup.
 
 ## MariaDB configuration files
 
@@ -81,7 +81,7 @@ The `my.cnf` file is the default configuration file for MariaDB, where you can a
 
     This `my.cnf` file makes the MariaDB instance fit for the resources-constrained environment of the K3s agent node in which the database is going to run:
 
-    - The [`skip_name_resolve`](https://mariadb.com/docs/server/server-management/variables-and-modes/server-system-variables#skip_name_resolve) forces MariaDB to use only IPs for connections, avoiding wasting time in resolving hostnames first. This is particularly useful in this Kubernetes-based Ghost setup, since the platform will be configured to call the database directly by its internal cluster IP.
+    - The [`skip_name_resolve`](https://mariadb.com/docs/server/server-management/variables-and-modes/server-system-variables#skip_name_resolve) forces MariaDB to use only IPs for connections, avoiding wasting time in resolving hostnames first. Since MariaDB is going to be served through a Kubernetes `Service` object, the name resolution is handled by the K3s cluster itself thanks to its CoreDNS service. Ghost will just call that MariaDB `Service` to make use of its database.
 
     - The values set in the [`max_connections`](https://mariadb.com/docs/server/server-management/variables-and-modes/server-system-variables#max_connections) and [`thread_cache_size`](https://mariadb.com/docs/server/server-management/variables-and-modes/server-system-variables#thread_cache_size) parameters are considered for a low usage scenario where just a very small number of clients will access the database.
 
@@ -130,7 +130,7 @@ There are a few names you need to specify in your database setup. Those names ar
 
 ### Initializer shell script `initdb.sh`
 
-The Prometheus metrics exporter system you will include in your MariaDB server deployment requires its own user to access certain statistical data from the MariaDB instance. You have already configured its name as a variable in the previous `dbnames.properties` file, but you also need to create the user within the MariaDB installation. The problem is that MariaDB can only create one user in its initial run, and you need also to create the user Ghost needs to work with its own database.
+The Prometheus metrics exporter system you will include in your MariaDB server deployment requires its own user to access certain statistical data from the MariaDB instance. You have already configured its name as a variable in the previous `dbnames.properties` file, but you also need to create the user within the MariaDB installation. The problem is that MariaDB can only create one user in its initial run, but you also have to create the user Ghost needs to work with its own database.
 
 To solve this conflict, you can use a initializer shell script that creates that extra user you need in the MariaDB database:
 
@@ -181,7 +181,7 @@ For convenience, declare all of these passwords as variables in the same propert
     > **The passwords have to be put in `dbusers.pwd` as plain unencrypted text**\
     > Be careful of who can access this `dbusers.pwd` file.
 
-## MariaDB storage
+## MariaDB persistent storage claim
 
 [As you saw when declaring Valkey's storage](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-storage), you need to declare a `PersistentVolumeClaim` to enable access to the persistent volume (to be declared in the last part of this Ghost deployment procedure) that will store the MariaDB instance's data:
 
@@ -194,6 +194,7 @@ For convenience, declare all of these passwords as variables in the same propert
 2. Declare Ghost's `PersistentVolumeClaim` in the `resources/db-mariadb.persistentvolumeclaim.yaml` file:
 
     ~~~yaml
+    # Ghost MariaDB claim of persistent storage
     apiVersion: v1
     kind: PersistentVolumeClaim
 
@@ -211,9 +212,9 @@ For convenience, declare all of these passwords as variables in the same propert
 
     This persistent volume claim is exactly like the one for the Valkey server, although with its own `metadata.name`, different referred volume in `spec.volumeName` and adjusted capacity in `spec.resources.requests.storage`.
 
-## MariaDB StatefulSet resource
+## MariaDB StatefulSet
 
-Since MariaDB is a program whose main purpose is to store _state_ (meaning data), its deployment must be declared as a `StatefulSet` resource:
+Since MariaDB is a program whose main purpose is to store _state_ (meaning data), its deployment must be declared as a `StatefulSet`:
 
 1. Create a `db-mariadb.statefulset.yaml` in the `resources` path:
 
@@ -224,6 +225,7 @@ Since MariaDB is a program whose main purpose is to store _state_ (meaning data)
 2. Declare the `StatefulSet` for your Ghost's MariaDB server in `resources/db-mariadb.statefulset.yaml`:
 
     ~~~yaml
+    # Ghost MariaDB StatefulSet for a sidecar server pod
     apiVersion: apps/v1
     kind: StatefulSet
 
@@ -341,6 +343,7 @@ Since MariaDB is a program whose main purpose is to store _state_ (meaning data)
           - name: mariadb-config
             configMap:
               name: db-mariadb-config
+              defaultMode: 444
               items:
               - key: initdb.sh
                 path: initdb.sh
@@ -389,9 +392,9 @@ Since MariaDB is a program whose main purpose is to store _state_ (meaning data)
         The `PersistentVolumeClaim` named `db-mariadb` is enabled as a volume called `mariadb-storage`.
 
       - With name `mariadb-config`\
-        The `my.cnf` and `initdb.sh` files are enabled here as volumes. The files will have the permission mode `644` by default in the container that mounts them.
+        The `my.cnf` and `initdb.sh` files are enabled here as volumes. The files will have the permission mode `444` by default in the container that mounts them.
 
-## MariaDB Service resource
+## MariaDB Service
 
 The previous `StatefulSet` requires a `Service` named `db-mariadb` to run, so you need to declare it:
 
@@ -404,6 +407,7 @@ The previous `StatefulSet` requires a `Service` named `db-mariadb` to run, so yo
 2. Declare the `Service` exposing your Ghost's MariaDB instance in `resources/db-mariadb.service.yaml`:
 
     ~~~yaml
+    # Ghost MariaDB headless service
     apiVersion: v1
     kind: Service
 
@@ -547,7 +551,7 @@ At this point, you can verify with `kubectl` that the Kustomize project for Ghos
     metadata:
       labels:
         app: db-mariadb
-      name: db-mariadb-passwords-dtt9d6h2b9
+      name: db-mariadb-passwords-8g2hdgch72
     type: Opaque
     ---
     apiVersion: v1
@@ -617,7 +621,7 @@ At this point, you can verify with `kubectl` that the Kustomize project for Ghos
               valueFrom:
                 secretKeyRef:
                   key: root-password
-                  name: db-mariadb-passwords-dtt9d6h2b9
+                  name: db-mariadb-passwords-8g2hdgch72
             - name: MYSQL_USER
               valueFrom:
                 configMapKeyRef:
@@ -627,7 +631,7 @@ At this point, you can verify with `kubectl` that the Kustomize project for Ghos
               valueFrom:
                 secretKeyRef:
                   key: ghost-user-password
-                  name: db-mariadb-passwords-dtt9d6h2b9
+                  name: db-mariadb-passwords-8g2hdgch72
             - name: MARIADB_PROMETHEUS_EXPORTER_USERNAME
               valueFrom:
                 configMapKeyRef:
@@ -637,7 +641,7 @@ At this point, you can verify with `kubectl` that the Kustomize project for Ghos
               valueFrom:
                 secretKeyRef:
                   key: prometheus-exporter-password
-                  name: db-mariadb-passwords-dtt9d6h2b9
+                  name: db-mariadb-passwords-8g2hdgch72
             image: mariadb:11.8-noble
             name: server
             ports:
@@ -650,9 +654,11 @@ At this point, you can verify with `kubectl` that the Kustomize project for Ghos
             volumeMounts:
             - mountPath: /etc/mysql/my.cnf
               name: mariadb-config
+              readOnly: true
               subPath: my.cnf
             - mountPath: /docker-entrypoint-initdb.d/initdb.sh
               name: mariadb-config
+              readOnly: true
               subPath: initdb.sh
             - mountPath: /var/lib/mysql
               name: mariadb-storage
@@ -696,7 +702,7 @@ At this point, you can verify with `kubectl` that the Kustomize project for Ghos
               valueFrom:
                 secretKeyRef:
                   key: prometheus-exporter-password
-                  name: db-mariadb-passwords-dtt9d6h2b9
+                  name: db-mariadb-passwords-8g2hdgch72
             image: prom/mysqld-exporter:v0.18.0
             name: metrics
             ports:
@@ -711,6 +717,7 @@ At this point, you can verify with `kubectl` that the Kustomize project for Ghos
             persistentVolumeClaim:
               claimName: db-mariadb
           - configMap:
+              defaultMode: 444
               items:
               - key: initdb.sh
                 path: initdb.sh
@@ -720,7 +727,7 @@ At this point, you can verify with `kubectl` that the Kustomize project for Ghos
             name: mariadb-config
     ~~~
 
-    Pay particular attention to the `ConfigMap` and `Secret` resources declared in the output.
+    Pay particular attention to the `ConfigMap` and `Secret` resources declared in the output:
 
     - Their names have a hash as a suffix appended to their names.
 
