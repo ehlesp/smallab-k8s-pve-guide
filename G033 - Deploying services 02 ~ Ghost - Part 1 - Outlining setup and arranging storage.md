@@ -409,7 +409,9 @@ If, after a time using and filling up these volumes, you need to increase their 
 
 ### [Ghost](https://docs.ghost.org/)
 
-- [How To Install Ghost On Ubuntu](https://docs.ghost.org/install/ubuntu)
+- [Documentation](https://ghost.org/)
+  - [How To Install Ghost](https://docs.ghost.org/install)
+    - [How To Install Ghost On Ubuntu](https://docs.ghost.org/install/ubuntu)
 
 ### Cache servers
 

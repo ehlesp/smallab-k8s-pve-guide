@@ -814,7 +814,7 @@ This MariaDB setup is missing the persistent volume for storing data that you mu
     - [local](https://kubernetes.io/docs/concepts/storage/volumes/#local)
   - [Persistent Volumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/)
     - [Reserving a PersistentVolume](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#reserving-a-persistentvolume)
-    - [Reclaiming Persistent Volumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#reclaiming)
+    - [Reclaiming](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#reclaiming)
   - [Storage Classes](https://kubernetes.io/docs/concepts/storage/storage-classes/)
     - [Local](https://kubernetes.io/docs/concepts/storage/storage-classes/#local)
 

@@ -17,7 +17,6 @@
   - [Files in `kubectl` client system](#files-in-kubectl-client-system)
 - [References](#references)
   - [Valkey](#valkey)
-    - [Articles about Valkey](#articles-about-valkey)
   - [Redis](#redis)
     - [Articles about Redis](#articles-about-redis)
   - [Kubernetes](#kubernetes)
@@ -27,7 +26,7 @@
     - [Reference. Kubernetes API](#reference-kubernetes-api)
     - [Articles about services](#articles-about-services)
     - [Articles about pod scheduling](#articles-about-pod-scheduling)
-    - [Articles about container ports](#articles-about-container-ports)
+    - [Articles about port names](#articles-about-port-names)
     - [Articles about ConfigMaps and Secrets](#articles-about-configmaps-and-secrets)
     - [Articles about CPU requests and limits](#articles-about-cpu-requests-and-limits)
 - [Navigation](#navigation)
@@ -763,20 +762,15 @@ This Valkey setup is missing one critical element, the persistent volume it need
 
 - [GitHub. Example `valkey.conf` for Valkey 9.0](https://raw.githubusercontent.com/valkey-io/valkey/9.0/valkey.conf)
 
-#### Articles about Valkey
-
-- [XDA Developers. I set up a Valkey Cache with Nextcloud, and it fixed my biggest complaint](https://www.xda-developers.com/set-up-valkey-cache-with-nextcloud-it-fixed-my-biggest-complaint/)
-
 ### [Redis](https://redis.io/)
 
-- [Redis FAQ](https://redis.io/topics/faq)
-- [Redis administration](https://redis.io/topics/admin)
+- [Docs](https://redis.io/docs/latest/)
 
 #### Articles about Redis
 
-- [rpi4cluster. K3s Kubernetes Redis](https://rpi4cluster.com/k3s-redis/)
-- [Medium. Simple Redis Cache on Kubernetes with Prometheus Metrics](https://itnext.io/simple-Redis-cache-on-kubernetes-with-prometheus-metrics-8667baceab6b)
-- [Medium. Deploy and Operate a Redis Cluster in Kubernetes](https://marklu-sf.medium.com/deploy-and-operate-a-redis-cluster-in-kubernetes-94fde7853001)
+- [rpi4cluster. K3s Kubernetes. Redis](https://rpi4cluster.com/k3s-redis/)
+- [Daniel Cushing. Simple Redis Cache on Kubernetes with Prometheus Metrics](https://itnext.io/simple-Redis-cache-on-kubernetes-with-prometheus-metrics-8667baceab6b)
+- [Mark Lu. Deploy and Operate a Redis Cluster in Kubernetes](https://marklu-sf.medium.com/deploy-and-operate-a-redis-cluster-in-kubernetes-94fde7853001)
 - [Suse Rancher Blog. Deploying Redis Cluster on Top of Kubernetes](https://www.suse.com/c/rancher_blog/deploying-redis-cluster-on-top-of-kubernetes/)
 - [StackOverflow. Redis sentinel vs clustering](https://stackoverflow.com/questions/31143072/redis-sentinel-vs-clustering)
 
@@ -785,7 +779,7 @@ This Valkey setup is missing one critical element, the persistent volume it need
 #### [Concepts](https://kubernetes.io/docs/concepts/)
 
 - [Overview. Objects in Kubernetes](https://kubernetes.io/docs/concepts/overview/working-with-objects/)
-  - [Labels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/)
+  - [Labels and Selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/)
 
 - [Services, Load Balancing, and Networking](https://kubernetes.io/docs/concepts/services-networking/)
   - [Service. Headless Services](https://kubernetes.io/docs/concepts/services-networking/service/#headless-services)
@@ -827,7 +821,7 @@ This Valkey setup is missing one critical element, the persistent volume it need
 - [TheNewStack. Implement Node and Pod Affinity/Anti-Affinity in Kubernetes: A Practical Example](https://thenewstack.io/implement-node-and-pod-affinity-anti-affinity-in-kubernetes-a-practical-example/)
 - [TheNewStack. Tutorial: Apply the Sidecar Pattern to Deploy Redis in Kubernetes](https://thenewstack.io/tutorial-apply-the-sidecar-pattern-to-deploy-redis-in-kubernetes/)
 
-#### Articles about container ports
+#### Articles about port names
 
 - [StackOverflow. Is there any way to disable or increase port name length in Kubernetes?](https://stackoverflow.com/questions/73330773/is-there-any-way-to-disable-or-increase-port-name-length-in-kubernetes)
 
@@ -845,4 +839,4 @@ This Valkey setup is missing one critical element, the persistent volume it need
 
 ## Navigation
 
-[<< Previous (**G033. Deploying services 02. Ghost Part 1**)](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%201%20-%20Outlining%20setup,%20arranging%20storage%20and%20choosing%20service%20IPs.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G033. Deploying services 02. Ghost Part 3**) >>](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md)
+[<< Previous (**G033. Deploying services 02. Ghost Part 1**)](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G033. Deploying services 02. Ghost Part 3**) >>](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md)
