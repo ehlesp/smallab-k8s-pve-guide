@@ -21,11 +21,12 @@
     - [MySQL Server Exporter](#mysql-server-exporter)
   - [Kubernetes](#kubernetes)
     - [ConfigMaps](#configmaps)
-    - [Related contents about ConfigMaps and Secrets](#related-contents-about-configmaps-and-secrets)
     - [Storage](#storage)
-    - [Related contents about Kubernetes storage](#related-contents-about-kubernetes-storage)
     - [StatefulSets](#statefulsets)
     - [Environment variables](#environment-variables)
+  - [Other Kubernetes-related contents](#other-kubernetes-related-contents)
+    - [About Kubernetes storage](#about-kubernetes-storage)
+    - [About ConfigMaps and Secrets](#about-configmaps-and-secrets)
 - [Navigation](#navigation)
 
 ## You can use MariaDB instead of MySQL as database server for Ghost
@@ -798,13 +799,6 @@ This MariaDB setup is missing the persistent volume for storing data that you mu
 - [Kubernetes Documentation. Tasks. Configure Pods and Containers](https://kubernetes.io/docs/tasks/configure-pod-container/)
   - [Configure a Pod to Use a ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/)
 
-#### Related contents about ConfigMaps and Secrets
-
-- [OpenSource.com. An Introduction to Kubernetes Secrets and ConfigMaps](https://opensource.com/article/19/6/introduction-kubernetes-secrets-and-configmaps)
-- [Dev. Kubernetes - Using ConfigMap SubPaths to Mount Files](https://dev.to/joshduffney/kubernetes-using-configmap-subpaths-to-mount-files-3a1i)
-- [GoLinuxCloud. Kubernetes Secrets | Declare confidential data with examples](https://www.golinuxcloud.com/kubernetes-secrets/)
-- [StackOverflow. Import data to config map from kubernetes secret](https://stackoverflow.com/questions/50452665/import-data-to-config-map-from-kubernetes-secret)
-
 #### Storage
 
 - [Kubernetes Blog. 2018. Local Persistent Volumes for Kubernetes Goes Beta](https://kubernetes.io/blog/2018/04/13/local-persistent-volumes-beta/)
@@ -822,7 +816,20 @@ This MariaDB setup is missing the persistent volume for storing data that you mu
   - [PersistentVolume](https://kubernetes.io/docs/reference/kubernetes-api/config-and-storage-resources/persistent-volume-v1/)
   - [PersistentVolumeClaim](https://kubernetes.io/docs/reference/kubernetes-api/config-and-storage-resources/persistent-volume-claim-v1/)
 
-#### Related contents about Kubernetes storage
+#### StatefulSets
+
+- [Kubernetes Documentation. Concepts. Workloads. Workload Management](https://kubernetes.io/docs/concepts/workloads/controllers/)
+  - [StatefulSets](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/)
+
+#### Environment variables
+
+- [Kubernetes Documentation. Tasks. Inject Data Into Applications](https://kubernetes.io/docs/tasks/inject-data-application/)
+  - [Define Dependent Environment Variables](https://kubernetes.io/docs/tasks/inject-data-application/define-interdependent-environment-variables/)
+  - [Define Environment Variables for a Container](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/)
+
+### Other Kubernetes-related contents
+
+#### About Kubernetes storage
 
 - [Rancher K3s. Add-Ons. Volumes and Storage](https://docs.k3s.io/add-ons/storage)
   - [Setting up the Local Storage Provider](https://docs.k3s.io/add-ons/storage#setting-up-the-local-storage-provider)
@@ -835,16 +842,12 @@ This MariaDB setup is missing the persistent volume for storing data that you mu
 
 - [GitHub. Helm. Issue. distinguish unset and empty values for storageClassName](https://github.com/helm/helm/issues/2600)
 
-#### StatefulSets
+#### About ConfigMaps and Secrets
 
-- [Kubernetes Documentation. Concepts. Workloads. Workload Management](https://kubernetes.io/docs/concepts/workloads/controllers/)
-  - [StatefulSets](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/)
-
-#### Environment variables
-
-- [Kubernetes Documentation. Tasks. Inject Data Into Applications](https://kubernetes.io/docs/tasks/inject-data-application/)
-  - [Define Dependent Environment Variables](https://kubernetes.io/docs/tasks/inject-data-application/define-interdependent-environment-variables/)
-  - [Define Environment Variables for a Container](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/)
+- [OpenSource.com. An Introduction to Kubernetes Secrets and ConfigMaps](https://opensource.com/article/19/6/introduction-kubernetes-secrets-and-configmaps)
+- [Dev. Kubernetes - Using ConfigMap SubPaths to Mount Files](https://dev.to/joshduffney/kubernetes-using-configmap-subpaths-to-mount-files-3a1i)
+- [GoLinuxCloud. Kubernetes Secrets | Declare confidential data with examples](https://www.golinuxcloud.com/kubernetes-secrets/)
+- [StackOverflow. Import data to config map from kubernetes secret](https://stackoverflow.com/questions/50452665/import-data-to-config-map-from-kubernetes-secret)
 
 ## Navigation
 

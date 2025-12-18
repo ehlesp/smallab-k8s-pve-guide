@@ -18,17 +18,18 @@
 - [References](#references)
   - [Valkey](#valkey)
   - [Redis](#redis)
-    - [Articles about Redis](#articles-about-redis)
+    - [Other Redis-related contents](#other-redis-related-contents)
   - [Kubernetes](#kubernetes)
-    - [Concepts](#concepts)
-    - [Tasks](#tasks)
-    - [Tutorials](#tutorials)
-    - [Reference. Kubernetes API](#reference-kubernetes-api)
-    - [Articles about services](#articles-about-services)
-    - [Articles about pod scheduling](#articles-about-pod-scheduling)
-    - [Articles about port names](#articles-about-port-names)
-    - [Articles about ConfigMaps and Secrets](#articles-about-configmaps-and-secrets)
-    - [Articles about CPU requests and limits](#articles-about-cpu-requests-and-limits)
+    - [Pods and containers](#pods-and-containers)
+    - [ConfigMaps](#configmaps)
+    - [Labels](#labels)
+    - [Services](#services)
+  - [Other Kubernetes-related contents](#other-kubernetes-related-contents)
+    - [About services](#about-services)
+    - [About pod scheduling](#about-pod-scheduling)
+    - [About port names](#about-port-names)
+    - [About ConfigMaps and Secrets](#about-configmaps-and-secrets)
+    - [About CPU requests and limits](#about-cpu-requests-and-limits)
 - [Navigation](#navigation)
 
 ## You can use Valkey instead of Redis as caching server for Ghost
@@ -766,7 +767,7 @@ This Valkey setup is missing one critical element, the persistent volume it need
 
 - [Docs](https://redis.io/docs/latest/)
 
-#### Articles about Redis
+#### Other Redis-related contents
 
 - [rpi4cluster. K3s Kubernetes. Redis](https://rpi4cluster.com/k3s-redis/)
 - [Daniel Cushing. Simple Redis Cache on Kubernetes with Prometheus Metrics](https://itnext.io/simple-Redis-cache-on-kubernetes-with-prometheus-metrics-8667baceab6b)
@@ -776,21 +777,7 @@ This Valkey setup is missing one critical element, the persistent volume it need
 
 ### [Kubernetes](https://kubernetes.io/docs/)
 
-#### [Concepts](https://kubernetes.io/docs/concepts/)
-
-- [Overview. Objects in Kubernetes](https://kubernetes.io/docs/concepts/overview/working-with-objects/)
-  - [Labels and Selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/)
-
-- [Services, Load Balancing, and Networking](https://kubernetes.io/docs/concepts/services-networking/)
-  - [Service. Headless Services](https://kubernetes.io/docs/concepts/services-networking/service/#headless-services)
-
-- [Configuration](https://kubernetes.io/docs/concepts/configuration/)
-  - [ConfigMaps](https://kubernetes.io/docs/concepts/configuration/configmap/)
-
-- [Scheduling, Preemption and Eviction](https://kubernetes.io/docs/concepts/scheduling-eviction/)
-  - [Assigning Pods to Nodes](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/)
-
-#### [Tasks](https://kubernetes.io/docs/tasks/)
+#### Pods and containers
 
 - [Configure Pods and Containers](https://kubernetes.io/docs/tasks/configure-pod-container/)
   - [Assign Pods to Nodes using Node Affinity](https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes-using-node-affinity/)
@@ -800,39 +787,55 @@ This Valkey setup is missing one critical element, the persistent volume it need
   - [Define Dependent Environment Variables](https://kubernetes.io/docs/tasks/inject-data-application/define-interdependent-environment-variables/)
   - [Define Environment Variables for a Container](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/)
 
-#### [Tutorials](https://kubernetes.io/docs/tutorials/)
-
-- [Configuration](https://kubernetes.io/docs/tutorials/configuration/)
-  - [Configuring Redis using a ConfigMap](https://kubernetes.io/docs/tutorials/configuration/configure-redis-using-configmap/)
-
-#### [Reference. Kubernetes API](https://kubernetes.io/docs/reference/kubernetes-api/)
+- [Scheduling, Preemption and Eviction](https://kubernetes.io/docs/concepts/scheduling-eviction/)
+  - [Assigning Pods to Nodes](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/)
 
 - [Workload Resources](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/)
   - [Pod](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/)
     - [Scheduling](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#scheduling)
 
-#### Articles about services
+#### ConfigMaps
+
+- [Configuration](https://kubernetes.io/docs/concepts/configuration/)
+  - [ConfigMaps](https://kubernetes.io/docs/concepts/configuration/configmap/)
+
+- [Configuration](https://kubernetes.io/docs/tutorials/configuration/)
+  - [Configuring Redis using a ConfigMap](https://kubernetes.io/docs/tutorials/configuration/configure-redis-using-configmap/)
+
+#### Labels
+
+- [Overview. Objects in Kubernetes](https://kubernetes.io/docs/concepts/overview/working-with-objects/)
+  - [Labels and Selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/)
+
+#### Services
+
+- [Services, Load Balancing, and Networking](https://kubernetes.io/docs/concepts/services-networking/)
+  - [Service. Headless Services](https://kubernetes.io/docs/concepts/services-networking/service/#headless-services)
+
+### Other Kubernetes-related contents
+
+#### About services
 
 - [GeeksForGeeks. Kubernetes Headless Service](https://www.geeksforgeeks.org/devops/kubernetes-headless-service/)
 
-#### Articles about pod scheduling
+#### About pod scheduling
 
 - [TheNewStack. Strategies for Kubernetes Pod Placement and Scheduling](https://thenewstack.io/strategies-for-kubernetes-pod-placement-and-scheduling/)
 - [TheNewStack. Implement Node and Pod Affinity/Anti-Affinity in Kubernetes: A Practical Example](https://thenewstack.io/implement-node-and-pod-affinity-anti-affinity-in-kubernetes-a-practical-example/)
 - [TheNewStack. Tutorial: Apply the Sidecar Pattern to Deploy Redis in Kubernetes](https://thenewstack.io/tutorial-apply-the-sidecar-pattern-to-deploy-redis-in-kubernetes/)
 
-#### Articles about port names
+#### About port names
 
 - [StackOverflow. Is there any way to disable or increase port name length in Kubernetes?](https://stackoverflow.com/questions/73330773/is-there-any-way-to-disable-or-increase-port-name-length-in-kubernetes)
 
-#### Articles about ConfigMaps and Secrets
+#### About ConfigMaps and Secrets
 
 - [Opensource.com. An Introduction to Kubernetes Secrets and ConfigMaps](https://opensource.com/article/19/6/introduction-kubernetes-secrets-and-configmaps)
 - [Dev. Kubernetes - Using ConfigMap SubPaths to Mount Files](https://dev.to/joshduffney/kubernetes-using-configmap-subpaths-to-mount-files-3a1i)
 - [GoLinuxCloud. Kubernetes Secrets | Declare confidential data with examples](https://www.golinuxcloud.com/kubernetes-secrets/)
 - [StackOverflow. Import data to config map from kubernetes secret](https://stackoverflow.com/questions/50452665/import-data-to-config-map-from-kubernetes-secret)
 
-#### Articles about CPU requests and limits
+#### About CPU requests and limits
 
 - [Baeldung. CPU Requests and Limits in Kubernetes](https://www.baeldung.com/ops/kubernetes-cpu-requests-limits)
 - [DEV. Kubernetes CPU Limits: The Silent Killer of Performance (And How to Fix It)](https://dev.to/naveens16/kubernetes-cpu-limits-the-silent-killer-of-performance-and-how-to-fix-it-20d1)

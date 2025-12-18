@@ -19,13 +19,14 @@
   - [SREDevOps.org](#sredevopsorg)
   - [Kubernetes](#kubernetes)
     - [ConfigMaps](#configmaps)
-    - [Related contents about ConfigMaps and Secrets](#related-contents-about-configmaps-and-secrets)
     - [Storage](#storage)
-    - [Related contents about Kubernetes storage](#related-contents-about-kubernetes-storage)
     - [StatefulSets](#statefulsets)
     - [Environment variables](#environment-variables)
   - [Configuration of Pods and Containers](#configuration-of-pods-and-containers)
-    - [Articles about the Security Context](#articles-about-the-security-context)
+  - [Other Kubernetes-related contents](#other-kubernetes-related-contents)
+    - [About ConfigMaps and Secrets](#about-configmaps-and-secrets)
+    - [About Kubernetes storage](#about-kubernetes-storage)
+    - [About the Security Context](#about-the-security-context)
 - [Navigation](#navigation)
 
 ## Deploy the Ghost server just like another component
@@ -952,13 +953,6 @@ Again I must tell you to wait to the upcoming final part of this Ghost deploymen
 - [Kubernetes Documentation. Tasks. Configure Pods and Containers](https://kubernetes.io/docs/tasks/configure-pod-container/)
   - [Configure a Pod to Use a ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/)
 
-#### Related contents about ConfigMaps and Secrets
-
-- [OpenSource.com. An Introduction to Kubernetes Secrets and ConfigMaps](https://opensource.com/article/19/6/introduction-kubernetes-secrets-and-configmaps)
-- [Dev. Kubernetes - Using ConfigMap SubPaths to Mount Files](https://dev.to/joshduffney/kubernetes-using-configmap-subpaths-to-mount-files-3a1i)
-- [GoLinuxCloud. Kubernetes Secrets | Declare confidential data with examples](https://www.golinuxcloud.com/kubernetes-secrets/)
-- [StackOverflow. Import data to config map from kubernetes secret](https://stackoverflow.com/questions/50452665/import-data-to-config-map-from-kubernetes-secret)
-
 #### Storage
 
 - [Kubernetes Blog. 2018. Local Persistent Volumes for Kubernetes Goes Beta](https://kubernetes.io/blog/2018/04/13/local-persistent-volumes-beta/)
@@ -975,21 +969,6 @@ Again I must tell you to wait to the upcoming final part of this Ghost deploymen
 - [Kubernetes Documentation. Reference. Kubernetes API. Config and Storage Resources](https://kubernetes.io/docs/reference/kubernetes-api/config-and-storage-resources/)
   - [PersistentVolume](https://kubernetes.io/docs/reference/kubernetes-api/config-and-storage-resources/persistent-volume-v1/)
   - [PersistentVolumeClaim](https://kubernetes.io/docs/reference/kubernetes-api/config-and-storage-resources/persistent-volume-claim-v1/)
-
-#### Related contents about Kubernetes storage
-
-- [Rancher K3s. Add-Ons. Volumes and Storage](https://docs.k3s.io/add-ons/storage)
-  - [Setting up the Local Storage Provider](https://docs.k3s.io/add-ons/storage#setting-up-the-local-storage-provider)
-
-- [GitHub. Rancher. Local Path Provisioner](https://github.com/rancher/local-path-provisioner)
-
-- [GitHub. K3s. Issue. Using "local-path" in persistent volume requires sudo to edit files on host node?](https://github.com/k3s-io/k3s/issues/1823)
-
-- [StackOverflow. Kubernetes size definitions: What's the difference of "Gi" and "G"?](https://stackoverflow.com/questions/50804915/kubernetes-size-definitions-whats-the-difference-of-gi-and-g)
-
-- [GitHub. Helm. Issue. distinguish unset and empty values for storageClassName](https://github.com/helm/helm/issues/2600)
-
-- [Thorsten Hans. Read-only filesystems in Docker and Kubernetes](https://www.thorsten-hans.com/read-only-filesystems-in-docker-and-kubernetes/)
 
 #### StatefulSets
 
@@ -1010,7 +989,31 @@ Again I must tell you to wait to the upcoming final part of this Ghost deploymen
   - [Configure Liveness, Readiness and Startup Probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
     - [Configure Probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes)
 
-#### Articles about the Security Context
+### Other Kubernetes-related contents
+
+#### About ConfigMaps and Secrets
+
+- [OpenSource.com. An Introduction to Kubernetes Secrets and ConfigMaps](https://opensource.com/article/19/6/introduction-kubernetes-secrets-and-configmaps)
+- [Dev. Kubernetes - Using ConfigMap SubPaths to Mount Files](https://dev.to/joshduffney/kubernetes-using-configmap-subpaths-to-mount-files-3a1i)
+- [GoLinuxCloud. Kubernetes Secrets | Declare confidential data with examples](https://www.golinuxcloud.com/kubernetes-secrets/)
+- [StackOverflow. Import data to config map from kubernetes secret](https://stackoverflow.com/questions/50452665/import-data-to-config-map-from-kubernetes-secret)
+
+#### About Kubernetes storage
+
+- [Rancher K3s. Add-Ons. Volumes and Storage](https://docs.k3s.io/add-ons/storage)
+  - [Setting up the Local Storage Provider](https://docs.k3s.io/add-ons/storage#setting-up-the-local-storage-provider)
+
+- [GitHub. Rancher. Local Path Provisioner](https://github.com/rancher/local-path-provisioner)
+
+- [GitHub. K3s. Issue. Using "local-path" in persistent volume requires sudo to edit files on host node?](https://github.com/k3s-io/k3s/issues/1823)
+
+- [StackOverflow. Kubernetes size definitions: What's the difference of "Gi" and "G"?](https://stackoverflow.com/questions/50804915/kubernetes-size-definitions-whats-the-difference-of-gi-and-g)
+
+- [GitHub. Helm. Issue. distinguish unset and empty values for storageClassName](https://github.com/helm/helm/issues/2600)
+
+- [Thorsten Hans. Read-only filesystems in Docker and Kubernetes](https://www.thorsten-hans.com/read-only-filesystems-in-docker-and-kubernetes/)
+
+#### About the Security Context
 
 - [Harsha Koushik. allowPrivilegeEscalation: false: The Kubernetes Security Flag With a Hidden Catch](https://medium.com/kernel-space/allowprivilegeescalation-false-the-kubernetes-security-flag-with-a-hidden-catch-e81292a0f43c)
 
