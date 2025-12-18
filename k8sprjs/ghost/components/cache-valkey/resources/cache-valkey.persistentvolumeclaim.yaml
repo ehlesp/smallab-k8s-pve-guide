@@ -1,0 +1,14 @@
+# Ghost Valkey claim of persistent storage
+apiVersion: v1
+kind: PersistentVolumeClaim
+
+metadata:
+  name: cache-valkey
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: local-path
+  volumeName: ghost-ssd-cache
+  resources:
+    requests:
+      storage: 2.8G

@@ -1,0 +1,37 @@
+# Ghost Valkey setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+labels:
+  - pairs:
+      app: cache-valkey
+    includeSelectors: true
+    includeTemplates: true
+
+resources:
+- resources/cache-valkey.persistentvolumeclaim.yaml
+- resources/cache-valkey.statefulset.yaml
+- resources/cache-valkey.service.yaml
+
+replicas:
+- name: cache-valkey
+  count: 1
+
+images:
+- name: valkey/valkey
+  newTag: 9.0-alpine
+- name: oliver006/redis_exporter
+  newTag: v1.80.0-alpine
+
+configMapGenerator:
+- name: cache-valkey-config
+  files:
+  - configs/valkey.conf
+
+secretGenerator:
+- name: cache-valkey-exporter-user
+  envs:
+  - secrets/default_user_env.properties
+- name: cache-valkey-acl
+  files:
+  - secrets/users.acl

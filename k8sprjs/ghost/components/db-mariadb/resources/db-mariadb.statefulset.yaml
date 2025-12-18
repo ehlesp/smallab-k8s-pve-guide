@@ -1,0 +1,126 @@
+# Ghost MariaDB StatefulSet for a sidecar server pod
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: db-mariadb
+spec:
+  replicas: 1
+  serviceName: db-mariadb
+  template:
+    spec:
+      containers:
+      - name: server
+        image: mariadb:11.8-noble
+        ports:
+        - name: server
+          containerPort: 3306
+        env:
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: db-mariadb-config
+              key: ghost-db-name
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-mariadb-passwords
+              key: root-password
+        - name: MYSQL_USER
+          valueFrom:
+            configMapKeyRef:
+              name: db-mariadb-config
+              key: ghost-username
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-mariadb-passwords
+              key: ghost-user-password
+        - name: MARIADB_PROMETHEUS_EXPORTER_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: db-mariadb-config
+              key: prometheus-exporter-username
+        - name: MARIADB_PROMETHEUS_EXPORTER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-mariadb-passwords
+              key: prometheus-exporter-password
+        resources:
+          requests:
+            cpu: "0.75"
+            memory: 256Mi
+        volumeMounts:
+        - name: mariadb-config
+          subPath: my.cnf
+          mountPath: /etc/mysql/my.cnf
+          readOnly: true
+        - name: mariadb-config 
+          subPath: initdb.sh
+          mountPath: /docker-entrypoint-initdb.d/initdb.sh
+          readOnly: true
+        - name: mariadb-storage
+          mountPath: /var/lib/mysql
+      - name: metrics
+        image: prom/mysqld-exporter:v0.18.0
+        ports:
+        - name: metrics
+          containerPort: 9104
+        args:
+        - --collect.auto_increment.columns
+        - --collect.binlog_size
+        - --collect.engine_innodb_status
+        - --collect.global_status
+        - --collect.global_variables
+        - --collect.info_schema.clientstats
+        - --collect.info_schema.innodb_metrics
+        - --collect.info_schema.innodb_tablespaces
+        - --collect.info_schema.innodb_cmp
+        - --collect.info_schema.innodb_cmpmem
+        - --collect.info_schema.processlist
+        - --collect.info_schema.query_response_time
+        - --collect.info_schema.tables
+        - --collect.info_schema.tablestats
+        - --collect.info_schema.schemastats
+        - --collect.info_schema.userstats
+        - --collect.perf_schema.eventsstatements
+        - --collect.perf_schema.eventsstatementssum
+        - --collect.perf_schema.eventswaits
+        - --collect.perf_schema.file_events
+        - --collect.perf_schema.file_instances
+        - --collect.perf_schema.indexiowaits
+        - --collect.perf_schema.tableiowaits
+        - --collect.perf_schema.tablelocks
+        - --collect.perf_schema.replication_group_member_stats
+        - --collect.perf_schema.replication_applier_status_by_worker
+        - --collect.slave_hosts
+        - --mysqld.address=localhost:3306
+        - --mysqld.username=$(MARIADB_PROMETHEUS_EXPORTER_USERNAME)
+        env:
+        - name: MARIADB_PROMETHEUS_EXPORTER_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: db-mariadb-config
+              key: prometheus-exporter-username
+        - name: MYSQLD_EXPORTER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-mariadb-passwords
+              key: prometheus-exporter-password
+        resources:
+          requests:
+            cpu: "0.25"
+            memory: 16Mi
+      volumes:
+      - name: mariadb-storage
+        persistentVolumeClaim:
+          claimName: db-mariadb
+      - name: mariadb-config
+        configMap:
+          name: db-mariadb-config
+          defaultMode: 444
+          items:
+          - key: initdb.sh
+            path: initdb.sh
+          - key: my.cnf
+            path: my.cnf

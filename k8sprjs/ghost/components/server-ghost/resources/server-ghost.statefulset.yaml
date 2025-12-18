@@ -1,0 +1,124 @@
+# Ghost server StatefulSet for an initialized regular pod
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: server-ghost
+spec:
+  replicas: 1
+  serviceName: server-ghost
+  template:
+    spec:
+      initContainers:
+      - name: permissions-fix
+        image: docker.io/busybox:stable-musl
+        env:
+        - name: GHOST_CONTENT
+          valueFrom:
+            configMapKeyRef:
+              name: server-ghost-env-vars
+              key: GHOST_CONTENT
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        command:
+          - /bin/sh
+          - '-c'
+          - |
+            set -e
+
+            export DIRS='files logs apps themes data public settings images media'
+            echo 'Check if base dirs exists, if not, create them'
+            echo "Directories to check: $DIRS"
+            for dir in $DIRS; do
+              if [ ! -d $GHOST_CONTENT/$dir ]; then
+                echo "Creating $GHOST_CONTENT/$dir directory"
+                mkdir -pv $GHOST_CONTENT/$dir || echo "Error creating $GHOST_CONTENT/$dir directory"
+              fi
+              chown -Rfv 65532:65532 $GHOST_CONTENT/$dir && echo "chown ok on $dir" || echo "Error changing ownership of $GHOST_CONTENT/$dir directory"
+            done
+            exit 0
+        volumeMounts:
+        - name: ghost-storage
+          mountPath: /home/nonroot/app/ghost/content
+          readOnly: false
+      containers:
+      - name: server
+        image: ghcr.io/sredevopsorg/ghost-on-kubernetes:main
+        ports:
+        - name: server
+          containerPort: 2368
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /ghost/api/admin/site/
+            port: server
+            httpHeaders:
+            - name: X-Forwarded-Proto
+              value: https
+            - name: Host
+              value: server-ghost.ghost
+          periodSeconds: 10
+          timeoutSeconds: 3
+          successThreshold: 1
+          failureThreshold: 3
+          initialDelaySeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /ghost/api/admin/site/
+            port: server
+            httpHeaders:
+            - name: X-Forwarded-Proto
+              value: https
+            - name: Host
+              value: server-ghost.ghost
+          periodSeconds: 300
+          timeoutSeconds: 3
+          successThreshold: 1
+          failureThreshold: 1
+          initialDelaySeconds: 30
+        envFrom:
+        - configMapRef:
+            name: server-ghost-env-vars
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        volumeMounts:
+        - name: ghost-storage
+          mountPath: /home/nonroot/app/ghost/content
+        - name: ghost-config
+          readOnly: true
+          mountPath: /home/nonroot/app/ghost/config.production.json
+          subPath: config.production.json
+        - name: tmp
+          mountPath: /tmp
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 65532
+      automountServiceAccountToken: false
+      hostAliases:
+      - ip: "10.7.0.1"
+        hostnames:
+        - "ghost.homelab.cloud"
+        - "ghostadmin.homelab.cloud"
+      volumes:
+      - name: ghost-storage
+        persistentVolumeClaim:
+          claimName: server-ghost
+      - name: ghost-config
+        secret:
+          secretName: server-ghost-config
+          defaultMode: 420
+          items:
+          - key: config.production.json
+            path: config.production.json
+      - name: tmp
+        emptyDir:
+          sizeLimit: 64Mi

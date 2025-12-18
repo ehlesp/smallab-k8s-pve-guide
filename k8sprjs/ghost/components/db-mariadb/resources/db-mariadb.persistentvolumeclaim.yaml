@@ -1,0 +1,14 @@
+# Ghost MariaDB claim of persistent storage
+apiVersion: v1
+kind: PersistentVolumeClaim
+
+metadata:
+  name: db-mariadb
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: local-path
+  volumeName: ghost-ssd-db
+  resources:
+    requests:
+      storage: 6.5G

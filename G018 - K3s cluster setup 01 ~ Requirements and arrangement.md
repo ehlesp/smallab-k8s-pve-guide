@@ -3,7 +3,7 @@
 - [Gearing up for your K3s cluster](#gearing-up-for-your-k3s-cluster)
 - [Requirements for the K3s cluster and the services to deploy in it](#requirements-for-the-k3s-cluster-and-the-services-to-deploy-in-it)
   - [Rancher K3s Kubernetes cluster](#rancher-k3s-kubernetes-cluster)
-  - [Nextcloud](#nextcloud)
+  - [Ghost](#ghost)
   - [Gitea](#gitea)
   - [Kubernetes cluster monitoring stack](#kubernetes-cluster-monitoring-stack)
     - [Prometheus](#prometheus)
@@ -12,7 +12,7 @@
 - [References](#references)
   - [About Kubernetes](#about-kubernetes)
   - [About Rancher K3s](#about-rancher-k3s)
-  - [About Nextcloud](#about-nextcloud)
+  - [About Ghost](#about-ghost)
   - [About Gitea](#about-gitea)
   - [About Prometheus](#about-prometheus)
   - [About Grafana](#about-grafana)
@@ -37,18 +37,18 @@ Since the virtual hardware I'm using in this guide series is rather limited, ins
 | Server | 2 cores |  2 GB  |
 | Agent  | 1 core  | 512 MB |
 
-### Nextcloud
+### Ghost
 
-[Nextcloud](https://nextcloud.com/) is a software mainly for file syncing and sharing, so it's main requirement will always be storage room for saving data. Still, it has some [recommended system requirements](https://docs.nextcloud.com/server/latest/admin_manual/installation/system_requirements.html) to work properly.
+The [Ghost](https://ghost.org/) publishing platform [has a different set of prerequisites specified in its official documentation depending on how it is installed](https://docs.ghost.org/install). Next are listed the particular minimum requirements (extracted from the mentioned prerequisites) that are relevant to this guide:
 
-- Database: MySQL 8.4 or MariaDB 10.11.
-- Web server: Apache 2.4 with mod_php or php-fpm.
-- PHP Runtime: 8.3
-- RAM: 512 MiB per process.
+- RAM: 1GB.
+- CPU: 1 core.
+- OS: Ubuntu 22.04 or 24.04.
+- Database: MySQL 8.
 
 ### Gitea
 
-[Gitea](https://gitea.io/) is a lightweight self-hosted git service, so its main requirement will be storage space.
+[Gitea](https://gitea.io/) is a lightweight self-hosted git service that requires the following:
 
 - Database: PostgreSQL (>= 12), MySQL (>= 8.0), MariaDB (>= 10.4), SQLite (builtin), and MSSQL (>= 2012 SP4).
 - Git version >= 2.0.
@@ -75,7 +75,7 @@ For monitoring the K3s Kubernetes cluster, you will install a stack which includ
 
 Now that you have a rough idea about what each software requires, it's time to stablish a proper arrangement for them. So, in my virtual hardware of four-single-threaded cores CPU and 8 GiB of RAM, I'll go with three VMs with the hardware configuration listed next:
 
-- **One VM with 2 vCPU and 2 GiB of RAM**\
+- **One VM with 2 vCPU and 1.50 GiB of RAM**\
   This will become the K3s **server** (_master_) node of the Kubernetes cluster.
 
 - **Two VMs with 3 vCPU and 2 GiB of RAM**\
@@ -93,9 +93,11 @@ If your hardware setup has more RAM and cores than the one used in this guide, y
 
 - [Docs. Installation. Requirements](https://docs.k3s.io/installation/requirements#hardware)
 
-### About [Nextcloud](https://nextcloud.com/)
+### About [Ghost](https://ghost.org/)
 
-- [Nextcloud system requirements](https://docs.nextcloud.com/server/latest/admin_manual/installation/system_requirements.html)
+- [Getting Started. How To Install Ghost](https://docs.ghost.org/install)
+  - [Documentation. How To Install Ghost On Ubuntu](https://docs.ghost.org/install/ubuntu)
+  - [How To Install Ghost With Docker (preview)](https://docs.ghost.org/install/docker)
 
 ### About [Gitea](https://gitea.io/)
 

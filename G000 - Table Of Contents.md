@@ -1,6 +1,6 @@
-# **G000** - Table Of Contents
+# G000 - Table Of Contents
 
-## [**README**](README.md)
+## [README](README.md)
 
 - [A complete guide for building a virtualized Kubernetes homelab](README.md#a-complete-guide-for-building-a-virtualized-kubernetes-homelab)
 - [Main concepts](README.md#main-concepts)
@@ -8,19 +8,19 @@
 - [Goal of this guide](README.md#goal-of-this-guide)
 - [Software used](README.md#software-used)
 
-## [**LICENSE**](LICENSE.md)
+## [LICENSE](LICENSE.md)
 
 - [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International Public License](LICENSE.md#creative-commons-attribution-noncommercial-sharealike-40-international-public-license)
 
 ## Guides
 
-### [**G001** - Hardware setup](G001%20-%20Hardware%20setup.md)
+### [G001 - Hardware setup](G001%20-%20Hardware%20setup.md)
 
 - [You just need a capable enough computer](G001%20-%20Hardware%20setup.md#you-just-need-a-capable-enough-computer)
 - [The reference hardware setup](G001%20-%20Hardware%20setup.md#the-reference-hardware-setup)
 - [References](G001%20-%20Hardware%20setup.md#references)
 
-### [**G002** - Proxmox VE installation](G002%20-%20Proxmox%20VE%20installation.md)
+### [G002 - Proxmox VE installation](G002%20-%20Proxmox%20VE%20installation.md)
 
 - [A procedure to install Proxmox VE in limited consumer hardware](G002%20-%20Proxmox%20VE%20installation.md#a-procedure-to-install-proxmox-ve-in-limited-consumer-hardware)
 - [System Requirements](G002%20-%20Proxmox%20VE%20installation.md#system-requirements)
@@ -29,7 +29,7 @@
 - [Connecting remotely](G002%20-%20Proxmox%20VE%20installation.md#connecting-remotely)
 - [References](G002%20-%20Proxmox%20VE%20installation.md#references)
 
-### [**G003** - Host configuration 01 ~ Apt sources, updates and extra tools](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md)
+### [G003 - Host configuration 01 ~ Apt sources, updates and extra tools](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md)
 
 - [Proxmox VE 9.0 runs on Debian 13 "trixie"](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md#proxmox-ve-90-runs-on-debian-13-trixie)
 - [Editing the apt repository sources](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md#editing-the-apt-repository-sources)
@@ -38,7 +38,7 @@
 - [Relevant system paths](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md#relevant-system-paths)
 - [References](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md#references)
 
-### [**G004** - Host configuration 02 ~ UPS management with NUT](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md)
+### [G004 - Host configuration 02 ~ UPS management with NUT](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md)
 
 - [Any server must be always connected to an UPS unit](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md#any-server-must-be-always-connected-to-an-ups-unit)
 - [Connecting your UPS with your PVE node using NUT](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md#connecting-your-ups-with-your-pve-node-using-nut)
@@ -48,7 +48,7 @@
 - [Relevant system paths](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md#relevant-system-paths)
 - [References](G004%20-%20Host%20configuration%2002%20~%20UPS%20management%20with%20NUT.md#references)
 
-### [**G005** - Host configuration 03 ~ LVM storage](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md)
+### [G005 - Host configuration 03 ~ LVM storage](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md)
 
 - [Your Proxmox VE server's storage needs to be reorganized](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#your-proxmox-ve-servers-storage-needs-to-be-reorganized)
 - [Initial filesystem configuration (**PVE web console**)](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#initial-filesystem-configuration-pve-web-console)
@@ -57,7 +57,7 @@
 - [LVM rearrangement in the main storage drive](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#lvm-rearrangement-in-the-main-storage-drive)
 - [References](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#references)
 
-### [**G006** - Host configuration 04 ~ Removing Proxmox's subscription warning](G006%20-%20Host%20configuration%2004%20~%20Removing%20Proxmox's%20subscription%20warning.md)
+### [G006 - Host configuration 04 ~ Removing Proxmox's subscription warning](G006%20-%20Host%20configuration%2004%20~%20Removing%20Proxmox's%20subscription%20warning.md)
 
 - [About the Proxmox subscription warning](G006%20-%20Host%20configuration%2004%20~%20Removing%20Proxmox's%20subscription%20warning.md#about-the-proxmox-subscription-warning)
 - [Removing the subscription warning](G006%20-%20Host%20configuration%2004%20~%20Removing%20Proxmox's%20subscription%20warning.md#removing-the-subscription-warning)
@@ -67,7 +67,7 @@
 - [Relevant system paths](G006%20-%20Host%20configuration%2004%20~%20Removing%20Proxmox's%20subscription%20warning.md#relevant-system-paths)
 - [References](G006%20-%20Host%20configuration%2004%20~%20Removing%20Proxmox's%20subscription%20warning.md#references)
 
-### [**G007** - Host hardening 01 ~ TFA authentication](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md)
+### [G007 - Host hardening 01 ~ TFA authentication](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md)
 
 - [Enable Two Factor Authentication in your PVE system](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#enable-two-factor-authentication-in-your-pve-system)
 - [Enabling TFA for SSH access](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#enabling-tfa-for-ssh-access)
@@ -77,7 +77,7 @@
 - [Relevant system paths](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#relevant-system-paths)
 - [References](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#references)
 
-### [**G008** - Host hardening 02 ~ Alternative administrator user](G008%20-%20Host%20hardening%2002%20~%20Alternative%20administrator%20user.md)
+### [G008 - Host hardening 02 ~ Alternative administrator user](G008%20-%20Host%20hardening%2002%20~%20Alternative%20administrator%20user.md)
 
 - [Avoid using the root user](G008%20-%20Host%20hardening%2002%20~%20Alternative%20administrator%20user.md#avoid-using-the-root-user)
 - [Understanding the Proxmox VE user management and the realms](G008%20-%20Host%20hardening%2002%20~%20Alternative%20administrator%20user.md#understanding-the-proxmox-ve-user-management-and-the-realms)
@@ -85,7 +85,7 @@
 - [Relevant system paths](G008%20-%20Host%20hardening%2002%20~%20Alternative%20administrator%20user.md#relevant-system-paths)
 - [References](G008%20-%20Host%20hardening%2002%20~%20Alternative%20administrator%20user.md#references)
 
-### [**G009** - Host hardening 03 ~ SSH key pairs and sshd service configuration](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md)
+### [G009 - Host hardening 03 ~ SSH key pairs and sshd service configuration](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md)
 
 - [Harden your SSH connections with key pairs](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md#harden-your-ssh-connections-with-key-pairs)
 - [Generating SSH key pairs](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md#generating-ssh-key-pairs)
@@ -93,7 +93,7 @@
 - [Relevant system paths](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md#relevant-system-paths)
 - [References](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md#references)
 
-### [**G010** - Host hardening 04 ~ Enabling Fail2Ban](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md)
+### [G010 - Host hardening 04 ~ Enabling Fail2Ban](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md)
 
 - [Harden your setup against intrusions with Fail2Ban](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#harden-your-setup-against-intrusions-with-fail2ban)
 - [Installing Fail2Ban](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#installing-fail2ban)
@@ -102,7 +102,7 @@
 - [Relevant system paths](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#relevant-system-paths)
 - [References](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#references)
 
-### [**G011** - Host hardening 05 ~ Proxmox VE services](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md)
+### [G011 - Host hardening 05 ~ Proxmox VE services](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md)
 
 - [Reduce your Proxmox VE server's exposed surface](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md#reduce-your-proxmox-ve-servers-exposed-surface)
 - [Checking currently running services](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md#checking-currently-running-services)
@@ -115,7 +115,7 @@
 - [Relevant system paths](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md#relevant-system-paths)
 - [References](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md#references)
 
-### [**G012** - Host hardening 06 ~ Network hardening with sysctl](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md)
+### [G012 - Host hardening 06 ~ Network hardening with sysctl](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md)
 
 - [Harden your PVE's networking with a `sysctl` configuration](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md#harden-your-pves-networking-with-a-sysctl-configuration)
 - [About `sysctl`](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md#about-sysctl)
@@ -123,7 +123,7 @@
 - [Relevant system paths](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md#relevant-system-paths)
 - [References](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md#references)
 
-### [**G013** - Host hardening 07 ~ Mitigating CPU vulnerabilities](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md)
+### [G013 - Host hardening 07 ~ Mitigating CPU vulnerabilities](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md)
 
 - [CPUs also have security vulnerabilities](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#cpus-also-have-security-vulnerabilities)
 - [Discovering your CPU's vulnerabilities](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#discovering-your-cpus-vulnerabilities)
@@ -131,7 +131,7 @@
 - [Relevant system paths](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#relevant-system-paths)
 - [References](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#references)
 
-### [**G014** - Host hardening 08 ~ Firewalling](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md)
+### [G014 - Host hardening 08 ~ Firewalling](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md)
 
 - [[Enabling your PVE's firewall is a must](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#enabling-your-pves-firewall-is-a-must)]
 - [Proxmox VE firewall uses iptables](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#proxmox-ve-firewall-uses-iptables)
@@ -145,7 +145,7 @@
 - [Relevant system paths](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#relevant-system-paths)
 - [References](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#references)
 
-### [**G015** - Host optimization 01 ~ Adjustments through sysctl](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md)
+### [G015 - Host optimization 01 ~ Adjustments through sysctl](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md)
 
 - [Tune your Proxmox VE system's `sysctl` files to improve performance](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md#tune-your-proxmox-ve-systems-sysctl-files-to-improve-performance)
 - [First go the `sysctl` directory](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md#first-go-the-sysctl-directory)
@@ -157,7 +157,7 @@
 - [Relevant system paths](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md#relevant-system-paths)
 - [References](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md#references)
 
-### [**G016** - Host optimization 02 ~ Disabling the transparent hugepages](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md)
+### [G016 - Host optimization 02 ~ Disabling the transparent hugepages](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md)
 
 - [Understanding the transparent hugepages](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md#understanding-the-transparent-hugepages)
 - [Status of the transparent hugepages in your host](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md#status-of-the-transparent-hugepages-in-your-host)
@@ -165,7 +165,7 @@
 - [Relevant system paths](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md#relevant-system-paths)
 - [References](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md#references)
 
-### [**G017** - Virtual Networking ~ Network configuration](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md)
+### [G017 - Virtual Networking ~ Network configuration](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md)
 
 - [Preparing your virtual network for Kubernetes](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#preparing-your-virtual-network-for-kubernetes)
 - [Current virtual network setup](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#current-virtual-network-setup)
@@ -175,14 +175,14 @@
 - [Relevant system paths](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#relevant-system-paths)
 - [References](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#references)
 
-### [**G018** - K3s cluster setup 01 ~ Requirements and arrangement](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md)
+### [G018 - K3s cluster setup 01 ~ Requirements and arrangement](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md)
 
 - [Gearing up for your K3s cluster](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md#gearing-up-for-your-k3s-cluster)
 - [Requirements for the K3s cluster and the services to deploy in it](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md#requirements-for-the-k3s-cluster-and-the-services-to-deploy-in-it)
 - [Arrangement of VMs and services](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md#arrangement-of-vms-and-services)
 - [References](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md#references)
 
-### [**G019** - K3s cluster setup 02 ~ Storage setup](G019%20-%20K3s%20cluster%20setup%2002%20~%20Storage%20setup.md)
+### [G019 - K3s cluster setup 02 ~ Storage setup](G019%20-%20K3s%20cluster%20setup%2002%20~%20Storage%20setup.md)
 
 - [Identifying your storage needs and current setup](G019%20-%20K3s%20cluster%20setup%2002%20~%20Storage%20setup.md#identifying-your-storage-needs-and-current-setup)
 - [Storage organization model](G019%20-%20K3s%20cluster%20setup%2002%20~%20Storage%20setup.md#storage-organization-model)
@@ -192,7 +192,7 @@
 - [Relevant system paths](G019%20-%20K3s%20cluster%20setup%2002%20~%20Storage%20setup.md#relevant-system-paths)
 - [References](G019%20-%20K3s%20cluster%20setup%2002%20~%20Storage%20setup.md#references)
 
-### [**G020** - K3s cluster setup 03 ~ Debian VM creation](G020%20-%20K3s%20cluster%20setup%2003%20~%20Debian%20VM%20creation.md)
+### [G020 - K3s cluster setup 03 ~ Debian VM creation](G020%20-%20K3s%20cluster%20setup%2003%20~%20Debian%20VM%20creation.md)
 
 - [You can start creating VMs in your Proxmox VE server](G020%20-%20K3s%20cluster%20setup%2003%20~%20Debian%20VM%20creation.md#you-can-start-creating-vms-in-your-proxmox-ve-server)
 - [Preparing the Debian ISO image](G020%20-%20K3s%20cluster%20setup%2003%20~%20Debian%20VM%20creation.md#preparing-the-debian-iso-image)
@@ -201,7 +201,7 @@
 - [Relevant system paths](G020%20-%20K3s%20cluster%20setup%2003%20~%20Debian%20VM%20creation.md#relevant-system-paths)
 - [References](G020%20-%20K3s%20cluster%20setup%2003%20~%20Debian%20VM%20creation.md#references)
 
-### [**G021** - K3s cluster setup 04 ~ Debian VM configuration](G021%20-%20K3s%20cluster%20setup%2004%20~%20Debian%20VM%20configuration.md)
+### [G021 - K3s cluster setup 04 ~ Debian VM configuration](G021%20-%20K3s%20cluster%20setup%2004%20~%20Debian%20VM%20configuration.md)
 
 - [You have to configure your new Debian VM](G021%20-%20K3s%20cluster%20setup%2004%20~%20Debian%20VM%20configuration.md#you-have-to-configure-your-new-debian-vm)
 - [Suggestion about the IP organization within your LAN](G021%20-%20K3s%20cluster%20setup%2004%20~%20Debian%20VM%20configuration.md#suggestion-about-the-ip-organization-within-your-lan)
@@ -219,7 +219,7 @@
 - [Relevant system paths](G021%20-%20K3s%20cluster%20setup%2004%20~%20Debian%20VM%20configuration.md#relevant-system-paths)
 - [References](G021%20-%20K3s%20cluster%20setup%2004%20~%20Debian%20VM%20configuration.md#references)
 
-### [**G022** - K3s cluster setup 05 ~ Connecting the VM to the NUT server](G022%20-%20K3s%20cluster%20setup%2005%20~%20Connecting%20the%20VM%20to%20the%20NUT%20server.md)
+### [G022 - K3s cluster setup 05 ~ Connecting the VM to the NUT server](G022%20-%20K3s%20cluster%20setup%2005%20~%20Connecting%20the%20VM%20to%20the%20NUT%20server.md)
 
 - [Make your VMs aware of your UPS unit with NUT](G022%20-%20K3s%20cluster%20setup%2005%20~%20Connecting%20the%20VM%20to%20the%20NUT%20server.md#make-your-vms-aware-of-your-ups-unit-with-nut)
 - [Reconfiguring the NUT server on your Proxmox VE host](G022%20-%20K3s%20cluster%20setup%2005%20~%20Connecting%20the%20VM%20to%20the%20NUT%20server.md#reconfiguring-the-nut-server-on-your-proxmox-ve-host)
@@ -229,7 +229,7 @@
 - [Relevant system paths](G022%20-%20K3s%20cluster%20setup%2005%20~%20Connecting%20the%20VM%20to%20the%20NUT%20server.md#relevant-system-paths)
 - [References](G022%20-%20K3s%20cluster%20setup%2005%20~%20Connecting%20the%20VM%20to%20the%20NUT%20server.md#references)
 
-### [**G023** - K3s cluster setup 06 ~ Debian VM template and backup](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md)
+### [G023 - K3s cluster setup 06 ~ Debian VM template and backup](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md)
 
 - [Turn your Debian VM into a VM template](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md#turn-your-debian-vm-into-a-vm-template)
 - [Steps for transforming your Debian VM into a VM template](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md#steps-for-transforming-your-debian-vm-into-a-vm-template)
@@ -237,7 +237,7 @@
 - [Other considerations regarding VM templates](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md#other-considerations-regarding-vm-templates)
 - [References](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md#references)
 
-### [**G024** - K3s cluster setup 07 ~ K3s node VM template setup](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md)
+### [G024 - K3s cluster setup 07 ~ K3s node VM template setup](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md)
 
 - [You need a more specialized VM template for building K3s nodes](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md#you-need-a-more-specialized-vm-template-for-building-k3s-nodes)
 - [Reasons for a new VM template](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md#reasons-for-a-new-vm-template)
@@ -252,7 +252,7 @@
 - [Relevant system paths](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md#relevant-system-paths)
 - [References](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md#references)
 
-### [**G025** - K3s cluster setup 08 ~ K3s Kubernetes cluster setup](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md)
+### [G025 - K3s cluster setup 08 ~ K3s Kubernetes cluster setup](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md)
 
 - [Build your virtualized K3s cluster](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#build-your-virtualized-k3s-cluster)
 - [Criteria for the VMs' IPs and hostnames](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#criteria-for-the-vms-ips-and-hostnames)
@@ -270,7 +270,7 @@
 - [Relevant system paths](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#relevant-system-paths)
 - [References](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#references)
 
-### [**G026** - K3s cluster setup 09 ~ Setting up a kubectl client for remote access](G026%20-%20K3s%20cluster%20setup%2009%20~%20Setting%20up%20a%20kubectl%20client%20for%20remote%20access.md)
+### [G026 - K3s cluster setup 09 ~ Setting up a kubectl client for remote access](G026%20-%20K3s%20cluster%20setup%2009%20~%20Setting%20up%20a%20kubectl%20client%20for%20remote%20access.md)
 
 - [Never handle your Kubernetes cluster directly from the server nodes](G026%20-%20K3s%20cluster%20setup%2009%20~%20Setting%20up%20a%20kubectl%20client%20for%20remote%20access.md#never-handle-your-kubernetes-cluster-directly-from-server-nodes)
 - [Description of the `kubectl` client system](G026%20-%20K3s%20cluster%20setup%2009%20~%20Setting%20up%20a%20kubectl%20client%20for%20remote%20access.md#description-of-the-kubectl-client-system)
@@ -283,7 +283,7 @@
 - [Relevant system paths](G026%20-%20K3s%20cluster%20setup%2009%20~%20Setting%20up%20a%20kubectl%20client%20for%20remote%20access.md#relevant-system-paths)
 - [References](G026%20-%20K3s%20cluster%20setup%2009%20~%20Setting%20up%20a%20kubectl%20client%20for%20remote%20access.md#references)
 
-### [**G027** - K3s cluster setup 10 ~ Deploying the MetalLB load balancer](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md)
+### [G027 - K3s cluster setup 10 ~ Deploying the MetalLB load balancer](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md)
 
 - [Considerations before deploying MetalLB](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md#considerations-before-deploying-metallb)
 - [Choosing the IP ranges for MetalLB](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md#choosing-the-ip-ranges-for-metallb)
@@ -292,7 +292,7 @@
 - [Relevant system paths](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md#relevant-system-paths)
 - [References](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md#references)
 
-### [**G028** - K3s cluster setup 11 ~ Deploying the metrics-server service](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md)
+### [G028 - K3s cluster setup 11 ~ Deploying the metrics-server service](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md)
 
 - [Deploy a metric-server service that you can fully configure](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md#deploy-a-metric-server-service-that-you-can-fully-configure)
 - [Checking the metrics-server's manifest](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md#checking-the-metrics-servers-manifest)
@@ -302,7 +302,7 @@
 - [Relevant system paths](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md#relevant-system-paths)
 - [References](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md#references)
 
-### [**G029** - K3s cluster setup 12 ~ Setting up cert-manager and self-signed CA](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md)
+### [G029 - K3s cluster setup 12 ~ Setting up cert-manager and self-signed CA](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md)
 
 - [Use cert-manager to handle certificates in your cluster](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#use-cert-manager-to-handle-certificates-in-your-cluster)
 - [Deploying cert-manager](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#deploying-cert-manager)
@@ -312,7 +312,7 @@
 - [Relevant system paths](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#relevant-system-paths)
 - [References](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#references)
 
-### [**G030** - K3s cluster setup 14 ~ Enabling the Traefik dashboard](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md)
+### [G030 - K3s cluster setup 14 ~ Enabling the Traefik dashboard](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md)
 
 - [Traefik is the embedded ingress controller of K3s](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md#traefik-is-the-embedded-ingress-controller-of-k3s)
 - [Enabling access to the Traefik dashboard](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md#enabling-access-to-the-traefik-dashboard)
@@ -322,7 +322,7 @@
 - [Relevant system paths](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md#relevant-system-paths)
 - [References](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md#references)
 
-### [**G031** - K3s cluster setup 13 ~ Deploying the Headlamp dashboard](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md)
+### [G031 - K3s cluster setup 13 ~ Deploying the Headlamp dashboard](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md)
 
 - [Headlamp is an alternative to the Kubernetes Dashboard](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md#headlamp-is-an-alternative-to-the-kubernetes-dashboard)
 - [Deploying Headlamp](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md#deploying-headlamp)
@@ -331,70 +331,78 @@
 - [Relevant system paths](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md#relevant-system-paths)
 - [References](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md#references)
 
-### [**G032** - Deploying services 01 ~ Considerations](G032%20-%20Deploying%20services%2001%20~%20Considerations.md)
+### [G032 - Deploying services 01 ~ Considerations](G032%20-%20Deploying%20services%2001%20~%20Considerations.md)
 
 - [Upcoming chapters are about deploying services in your K3s cluster](G032%20-%20Deploying%20services%2001%20~%20Considerations.md#upcoming-chapters-are-about-deploying-services-in-your-k3s-cluster)
 - [Be watchful of your system's resources usage](G032%20-%20Deploying%20services%2001%20~%20Considerations.md#be-watchful-of-your-systems-resources-usage)
 - [Do not fill your cluster up to the brim](G032%20-%20Deploying%20services%2001%20~%20Considerations.md#do-not-fill-your-cluster-up-to-the-brim)
 
-### [**G033** - Deploying services 02 ~ **Nextcloud - Part 1** - Outlining setup, arranging storage and choosing service IPs](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%201%20-%20Outlining%20setup%2C%20arranging%20storage%20and%20choosing%20service%20IPs.md#g033-deploying-services-02-nextcloud-part-1-outlining-setup-arranging-storage-and-choosing-service-ips)
+### [G033 - Deploying services 02 ~ Ghost - Part 1 - Outlining setup and arranging storage](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md)
 
-- [Outlining Nextcloud's setup](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%201%20-%20Outlining%20setup%2C%20arranging%20storage%20and%20choosing%20service%20IPs.md#outlining-nextclouds-setup)
-- [Setting up new storage drives in the K3s agent](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%201%20-%20Outlining%20setup%2C%20arranging%20storage%20and%20choosing%20service%20IPs.md#setting-up-new-storage-drives-in-the-k3s-agent)
-- [Choosing static cluster IPs for Nextcloud related services](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%201%20-%20Outlining%20setup%2C%20arranging%20storage%20and%20choosing%20service%20IPs.md#choosing-static-cluster-ips-for-nextcloud-related-services)
-- [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%201%20-%20Outlining%20setup%2C%20arranging%20storage%20and%20choosing%20service%20IPs.md#relevant-system-paths)
+- [Beginning with Ghost](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#beginning-with-ghost)
+- [Outlining Ghost's setup](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#outlining-ghosts-setup)
+- [Choosing the K3s agent node for running Ghost](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#choosing-the-k3s-agent-node-for-running-ghost)
+- [Setting up new storage drives in the K3s agent node](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#setting-up-new-storage-drives-in-the-k3s-agent-node)
+- [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#relevant-system-paths)
+- [References](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#references)
 
-### [**G033** - Deploying services 02 ~ **Nextcloud - Part 2** - Redis cache server](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Redis%20cache%20server.md#g033-deploying-services-02-nextcloud-part-2-redis-cache-server)
+### [G033 - Deploying services 02 ~ Ghost - Part 2 - Valkey cache server](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md)
 
-- [Kustomize project folders for Nextcloud and Redis](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Redis%20cache%20server.md#kustomize-project-folders-for-nextcloud-and-redis)
-- [Redis configuration file](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Redis%20cache%20server.md#redis-configuration-file)
-- [Redis password](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Redis%20cache%20server.md#redis-password)
-- [Redis Deployment resource](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Redis%20cache%20server.md#redis-deployment-resource)
-- [Redis Service resource](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Redis%20cache%20server.md#redis-service-resource)
-- [Redis Kustomize project](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Redis%20cache%20server.md#redis-kustomize-project)
-- [Don't deploy this Redis project on its own](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Redis%20cache%20server.md#dont-deploy-this-redis-project-on-its-own)
-- [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Redis%20cache%20server.md#relevant-system-paths)
-- [References](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%202%20-%20Redis%20cache%20server.md#references)
+- [You can use Valkey instead of Redis as caching server for Ghost](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#you-can-use-valkey-instead-of-redis-as-caching-server-for-ghost)
+- [Kustomize project folders for Ghost and Valkey](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#kustomize-project-folders-for-ghost-and-valkey)
+- [Valkey configuration file](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-configuration-file)
+- [Valkey secrets](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-secrets)
+- [Valkey persistent storage claim](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-persistent-storage-claim)
+- [Valkey StatefulSet](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-statefulset)
+- [Valkey Service](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-service)
+- [Valkey Kustomize project](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-kustomize-project)
+- [Do not deploy this Valkey project on its own](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#do-not-deploy-this-valkey-project-on-its-own)
+- [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#relevant-system-paths)
+- [References](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#references)
 
-### [**G033** - Deploying services 02 ~ **Nextcloud - Part 3** - MariaDB database server](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%203%20-%20MariaDB%20database%20server.md#g033-deploying-services-02-nextcloud-part-3-mariadb-database-server)
+### [G033 - Deploying services 02 ~ Ghost - Part 3 - MariaDB database server](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md)
 
-- [MariaDB Kustomize project's folders](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-kustomize-projects-folders)
-- [MariaDB configuration files](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-configuration-files)
-- [MariaDB passwords](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-passwords)
-- [MariaDB storage](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-storage)
-- [MariaDB StatefulSet resource](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-statefulset-resource)
-- [MariaDB Service resource](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-service-resource)
-- [MariaDB Kustomize project](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-kustomize-project)
-- [Don't deploy this MariaDB project on its own](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%203%20-%20MariaDB%20database%20server.md#dont-deploy-this-mariadb-project-on-its-own)
-- [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%203%20-%20MariaDB%20database%20server.md#relevant-system-paths)
-- [References](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%203%20-%20MariaDB%20database%20server.md#references)
+- [You can use MariaDB instead of MySQL as database server for Ghost](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#you-can-use-mariadb-instead-of-mysql-as-database-server-for-ghost)
+- [MariaDB Kustomize subproject's folders](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-kustomize-subprojects-folders)
+- [MariaDB configuration files](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-configuration-files)
+- [MariaDB passwords](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-passwords)
+- [MariaDB persistent storage claim](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-persistent-storage-claim)
+- [MariaDB StatefulSet](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-statefulset)
+- [MariaDB Service](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-service)
+- [MariaDB Kustomize project](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-kustomize-project)
+- [Do not deploy this MariaDB project on its own](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#do-not-deploy-this-mariadb-project-on-its-own)
+- [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#relevant-system-paths)
+- [References](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#references)
 
-### [**G033** - Deploying services 02 ~ **Nextcloud - Part 4** - Nextcloud server](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#g033-deploying-services-02-nextcloud-part-4-nextcloud-server)
+### [G033 - Deploying services 02 ~ Ghost - Part 4 - Ghost server](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md)
 
-- [Considerations about the Nextcloud server](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#considerations-about-the-nextcloud-server)
-- [Nextcloud server Kustomize project's folders](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#nextcloud-server-kustomize-projects-folders)
-- [Nextcloud server configuration files](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#nextcloud-server-configuration-files)
-- [Nextcloud server password](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#nextcloud-server-password)
-- [Nextcloud server storage](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#nextcloud-server-storage)
-- [Nextcloud server Stateful resource](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#nextcloud-server-stateful-resource)
-- [Nextcloud server Service resource](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#nextcloud-server-service-resource)
-- [Nextcloud server Kustomize project](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#nextcloud-server-kustomize-project)
-- [Don't deploy this Nextcloud server project on its own](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#dont-deploy-this-nextcloud-server-project-on-its-own)
-- [Background jobs on Nextcloud](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#background-jobs-on-nextcloud)
-- [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#relevant-system-paths)
-- [References](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%204%20-%20Nextcloud%20server.md#references)
+- [Deploy the Ghost server just like another component](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#deploy-the-ghost-server-just-like-another-component)
+- [Considerations about the Ghost server](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#considerations-about-the-ghost-server)
+- [Ghost server Kustomize subproject's folders](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#ghost-server-kustomize-subprojects-folders)
+- [Ghost server configuration file](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#ghost-server-configuration-file)
+- [Ghost server environment variables](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#ghost-server-environment-variables)
+- [Ghost server persistent storage claim](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#ghost-server-persistent-storage-claim)
+- [Ghost server StatefulSet](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#ghost-server-statefulset)
+- [Ghost server Service](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#ghost-server-service)
+- [Ghost server Kustomize project](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#ghost-server-kustomize-project)
+- [Do not deploy this Ghost server project on its own](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#do-not-deploy-this-ghost-server-project-on-its-own)
+- [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#relevant-system-paths)
+- [References](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#references)
 
-### [**G033** - Deploying services 02 ~ **Nextcloud - Part 5** - Complete Nextcloud platform](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md#g033-deploying-services-02-nextcloud-part-5-complete-nextcloud-platform)
+### [G033 - Deploying services 02 ~ Ghost - Part 5 - Complete Ghost platform](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md)
 
-- [Preparing pending Nextcloud platform elements](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md#preparing-pending-nextcloud-platform-elements)
-- [Kustomize project for Nextcloud platform](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md#kustomize-project-for-nextcloud-platform)
-- [Logging and checking the background jobs configuration on your Nextcloud platform](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md#logging-and-checking-the-background-jobs-configuration-on-your-nextcloud-platform)
-- [Security considerations in Nextcloud](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md#security-considerations-in-nextcloud)
-- [Nextcloud platform's Kustomize project attached to this guide series](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md#nextcloud-platforms-kustomize-project-attached-to-this-guide-series)
-- [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md#relevant-system-paths)
-- [References](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%205%20-%20Complete%20Nextcloud%20platform.md#references)
+- [Putting together the whole Ghost platform](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#putting-together-the-whole-ghost-platform)
+- [Create a folder for the pending Ghost platform resources](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#create-a-folder-for-the-pending-ghost-platform-resources)
+- [Ghost platform's persistent volumes](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#ghost-platforms-persistent-volumes)
+- [Ghost platform's TLS certificate](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#ghost-platforms-tls-certificate)
+- [Traefik IngressRoute for enabling HTTPS access to the Ghost platform](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#traefik-ingressroute-for-enabling-https-access-to-the-ghost-platform)
+- [Main Kustomize project for the Ghost platform](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#main-kustomize-project-for-the-ghost-platform)
+- [Browsing into Ghost](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#browsing-into-ghost)
+- [Ghost platform's Kustomize project attached to this guide series](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#ghost-platforms-kustomize-project-attached-to-this-guide-series)
+- [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#relevant-system-paths)
+- [References](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#references)
 
-### [**G034** - Deploying services 03 ~ **Gitea - Part 1** - Outlining setup and arranging storage](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#g034-deploying-services-03-gitea-part-1-outlining-setup-and-arranging-storage)
+### [G034 - Deploying services 03 ~ Gitea - Part 1 - Outlining setup and arranging storage](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#g034-deploying-services-03-gitea-part-1-outlining-setup-and-arranging-storage)
 
 - [Outlining Gitea's setup](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#outlining-giteas-setup)
 - [Setting up new storage drives in the K3s agent](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#setting-up-new-storage-drives-in-the-k3s-agent)
@@ -402,7 +410,7 @@
 - [Relevant system paths](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#relevant-system-paths)
 - [References](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#references)
 
-### [**G034** - Deploying services 03 ~ **Gitea - Part 2** - Redis cache server](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%202%20-%20Redis%20cache%20server.md#g034-deploying-services-03-gitea-part-2-redis-cache-server)
+### [G034 - Deploying services 03 ~ Gitea - Part 2 - Redis cache server](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%202%20-%20Redis%20cache%20server.md#g034-deploying-services-03-gitea-part-2-redis-cache-server)
 
 - [Kustomize project folders for Gitea and Redis](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%202%20-%20Redis%20cache%20server.md#kustomize-project-folders-for-gitea-and-redis)
 - [Redis configuration file](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%202%20-%20Redis%20cache%20server.md#redis-configuration-file)
@@ -414,7 +422,7 @@
 - [Relevant system paths](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%202%20-%20Redis%20cache%20server.md#relevant-system-paths)
 - [References](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%202%20-%20Redis%20cache%20server.md#references)
 
-### [**G034** - Deploying services 03 ~ **Gitea - Part 3** - PostgreSQL database server](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%203%20-%20PostgreSQL%20database%20server.md#g034-deploying-services-03-gitea-part-3-postgresql-database-server)
+### [G034 - Deploying services 03 ~ Gitea - Part 3 - PostgreSQL database server](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%203%20-%20PostgreSQL%20database%20server.md#g034-deploying-services-03-gitea-part-3-postgresql-database-server)
 
 - [PostgreSQL Kustomize project's folders](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%203%20-%20PostgreSQL%20database%20server.md#postgresql-kustomize-projects-folders)
 - [PostgreSQL configuration files](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%203%20-%20PostgreSQL%20database%20server.md#postgresql-configuration-files)
@@ -427,7 +435,7 @@
 - [Relevant system paths](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%203%20-%20PostgreSQL%20database%20server.md#relevant-system-paths)
 - [References](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%203%20-%20PostgreSQL%20database%20server.md#references)
 
-### [**G034** - Deploying services 03 ~ **Gitea - Part 4** - Gitea server](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%204%20-%20Gitea%20server.md#g034-deploying-services-03-gitea-part-4-gitea-server)
+### [G034 - Deploying services 03 ~ Gitea - Part 4 - Gitea server](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%204%20-%20Gitea%20server.md#g034-deploying-services-03-gitea-part-4-gitea-server)
 
 - [Considerations about the Gitea server](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%204%20-%20Gitea%20server.md#considerations-about-the-gitea-server)
 - [Gitea server Kustomize project's folders](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%204%20-%20Gitea%20server.md#gitea-server-kustomize-projects-folders)
@@ -440,7 +448,7 @@
 - [Relevant system paths](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%204%20-%20Gitea%20server.md#relevant-system-paths)
 - [References](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%204%20-%20Gitea%20server.md#references)
 
-### [**G034** - Deploying services 03 ~ **Gitea - Part 5** - Complete Gitea platform](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%205%20-%20Complete%20Gitea%20platform.md#g034-deploying-services-03-gitea-part-5-complete-gitea-platform)
+### [G034 - Deploying services 03 ~ Gitea - Part 5 - Complete Gitea platform](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%205%20-%20Complete%20Gitea%20platform.md#g034-deploying-services-03-gitea-part-5-complete-gitea-platform)
 
 - [Declaring the pending Gitea platform elements](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%205%20-%20Complete%20Gitea%20platform.md#declaring-the-pending-gitea-platform-elements)
 - [Kustomize project for Gitea platform](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%205%20-%20Complete%20Gitea%20platform.md#kustomize-project-for-gitea-platform)
@@ -450,14 +458,14 @@
 - [Relevant system paths](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%205%20-%20Complete%20Gitea%20platform.md#relevant-system-paths)
 - [References](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%205%20-%20Complete%20Gitea%20platform.md#references)
 
-### [**G035** - Deploying services 04 ~ **Monitoring stack - Part 1** - Outlining setup and arranging storage](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#g035-deploying-services-04-monitoring-stack-part-1-outlining-setup-and-arranging-storage)
+### [G035 - Deploying services 04 ~ Monitoring stack - Part 1 - Outlining setup and arranging storage](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#g035-deploying-services-04-monitoring-stack-part-1-outlining-setup-and-arranging-storage)
 
 - [Outlining your monitoring stack setup](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#outlining-your-monitoring-stack-setup)
 - [Setting up new storage drives in the K3s agents](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#setting-up-new-storage-drives-in-the-k3s-agents)
 - [Relevant system paths](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#relevant-system-paths)
 - [References](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#references)
 
-### [**G035** - Deploying services 04 ~ **Monitoring stack - Part 2** - Kube State Metrics service](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%202%20-%20Kube%20State%20Metrics%20service.md#g035-deploying-services-04-monitoring-stack-part-2-kube-state-metrics-service)
+### [G035 - Deploying services 04 ~ Monitoring stack - Part 2 - Kube State Metrics service](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%202%20-%20Kube%20State%20Metrics%20service.md#g035-deploying-services-04-monitoring-stack-part-2-kube-state-metrics-service)
 
 - [Kustomize project folders for your monitoring stack and Kube State Metrics](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%202%20-%20Kube%20State%20Metrics%20service.md#kustomize-project-folders-for-your-monitoring-stack-and-kube-state-metrics)
 - [Kube State Metrics ServiceAccount resource](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%202%20-%20Kube%20State%20Metrics%20service.md#kube-state-metrics-serviceaccount-resource)
@@ -470,7 +478,7 @@
 - [Relevant system paths](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%202%20-%20Kube%20State%20Metrics%20service.md#relevant-system-paths)
 - [References](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%202%20-%20Kube%20State%20Metrics%20service.md#references)
 
-### [**G035** - Deploying services 04 ~ **Monitoring stack - Part 3** - Prometheus Node Exporter service](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%203%20-%20Prometheus%20Node%20Exporter%20service.md#g035-deploying-services-04-monitoring-stack-part-3-prometheus-node-exporter-service)
+### [G035 - Deploying services 04 ~ Monitoring stack - Part 3 - Prometheus Node Exporter service](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%203%20-%20Prometheus%20Node%20Exporter%20service.md#g035-deploying-services-04-monitoring-stack-part-3-prometheus-node-exporter-service)
 
 - [Kustomize project folders for Prometheus Node Exporter](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%203%20-%20Prometheus%20Node%20Exporter%20service.md#kustomize-project-folders-for-prometheus-node-exporter)
 - [Prometheus Node Exporter DaemonSet resource](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%203%20-%20Prometheus%20Node%20Exporter%20service.md#prometheus-node-exporter-daemonset-resource)
@@ -480,7 +488,7 @@
 - [Relevant system paths](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%203%20-%20Prometheus%20Node%20Exporter%20service.md#relevant-system-paths)
 - [References](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%203%20-%20Prometheus%20Node%20Exporter%20service.md#references)
 
-### [**G035** - Deploying services 04 ~ **Monitoring stack - Part 4** - Prometheus server](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%204%20-%20Prometheus%20server.md#g035-deploying-services-04-monitoring-stack-part-4-prometheus-server)
+### [G035 - Deploying services 04 ~ Monitoring stack - Part 4 - Prometheus server](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%204%20-%20Prometheus%20server.md#g035-deploying-services-04-monitoring-stack-part-4-prometheus-server)
 
 - [Kustomize project folders for Prometheus server](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%204%20-%20Prometheus%20server.md#kustomize-project-folders-for-prometheus-server)
 - [Prometheus configuration files](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%204%20-%20Prometheus%20server.md#prometheus-configuration-files)
@@ -493,7 +501,7 @@
 - [Relevant system paths](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%204%20-%20Prometheus%20server.md#relevant-system-paths)
 - [References](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%204%20-%20Prometheus%20server.md#references)
 
-### [**G035** - Deploying services 04 ~ **Monitoring stack - Part 5** - Grafana](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana.md#g035-deploying-services-04-monitoring-stack-part-5-grafana)
+### [G035 - Deploying services 04 ~ Monitoring stack - Part 5 - Grafana](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana.md#g035-deploying-services-04-monitoring-stack-part-5-grafana)
 
 - [Kustomize project folders for Grafana](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana.md#kustomize-project-folders-for-grafana)
 - [Grafana data storage](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana.md#grafana-data-storage)
@@ -505,7 +513,7 @@
 - [Relevant system paths](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana.md#relevant-system-paths)
 - [References](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana.md#references)
 
-### [**G035** - Deploying services 04 ~ **Monitoring stack - Part 6** - Complete monitoring stack setup](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#g035-deploying-services-04-monitoring-stack-part-6-complete-monitoring-stack-setup)
+### [G035 - Deploying services 04 ~ Monitoring stack - Part 6 - Complete monitoring stack setup](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#g035-deploying-services-04-monitoring-stack-part-6-complete-monitoring-stack-setup)
 
 - [Declaring the remaining monitoring stack components](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#declaring-the-remaining-monitoring-stack-components)
 - [Kustomize project for the monitoring setup](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#kustomize-project-for-the-monitoring-setup)
@@ -516,14 +524,14 @@
 - [Relevant system paths](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#relevant-system-paths)
 - [References](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#references)
 
-### [**G036** - Host and K3s cluster ~ Monitoring and diagnosis](G036%20-%20Host%20and%20K3s%20cluster%20~%20Monitoring%20and%20diagnosis.md#g036-host-and-k3s-cluster-monitoring-and-diagnosis)
+### [G036 - Host and K3s cluster ~ Monitoring and diagnosis](G036%20-%20Host%20and%20K3s%20cluster%20~%20Monitoring%20and%20diagnosis.md#g036-host-and-k3s-cluster-monitoring-and-diagnosis)
 
 - [Monitoring resources usage](G036%20-%20Host%20and%20K3s%20cluster%20~%20Monitoring%20and%20diagnosis.md#monitoring-resources-usage)
 - [Checking the logs](G036%20-%20Host%20and%20K3s%20cluster%20~%20Monitoring%20and%20diagnosis.md#checking-the-logs)
 - [Shell access into your containers](G036%20-%20Host%20and%20K3s%20cluster%20~%20Monitoring%20and%20diagnosis.md#shell-access-into-your-containers)
 - [References](G036%20-%20Host%20and%20K3s%20cluster%20~%20Monitoring%20and%20diagnosis.md#references)
 
-### [**G037** - Backups 01 ~ Considerations](G037%20-%20Backups%2001%20~%20Considerations.md#g037-backups-01-considerations)
+### [G037 - Backups 01 ~ Considerations](G037%20-%20Backups%2001%20~%20Considerations.md#g037-backups-01-considerations)
 
 - [What to backup. Identifying your data concerns](G037%20-%20Backups%2001%20~%20Considerations.md#what-to-backup-identifying-your-data-concerns)
 - [How to backup. Backup tools](G037%20-%20Backups%2001%20~%20Considerations.md#how-to-backup-backup-tools)
@@ -531,7 +539,7 @@
 - [When to do the backups. Backup scheduling](G037%20-%20Backups%2001%20~%20Considerations.md#when-to-do-the-backups-backup-scheduling)
 - [References](G037%20-%20Backups%2001%20~%20Considerations.md#references)
 
-### [**G038** - Backups 02 ~ Host platform backup with Clonezilla](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md#g038-backups-02-host-platform-backup-with-clonezilla)
+### [G038 - Backups 02 ~ Host platform backup with Clonezilla](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md#g038-backups-02-host-platform-backup-with-clonezilla)
 
 - [What gets inside this backup](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md#what-gets-inside-this-backup)
 - [Why doing this backup](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md#why-doing-this-backup)
@@ -542,7 +550,7 @@
 - [Final considerations](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md#final-considerations)
 - [References](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md#references)
 
-### [**G039** - Backups 03 ~ Proxmox VE backup job](G039%20-%20Backups%2003%20~%20Proxmox%20VE%20backup%20job.md#g039-backups-03-proxmox-ve-backup-job)
+### [G039 - Backups 03 ~ Proxmox VE backup job](G039%20-%20Backups%2003%20~%20Proxmox%20VE%20backup%20job.md#g039-backups-03-proxmox-ve-backup-job)
 
 - [What gets covered with the backup job](G039%20-%20Backups%2003%20~%20Proxmox%20VE%20backup%20job.md#what-gets-covered-with-the-backup-job)
 - [Why scheduling a backup job](G039%20-%20Backups%2003%20~%20Proxmox%20VE%20backup%20job.md#why-scheduling-a-backup-job)
@@ -554,7 +562,7 @@
 - [Relevant system paths](G039%20-%20Backups%2003%20~%20Proxmox%20VE%20backup%20job.md#relevant-system-paths)
 - [References](G039%20-%20Backups%2003%20~%20Proxmox%20VE%20backup%20job.md#references)
 
-### [**G040** - Backups 04 ~ UrBackup 01 - Server setup](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#g040-backups-04-urbackup-01-server-setup)
+### [G040 - Backups 04 ~ UrBackup 01 - Server setup](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#g040-backups-04-urbackup-01-server-setup)
 
 - [Setting up a new VM for the UrBackup server](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#setting-up-a-new-vm-for-the-urbackup-server)
 - [Deploying UrBackup](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#deploying-urbackup)
@@ -565,7 +573,7 @@
 - [Relevant system paths](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#relevant-system-paths)
 - [References](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#references)
 
-### [**G041** - Backups 05 ~ UrBackup 02 - Clients setup and configuring file backups](G041%20-%20Backups%2005%20~%20UrBackup%2002%20-%20Clients%20setup%20and%20configuring%20file%20backups.md#g041-backups-05-urbackup-02-clients-setup-and-configuring-file-backups)
+### [G041 - Backups 05 ~ UrBackup 02 - Clients setup and configuring file backups](G041%20-%20Backups%2005%20~%20UrBackup%2002%20-%20Clients%20setup%20and%20configuring%20file%20backups.md#g041-backups-05-urbackup-02-clients-setup-and-configuring-file-backups)
 
 - [Deploying the UrBackup client program](G041%20-%20Backups%2005%20~%20UrBackup%2002%20-%20Clients%20setup%20and%20configuring%20file%20backups.md#deploying-the-urbackup-client-program)
 - [UrBackup client log file](G041%20-%20Backups%2005%20~%20UrBackup%2002%20-%20Clients%20setup%20and%20configuring%20file%20backups.md#urbackup-client-log-file)
@@ -576,32 +584,32 @@
 - [Relevant system paths](G041%20-%20Backups%2005%20~%20UrBackup%2002%20-%20Clients%20setup%20and%20configuring%20file%20backups.md#relevant-system-paths)
 - [References](G041%20-%20Backups%2005%20~%20UrBackup%2002%20-%20Clients%20setup%20and%20configuring%20file%20backups.md#references)
 
-### [**G042** - System update 01 ~ Considerations](G042%20-%20System%20update%2001%20~%20Considerations.md#g042-system-update-01-considerations)
+### [G042 - System update 01 ~ Considerations](G042%20-%20System%20update%2001%20~%20Considerations.md#g042-system-update-01-considerations)
 
 - [What to update. Identifying your system's software layers](G042%20-%20System%20update%2001%20~%20Considerations.md#what-to-update-identifying-your-systems-software-layers)
 - [How to update. Update procedures](G042%20-%20System%20update%2001%20~%20Considerations.md#how-to-update-update-procedures)
 - [When to apply the updates](G042%20-%20System%20update%2001%20~%20Considerations.md#when-to-apply-the-updates)
 
-### [**G043** - System update 02 ~ Updating Proxmox VE](G043%20-%20System%20update%2002%20~%20Updating%20Proxmox%20VE.md#g043-system-update-02-updating-proxmox-ve)
+### [G043 - System update 02 ~ Updating Proxmox VE](G043%20-%20System%20update%2002%20~%20Updating%20Proxmox%20VE.md#g043-system-update-02-updating-proxmox-ve)
 
 - [Examining your Proxmox VE system](G043%20-%20System%20update%2002%20~%20Updating%20Proxmox%20VE.md#examining-your-proxmox-ve-system)
 - [Updating Proxmox VE](G043%20-%20System%20update%2002%20~%20Updating%20Proxmox%20VE.md#updating-proxmox-ve)
 - [References](G043%20-%20System%20update%2002%20~%20Updating%20Proxmox%20VE.md#references)
 
-### [**G044** - System update 03 ~ Updating VMs and UrBackup](G044%20-%20System%20update%2003%20~%20Updating%20VMs%20and%20UrBackup.md#g044-system-update-03-updating-vms-and-urbackup)
+### [G044 - System update 03 ~ Updating VMs and UrBackup](G044%20-%20System%20update%2003%20~%20Updating%20VMs%20and%20UrBackup.md#g044-system-update-03-updating-vms-and-urbackup)
 
 - [Examining your VMs](G044%20-%20System%20update%2003%20~%20Updating%20VMs%20and%20UrBackup.md#examining-your-vms)
 - [Updating Debian on your VMs](G044%20-%20System%20update%2003%20~%20Updating%20VMs%20and%20UrBackup.md#updating-debian-on-your-vms)
 - [Updating the UrBackup software](G044%20-%20System%20update%2003%20~%20Updating%20VMs%20and%20UrBackup.md#updating-the-urbackup-software)
 - [References](G044%20-%20System%20update%2003%20~%20Updating%20VMs%20and%20UrBackup.md#references)
 
-### [**G045** - System update 04 ~ Updating K3s and deployed apps](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md#g045-system-update-04-updating-k3s-and-deployed-apps)
+### [G045 - System update 04 ~ Updating K3s and deployed apps](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md#g045-system-update-04-updating-k3s-and-deployed-apps)
 
 - [Examining your K3s Kubernetes cluster](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md#examining-your-k3s-kubernetes-cluster)
 - [Updating apps and K3s](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md#updating-apps-and-k3s)
 - [References](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md#references)
 
-### [**G046** - Cleaning the system](G046%20-%20Cleaning%20the%20system.md#g046-cleaning-the-system)
+### [G046 - Cleaning the system](G046%20-%20Cleaning%20the%20system.md#g046-cleaning-the-system)
 
 - [Checking your storage status](G046%20-%20Cleaning%20the%20system.md#checking-your-storage-status)
 - [Cleaning procedures](G046%20-%20Cleaning%20the%20system.md#cleaning-procedures)
@@ -611,27 +619,27 @@
 
 ## Appendixes
 
-### [**G901** - Appendix 01 ~ Connecting through SSH with PuTTY](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md#g901-appendix-01-connecting-through-ssh-with-putty)
+### [G901 - Appendix 01 ~ Connecting through SSH with PuTTY](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md#g901-appendix-01-connecting-through-ssh-with-putty)
 
 - [Generating `.ppk` file from private key](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md#generating-ppk-file-from-private-key)
 - [Configuring the connection to the PVE node](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md#configuring-the-connection-to-the-pve-node)
 - [References](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md#references)
 
-### [**G902** - Appendix 02 ~ Vim vimrc configuration](G902%20-%20Appendix%2002%20~%20Vim%20vimrc%20configuration.md#g902-appendix-02-vim-vimrc-configuration)
+### [G902 - Appendix 02 ~ Vim vimrc configuration](G902%20-%20Appendix%2002%20~%20Vim%20vimrc%20configuration.md#g902-appendix-02-vim-vimrc-configuration)
 
 - [References](G902%20-%20Appendix%2002%20~%20Vim%20vimrc%20configuration.md#references)
 
-### [**G903** - Appendix 03 ~ Customization of the motd file](G903%20-%20Appendix%2003%20~%20Customization%20of%20the%20motd%20file.md#g903-appendix-03-customization-of-the-motd-file)
+### [G903 - Appendix 03 ~ Customization of the motd file](G903%20-%20Appendix%2003%20~%20Customization%20of%20the%20motd%20file.md#g903-appendix-03-customization-of-the-motd-file)
 
 - [References](G903%20-%20Appendiz%2003%20~%20Customization%20of%20the%20motd%20file.md#references)
 
-### [**G904** - Appendix 04 ~ Object by object Kubernetes deployments](G904%20-%20Appendix%2004%20~%20Object%20by%20object%20Kubernetes%20deployments.md#g904-appendix-04-object-by-object-kubernetes-deployments)
+### [G904 - Appendix 04 ~ Object by object Kubernetes deployments](G904%20-%20Appendix%2004%20~%20Object%20by%20object%20Kubernetes%20deployments.md#g904-appendix-04-object-by-object-kubernetes-deployments)
 
 - [Example scenario: cert-manager deployment](G904%20-%20Appendix%2004%20~%20Object%20by%20object%20Kubernetes%20deployments.md#example-scenario-cert-manager-deployment)
 - [Relevant system paths](G904%20-%20Appendix%2004%20~%20Object%20by%20object%20Kubernetes%20deployments.md#relevant-system-paths)
 - [References](G904%20-%20Appendix%2004%20~%20Object%20by%20object%20Kubernetes%20deployments.md#references)
 
-### [**G905** - Appendix 05 ~ Cloning storage drives with Clonezilla](G905%20-%20Appendix%2005%20~%20Cloning%20storage%20drives%20with%20Clonezilla.md#g905-appendix-05-cloning-storage-drives-with-clonezilla)
+### [G905 - Appendix 05 ~ Cloning storage drives with Clonezilla](G905%20-%20Appendix%2005%20~%20Cloning%20storage%20drives%20with%20Clonezilla.md#g905-appendix-05-cloning-storage-drives-with-clonezilla)
 
 - [Preparing the Clonezilla Live USB](G905%20-%20Appendix%2005%20~%20Cloning%20storage%20drives%20with%20Clonezilla.md#preparing-the-clonezilla-live-usb)
 - [Cloning a storage drive with Clonezilla](G905%20-%20Appendix%2005%20~%20Cloning%20storage%20drives%20with%20Clonezilla.md#cloning-a-storage-drive-with-clonezilla)
@@ -640,21 +648,21 @@
 - [Alternative to Clonezilla:_ Rescuezilla](G905%20-%20Appendix%2005%20~%20Cloning%20storage%20drives%20with%20Clonezilla.md#alternative-to-clonezilla-rescuezilla)
 - [References](G905%20-%20Appendix%2005%20~%20Cloning%20storage%20drives%20with%20Clonezilla.md#references)
 
-### [**G906** - Appendix 06 ~ Handling VM or VM template volumes](G906%20-%20Appendix%2006%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#g906-appendix-06-handling-vm-or-vm-template-volumes)
+### [G906 - Appendix 06 ~ Handling VM or VM template volumes](G906%20-%20Appendix%2006%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#g906-appendix-06-handling-vm-or-vm-template-volumes)
 
 - [Installing the `libguestfs-tools` package](G906%20-%20Appendix%2006%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#installing-the-libguestfs-tools-package)
 - [Locating and checking a VM or VM template's hard disk volume](G906%20-%20Appendix%2006%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#locating-and-checking-a-vm-or-vm-templates-hard-disk-volume)
 - [Relevant system paths](G906%20-%20Appendix%2006%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#relevant-system-paths)
 - [References](G906%20-%20Appendix%2006%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#references)
 
-### [**G907** - Appendix 07 ~ Resizing a root LVM volume](G907%20-%20Appendix%2007%20~%20Resizing%20a%20root%20LVM%20volume.md#g907-appendix-07-resizing-a-root-lvm-volume)
+### [G907 - Appendix 07 ~ Resizing a root LVM volume](G907%20-%20Appendix%2007%20~%20Resizing%20a%20root%20LVM%20volume.md#g907-appendix-07-resizing-a-root-lvm-volume)
 
 - [Resizing the storage drive on Proxmox VE](G907%20-%20Appendix%2007%20~%20Resizing%20a%20root%20LVM%20volume.md#resizing-the-storage-drive-on-proxmox-ve)
 - [Extending the root LVM filesystem on a live VM](G907%20-%20Appendix%2007%20~%20Resizing%20a%20root%20LVM%20volume.md#extending-the-root-lvm-filesystem-on-a-live-vm)
 - [Final note](G907%20-%20Appendix%2007%20~%20Resizing%20a%20root%20LVM%20volume.md#final-note)
 - [References](G907%20-%20Appendix%2007%20~%20Resizing%20a%20root%20LVM%20volume.md#references)
 
-### [**G908** - Appendix 08 ~ K3s cluster with two or more server nodes](G908%20-%20Appendix%2008%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#g908-appendix-08-k3s-cluster-with-two-or-more-server-nodes)
+### [G908 - Appendix 08 ~ K3s cluster with two or more server nodes](G908%20-%20Appendix%2008%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#g908-appendix-08-k3s-cluster-with-two-or-more-server-nodes)
 
 - [Add a new VM to act as the second server node](G908%20-%20Appendix%2008%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#add-a-new-vm-to-act-as-the-second-server-node)
 - [Adapt the Proxmox VE firewall setup](G908%20-%20Appendix%2008%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#adapt-the-proxmox-ve-firewall-setup)
@@ -662,50 +670,37 @@
 - [Setup of the SECOND K3s server node](G908%20-%20Appendix%2008%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#setup-of-the-second-k3s-server-node)
 - [Regarding the K3s agent nodes](G908%20-%20Appendix%2008%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#regarding-the-k3s-agent-nodes)
 
-### [**G909** - Appendix 09 ~ Kubernetes object stuck in Terminating state](G909%20-%20Appendix%2009%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md#g909-appendix-09-kubernetes-object-stuck-in-terminating-state)
+### [G909 - Appendix 09 ~ Kubernetes object stuck in Terminating state](G909%20-%20Appendix%2009%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md#g909-appendix-09-kubernetes-object-stuck-in-terminating-state)
 
 - [Scenario](G909%20-%20Appendix%2009%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md#scenario)
 - [Solution](G909%20-%20Appendix%2009%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md#solution)
 - [References](G909%20-%20Appendix%2009%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md#references)
 
-### [**G910** - Appendix 10 ~ Setting up virtual network with Open vSwitch](G910%20-%20Appendix%2010%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md#g910-appendix-10-setting-up-virtual-network-with-open-vswitch)
+### [G910 - Appendix 10 ~ Setting up virtual network with Open vSwitch](G910%20-%20Appendix%2010%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md#g910-appendix-10-setting-up-virtual-network-with-open-vswitch)
 
 - [Installation](G910%20-%20Appendix%2010%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md#installation)
 - [Replacing the Linux bridge with the OVS one](G910%20-%20Appendix%2010%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md#replacing-the-linux-bridge-with-the-ovs-one)
 - [Relevant system paths](G910%20-%20Appendix%2010%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md#relevant-system-paths)
 - [References](G910%20-%20Appendix%2010%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md#references)
 
-### [**G911** - Appendix 11 ~ Alternative Nextcloud web server setups](G911%20-%20Appendix%2011%20~%20Alternative%20Nextcloud%20web%20server%20setups.md)
-
-- [Ideas for the Apache setup](G911%20-%20Appendix%2011%20~%20Alternative%20Nextcloud%20web%20server%20setups.md#ideas-for-the-apache-setup)
-- [Nginx setup](G911%20-%20Appendix%2011%20~%20Alternative%20Nextcloud%20web%20server%20setups.md#nginx-setup)
-- [Relevant system paths](G911%20-%20Appendix%2011%20~%20Alternative%20Nextcloud%20web%20server%20setups.md#relevant-system-paths)
-- [References](G911%20-%20Appendix%2011%20~%20Alternative%20Nextcloud%20web%20server%20setups.md#references)
-
-### [**G912** - Appendix 12 ~ Checking the K8s API endpoints' status](G912%20-%20Appendix%2012%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md)
+### [G911 - Appendix 11 ~ Checking the K8s API endpoints' status](G912%20-%20Appendix%2012%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md)
 
 - [References](G912%20-%20Appendix%2012%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md#references)
 
-### [**G913** - Appendix 13 ~ Post-update manual maintenance tasks for Nextcloud](G913%20-%20Appendix%2013%20~%20Post-update%20manual%20maintenance%20tasks%20for%20Nextcloud.md)
+### [G912 - Appendix 12 ~ Updating MariaDB to a newer major version](G912%20-%20Appendix%2012%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md)
 
-- [Concerns](G913%20-%20Appendix%2013%20~%20Post-update%20manual%20maintenance%20tasks%20for%20Nextcloud.md#concerns)
-- [Procedure](G913%20-%20Appendix%2013%20~%20Post-update%20manual%20maintenance%20tasks%20for%20Nextcloud.md#procedure)
-- [References](G913%20-%20Appendix%2013%20~%20Post-update%20manual%20maintenance%20tasks%20for%20Nextcloud.md#references)
+- [Concerns](G912%20-%20Appendix%2012%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#concerns)
+- [Enabling the update procedure](G912%20-%20Appendix%2012%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#enabling-the-update-procedure)
+- [References](G912%20-%20Appendix%2012%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#references)
 
-### [**G914** - Appendix 14 ~ Updating MariaDB to a newer major version](G914%20-%20Appendix%2014%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md)
+### [G913 - Appendix 13 ~ Updating PostgreSQL to a newer major version](G913%20-%20Appendix%2013%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md)
 
-- [Concerns](G914%20-%20Appendix%2014%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#concerns)
-- [Enabling the update procedure](G914%20-%20Appendix%2014%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#enabling-the-update-procedure)
-- [References](G914%20-%20Appendix%2014%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#references)
-
-### [**G915** - Appendix 15 ~ Updating PostgreSQL to a newer major version](G915%20-%20Appendix%2015%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md)
-
-- [Concerns](G915%20-%20Appendix%2015%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#concerns)
-- [Upgrade procedure (for Gitea's PostgreSQL instance)](G915%20-%20Appendix%2015%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#upgrade-procedure-for-gitea-s-postgresql-instance)
-- [Kustomize project only for updating PostgreSQL included in this guide series](G915%20-%20Appendix%2015%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#kustomize-project-only-for-updating-postgresql-included-in-this-guide-series)
-- [Relevant system paths](G915%20-%20Appendix%2015%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#relevant-system-paths)
-- [References](G915%20-%20Appendix%2015%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#references)
+- [Concerns](G913%20-%20Appendix%2013%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#concerns)
+- [Upgrade procedure (for Gitea's PostgreSQL instance)](G913%20-%20Appendix%2013%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#upgrade-procedure-for-gitea-s-postgresql-instance)
+- [Kustomize project only for updating PostgreSQL included in this guide series](G913%20-%20Appendix%2013%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#kustomize-project-only-for-updating-postgresql-included-in-this-guide-series)
+- [Relevant system paths](G913%20-%20Appendix%2013%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#relevant-system-paths)
+- [References](G913%20-%20Appendix%2013%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#references)
 
 ## Navigation
 
-[<< Previous (**README**)](README.md) | [Next (**G001** - Hardware setup) >>](G001%20-%20Hardware%20setup.md)
+[<< Previous (**README**)](README.md) | [Next (**G001 - Hardware setup) >>](G001%20-%20Hardware%20setup.md)

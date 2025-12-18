@@ -6,7 +6,8 @@
     ],
 		"settings": {
 			"cSpell.words": [
-				"hugepages"
+				"hugepages",
+				"Valkey"
 			]
 		}
 }

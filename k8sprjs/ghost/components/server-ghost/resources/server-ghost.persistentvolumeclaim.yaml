@@ -1,0 +1,14 @@
+# Ghost server claim of persistent storage
+apiVersion: v1
+kind: PersistentVolumeClaim
+
+metadata:
+  name: server-ghost
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: local-path
+  volumeName: ghost-hdd-srv
+  resources:
+    requests:
+      storage: 9.3G

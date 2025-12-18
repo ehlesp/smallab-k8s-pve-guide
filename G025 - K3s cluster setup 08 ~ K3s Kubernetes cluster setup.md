@@ -107,7 +107,7 @@ A server can also act as an agent at the same time, but this chapter only explai
 
 ### Criteria for IPs
 
-I'll assume the most simple scenario, which is a single local network behind one router. This means that everything falls within a [private network IPv4 range](https://en.wikipedia.org/wiki/Reserved_IP_addresses#IPv4) such as `10.0.0.0/8`, and no other subnets are present.
+This guide assumes the most simple scenario, which is a single local network behind one router. This means that everything falls within a [private network IPv4 range](https://en.wikipedia.org/wiki/Reserved_IP_addresses#IPv4) such as `10.0.0.0/8`, and no other subnets are present.
 
 > [!NOTE]
 > **I picked a big private network IP range to minimize conflicts**\
@@ -1554,7 +1554,7 @@ On the other hand, you might be thinking now that the NUT configuration you've d
 
 ### Warning about the Kubernetes graceful shutdown feature
 
-This feature is still considered beta, so it could give you surprises. I'll give you an example from my experience with the older K3s release `v1.22.3+k3s1` of K3s. After a graceful reboot, the pods appeared as `Terminated` although they were actually running. This is something you can detect with `kubectl` when checking the pods like in the output below:
+This feature is still considered beta, so it could give you surprises. I'll give you an example from my experience with the older K3s release `v1.33.4+k3s1` of K3s. After a graceful reboot, the pods appeared as `Terminated` although they were actually running. This is something you can detect with `kubectl` when checking the pods like in the output below:
 
 ~~~sh
 $ kubectl get pods -n kube-system

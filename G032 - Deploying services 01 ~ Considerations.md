@@ -11,7 +11,7 @@ The next chapters of this guide will show you how to deploy in your K3s cluster 
 
 ## Be watchful of your system's resources usage
 
-Your K3s Kubernetes cluster is not running "empty" at this point, it already has a fair number of services running which already eat up a good chunk of your hardware's resources. Be always aware of the current resources usage in your setup before you deploy any new app or service in your cluster.
+Your K3s Kubernetes cluster is not running "empty" at this point. It has a number of services running that already eat up a good chunk of your hardware's resources. Be always aware of the current resources usage in your setup before you deploy any new app or service in your cluster.
 
 Remember that you can get the resource usages from your setup in these ways:
 
@@ -33,4 +33,4 @@ Just because you still have free RAM or a not so high CPU usage, it does not mea
 
 ## Navigation
 
-[<< Previous (**G031. K3s cluster setup 14**)](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G033. Deploying services 02. Nextcloud Part 1**) >>](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%201%20-%20Outlining%20setup%2C%20arranging%20storage%20and%20choosing%20service%20IPs.md)
+[<< Previous (**G031. K3s cluster setup 14**)](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G033. Deploying services 02. Ghost Part 1**) >>](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md)
