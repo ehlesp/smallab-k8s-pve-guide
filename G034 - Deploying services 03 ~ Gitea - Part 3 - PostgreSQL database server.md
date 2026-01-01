@@ -1,12 +1,36 @@
 # G034 - Deploying services 03 ~ Gitea - Part 3 - PostgreSQL database server
 
-Gitea is compatible with MariaDB but, instead of essentially repeating [the configuration used for the Nextcloud platform](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%203%20-%20MariaDB%20database%20server.md), I thought it would be more interesting to show you how similar can be, from a Kubernetes point of view, the configuration of a different database. So, here you'll see how to configure a PostgreSQL instance for your Gitea platform.
+- [Gitea can use PostgreSQL as database](#gitea-can-use-postgresql-as-database)
+- [PostgreSQL Kustomize project's folders](#postgresql-kustomize-projects-folders)
+- [PostgreSQL configuration files](#postgresql-configuration-files)
+  - [Configuration file `postgresql.conf`](#configuration-file-postgresqlconf)
+  - [Properties file `dbnames.properties`](#properties-file-dbnamesproperties)
+  - [Initializer shell script `initdb.sh`](#initializer-shell-script-initdbsh)
+- [PostgreSQL passwords](#postgresql-passwords)
+- [PostgreSQL persistent storage claim](#postgresql-persistent-storage-claim)
+- [PostgreSQL StatefulSet](#postgresql-statefulset)
+- [PostgreSQL Service](#postgresql-service)
+- [PostgreSQL Kustomize project](#postgresql-kustomize-project)
+  - [Validating the Kustomize YAML output](#validating-the-kustomize-yaml-output)
+- [Do not deploy this PostgreSQL project on its own](#do-not-deploy-this-postgresql-project-on-its-own)
+- [Relevant system paths](#relevant-system-paths)
+  - [Folders in `kubectl` client system](#folders-in-kubectl-client-system)
+  - [Files in `kubectl` client system](#files-in-kubectl-client-system)
+- [References](#references)
+  - [PostgreSQL](#postgresql)
+    - [Other PostgreSQL-related contents](#other-postgresql-related-contents)
+  - [Kubernetes](#kubernetes)
+- [Navigation](#navigation)
+
+## Gitea can use PostgreSQL as database
+
+Gitea is compatible with MariaDB but, instead of essentially repeating [the configuration used for the Ghost platform](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md), it is more interesting to show you how similar can be, from a Kubernetes point of view, the configuration of a different database. Therefore, in this part you will see how to configure the deployment a PostgreSQL instance for your Gitea platform.
 
 ## PostgreSQL Kustomize project's folders
 
 Create the corresponding Kustomize subproject's directory tree for this component of your Gitea platform.
 
-~~~bash
+~~~sh
 $ mkdir -p $HOME/k8sprjs/gitea/components/db-postgresql/{configs,resources,secrets}
 ~~~
 
@@ -14,17 +38,17 @@ $ mkdir -p $HOME/k8sprjs/gitea/components/db-postgresql/{configs,resources,secre
 
 You need some configuration files where to set certain parameters for PostgreSQL.
 
-### _Configuration file `postgresql.conf`_
+### Configuration file `postgresql.conf`
 
 The `postgresql.conf` is where you can set the parameters for PostgreSQL.
 
-1. Create a `postgresql.conf` in the `configs` folder.
+1. Create a `postgresql.conf` in the `configs` folder:
 
-    ~~~bash
+    ~~~sh
     $ touch $HOME/k8sprjs/gitea/components/db-postgresql/configs/postgresql.conf
     ~~~
 
-2. Add to `postgresql.conf` the next configuration.
+2. Set the PostgreSQL configuration in `configs/postgresql.conf`:
 
     ~~~properties
     # Extension libraries loading
@@ -57,99 +81,122 @@ The `postgresql.conf` is where you can set the parameters for PostgreSQL.
     pg_stat_statements.track = all
     ~~~
 
-    Above I've set just a bunch of the many parameters available for tuning PostgreSQL.
+    The parameters set above mean the following:
 
-    - `shared_preload_libraries`: to list shared libraries to be preloaded at server start.
+    - `shared_preload_libraries`\
+      Preloads at server start the listed libraries. In this case, only the [`pg_stat_statements` extension library](https://www.postgresql.org/docs/current/pgstatstatements.html) is preloaded to help in tracking of planning and execution statistics of all SQL statements executed by the PostgreSQL server.
 
-    - `listen_addresses`: indicates through which network interfaces this server will listen. With `0.0.0.0` it'll listen only through all the IPv4 ones it has available.
+    - `listen_addresses`\
+      Indicates which network interfaces this server will listen through. The `0.0.0.0` address makes this PostgreSQL instance listen through all the IPv4 interfaces it has available.
 
-    - `port`: port where PostgreSQL listen to requests. Here it has the default value, `5432`.
+    - `port`\
+      Port where the PostgreSQL server listen to requests. Here it has the default value, `5432`.
 
-    - `max_connections`: the maximum number of concurrent connections to this PostgreSQL server. Here set with the default value, `100`.
+    - `max_connections`\
+      The maximum number of concurrent connections allowed on this PostgreSQL server. Here is set with the default value, `100`.
 
-    - `superuser_reserved_connections`: maximum number of simultaneous connections of the superuser to this server. Set with the default value, `3`.
+    - `superuser_reserved_connections`\
+      Maximum number of simultaneous connections of PostgreSQL superusers allowed on this server. Set with the default value, `3`.
 
-    - `shared_buffers`: how much memory this server can use for shared memory buffers. Here set with the default value, `128MB`.
+    - `shared_buffers`\
+      How much memory this server can use for shared memory buffers. Here set with the default value, `128MB`.
 
-    - `work_mem`: maximum memory that can be used by a query operation before writing to a temporary disk file. Careful with this value, since it works in tandem with the parameter `hash_mem_multiplier` for hash-based operations.
+    - `work_mem`\
+      Maximum memory that can be used by a query operation before writing to a temporary disk file. Careful with this value, since it works in tandem with the parameter `hash_mem_multiplier` for hash-based operations.
 
-    - `hash_mem_multiplier`: used to compute the maximum amount of memory that database hash-based operations can use. As it name implies, it multiplies the value in `work_mem` to set the top memory limit for hash-based operations.
+    - `hash_mem_multiplier`\
+      Used to compute the maximum amount of memory that database hash-based operations can use. As it name implies, it multiplies the value in `work_mem` to set the top memory limit for hash-based operations.
 
-    - `maintenance_work_mem`: maximum amount of memory allowed for database maintenance operations. This value can be multiplied by another parameter called `autovacuum_max_workers` when the automatic vacuuming operation is executed.
+    - `maintenance_work_mem`\
+      Maximum amount of memory allowed for database maintenance operations. This value can be multiplied by the value of another parameter called `autovacuum_max_workers` when the automatic vacuuming operation is executed.
 
-    - `log_destination`: where you want to dump this server logs. The default value is `stderr`.
+    - `log_destination`\
+      Where you want to dump this server logs. The default value is `stderr`.
 
-    - `logging_collector`: a PostgreSQL feature that collect in the background logs dumped in `stderr`. Unless you're specifically saving those logs in files outside the PostgreSQL server container, you won't use this feature.
+    - `logging_collector`\
+      A PostgreSQL feature that collects in the background logs dumped in `stderr`. Unless you are specifically saving those logs in files outside the PostgreSQL server container, leave this feature disabled with the `off` value.
 
-    - `log_min_messages`: to indicate up to what message level gets printed as server log.
+    - `log_min_messages`\
+      To indicate up to what message level gets printed as server log.
 
-    - `log_error_verbosity`: how verbose you want the error messages. Careful with the verbosity, since it can affect your server's performance.
+    - `log_error_verbosity`\
+      How verbose you want the error messages. Careful with the verbosity, since it can affect your server's performance.
 
-    - `log_connections`: for logging the connection attempts to the server.
+    - `log_connections`\
+      For logging the connection attempts to the server.
 
-    - `log_disconnections`: logs the session terminations.
+    - `log_disconnections`\
+      Logs the session terminations.
 
-    - `log_hostname`: when enabled, the server will try to get the hostname of the IPs connecting to it. That hostname resolution can result in a noticeable performance loss, so its better to be sure of having it disabled.
+    - `log_hostname`\
+      When enabled, the server will try to get the hostname of the IPs connecting to it. That hostname resolution can result in a noticeable performance loss, so it is better to have it disabled.
 
-    - `compute_query_id`: enables in-core computation of a query identifier. Required `on` for the `pg_stat_statements` extension.
+    - `compute_query_id`\
+      Enables in-core computation of a query identifier. Required to be `on` for the `pg_stat_statements` extension.
 
-    - `pg_stat_statements.max`: maximum number of statements tracked by the `pg_stat_statements` extension.
+    - `pg_stat_statements.max`\
+      Maximum number of statements tracked by the `pg_stat_statements` extension.
 
-    - `pg_stat_statements.track`: controls which statements are counted by the `pg_stat_statements` module.
+    - `pg_stat_statements.track`\
+      Controls which statements are counted by the `pg_stat_statements` module.
 
-    To know more about the parameters above and many others available in PostgreSQL, check the [official documentation about Server Configuration](https://www.postgresql.org/docs/14/runtime-config.html) and [the `pg_stat_statements` module](https://www.postgresql.org/docs/14/pgstatstatements.html).
+    To know more about the parameters above and many others available in PostgreSQL, check the [official documentation about Server Configuration](https://www.postgresql.org/docs/current/runtime-config.html) and [the `pg_stat_statements` module](https://www.postgresql.org/docs/current/pgstatstatements.html).
 
-### _Properties file `dbnames.properties`_
+### Properties file `dbnames.properties`
 
-You need to load in your PostgreSQL container some names as variables, so you'll prefer to keep them together in a file and load it as a `ConfigMap` later.
+You need to load in your PostgreSQL container some names as variables. Better keep them all together in a single file which you can load as a `ConfigMap` later:
 
-1. Create a `dbnames.properties` file under the `configs` path.
+1. Create a `dbnames.properties` file under the `configs` path:
 
-    ~~~bash
+    ~~~sh
     $ touch $HOME/k8sprjs/gitea/components/db-postgresql/configs/dbnames.properties
     ~~~
 
-2. Copy the following parameter lines into `dbnames.properties`.
+2. Copy the following parameter lines into `configs/dbnames.properties`:
 
     ~~~properties
-    postgresql-db-name=gitea
+    postgresql-db-name=gitea-db
     postgresql-superuser-name=postgres
-    gitea-username=gitea
+    gitea-username=giteadb
     prometheus-exporter-username=prom_metrics
     ~~~
 
     The key-value pairs above mean the following.
 
-    - `postgresql-db-name`: a PostgreSQL server always initializes with an empty database named `postgres`, but you can make it generate another one if you give it a different name such as `gitea`.
+    - `postgresql-db-name`\
+      A PostgreSQL server always initializes with an empty database named `postgres`, but you can make the server generate another one if you give it a different name such as `gitea-db`.
 
-    - `postgresql-superuser-name`: the default superuser in a PostgreSQL server is named `postgres`, but you could change it for any other.
+    - `postgresql-superuser-name`\
+      The default superuser in a PostgreSQL server is named `postgres`, but you could change it for any other.
 
-    - `gitea-username`: name of the regular user for Gitea.
+    - `gitea-username`\
+      Name of the regular user for Gitea.
 
-    - `prometheus-exporter-username`: name for the Prometheus metrics exporter user.
+    - `prometheus-exporter-username`\
+      Name for the Prometheus metrics exporter user.
 
-### _Initializer shell script `initdb.sh`_
+### Initializer shell script `initdb.sh`
 
 You need to initialize your PostgreSQL server with the following:
 
 - A regular user for Gitea that has all the privileges on the Gitea database running on your PostgreSQL server.
 
-- Enable an extra module to get certain stats, from the Gitea database, for the Prometheus metrics exporter.
+- Enable the `pg_stat_statements` module to make certain stats from the Gitea database accessible for the Prometheus metrics exporter.
 
 - A regular user and a special schema in the Gitea database for the Prometheus metrics exporter.
 
-Let's do it all in one initializer shell script.
+Let's do it all in one initializer shell script:
 
-1. Create an `initdb.sh` file in the `configs` directory.
+1. Create an `initdb.sh` file in the `configs` directory:
 
-    ~~~bash
+    ~~~sh
     $ touch $HOME/k8sprjs/gitea/components/db-postgresql/configs/initdb.sh
     ~~~
 
-2. Fill the `initdb.sh` file with the following shell script.
+2. Enter the script in the `configs/initdb.sh` file:
 
-    ~~~bash
-    #!/bin/bash
+    ~~~sh
+    #!/usr/bin/env bash
     echo ">>> Initializing PostgreSQL server"
     set -e
 
@@ -170,7 +217,7 @@ Let's do it all in one initializer shell script.
         -- To use IF statements, hence to be able to check if the user exists before
         -- attempting creation, we need to switch to procedural SQL (PL/pgSQL)
         -- instead of standard SQL.
-        -- More: https://www.postgresql.org/docs/14/plpgsql-overview.html
+        -- More: https://www.postgresql.org/docs/9.3/plpgsql-overview.html
         -- To preserve compatibility with <9.0, DO blocks are not used; instead,
         -- a function is created and dropped.
         CREATE OR REPLACE FUNCTION __tmp_create_user() returns void as
@@ -194,62 +241,38 @@ Let's do it all in one initializer shell script.
         -- If deploying as non-superuser (for example in AWS RDS), uncomment the GRANT
         -- line below and replace <MASTER_USER> with your root user.
         -- GRANT ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME} TO <MASTER_USER>;
-        CREATE SCHEMA IF NOT EXISTS ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME};
-        GRANT USAGE ON SCHEMA ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME} TO ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME};
+
         GRANT CONNECT ON DATABASE ${POSTGRES_DB} TO ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME};
 
-        CREATE OR REPLACE FUNCTION get_pg_stat_activity() RETURNS SETOF pg_stat_activity AS
-        ' SELECT * FROM pg_catalog.pg_stat_activity; '
-        LANGUAGE sql
-        VOLATILE
-        SECURITY DEFINER;
-
-        CREATE OR REPLACE VIEW ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME}.pg_stat_activity
-        AS
-          SELECT * from get_pg_stat_activity();
-
-        GRANT SELECT ON ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME}.pg_stat_activity TO ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME};
-
-        CREATE OR REPLACE FUNCTION get_pg_stat_replication() RETURNS SETOF pg_stat_replication AS
-        ' SELECT * FROM pg_catalog.pg_stat_replication; '
-        LANGUAGE sql
-        VOLATILE
-        SECURITY DEFINER;
-
-        CREATE OR REPLACE VIEW ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME}.pg_stat_replication
-        AS
-          SELECT * FROM get_pg_stat_replication();
-
-        GRANT SELECT ON ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME}.pg_stat_replication TO ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME};
-
-        CREATE OR REPLACE FUNCTION get_pg_stat_statements() RETURNS SETOF pg_stat_statements AS
-        ' SELECT * FROM public.pg_stat_statements; '
-        LANGUAGE sql
-        VOLATILE
-        SECURITY DEFINER;
-
-        CREATE OR REPLACE VIEW ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME}.pg_stat_statements
-        AS
-          SELECT * FROM get_pg_stat_statements();
-
-        GRANT SELECT ON ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME}.pg_stat_statements TO ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME};
+        GRANT pg_monitor to ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME};
     EOSQL
     ~~~
 
-    This script is a combination of a few others:
+    This script is a combination of a few other ones:
 
     - The one shown at the [Initialization scripts section](https://github.com/docker-library/docs/blob/master/postgres/README.md#initialization-scripts) of the PostgreSQL Docker image README.
 
-    - [The SQL script about "running as non-superuser" shown in the Postgres exporter Docker image's readme](https://github.com/prometheus-community/postgres_exporter#running-as-non-superuser).
+    - [The SQL scripts about "running as non-superuser" shown in the Postgres exporter Docker image's readme](https://github.com/prometheus-community/postgres_exporter#running-as-non-superuser).
 
-    The environment parameters that appear in the `initdb.sh` above mean the following.
+    The environment parameters that appear in the `initdb.sh` above mean the following:
 
-    - `POSTGRES_USER`: the PostgreSQL superuser's name which, in a default installation, is set to `postgres`.
-    - `POSTGRES_DB`: the PostgreSQL database's name to access.
-    - `POSTGRESQL_GITEA_USERNAME`: name for Gitea database's user.
-    - `POSTGRESQL_GITEA_PASSWORD`: password for Gitea database's user.
-    - `POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME`: name for the Prometheus metrics exporter user. It's also used as the name of the schema created for metrics within Gitea's database.
-    - `POSTGRESQL_PROMETHEUS_EXPORTER_PASSWORD`: password for the Prometheus metrics exporter user.
+    - `POSTGRES_USER`\
+      The PostgreSQL superuser's name which, in a default installation, is set to `postgres`.
+
+    - `POSTGRES_DB`\
+      The PostgreSQL database's name to access.
+
+    - `POSTGRESQL_GITEA_USERNAME`\
+      Name for Gitea's database user.
+
+    - `POSTGRESQL_GITEA_PASSWORD`\
+      Password for Gitea's database user.
+
+    - `POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME`\
+      Name for the Prometheus metrics exporter user. It is also used as the name of the schema created for metrics within Gitea's database.
+
+    - `POSTGRESQL_PROMETHEUS_EXPORTER_PASSWORD`\
+      Password for the Prometheus metrics exporter user.
 
 ## PostgreSQL passwords
 
@@ -259,15 +282,15 @@ There are three passwords you need to stablish for your PostgreSQL users.
 - The Gitea database user's password.
 - The Prometheus metrics exporter user's password.
 
-Put them all as variables in the same properties file, to be loaded later as variables of a Secret resource.
+Put them all as variables in the same properties file, to be loaded later as variables of a `Secret` resource:
 
-1. Create a `dbusers.pwd` file under the `secrets` path.
+1. Create a `dbusers.pwd` file under the `secrets` path:
 
-    ~~~bash
+    ~~~sh
     $ touch $HOME/k8sprjs/gitea/components/db-postgresql/secrets/dbusers.pwd
     ~~~
 
-2. Fill `dbusers.pwd` with the following lines.
+2. Enter the passwords in `secrets/dbusers.pwd`:
 
     ~~~properties
     postgresql-superuser-password=l0nG.Pl4in_T3xt_sEkRet_p4s5wORD-FoR_s4pEruZ3r!
@@ -275,21 +298,24 @@ Put them all as variables in the same properties file, to be loaded later as var
     prometheus-exporter-password=l0nG.Pl4in_T3xt_sEkRet_p4s5wORD-FoR_3xP0rTeR_uZ3r!
     ~~~
 
-    The passwords in this file must be typed as plain unencrypted text, so be careful of who accesses this file.
+    > [!WARNING]
+    > **The passwords in this `secrets/dbusers.pwd` file are unencrypted strings**\
+    > Be careful of who can access this `dbusers.pwd` file.
 
-## PostgreSQL storage
+## PostgreSQL persistent storage claim
 
-Here you'll declare a persistent volume claim (PVC) on the persistent volume (PV declared in the last part of this Gitea guide) required for this PostgreSQL setup.
+Declare here the `PersistentVolumeClaim` (_PVC_) that claims the `PersistentVolume` that will be declared in the last part of this Gitea deployment procedure:
 
-1. Create a `db-postgresql.persistentvolumeclaim.yaml` file under the `resources` folder.
+1. Create a `db-postgresql.persistentvolumeclaim.yaml` file under the `resources` folder:
 
-    ~~~bash
+    ~~~sh
     $ touch $HOME/k8sprjs/gitea/components/db-postgresql/resources/db-postgresql.persistentvolumeclaim.yaml
     ~~~
 
-2. Copy the yaml manifest below into `db-postgresql.persistentvolumeclaim.yaml`.
+2. Declare the `PersistentVolumeClaim` object in `resources/db-postgresql.persistentvolumeclaim.yaml`.
 
     ~~~yaml
+    # Gitea PostgreSQL claim of persistent storage
     apiVersion: v1
     kind: PersistentVolumeClaim
 
@@ -299,27 +325,28 @@ Here you'll declare a persistent volume claim (PVC) on the persistent volume (PV
       accessModes:
       - ReadWriteOnce
       storageClassName: local-path
-      volumeName: db-gitea
+      volumeName: gitea-ssd-db
       resources:
         requests:
-          storage: 3.5G
+          storage: 4.5G
     ~~~
 
-    If you went back and compared this PVC resource with the one declared for MariaDB in the [part 3 of the Nextcloud guide](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-storage), you'll notice that they're essentially the same. Just remember here that the specifications you set in spec must match the ones available in the PV you claim with this PVC.
+    If you went back and compared this PVC resource with the one declared for MariaDB in the [part 3 of the Ghost deployment procedure](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-persistent-storage-claim), you would notice that they're essentially the same. Just remember here that the specifications you declare in the YAML manifest must match the ones available in the PV you claim with this PVC.
 
-## PostgreSQL StatefulSet resource
+## PostgreSQL StatefulSet
 
-You know already that databases are better deployed with stateful set resources, so let's create one for your PostgreSQL server.
+Since you already know that databases are better deployed as `StatefulSet` objects, let's create one for your PostgreSQL server:
 
 1. Create a `db-postgresql.statefulset.yaml` in the `resources` path.
 
-    ~~~bash
+    ~~~sh
     $ touch $HOME/k8sprjs/gitea/components/db-postgresql/resources/db-postgresql.statefulset.yaml
     ~~~
 
-2. Put in `db-postgresql.statefulset.yaml` the next resource description.
+2. Declare the `StatefulSet` in `resources/db-postgresql.statefulset.yaml`:
 
     ~~~yaml
+    # Gitea PostgreSQL StatefulSet for a sidecar server pod
     apiVersion: apps/v1
     kind: StatefulSet
 
@@ -332,9 +359,10 @@ You know already that databases are better deployed with stateful set resources,
         spec:
           containers:
           - name: server
-            image: postgres:14.1-bullseye
+            image: postgres:18.1-trixie
             ports:
-            - containerPort: 5432
+            - name: server
+              containerPort: 5432
             args:
             - "-c"
             - "config_file=/etc/postgresql/postgresql.conf"
@@ -342,76 +370,80 @@ You know already that databases are better deployed with stateful set resources,
             - name: POSTGRES_USER
               valueFrom:
                 configMapKeyRef:
-                  name: db-postgresql
+                  name: db-postgresql-config
                   key: postgresql-superuser-name
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: db-postgresql
+                  name: db-postgresql-secrets
                   key: postgresql-superuser-password
             - name: POSTGRES_DB
               valueFrom:
                 configMapKeyRef:
-                  name: db-postgresql
+                  name: db-postgresql-config
                   key: postgresql-db-name
             - name: POSTGRESQL_GITEA_USERNAME
               valueFrom:
                 configMapKeyRef:
-                  name: db-postgresql
+                  name: db-postgresql-config
                   key: gitea-username
             - name: POSTGRESQL_GITEA_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: db-postgresql
+                  name: db-postgresql-secrets
                   key: gitea-user-password
             - name: POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME
               valueFrom:
                 configMapKeyRef:
-                  name: db-postgresql
+                  name: db-postgresql-config
                   key: prometheus-exporter-username
             - name: POSTGRESQL_PROMETHEUS_EXPORTER_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: db-postgresql
+                  name: db-postgresql-secrets
                   key: prometheus-exporter-password
             resources:
-              limits:
-                memory: 320Mi
+              requests:
+                cpu: "0.75"
+                memory: 256Mi
             volumeMounts:
             - name: postgresql-storage
               mountPath: /var/lib/postgresql/data
             - name: postgresql-config
+              readOnly: true
               subPath: postgresql.conf
               mountPath: /etc/postgresql/postgresql.conf
             - name: postgresql-config
+              readOnly: true
               subPath: initdb.sh
               mountPath: /docker-entrypoint-initdb.d/initdb.sh
           - name: metrics
-            image: wrouesnel/postgres_exporter:latest
+            image: prometheuscommunity/postgres-exporter:v0.18.1
             ports:
-            - containerPort: 9187
+            - name: metrics
+              containerPort: 9187
             env:
             - name: DATA_SOURCE_USER
               valueFrom:
                 configMapKeyRef:
-                  name: db-postgresql
+                  name: db-postgresql-config
                   key: prometheus-exporter-username
             - name: DATA_SOURCE_PASS
               valueFrom:
                 secretKeyRef:
-                  name: db-postgresql
+                  name: db-postgresql-secrets
                   key: prometheus-exporter-password
             - name: DATA_SOURCE_URI
               value: "localhost:5432/?sslmode=disable"
-            - name: PG_EXPORTER_AUTO_DISCOVER_DATABASES
-              value: 'true'
             resources:
-              limits:
-                memory: 32Mi
+              requests:
+                cpu: "0.25"
+                memory: 16Mi
           volumes:
           - name: postgresql-config
             configMap:
-              name: db-postgresql
+              name: db-postgresql-config
+              defaultMode: 444
               items:
               - key: initdb.sh
                 path: initdb.sh
@@ -422,96 +454,117 @@ You know already that databases are better deployed with stateful set resources,
               claimName: db-postgresql
     ~~~
 
-    The `StatefulSet` above is pretty much like [the one you made for the MariaDB server of the Nextcloud platform](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-statefulset-resource). The differences are essentially in the values set and the environment variables used, and more in particular in the containers' declarations.
+    The `StatefulSet` above is pretty much like [the one you made for the MariaDB server of the Ghost platform](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-statefulset). The differences are essentially in the values set and the environment variables used, and more in particular in the containers' declarations:
 
-    - `template.spec.containers`: two containers are set in the pod as sidecars.
-        - Container `server`: the PostgreSQL server instance.
+    - `template.spec.containers`\
+      Two containers are set in a sidecar configuration within the pod.
 
-            - The `image` of PostgreSQL is based on Debian Bullseye.
+      - Container `server`\
+        Holds the PostgreSQL server instance.
 
-            - There's an `args` section with a couple of arguments for this container.
-                - `"-c"`: is an option of the postgres service, used for specifying configuration options at runtime.
-                - `"config_file=/etc/postgresql/postgresql.conf"`: the `config_file` option is for setting an alternative custom configuration file for the PostgreSQL server. In this case, it will be the `postgresql.conf` file you configured previously, and you'll put in the `/etc/postgresql` path.
+        - The `image` of PostgreSQL is based on Debian Trixie.
 
-                    This is necessary because you won't be able to change directly the default `postgresql.conf` file that exists in the default data path `/var/lib/postgresql/data`. Trying to do so will provoke a `Read-only file system` error that won't allow the container to start. The same goes for any other configuration file you might consider customize within that `/var/lib/postgresql/data` path.
+        - There's an `args` section with a couple of arguments for this container:
 
-            - At the `env` section.
-                - The `POSTGRES_USER` and `POSTGRES_PASSWORD` variables are expected by PostgreSQL to set the superuser's name and password. The `POSTGRES_USER` is defined here also to make it available for the `initdb.sh` script.
-                - The `POSTGRES_DB` is the name of the database you want to create initially in your PostgreSQL. This variable's also used in the initialization script.
-                    > **BEWARE!**  
-                    > No matter what, there will be always a `postgres` database created in your PostgreSQL server.
-                - The `POSTGRESQL_GITEA_USERNAME`, `POSTGRESQL_GITEA_PASSWORD`, `POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME` and `POSTGRESQL_PROMETHEUS_EXPORTER_PASSWORD` variables are for the `initdb.sh` script.
+          - `"-c"`\
+            Is an option of the postgres service, used for specifying configuration options at runtime.
 
-            - The `volumeMounts` section has three mount points.
-                - MountPath `/var/lib/postgresql/data`: mounts the volume claimed by `postgresql-storage` in the default data folder of PostgreSQL.
-                - MountPath `/etc/postgresql/postgresql.conf`: your `postgresql.conf` file will be mounted in the container path `/etc/postgresql`, as it has been specified at the `args` section of this `server` container.
-                - MountPath `/docker-entrypoint-initdb.d/initdb.sh`: to make the PostgreSQL container execute initializer scripts, you can put them in the `/docker-entrypoint-initdb.d` path (as you had to do in the MariaDB container of the Nextcloud platform). This line mounts your `initdb.sh` shell script in that folder.
+          - `"config_file=/etc/postgresql/postgresql.conf"`\
+            The `config_file` option is for setting an alternative custom configuration file for the PostgreSQL server. In this case, it will be the `postgresql.conf` file you configured previously, and you'll put in the `/etc/postgresql` path.
 
-        - Container `metrics`: the Prometheus metrics exporter service related to the PostgreSQL server.
-            - The `image` of this exporter doesn't have detailed [on what Linux Distribution runs](https://hub.docker.com/r/wrouesnel/postgres_exporter).
-            - The `env` block has four variables that are all directly used by this container. The `DATA_SOURCE_USER` and `DATA_SOURCE_PASS` specify the user and password in the PostgreSQL server for this exporter, `DATA_SOURCE_URI` indicates the URI to connect to the database server and `PG_EXPORTER_AUTO_DISCOVER_DATABASES` is an option that enables this metrics exporter to autodetect the databases present in the PostgreSQL server.
+            > [!IMPORTANT]
+            > **It is not possible to directly change the default `postgresql.conf` file that exists in the default data path `/var/lib/postgresql/data`**\
+            > Trying to do so will provoke a `Read-only file system` error that will not allow the container to start. The same happens with any other configuration file you might consider customize within that `/var/lib/postgresql/data` path.
 
-## PostgreSQL Service resource
+        - At the `env` section:
 
-You need a `Service` named `db-postgresql` for the previous `StatefulSet`.
+          - The `POSTGRES_USER` and `POSTGRES_PASSWORD` variables are expected by PostgreSQL to set the superuser's name and password. The `POSTGRES_USER` is defined here also to make it available for the `initdb.sh` script.
 
-1. Create a file named `db-postgresql.service.yaml` under `resources`.
+          - The `POSTGRES_DB` is the name of the database you want to create initially in your PostgreSQL. This variable's also used in the initialization script.
 
-    ~~~bash
+              > [!NOTE]
+              > No matter what, there will be always a `postgres` database created in your PostgreSQL server.
+
+          - The `POSTGRESQL_GITEA_USERNAME`, `POSTGRESQL_GITEA_PASSWORD`, `POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME` and `POSTGRESQL_PROMETHEUS_EXPORTER_PASSWORD` variables are for the `initdb.sh` script.
+
+        - The `volumeMounts` section has three mount points:
+
+          - MountPath `/var/lib/postgresql/data`\
+            Mounts the volume claimed by `postgresql-storage` in the default data folder of PostgreSQL.
+
+          - MountPath `/etc/postgresql/postgresql.conf`\
+            Your `postgresql.conf` file is mounted in the container path `/etc/postgresql`, as it has been specified at the `args` section of this `server` container.
+
+          - MountPath `/docker-entrypoint-initdb.d/initdb.sh`\
+            To make the PostgreSQL container execute initializer scripts, you can put them in the `/docker-entrypoint-initdb.d` path (as you had to do in the MariaDB container of the Nextcloud platform). This line mounts your `initdb.sh` shell script in that folder.
+
+      - Container `metrics`\
+        The Prometheus metrics exporter service related to the PostgreSQL server.
+
+        - The `image` of this exporter does not have detailed [on what Linux Distribution runs](https://hub.docker.com/r/prometheuscommunity/postgres-exporter).
+
+        - The `env` block has three environment variables that this `metrics` container directly uses. The `DATA_SOURCE_USER` and `DATA_SOURCE_PASS` specify the user and password in the PostgreSQL server for this exporter, and `DATA_SOURCE_URI` indicates the URI to connect to the database server.
+
+## PostgreSQL Service
+
+You need a `Service` named `db-postgresql` for the previous `StatefulSet`:
+
+1. Create a file named `db-postgresql.service.yaml` under `resources`:
+
+    ~~~sh
     $ touch $HOME/k8sprjs/gitea/components/db-postgresql/resources/db-postgresql.service.yaml
     ~~~
 
-2. Edit `db-postgresql.service.yaml` and put the following yaml in it.
+2. Declare the Service in `resources/db-postgresql.service.yaml`:
 
     ~~~yaml
+    # Gitea PostgreSQL headless service
     apiVersion: v1
     kind: Service
 
     metadata:
+      name: db-postgresql
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "9187"
-      name: db-postgresql
     spec:
       type: ClusterIP
+      clusterIP: None
       ports:
       - port: 5432
+        targetPort: server
         protocol: TCP
         name: server
       - port: 9187
+        targetPort: metrics
         protocol: TCP
         name: metrics
     ~~~
 
-    This is just another `ClusterIP` service, like the one you've [declared previously for the Redis server](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%202%20-%20Redis%20cache%20server.md#redis-service-resource). And, like that Redis service, you'll have to invoke this PostgreSQL service by its FQDN.
-
-### _PosgreSQL `Service`'s FQDN or DNS record_
-
-[The same particularities that determined the Redis service's DNS record](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%202%20-%20Redis%20cache%20server.md#redis-services-fqdn-or-dns-record) apply to this PostgreSQL `Service`'s internal FQDN, which should be as follows.
-
-~~~http
-gitea-db-postgresql.gitea.svc.deimos.cluster.io
-~~~
+    This is just another `ClusterIP` service, like the one you have [declared previously for the Valkey server](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-service). And, like that Valkey service, you will have to invoke this PostgreSQL service by its FQDN which will be `db-postgresql.gitea`.
 
 ## PostgreSQL Kustomize project
 
-Let's produce now the the main `kustomization.yaml` file for this PostgreSQL Kustomize project.
+Produce the main `kustomization.yaml` file for this PostgreSQL Kustomize subproject:
 
-1. Under `db-postgresql`, create a `kustomization.yaml` file.
+1. Under `db-postgresql`, create a `kustomization.yaml` file:
 
-    ~~~bash
+    ~~~sh
     $ touch $HOME/k8sprjs/gitea/components/db-postgresql/kustomization.yaml
     ~~~
 
-2. Fill `kustomization.yaml` with the yaml definition below.
+2. Declare the Kustomize manifest in `kustomization.yaml`:
 
     ~~~yaml
-    # PostgreSQL setup
+    # Gitea PostgreSQL setup
     apiVersion: kustomize.config.k8s.io/v1beta1
     kind: Kustomization
 
-    commonLabels:
-      app: db-postgresql
+    labels:
+      - pairs:
+          app: db-postgresql
+        includeSelectors: true
+        includeTemplates: true
 
     resources:
     - resources/db-postgresql.persistentvolumeclaim.yaml
@@ -524,12 +577,12 @@ Let's produce now the the main `kustomization.yaml` file for this PostgreSQL Kus
 
     images:
     - name: postgres
-      newTag: 14.1-bullseye
-    - name: wrouesnel/postgres_exporter
-      newTag: latest
+      newTag: 18.1-trixie
+    - name: prometheuscommunity/postgres-exporter
+      newTag: v0.18.1
 
     configMapGenerator:
-    - name: db-postgresql
+    - name: db-postgresql-config
       envs:
       - configs/dbnames.properties
       files:
@@ -537,20 +590,20 @@ Let's produce now the the main `kustomization.yaml` file for this PostgreSQL Kus
       - configs/postgresql.conf
 
     secretGenerator:
-    - name: db-postgresql
+    - name: db-postgresql-secrets
       envs:
       - secrets/dbusers.pwd
     ~~~
 
-    Here there's nothing that you haven't seen in previous `kustomization.yaml` files, specially if you compare with the one for [the MariaDB server of your Nextcloud platform](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-kustomize-project).
+    This Kustomize manifest is like other `kustomization.yaml` files you have seen before in this guide. For instance, you can compare it with the one for [the MariaDB server of your Ghost platform](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-kustomize-project).
 
-### _Checking the Kustomize yaml output_
+### Validating the Kustomize YAML output
 
-As usual, check the output of this Kustomize project and see that the values are all correct.
+As usual, check the output of the declared Kustomize project and see that the values are all correct:
 
-1. Execute `kubectl kustomize` and pipe the yaml output on the `less` command or dump it on a file.
+1. Execute `kubectl kustomize` and pipe the YAML output on the `less` command or dump it on a file.
 
-    ~~~bash
+    ~~~sh
     $ kubectl kustomize $HOME/k8sprjs/gitea/components/db-postgresql | less
     ~~~
 
@@ -559,9 +612,9 @@ As usual, check the output of this Kustomize project and see that the values are
     ~~~yaml
     apiVersion: v1
     data:
-      gitea-username: gitea
-      initdb.sh: |
-        #!/bin/bash
+      gitea-username: giteadb
+      initdb.sh: |-
+        #!/usr/bin/env bash
         echo ">>> Initializing PostgreSQL server"
         set -e
 
@@ -582,7 +635,7 @@ As usual, check the output of this Kustomize project and see that the values are
             -- To use IF statements, hence to be able to check if the user exists before
             -- attempting creation, we need to switch to procedural SQL (PL/pgSQL)
             -- instead of standard SQL.
-            -- More: https://www.postgresql.org/docs/14/plpgsql-overview.html
+            -- More: https://www.postgresql.org/docs/9.3/plpgsql-overview.html
             -- To preserve compatibility with <9.0, DO blocks are not used; instead,
             -- a function is created and dropped.
             CREATE OR REPLACE FUNCTION __tmp_create_user() returns void as
@@ -606,47 +659,12 @@ As usual, check the output of this Kustomize project and see that the values are
             -- If deploying as non-superuser (for example in AWS RDS), uncomment the GRANT
             -- line below and replace <MASTER_USER> with your root user.
             -- GRANT ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME} TO <MASTER_USER>;
-            CREATE SCHEMA IF NOT EXISTS ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME};
-            GRANT USAGE ON SCHEMA ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME} TO ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME};
+
             GRANT CONNECT ON DATABASE ${POSTGRES_DB} TO ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME};
 
-            CREATE OR REPLACE FUNCTION get_pg_stat_activity() RETURNS SETOF pg_stat_activity AS
-            ' SELECT * FROM pg_catalog.pg_stat_activity; '
-            LANGUAGE sql
-            VOLATILE
-            SECURITY DEFINER;
-
-            CREATE OR REPLACE VIEW ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME}.pg_stat_activity
-            AS
-              SELECT * from get_pg_stat_activity();
-
-            GRANT SELECT ON ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME}.pg_stat_activity TO ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME};
-
-            CREATE OR REPLACE FUNCTION get_pg_stat_replication() RETURNS SETOF pg_stat_replication AS
-            ' SELECT * FROM pg_catalog.pg_stat_replication; '
-            LANGUAGE sql
-            VOLATILE
-            SECURITY DEFINER;
-
-            CREATE OR REPLACE VIEW ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME}.pg_stat_replication
-            AS
-              SELECT * FROM get_pg_stat_replication();
-
-            GRANT SELECT ON ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME}.pg_stat_replication TO ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME};
-
-            CREATE OR REPLACE FUNCTION get_pg_stat_statements() RETURNS SETOF pg_stat_statements AS
-            ' SELECT * FROM public.pg_stat_statements; '
-            LANGUAGE sql
-            VOLATILE
-            SECURITY DEFINER;
-
-            CREATE OR REPLACE VIEW ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME}.pg_stat_statements
-            AS
-              SELECT * FROM get_pg_stat_statements();
-
-            GRANT SELECT ON ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME}.pg_stat_statements TO ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME};
+            GRANT pg_monitor to ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME};
         EOSQL
-      postgresql-db-name: gitea
+      postgresql-db-name: gitea-db
       postgresql-superuser-name: postgres
       postgresql.conf: |-
         # Extension libraries loading
@@ -682,21 +700,18 @@ As usual, check the output of this Kustomize project and see that the values are
     metadata:
       labels:
         app: db-postgresql
-      name: db-postgresql-2m294k4k9m
+      name: db-postgresql-config-kh5bhtf7fh
     ---
     apiVersion: v1
     data:
-      gitea-user-password: |
-        bDBuRy5QbDRpbl9UM3h0X3NFa1JldF9wNHM1d09SRC1Gb1JfZ0k3ZUFfdVozciEK
-      postgresql-superuser-password: |
-        bDBuRy5QbDRpbl9UM3h0X3NFa1JldF9wNHM1d09SRC1Gb1JfczRwRXJ1WjNyIQo=
-      prometheus-exporter-password: |
-        bDBuRy5QbDRpbl9UM3h0X3NFa1JldF9wNHM1d09SRC1Gb1JfM3hQMHJUZVJfdVozciEK
+      gitea-user-password: bDBuRy5QbDRpbl9UM3h0X3NFa1JldF9wNHM1d09SRC1Gb1JfZ0k3ZUFfdVozciE=
+      postgresql-superuser-password: bDBuRy5QbDRpbl9UM3h0X3NFa1JldF9wNHM1d09SRC1Gb1JfczRwRXJ1WjNyIQ==
+      prometheus-exporter-password: bDBuRy5QbDRpbl9UM3h0X3NFa1JldF9wNHM1d09SRC1Gb1JfM3hQMHJUZVJfdVozciE=
     kind: Secret
     metadata:
       labels:
         app: db-postgresql
-      name: db-postgresql-2gmd96742m
+      name: db-postgresql-secrets-c58f7287gh
     type: Opaque
     ---
     apiVersion: v1
@@ -709,13 +724,16 @@ As usual, check the output of this Kustomize project and see that the values are
         app: db-postgresql
       name: db-postgresql
     spec:
+      clusterIP: None
       ports:
       - name: server
         port: 5432
         protocol: TCP
+        targetPort: server
       - name: metrics
         port: 9187
         protocol: TCP
+        targetPort: metrics
       selector:
         app: db-postgresql
       type: ClusterIP
@@ -731,9 +749,9 @@ As usual, check the output of this Kustomize project and see that the values are
       - ReadWriteOnce
       resources:
         requests:
-          storage: 3.5G
+          storage: 4.5G
       storageClassName: local-path
-      volumeName: db-gitea
+      volumeName: gitea-ssd-db
     ---
     apiVersion: apps/v1
     kind: StatefulSet
@@ -761,98 +779,101 @@ As usual, check the output of this Kustomize project and see that the values are
               valueFrom:
                 configMapKeyRef:
                   key: postgresql-superuser-name
-                  name: db-postgresql-2m294k4k9m
+                  name: db-postgresql-config-kh5bhtf7fh
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: postgresql-superuser-password
-                  name: db-postgresql-2gmd96742m
+                  name: db-postgresql-secrets-c58f7287gh
             - name: POSTGRES_DB
               valueFrom:
                 configMapKeyRef:
                   key: postgresql-db-name
-                  name: db-postgresql-2m294k4k9m
+                  name: db-postgresql-config-kh5bhtf7fh
             - name: POSTGRESQL_GITEA_USERNAME
               valueFrom:
                 configMapKeyRef:
                   key: gitea-username
-                  name: db-postgresql-2m294k4k9m
+                  name: db-postgresql-config-kh5bhtf7fh
             - name: POSTGRESQL_GITEA_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: gitea-user-password
-                  name: db-postgresql-2gmd96742m
+                  name: db-postgresql-secrets-c58f7287gh
             - name: POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME
               valueFrom:
                 configMapKeyRef:
                   key: prometheus-exporter-username
-                  name: db-postgresql-2m294k4k9m
+                  name: db-postgresql-config-kh5bhtf7fh
             - name: POSTGRESQL_PROMETHEUS_EXPORTER_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: prometheus-exporter-password
-                  name: db-postgresql-2gmd96742m
-            image: postgres:14.1-bullseye
+                  name: db-postgresql-secrets-c58f7287gh
+            image: postgres:18.1-trixie
             name: server
             ports:
             - containerPort: 5432
+              name: server
             resources:
-              limits:
-                memory: 320Mi
+              requests:
+                cpu: "0.75"
+                memory: 256Mi
             volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: postgresql-storage
             - mountPath: /etc/postgresql/postgresql.conf
               name: postgresql-config
+              readOnly: true
               subPath: postgresql.conf
             - mountPath: /docker-entrypoint-initdb.d/initdb.sh
               name: postgresql-config
+              readOnly: true
               subPath: initdb.sh
           - env:
             - name: DATA_SOURCE_USER
               valueFrom:
                 configMapKeyRef:
                   key: prometheus-exporter-username
-                  name: db-postgresql-2m294k4k9m
+                  name: db-postgresql-config-kh5bhtf7fh
             - name: DATA_SOURCE_PASS
               valueFrom:
                 secretKeyRef:
                   key: prometheus-exporter-password
-                  name: db-postgresql-2gmd96742m
+                  name: db-postgresql-secrets-c58f7287gh
             - name: DATA_SOURCE_URI
               value: localhost:5432/?sslmode=disable
-            - name: PG_EXPORTER_AUTO_DISCOVER_DATABASES
-              value: "true"
-            image: wrouesnel/postgres_exporter:latest
+            image: prometheuscommunity/postgres-exporter:v0.18.1
             name: metrics
             ports:
             - containerPort: 9187
+              name: metrics
             resources:
-              limits:
-                memory: 32Mi
+              requests:
+                cpu: "0.25"
+                memory: 16Mi
           volumes:
           - configMap:
+              defaultMode: 444
               items:
               - key: initdb.sh
                 path: initdb.sh
               - key: postgresql.conf
                 path: postgresql.conf
-              name: db-postgresql-2m294k4k9m
+              name: db-postgresql-config-kh5bhtf7fh
             name: postgresql-config
           - name: postgresql-storage
             persistentVolumeClaim:
               claimName: db-postgresql
     ~~~
 
-3. Remember that, if you dumped the Kustomize output into a yaml file, you can validate it with `kubeval`.
+## Do not deploy this PostgreSQL project on its own
 
-## Don't deploy this PostgreSQL project on its own
-
-This PostgreSQL setup is missing the persistent volume it needs to store data and which you must not confuse with the claim you've configured for your PostgreSQL server. The PV and other elements will be declared in the main Kustomize project you'll prepare in the final part of this guide.
+This PostgreSQL setup is missing the `PersistentVolume` it needs to store data. Do not confuse it with the claim you have configured here for your PostgreSQL server. The corresponding `PersistentVolume` and other remaining elements will be declared in the main Kustomize project you will prepare in the final part of this Gitea deployment procedure.
 
 ## Relevant system paths
 
-### _Folders in `kubectl` client system_
+### Folders in `kubectl` client system
 
 - `$HOME/k8sprjs/gitea`
 - `$HOME/k8sprjs/gitea/components`
@@ -861,12 +882,11 @@ This PostgreSQL setup is missing the persistent volume it needs to store data an
 - `$HOME/k8sprjs/gitea/components/db-postgresql/resources`
 - `$HOME/k8sprjs/gitea/components/db-postgresql/secrets`
 
-### _Files in `kubectl` client system_
+### Files in `kubectl` client system
 
 - `$HOME/k8sprjs/gitea/components/db-postgresql/kustomization.yaml`
 - `$HOME/k8sprjs/gitea/components/db-postgresql/configs/dbnames.properties`
-- `$HOME/k8sprjs/gitea/components/db-postgresql/configs/initdb_exporter_user.sh`
-- `$HOME/k8sprjs/gitea/components/db-postgresql/configs/initdb_gitea.sh`
+- `$HOME/k8sprjs/gitea/components/db-postgresql/configs/initdb.sh`
 - `$HOME/k8sprjs/gitea/components/db-postgresql/configs/postgresql.conf`
 - `$HOME/k8sprjs/gitea/components/db-postgresql/resources/db-postgresql.persistentvolumeclaim.yaml`
 - `$HOME/k8sprjs/gitea/components/db-postgresql/resources/db-postgresql.service.yaml`
@@ -875,39 +895,56 @@ This PostgreSQL setup is missing the persistent volume it needs to store data an
 
 ## References
 
-### _Kubernetes_
+### [PostgreSQL](https://www.postgresql.org/)
+
+- [PostgreSQL 18.1 Documentation](https://www.postgresql.org/docs/18/index.html)
+  - [Chapter 19. Server Configuration](https://www.postgresql.org/docs/18/runtime-config.html)
+    - [19.2. File Locations](https://www.postgresql.org/docs/18/runtime-config-file-locations.html)
+
+  - [Part VI. Reference](https://www.postgresql.org/docs/18/reference.html)
+    - [SQL Commands](https://www.postgresql.org/docs/18/sql-commands.html)
+      - [ALTER ROLE](https://www.postgresql.org/docs/18/sql-alterrole.html)
+      - [CREATE ROLE](https://www.postgresql.org/docs/18/sql-createrole.html)
+
+  - [Appendix F. Additional Supplied Modules and Extensions](https://www.postgresql.org/docs/18/contrib.html)
+    - [F.32. pg_stat_statements — track statistics of SQL planning and execution](https://www.postgresql.org/docs/18/pgstatstatements.html)
+
+- [Docker Hub. PostgreSQL](https://hub.docker.com/_/postgres)
+- [GitHub. PostgreSQL 18 Trixie Docker image Dockerfile](https://github.com/docker-library/postgres/blob/master/18/trixie/Dockerfile)
+- [GitHub. PostgreSQL Docker image README](https://github.com/docker-library/docs/blob/master/postgres/README.md)
+
+- [GitHub. PostgreSQL Server Exporter](https://github.com/prometheus-community/postgres_exporter)
+- [Docker Hub. PostgreSQL Server Exporter](https://hub.docker.com/r/prometheuscommunity/postgres-exporter)
+
+#### Other PostgreSQL-related contents
+
+- [Several9s. Architecture and Tuning of Memory in PostgreSQL Databases](https://severalnines.com/database-blog/architecture-and-tuning-memory-postgresql-databases)
+- [Microsoft Blog for PostgreSQL. How to configure Postgres log settings](https://techcommunity.microsoft.com/blog/adforpostgresql/how-to-configure-postgres-log-settings/1214716)
+- [Medium. Sylia CHIBOUB. Monitoring PostgreSQL Databases using Postgres exporter along with Prometheus and Grafana.](https://schh.medium.com/monitoring-postgresql-databases-using-postgres-exporter-along-with-prometheus-and-grafana-1d68209ca687)
+
+- [Stack Exchange. Database Administrators](https://dba.stackexchange.com/)
+  - [PostgreSQL and default Schemas](https://dba.stackexchange.com/questions/40488/postgresql-and-default-schemas)
+
+- [Stack Overflow](https://stackoverflow.com/)
+  - [Kubernetes PostgreSQL: How do I store config files elsewhere than the data directory?](https://stackoverflow.com/questions/61745199/kubernetes-postgresql-how-do-i-store-config-files-elsewhere-than-the-data-direc)
+  - [How to customize the configuration file of the official PostgreSQL Docker image?](https://stackoverflow.com/questions/30848670/how-to-customize-the-configuration-file-of-the-official-postgresql-docker-image)
+  - [How to change Postgresql max_connections config via Kubernetes statefulset environment variable?](https://stackoverflow.com/questions/56515367/how-to-change-postgresql-max-connections-config-via-kubernetes-statefulset-envir)
+  - [chown: changing ownership of '/data/db': Operation not permitted](https://stackoverflow.com/questions/51200115/chown-changing-ownership-of-data-db-operation-not-permitted)
+  - [Postgis pg_stat_statements errors](https://stackoverflow.com/questions/68185097/postgis-pg-stat-statements-errors)
+  - [pg_stat_statements enabled, but the table does not exist](https://stackoverflow.com/questions/31021174/pg-stat-statements-enabled-but-the-table-does-not-exist)
+
+- [GitHub. Docker-library. Postgres. Issues](github.com/docker-library/postgres/issues/)
+  - [chown: changing ownership of ‘/var/lib/postgresql/data’: Operation not permitted, when running in kubernetes with mounted "/var/lib/postgres/data" volume](https://github.com/docker-library/postgres/issues/361)
+
+- [Neon. PostgreSQL Tutorial](https://neon.com/postgresql/tutorial)
+  - [Advanced](https://neon.com/postgresql/postgresql-advanced)
+    - [PostgreSQL Create Function Statement](https://neon.com/postgresql/postgresql-plpgsql/postgresql-create-function)
+    - [Dollar-Quoted String Constants](https://neon.com/postgresql/postgresql-plpgsql/dollar-quoted-string-constants)
+
+### [Kubernetes](https://kubernetes.io/)
 
 - [Run a command in a shell](https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#running-a-command-in-a-shell)
 
-### _PostgreSQL_
-
-- [Official PostgreSQL site](https://www.postgresql.org/)
-- [Server Configuration](https://www.postgresql.org/docs/14/runtime-config.html)
-- [File Locations](https://www.postgresql.org/docs/current/runtime-config-file-locations.html)
-- [PostgreSQL official Docker image](https://hub.docker.com/_/postgres)
-- [PostgreSQL Docker image README](https://github.com/docker-library/docs/blob/master/postgres/README.md)
-- [PostgreSQL 14 Dockerfile](https://github.com/docker-library/postgres/blob/3bb48045b4dc5df24bf2271c679f7a4e9efcbe6e/14/bullseye/Dockerfile)
-- [PostgreSQL Prometheus metrics exporter](https://github.com/prometheus-community/postgres_exporter)
-- [Architecture and Tuning of Memory in PostgreSQL Databases](https://severalnines.com/database-blog/architecture-and-tuning-memory-postgresql-databases)
-- [How To Start Logging With PostgreSQL](https://logtail.com/tutorials/how-to-start-logging-with-postgresql/)
-- [How to configure Postgres log settings](https://techcommunity.microsoft.com/t5/azure-database-for-postgresql/how-to-configure-postgres-log-settings/ba-p/1214716)
-- [PostgresSQL Server Exporter](https://hub.docker.com/r/wrouesnel/postgres_exporter)
-- [PostgresSQL Server Exporter on GitHub](https://github.com/prometheus-community/postgres_exporter)
-- [Monitoring PostgreSQL Databases using Postgres exporter along with Prometheus and Grafana.](https://schh.medium.com/monitoring-postgresql-databases-using-postgres-exporter-along-with-prometheus-and-grafana-1d68209ca687)
-- [CREATE ROLE](https://www.postgresql.org/docs/14/sql-createrole.html)
-- [ALTER ROLE](https://www.postgresql.org/docs/14/sql-alterrole.html)
-- [PostgreSQL and default Schemas](https://dba.stackexchange.com/questions/40488/postgresql-and-default-schemas)
-- [Kubernetes PostgreSQL: How do I store config files elsewhere than the data directory?](https://stackoverflow.com/questions/61745199/kubernetes-postgresql-how-do-i-store-config-files-elsewhere-than-the-data-direc)
-- [How to customize the configuration file of the official PostgreSQL Docker image?](https://stackoverflow.com/questions/30848670/how-to-customize-the-configuration-file-of-the-official-postgresql-docker-image)
-- [How to change Postgresql max_connections config via Kubernetes statefulset environment variable?](https://stackoverflow.com/questions/56515367/how-to-change-postgresql-max-connections-config-via-kubernetes-statefulset-envir)
-- [chown: changing ownership of '/data/db': Operation not permitted](https://stackoverflow.com/questions/51200115/chown-changing-ownership-of-data-db-operation-not-permitted)
-- [chown: changing ownership of ‘/var/lib/postgresql/data’: Operation not permitted, when running in kubernetes with mounted "/var/lib/postgres/data" volume](https://github.com/docker-library/postgres/issues/361)
-- [PostgreSQL Create Function Statement](https://www.postgresqltutorial.com/postgresql-create-function/)
-- [Dollar-Quoted String Constants](https://www.postgresqltutorial.com/dollar-quoted-string-constants/)
-- [Extension library module `pg_stat_statements`](https://www.postgresql.org/docs/14/pgstatstatements.html)
-- [Postgis pg_stat_statements errors](https://stackoverflow.com/questions/68185097/postgis-pg-stat-statements-errors)
-- [pg_stat_statements enabled, but the table does not exist](https://stackoverflow.com/questions/31021174/pg-stat-statements-enabled-but-the-table-does-not-exist)
-
 ## Navigation
 
-[<< Previous (**G034. Deploying services 03. Gitea Part 2**)](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%202%20-%20Redis%20cache%20server.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G034. Deploying services 03. Gitea Part 4**) >>](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%204%20-%20Gitea%20server.md)
+[<< Previous (**G034. Deploying services 03. Gitea Part 2**)](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%202%20-%20Valkey%20cache%20server.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G034. Deploying services 03. Gitea Part 4**) >>](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%204%20-%20Gitea%20server.md)
