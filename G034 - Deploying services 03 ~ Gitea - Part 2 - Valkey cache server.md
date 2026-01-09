@@ -490,7 +490,7 @@ With all the necessary resources declared for your Gitea Valkey instance, review
 
 ## Do not deploy this Valkey project on its own
 
-This Valkey setup is missing one critical element, the persistent volume it needs to store its working directory data. Do not confuse it with the claim you have configured for your Valkey cache server. That PV and other elements will be declared in the main Kustomize project you will declare in the final part of this Gitea deployment procedure. Until then, do not deploy this Valkey subproject.
+This Valkey setup is missing one critical element, the persistent volume it needs to store its working directory data. Do not confuse it with the claim you have configured for your Valkey cache server. That persistent volume and other elements will be declared in the main Kustomize project you will declare in the final part of this Gitea deployment procedure. Until then, do not deploy this Valkey subproject.
 
 ## Relevant system paths
 

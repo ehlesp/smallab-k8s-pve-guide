@@ -574,13 +574,9 @@ Your Ghost server's `StatefulSet` requires a `Service` called `server-ghost` to 
         name: server
     ~~~
 
-    This Service's `type` is `LoadBalancer`, meaning that it would take the next available IP from the MetalLB pool to use as external public IP in your network:
+    This `Service`'s `type` is `ClusterIP` and has no `clusterIP` set. This means that this service should be reached only by its internal hostname in the Kubernetes cluster. Knowing that the namespace for the whole Ghost setup will be `ghost`, the hostname will be `server-ghost.ghost`.
 
-    - Since this guide's local network setup lacks a DNS service (do not confuse it with the internal CoreDNS service running within the K3s cluster), it is better to ensure the service always uses the same external IP. In services of the type `LoadBalancer` like this one, you can specify a specific external IP from the range available in you Kubernetes cluster's load balancer (MetalLB in this guide's setup) in the `loadBalancerIP` parameter. In the YAML above, `10.7.0.3` is the address right the next one after the IP already assigned to the [Headlamp service (`10.7.0.2`)](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md).
-
-    - A `LoadBalancer` type service can also have an internal `clusterIP`, but Kubernetes does not allow to set it as `None`. Since this IP is not going to be used in this setup, the `clusterIP` parameter is not specified.
-
-    - Since there is no Prometheus metric exporter nor a port through which the Ghost server could provide such metrics, there is only one port declared in this `Service` resource that redirects all traffic to the Ghost server container's `server` port. Notice that the port number specified here is the same one set in the container, which is the default Ghost server's `2368`.
+    Since there is no Prometheus metric exporter nor a port through which the Ghost server could provide such metrics, there is only one port declared in this `Service` resource that redirects all traffic to the Ghost server container's `server` port. Notice that the port number specified here is the same one set in the container, which is the default Ghost server's `2368`.
 
 ## Ghost server Kustomize project
 

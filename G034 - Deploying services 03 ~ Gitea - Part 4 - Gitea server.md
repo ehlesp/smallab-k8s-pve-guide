@@ -1,120 +1,214 @@
 # G034 - Deploying services 03 ~ Gitea - Part 4 - Gitea server
 
-The last component to setup in its own Kustomize project is the Gitea server itself.
+- [The Gitea server is another component of this setup](#the-gitea-server-is-another-component-of-this-setup)
+- [Considerations about the Gitea server](#considerations-about-the-gitea-server)
+- [Gitea server Kustomize project's folders](#gitea-server-kustomize-projects-folders)
+- [Gitea server configuration with environment variables](#gitea-server-configuration-with-environment-variables)
+  - [Non-secret Gitea configuration parameters](#non-secret-gitea-configuration-parameters)
+  - [Secret Gitea configuration parameters](#secret-gitea-configuration-parameters)
+- [Gitea server persistent storage claims](#gitea-server-persistent-storage-claims)
+  - [Persistent storage claim for Gitea server's data](#persistent-storage-claim-for-gitea-servers-data)
+  - [Persistent storage claim for users' Git repositories](#persistent-storage-claim-for-users-git-repositories)
+- [Gitea server StatefulSet](#gitea-server-statefulset)
+- [Gitea server Service](#gitea-server-service)
+- [Gitea Kustomize project](#gitea-kustomize-project)
+  - [Validating the Kustomize YAML output](#validating-the-kustomize-yaml-output)
+- [Do not deploy this Gitea server project on its own](#do-not-deploy-this-gitea-server-project-on-its-own)
+- [Relevant system paths](#relevant-system-paths)
+  - [Folders in `kubectl` client system](#folders-in-kubectl-client-system)
+  - [Files in `kubectl` client system](#files-in-kubectl-client-system)
+- [References](#references)
+  - [Gitea](#gitea)
+  - [Other Gitea-related contents](#other-gitea-related-contents)
+  - [Kubernetes](#kubernetes)
+  - [Other Kubernetes-related contents](#other-kubernetes-related-contents)
+- [Navigation](#navigation)
+
+## The Gitea server is another component of this setup
+
+The last component to setup in its own Kustomize subproject is the Gitea server itself.
 
 ## Considerations about the Gitea server
 
-Gitea is a platform specialized in storing and handling Git repositories, which you can upload to Gitea through HTTP or SSH connections. Moreover, Gitea comes with a web console and embedded Prometheus-formatted metrics. All of this means that you'll run one Gitea container but with two ports opened on it.
+Gitea is a platform specialized in storing and handling Git repositories, which you can upload to Gitea through HTTP or SSH connections. Moreover, Gitea comes with a web console and embedded Prometheus-formatted metrics. All of this means that you will run one Gitea container with two open ports.
 
 ## Gitea server Kustomize project's folders
 
 Prepare your Gitea's Kustomize project folder tree as follows.
 
 ~~~bash
-$ mkdir -p $HOME/k8sprjs/gitea/components/server-gitea/{configs,resources}
+$ mkdir -p $HOME/k8sprjs/gitea/components/server-gitea/{configs,resources,secrets}
 ~~~
 
-Notice that there's no `secret` folder to be created this time.
+## Gitea server configuration with environment variables
 
-## Gitea server configuration file
+Gitea can be fully configured either with an `app.ini` file or with environment variables. Since certain values have to be injected as environment variables already, this section shows you how to declare certain Gitea parameters as environment variables.
 
-Here I'll tell you about preparing just one properties file with a couple of values. The Gitea server's configuration will be done by declaring special environment variables.
+### Non-secret Gitea configuration parameters
 
-### _Properties file `params.properties`_
+See here how to configure as environment variables in a separated properties file those Gitea parameters that are not secrets (meaning passwords or similar values) with values not injected from somewhere else:
 
-You'll want to keep certain parameters in a `params.properties` file for convenience.
+1. Create an `env.properties` files under the `configs` path:
 
-1. Create the file `params.properties` under the `configs` path.
-
-    ~~~bash
-    $ touch $HOME/k8sprjs/gitea/components/server-gitea/configs/params.properties
+    ~~~sh
+    $ touch $HOME/k8sprjs/gitea/components/server-gitea/configs/env.properties
     ~~~
 
-2. Set the parameters below in `params.properties`.
+2. Set the Gitea parameters as environment variables in the `configs/env.properties`:
 
     ~~~properties
-    cache-redis-svc-fqdn=gitea-cache-redis.gitea.svc.deimos.cluster.io
-    db-postgresql-svc-fqdn=gitea-db-postgresql.gitea.svc.deimos.cluster.io
+    GITEA__server__DOMAIN=gitea.homelab.cloud
+    GITEA__server__HTTP_ADDR=0.0.0.0
+    GITEA__repository__ROOT=/data/gitea/repos
+    GITEA__metrics__ENABLED=true
+    GITEA__database__HOST=db-postgresql.gitea:5432
+    GITEA__database__DB_TYPE=postgres
+    GITEA__database__SSL_MODE=disable
+    GITEA__cache__ENABLED=true
+    GITEA__cache__ADAPTER=redis
+    GITEA__queue__TYPE=redis
+    GITEA__session__PROVIDER=redis
+    GITEA__session__COOKIE_NAME=gitea_cookie
     ~~~
 
-    The parameters set above mean the following.
-    - `cache-redis-svc-fqdn`: the internal FQDN of the Redis service for Gitea.
-    - `db-postgresql-svc-fqdn`: the internal FQDN of the PostgreSQL service for Gitea.
+    The environment variables set above mean the following:
 
-## Gitea server storage
+    - `GITEA__server__DOMAIN`\
+      The domain name for the Gitea server. As in other cases, you will have to enable the domain in your network or directly in your client systems using the `hosts` file.
 
-You'll require two persistent volumes for your Gitea server.
+    - `GITEA__server__HTTP_ADDR`\
+      On which IP address this server will listen on.
 
-- One PV for storing the server's data files.
-- One PV to store users' Git repositories.
+    - `GITEA__repository__ROOT`\
+      Absolute path to the directory where the Git repositories of the users are kept.
 
-So you also need declaring two different claim resources, one per PV.
+    - `GITEA__metrics__ENABLED`\
+      For enabling the Prometheus metrics feature included in the Gitea server.
 
-### _Claim for the server files PV_
+    - `GITEA__database__HOST`\
+      The host address and port of the database server this Gitea server has to connect to. The value in this case is the [corresponding hostname and `server` port of the PostgreSQL `Service` created in the previous part](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%203%20-%20PostgreSQL%20database%20server.md#postgresql-service).
 
-1. Create a file named `data-server-gitea.persistentvolumeclaim.yaml` under `resources`.
+    - `GITEA__database__DB_TYPE`\
+      Indicates the type of database Gitea must use.
 
-    ~~~bash
-    $ touch $HOME/k8sprjs/gitea/components/server-gitea/resources/data-server-gitea.persistentvolumeclaim.yaml
+    - `GITEA__database__SSL_MODE`\
+      For enabling or disabling encryption in the communication with the database.
+
+    - `GITEA__cache__ENABLED`\
+      For enabling the cache on the Gitea instance.
+
+    - `GITEA__cache__ADAPTER`\
+      Depending on what caching engine you want to use, you will have to set the proper adapter here to connect to that engine. To use Valkey, you have to specify `redis` here.
+
+    - `GITEA__queue__TYPE`\
+      Type of queue to be used. In this case, since Valkey is also used for this feature, you must set this value to `redis`.
+
+    - `GITEA__session__PROVIDER`\
+      Indicates what session engine provider you want to use.
+
+    - `GITEA__session__COOKIE_NAME`\
+      Name of the cookie used for the session ID.
+
+### Secret Gitea configuration parameters
+
+The only secret values to configure are those corresponding to [the `giteacache` user prepared for Gitea in the ACL user list of the Valkey server setup](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-acl-user-list):
+
+1. Create a `valkey_user_env.properties` files in the `secrets` folder:
+
+    ~~~sh
+    $ touch $HOME/k8sprjs/gitea/components/server-gitea/secrets/valkey_user_env.properties
     ~~~
 
-2. Copy the yaml below in `data-server-gitea.persistentvolumeclaim.yaml`.
+2. Enter the values of Gitea's Valkey user as environment variables in the `secrets/valkey_user_env.properties`:
+
+    ~~~properties
+    GITEA_VALKEY_USERNAME=giteacache
+    GITEA_VALKEY_PASSWORD="pAS2wOrD_f0r_T#e_G17e4_Us3R"
+    ~~~
+
+    These two environment variables are just custom non-Gitea parameters that will be used later in this part when declaring the URI for calling the Valkey server host. They are necessary because it is not possible to reuse the values from Valkey's ACL file for injecting them somewhere else.
+
+## Gitea server persistent storage claims
+
+The Gitea server requires two distinct `PersistentVolume` resources (to be declared in the final part of this Gitea deployment procedure), each for a specific purpose:
+
+- One is dedicated to store Gitea server's own data files.
+- The other one is meant for storing the users' Git repositories that Gitea will manage.
+
+Hence you need two `PersistentVolumeClaim`s, one per persistent volume.
+
+### Persistent storage claim for Gitea server's data
+
+Declare the `PersistentVolumeClaim` to claim the storage where to put the Gitea server's data:
+
+1. Create a `server-gitea-srv.persistentvolumeclaim.yaml` file under the `resources` folder:
+
+    ~~~sh
+    $ touch $HOME/k8sprjs/gitea/components/server-gitea/resources/server-gitea-srv.persistentvolumeclaim.yaml
+    ~~~
+
+2. Declare the `server-gitea-srv` claim in `resources/server-gitea-srv.persistentvolumeclaim.yaml`:
 
     ~~~yaml
+    # Gitea server claim of persistent storage for server data
     apiVersion: v1
     kind: PersistentVolumeClaim
 
     metadata:
-      name: data-server-gitea
+      name: server-gitea-srv
     spec:
       accessModes:
       - ReadWriteOnce
       storageClassName: local-path
-      volumeName: data-gitea
+      volumeName: gitea-ssd-srv
       resources:
         requests:
-          storage: 1.2G
+          storage: 1.9G
     ~~~
 
-### _Claim for the users git repositories PV_
+### Persistent storage claim for users' Git repositories
 
-1. Create a `repos-server-gitea.persistentvolumeclaim.yaml` file under `resources`.
+Declare the `PersistentVolumeClaim` to claim the storage for keeping the Git repositories of the Gitea server's users:
 
-    ~~~bash
-    $ touch $HOME/k8sprjs/gitea/components/server-gitea/resources/repos-server-gitea.persistentvolumeclaim.yaml
+1. Create a `server-gitea-repos.persistentvolumeclaim.yaml` file under the `resources` folder:
+
+    ~~~sh
+    $ touch $HOME/k8sprjs/gitea/components/server-gitea/resources/server-gitea-repos.persistentvolumeclaim.yaml
     ~~~
 
-2. Fill `repos-server-gitea.persistentvolumeclaim.yaml` with the declaration next.
+2. Declare the `server-gitea-srv` claim in `resources/server-gitea-repos.persistentvolumeclaim.yaml`:
 
     ~~~yaml
+    # Gitea server claim of persistent storage for Gitea users' Git repositories
     apiVersion: v1
     kind: PersistentVolumeClaim
 
     metadata:
-      name: repos-server-gitea
+      name: server-gitea-repos
     spec:
       accessModes:
       - ReadWriteOnce
       storageClassName: local-path
-      volumeName: repos-gitea
+      volumeName: gitea-hdd-repos
       resources:
         requests:
           storage: 9.3G
     ~~~
 
-## Gitea server Stateful resource
+## Gitea server StatefulSet
 
-Gitea is a server that stores data, so it needs to be deployed with a `StatefulSet` resource.
+Since Gitea is a server that stores data, it is better to deploy it with a `StatefulSet` resource.
 
-1. Create a `server-gitea.statefulset.yaml` file under the `resources` path.
+1. Create a `server-gitea.statefulset.yaml` file under the `resources` path:
 
-    ~~~bash
+    ~~~sh
     $ touch $HOME/k8sprjs/gitea/components/server-gitea/resources/server-gitea.statefulset.yaml
     ~~~
 
-2. Put the yaml declaration below in `server-gitea.statefulset.yaml`.
+2. Declare the `StatefulSet` for your Gitea server in `resources/server-gitea.statefulset.yaml`:
 
     ~~~yaml
+    # Gitea StatefulSet for a server pod
     apiVersion: apps/v1
     kind: StatefulSet
 
@@ -127,245 +221,231 @@ Gitea is a server that stores data, so it needs to be deployed with a `StatefulS
         spec:
           containers:
           - name: server
-            image: gitea/gitea:1.15.9
+            image: gitea/gitea:1.25-rootless
             ports:
             - containerPort: 3000
-              name: https
-            - containerPort: 22
+              name: server
+            - containerPort: 2222
               name: ssh
+            readinessProbe:
+              httpGet:
+                path: /api/healthz
+                port: server
+                httpHeaders:
+                - name: X-Forwarded-Proto
+                  value: https
+                - name: Host
+                  value: server-gitea.gitea
+              initialDelaySeconds: 100
+              timeoutSeconds: 5
+              periodSeconds: 10
+              successThreshold: 1
+              failureThreshold: 10
+            livenessProbe:
+              httpGet:
+                path: /api/healthz
+                port: server
+                httpHeaders:
+                - name: X-Forwarded-Proto
+                  value: https
+                - name: Host
+                  value: server-gitea.gitea
+              initialDelaySeconds: 120
+              timeoutSeconds: 5
+              periodSeconds: 10
+              successThreshold: 1
+              failureThreshold: 10
+            envFrom:
+            - configMapRef:
+                name: server-gitea-env-vars
+            - secretRef:
+                name: server-gitea-valkey-user
             env:
-            - name: GITEA__server__PROTOCOL
-              value: https
-            - name: GITEA__server__DOMAIN
-              value: gitea.deimos.cloud
-            - name: GITEA__server__HTTP_ADDR
-              value: 0.0.0.0
-            - name: GITEA__server__ROOT_URL
-              value: $(GITEA__server__PROTOCOL)://$(GITEA__server__DOMAIN)/
-            - name: GITEA__server__CERT_FILE
-              value: https/wildcard.deimos.cloud-tls.crt
-            - name: GITEA__server__KEY_FILE
-              value: https/wildcard.deimos.cloud-tls.key
-            - name: GITEA__repository__ROOT
-              value: /data/gitea/repos
-            - name: GITEA__metrics__ENABLED
-              value: "true"
-            - name: GITEA__database__DB_TYPE
-              value: postgres
-            - name: POSTGRESQL_HOST_FQDN
-              valueFrom:
-                configMapKeyRef:
-                  name: server-gitea
-                  key: db-postgresql-svc-fqdn
-            - name: GITEA__database__HOST
-              value: "$(POSTGRESQL_HOST_FQDN):5432"
             - name: GITEA__database__NAME
               valueFrom:
                 configMapKeyRef:
-                  name: db-postgresql
+                  name: db-postgresql-config
                   key: postgresql-db-name
             - name: GITEA__database__USER
               valueFrom:
                 configMapKeyRef:
-                  name: db-postgresql
+                  name: db-postgresql-config
                   key: gitea-username
             - name: GITEA__database__PASSWD
               valueFrom:
                 secretKeyRef:
-                  name: db-postgresql
+                  name: db-postgresql-secrets
                   key: gitea-user-password
-            - name: GITEA__database__SSL_MODE
-              value: disable
-            - name: GITEA__cache__ENABLED
-              value: "true"
-            - name: GITEA__cache__ADAPTER
-              value: redis
-            - name: REDIS_HOST_FQDN
-              valueFrom:
-                configMapKeyRef:
-                  name: server-gitea
-                  key: cache-redis-svc-fqdn
-            - name: REDIS_HOST_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: cache-redis
-                  key: redis-password
             - name: GITEA__cache__HOST
-              value: "redis://:$(REDIS_HOST_PASSWORD)@$(REDIS_HOST_FQDN):6379/0?pool_size=100&idle_timeout=180s"
-            - name: GITEA__queue__TYPE
-              value: redis
-            - name: GITEA__queue__CONN_STR
-              value: "redis://:$(REDIS_HOST_PASSWORD)@$(REDIS_HOST_FQDN):6379/0"
-            - name: GITEA__session__PROVIDER
-              value: redis
+              value: "redis://$(GITEA_VALKEY_USERNAME):$(GITEA_VALKEY_PASSWORD)@cache-valkey.gitea:6379/0?pool_size=100&idle_timeout=180s&prefix=gitea:"
             - name: GITEA__session__PROVIDER_CONFIG
               value: $(GITEA__cache__HOST)
-            - name: GITEA__session__COOKIE_SECURE
-              value: "true"
-            - name: GITEA__session__COOKIE_NAME
-              value: gitea_cookie
-            - name: GITEA__log__ROUTER_LOG_LEVEL
-              value: trace
             resources:
-              limits:
-                memory: 256Mi
+              requests:
+                cpu: 250m
+                memory: 128Mi
             volumeMounts:
-            - name: data-storage
+            - name: gitea-data-storage
               mountPath: /data
-            - name: certificate
-              subPath: wildcard.deimos.cloud-tls.crt
-              mountPath: /data/gitea/https/wildcard.deimos.cloud-tls.crt
-            - name: certificate
-              subPath: wildcard.deimos.cloud-tls.key
-              mountPath: /data/gitea/https/wildcard.deimos.cloud-tls.key
-            - name: repos-storage
+            - name: gitea-repos-storage
               mountPath: /data/gitea/repos
+            - name: tmp
+              mountPath: /tmp/gitea
+            securityContext:
+              readOnlyRootFilesystem: true
+              allowPrivilegeEscalation: false
+              runAsNonRoot: true
+              runAsUser: 1000
+          automountServiceAccountToken: false
+          hostAliases:
+          - ip: "10.7.0.1"
+            hostnames:
+            - "gitea.homelab.cloud"
           volumes:
-          - name: certificate
-            secret:
-              secretName: wildcard.deimos.cloud-tls
-              items:
-              - key: tls.crt
-                path: wildcard.deimos.cloud-tls.crt
-              - key: tls.key
-                path: wildcard.deimos.cloud-tls.key
-          - name: data-storage
+          - name: gitea-data-storage
             persistentVolumeClaim:
-              claimName: data-server-gitea
-          - name: repos-storage
+              claimName: server-gitea-srv
+          - name: gitea-repos-storage
             persistentVolumeClaim:
-              claimName: repos-server-gitea
+              claimName: server-gitea-repos
+          - name: tmp
+            emptyDir:
+              sizeLimit: 64Mi
     ~~~
 
-    There are a few particularities in this `StatefulSet` in comparison with the others you've seen before.
+    This `StatefulSet` for the Gitea server is similar to [the one declared for the Ghost server](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#ghost-server-statefulset), with the following differences:
 
-    - `server` container: there's only one container in the pod. Since Gitea already provides Prometheus metrics, you don't need another sidecar container to run a service that provides those metrics.
+    - `spec.template.spec.container.server`\
+      There is the only the `server` container in the pod. Since Gitea already provides Prometheus metrics, you do not need another sidecar container to run a service providing those metrics.
 
-        - The `image` is for the version `1.15.9` of Gitea, built on an Alpine Linux system.
+      - The `image` is for the version `1.25-rootless` of Gitea, built on an Alpine Linux system. Notice that it is the `rootless` version of Gitea's image, which is prepared to run the Gitea server with an unnamed non-root user identified by the UID `1000`.
 
-        - In `ports` you have two ports declared, the `https` one to access the web interface (Gitea by default listens on the port `3000`) and the `ssh` for connecting with this Gitea server through that protocol (which uses the port `22` as the standard one).
-            > **BEWARE!**  
-            > The `containerPort` declarations are essentially informative, they don't actually determine what ports are opened in a pod. That's up to the applications or services running within the pod. [Check this thread](https://stackoverflow.com/questions/57197095/why-do-we-need-a-port-containerport-in-a-kuberntes-deployment-container-definiti) to know more about this technicality.
+      - In `ports` you have two ports declared, the `server` one to access Gitea (it listens on the port `3000` by default) and the `ssh` for connecting with this Gitea server through that protocol (the rootless image is configured to use the port `2222`).
 
-        - `env` section: the main oddity in the variables set here is the format of those named `GITEA_`. It's a format [explained here](https://github.com/go-gitea/gitea/tree/main/contrib/environment-to-ini) that allows the Gitea in this Docker image to overwrite the corresponding configuration parameters in its default `/data/gitea/conf/app.ini` file with the values set in these variables.
-            - `GITEA__server__PROTOCOL`: indicates on which protocol this Gitea server listens on.
-            - `GITEA__server__DOMAIN`: the domain name for this server. As in other cases, you'll have to enable the domain in your network or directly in your client systems using the `hosts` file.
-            - `GITEA__server__HTTP_ADDR`: on which IPs this server will listen on.
-            - `GITEA__server__ROOT_URL`: overwrites the automatically generated public URL. The autogenerated one also includes the port after the domain, which I've removed here because you'll access this Gitea server through the a `Service` configured to use the standard HTTPS port `443`.
-            - `GITEA__server__CERT_FILE`: path to the public or crt part of the certificate used for HTTPS communication. The path is relative to the value set in a `CUSTOM_PATH` variable which, in the Docker image of Gitea, is set to `/data/gitea`.
-            - `GITEA__server__KEY_FILE`: path to the private key of the certificate used for HTTPS communications. Also relative to the `CUSTOM_PATH` variable.
-            - `GITEA__repository__ROOT`: absolute path to the directory where the Git repositories of the users are kept.
-            - `GITEA__metrics__ENABLED`: for enabling the Prometheus metrics endpoint included in the Gitea server.
-            - `GITEA__database__DB_TYPE`: indicates the type of database Gitea must use.
-            - `POSTGRESQL_HOST_FQDN`: variable for loading as environment variable the FQDN of the PostgreSQL server this Gitea instance will connect to.
-            - `GITEA__database__HOST`: connection string to reach the database for this Gitea instance.
-            - `GITEA__database__NAME`: name of the database to connect to in the database server.
-            - `GITEA__database__USER`: Gitea user's name in the database.
-            - `GITEA__database__PASSWD`: Gitea user's password in the database.
-            - `GITEA__database__SSL_MODE`: for enabling or disabling encryption in the communication with the database.
-            - `GITEA__cache__ENABLED`: for enabling the cache on the Gitea instance.
-            - `GITEA__cache__ADAPTER`: depending on what caching engine you want to use, you'll have to set the proper adapter here to connect to that engine.
-            - `REDIS_HOST_FQDN`: variable for loading as environment variable the FQDN of the Redis server this Gitea instance will connect to.
-            - `REDIS_HOST_PASSWORD`: custom variable to load the password for connecting with the Redis server.
-            - `GITEA__cache__HOST`: the full connection string to reach the cache server.
-            - `GITEA__queue__TYPE`: type of queue to be used.
-            - `GITEA__queue__CONN_STR`: connection string for the `redis` queue type.
-            - `GITEA__session__PROVIDER`: indicates what session engine provider you want to use.
-            - `GITEA__session__PROVIDER_CONFIG`: this value will vary depending on what session engine provider you uses. For Redis is the full connection string.
-            - `GITEA__session__COOKIE_SECURE`: when `true`, this forces using HTTPS on all session accesses.
-            - `GITEA__session__COOKIE_NAME`: name of the cookie used for the session ID.
+      - The `readinessProbe` and `livenessProbe` probes call the `/api/healthz` endpoint `path` to check on the Gitea server status.
 
-        - `volumeMounts` section: mounts the certificate files and the two storage volumes for storing Gitea's data.
-            - `/data`: the Gitea Docker image will put here contents required to run the instance.
-            - `wildcard.deimos.cloud-tls.crt` and `wildcard.deimos.cloud-tls.key`: the certificate files that, for this Gitea setup, must be placed at `/data/gitea/https`.
-            - `/data/gitea/repos`: folder where Gitea will store the users' Git repositories.
+      - The `envFrom` block invokes the `ConfigMap` and `Secret` that will be declared later in the Kustomize manifest for this Gitea server subproject. The `server-gitea-env-vars` config map loads [the environment variables set previously in the `configs/env.properties` file](#non-secret-gitea-configuration-parameters), while the `server-gitea-valkey-user` secret loads [the variables set in the `secrets/valkey_user_env.properties` file](#secret-gitea-configuration-parameters).
 
-                > **BEWARE!**  
-                > Gitea works with several paths, each with a different purpose. To know more about them, [check this FAQ question](https://docs.gitea.io/en-us/faq/#where-does-gitea-store-what-file) in the official Gitea documentation. On the other hand, be aware that, [in Gitea's Docker image](https://github.com/go-gitea/gitea/blob/v1.15.8/Dockerfile), the path `/data/gitea` is the default one for application data and custom content (like the certificate files).
+      - The `env` section only declares the environment variables that have values injected from parameters set somewhere else:
 
-## Gitea server Service resource
+        - `GITEA__database__NAME`\
+          The name of the database reserved for Gitea. [This value was set in the configuration of the PostgreSQL deployment subproject](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%203%20-%20PostgreSQL%20database%20server.md#properties-file-dbnamesproperties).
 
-Now you have to produce the `Service` for your Gitea setup
+        - `GITEA__database__USER`\
+          The name of the user assigned to Gitea in the database server. [This value was also set in the configuration of the PostgreSQL deployment subproject](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%203%20-%20PostgreSQL%20database%20server.md#properties-file-dbnamesproperties)
 
-1. Create a `server-gitea.service.yaml` file under `resources`.
+        - `GITEA__database__PASSWD`\
+          This is the password of the Gitea user in the database server. This value is [one of the passwords declared in the PostgreSQL deployment subproject](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%203%20-%20PostgreSQL%20database%20server.md#postgresql-passwords).
 
-    ~~~bash
+        - `GITEA__cache__HOST`\
+          This is the URL to connect to the cache server host:
+
+          - Notice that the application layer protocol specified is `redis`, not `http`.
+
+          - The values for the user credentials are injected in the URL with the environment variables `GITEA_VALKEY_USERNAME` and `GITEA_VALKEY_PASSWORD`.
+
+          - `cache-valkey.gitea:6379` indicates the hostname and port of the Valkey `Service` to connect to.
+
+          - The `/0` specifies which Valkey instance to use. This value is always `0` when only using a single Valkey server instance. When working in a High Availability (HA) environment (where there is a cluster of Valkey instances), this value could point to any Valkey instance available in the environment.
+
+          - The query parameters are options that affect how the client side (Gitea in this case) connects with Valkey. In particular, notice how the `prefix` parameter specifies the same `gitea:` prefix configured for the Gitea user [in the Valkey ACL user list](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-acl-user-list).
+
+        - `GITEA__session__PROVIDER_CONFIG`\
+          Connection string pointing to the system providing sessions support. Since the session provider is also Valkey in this case, the connection string is the same one specified in the `GITEA__cache__HOST` variable.
+
+      - The `volumeMounts` block links the Gitea server with three storage resources:
+
+        - The storage for the Gitea server data, which is mounted under the `/data` path.
+
+        - The storage for the users Git repositories, that is mounted in the `/data/gitea/repos` directory.
+
+        - An ephemeral in-memory storage for Gitea mounted in `/tmp/gitea`, which is the path set as the temporary directory in the rootless Gitea image.
+
+      - The `securityContext` hardens the container by making the filesystem read-only, and avoiding using the root user to run the container. Instead, the `runAsUser` specifies the user `1000` which is the one prepared in the rootless Gitea image.
+
+    - The `automountServiceAccountToken` parameter set to `false` blocks the access to the Kubernetes cluster's control plane from the pod generated by this `StatefulSet`.
+
+    - In the `hostAliases`, the hostname for the Gitea server (`gitea.homelab.cloud`) is associated with the IP address of Traefik (`10.7.0.1`). This allows Gitea to reach itself through the proper IP when necessary.
+
+    - The `volumes` block declares the three storages used in the Gitea `server` container:
+
+      - The `gitea-data-storage` item uses the `server-gitea-srv` persistent volume claim to connect with the LVM meant to store the Gitea server data.
+
+      - The `gitea-repos-storage` item uses the `server-gitea-repos` persistent volume claim to connect with the LVM created for storing Gitea users' repositories.
+
+      - The `tmp` entry is an emptyDir that enables the ephemeral in-memory storage for temporary operations happening in the Ghost server.
+
+## Gitea server Service
+
+Your Gitea server's `StatefulSet` needs a `Service` called `server-ghost` to work:
+
+1. Create a file called `server-gitea.service.yaml` under `resources`:
+
+    ~~~sh
     $ touch $HOME/k8sprjs/gitea/components/server-gitea/resources/server-gitea.service.yaml
     ~~~
 
-2. Copy in `server-gitea.service.yaml` the `Service` declaration next.
+2. Declare the `Service` for the Ghost server in `resources/server-ghost.service.yaml`:
 
     ~~~yaml
+    # Gitea server headless service
     apiVersion: v1
     kind: Service
 
     metadata:
+      name: server-gitea
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/path: /metrics
-        prometheus.io/scheme: "https"
         prometheus.io/port: "3000"
-      name: server-gitea
     spec:
-      type: LoadBalancer
-      loadBalancerIP: 192.168.1.43
+      type: ClusterIP
+      clusterIP: None
       ports:
-      - port: 443
-        targetPort: 3000
+      - port: 3000
+        targetPort: server
         protocol: TCP
-        name: https
+        name: server
       - port: 22
+        targetPort: ssh
         protocol: TCP
         name: ssh
     ~~~
 
-    There are a few particularities to notice in this `Service` declaration.
+    Like the services for the other components, this `Service` for the Gitea server does not have an specific IP permanently assigned in the Kubernetes cluster. Since the namespace for the complete Gitea deployment is going to be `gitea`, the hostname to reach this service will be `server-gitea.gitea`. Also notice that:
 
-    - This `Service` is of the `LoadBalancer` type, so it gets its external IP from the MetalLB load balancer in your cluster.
+    - In the `metadata.annotations` section, there is a new `prometheus.io/path` entry you have not seen in the other Services you have declared up till now. This parameter is the relative URL to the Prometheus metrics endpoint. By default this path is expected to be located at `/metrics`, as it is in this case. If the Prometheus metrics had been served by another endpoint, you would have been forced to specify its relative path in this annotation entry.
 
-    - `metadata.annotations`: up till now you've put here only two `prometheus.io` annotations, `scrape` and `port`. Now here you have two more:
-        - `path`: is the relative URL to the Prometheus metrics endpoint. By default it's expected to be at `/metrics`, as in this case, but if it's found in another path you'll have to specify it in this annotation.
-        - `scheme`: since the connection to Gitea is secured through HTTPS, you must indicate it by setting this parameter to `https`.
+    - The port `3000` is used both for regular access into the Gitea server and for scraping the server's Prometheus metrics endpoint.
 
-    - On the other hand, it doesn't have any particular internal cluster IP specified. This means that its cluster IP may change on every run so, to reach this service internally, you'll better use its FQDN.
-        > **BEWARE!**  
-        > A `Service` with type `LoadBalancer` cannot have its `clusterIP` set as `None`.
+    - The `ssh` port declared in this `Service` is the standard SSH one, but it connects with the `ssh` `2222` port previously [declared in the Gitea server `StatefulSet`](#gitea-server-statefulset).
 
-    - The `https` port redirects the requests reaching the `443` port to the `3000`, because that's where the Gitea server is truly listening in its container.
+## Gitea Kustomize project
 
-    - It has exactly the same `prometheus.io` annotations that were specified in the previous `StatefulSet`. Notice how the `prometheus.io/port` annotation has the same number as in the `targetPort` of the `https` port. This seems to be the recommended thing to do, at least according to [this article](https://devopscube.com/setup-prometheus-monitoring-on-kubernetes/).
+Declare the main `kustomization.yaml` manifest describing the Gitea server's Kustomize subproject:
 
-### _Gitea `Service`'s FQDN or DNS record_
+1. In the main `server-gitea` folder, create a `kustomization.yaml` file:
 
-[This Gitea Service resource is under the same particularities as the Redis](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%202%20-%20Redis%20cache%20server.md#redis-services-fqdn-or-dns-record) and PostgreSQL services, so it's FQDN will be a very similar string.
-
-~~~http
-gitea-server-gitea.gitea.svc.deimos.cluster.io
-~~~
-
-## Gitea server's Kustomize project
-
-Now you have to put all the Gitea parts together in a `kustomization.yaml` file.
-
-1. Create a `kustomization.yaml` file in the `server-gitea` folder.
-
-    ~~~bash
+    ~~~sh
     $ touch $HOME/k8sprjs/gitea/components/server-gitea/kustomization.yaml
     ~~~
 
-2. Fill `kustomization.yaml` with the following yaml.
+2. Enter in the `kustomization.yaml` file the `Kustomization` declaration for deploying the Gitea server:
 
     ~~~yaml
     # Gitea server setup
     apiVersion: kustomize.config.k8s.io/v1beta1
     kind: Kustomization
 
-    commonLabels:
-      app: server-gitea
+    labels:
+      - pairs:
+          app: server-gitea
+        includeSelectors: true
+        includeTemplates: true
 
     resources:
-    - resources/data-server-gitea.persistentvolumeclaim.yaml
-    - resources/repos-server-gitea.persistentvolumeclaim.yaml
+    - resources/server-gitea-srv.persistentvolumeclaim.yaml
+    - resources/server-gitea-repos.persistentvolumeclaim.yaml
     - resources/server-gitea.service.yaml
     - resources/server-gitea.statefulset.yaml
 
@@ -375,38 +455,72 @@ Now you have to put all the Gitea parts together in a `kustomization.yaml` file.
 
     images:
     - name: gitea/gitea
-      newTag: 1.15.9
+      newTag: 1.25-rootless
 
     configMapGenerator:
-    - name: server-gitea
+    - name: server-gitea-env-vars
       envs:
-      - configs/params.properties
+      - configs/env.properties
+
+    secretGenerator:
+    - name: server-gitea-valkey-user
+      envs:
+      - secrets/valkey_user_env.properties
     ~~~
 
-    The only thing to highlight in this `kustomization.yaml` is that there's no `secretGenerator` block, unlike the cases of the Redis and PostgreSQL components.
+    This `Kustomization` manifest is like the others you have created for other components, with just a few particularities to highlight:
 
-### _Validating the Kustomize yaml output_
+    - There is only one image to manage in the `images` list because Gitea already provides Prometheus metrics without requiring some extra container to enable them.
 
-As with the other components, you should check the output generated by this Kustomize project.
+    - In the `resources` block are listed the two files declaring `PersistentVolumeClaim` resources used to enable persistent storage in the Gitea server, together with the other usual declarations for the corresponding `StatefulSet` and `Service`.
 
-1. Generate the yaml with `kubectl kustomize` as usual.
+    - The `configMapGenerator` block declares the `server-gitea-env-vars`  `ConfigMap` object containing only [the `configs/env.properties` file with the specific environment variables that adjust the configuration of the Gitea server](#non-secret-gitea-configuration-parameters).
 
-    ~~~bash
+    - The `secretGenerator` block is configured to produce a `Secret` object only containing the environment variables with the credentials of the Gitea server's Valkey user.
+
+### Validating the Kustomize YAML output
+
+At this point, you have completed the Gitea server Kustomize subproject. It is time to test it out with `kubectl`:
+
+1. Execute the `kubectl kustomize` command on the Gitea server Kustomize subproject's root folder, piped to `less` to get the output paginated:
+
+    ~~~sh
     $ kubectl kustomize $HOME/k8sprjs/gitea/components/server-gitea | less
     ~~~
 
-2. See if your yaml output matches the one below.
+2. The resulting YAML should look like this:
 
     ~~~yaml
     apiVersion: v1
     data:
-      cache-redis-svc-fqdn: gitea-cache-redis.gitea.svc.deimos.cluster.io
-      db-postgresql-svc-fqdn: gitea-db-postgresql.gitea.svc.deimos.cluster.io
+      GITEA__cache__ADAPTER: redis
+      GITEA__cache__ENABLED: "true"
+      GITEA__database__DB_TYPE: postgres
+      GITEA__database__HOST: db-postgresql.gitea:5432
+      GITEA__database__SSL_MODE: disable
+      GITEA__metrics__ENABLED: "true"
+      GITEA__queue__TYPE: redis
+      GITEA__repository__ROOT: /data/gitea/repos
+      GITEA__server__DOMAIN: gitea.homelab.cloud
+      GITEA__server__HTTP_ADDR: 0.0.0.0
+      GITEA__session__COOKIE_NAME: gitea_cookie
+      GITEA__session__PROVIDER: redis
     kind: ConfigMap
     metadata:
       labels:
         app: server-gitea
-      name: server-gitea-hffkf88tm4
+      name: server-gitea-env-vars-dmth7bdc25
+    ---
+    apiVersion: v1
+    data:
+      GITEA_VALKEY_PASSWORD: InBBUzJ3T3JEX2Ywcl9UI2VfRzE3ZTRfVXMzUiI=
+      GITEA_VALKEY_USERNAME: Z2l0ZWFjYWNoZQ==
+    kind: Secret
+    metadata:
+      labels:
+        app: server-gitea
+      name: server-gitea-valkey-user-hbk4b87t87
+    type: Opaque
     ---
     apiVersion: v1
     kind: Service
@@ -414,46 +528,31 @@ As with the other components, you should check the output generated by this Kust
       annotations:
         prometheus.io/path: /metrics
         prometheus.io/port: "3000"
-        prometheus.io/scheme: https
         prometheus.io/scrape: "true"
       labels:
         app: server-gitea
       name: server-gitea
     spec:
-      loadBalancerIP: 192.168.1.43
+      clusterIP: None
       ports:
-      - name: https
-        port: 443
+      - name: server
+        port: 3000
         protocol: TCP
-        targetPort: 3000
+        targetPort: server
       - name: ssh
         port: 22
         protocol: TCP
+        targetPort: ssh
       selector:
         app: server-gitea
-      type: LoadBalancer
+      type: ClusterIP
     ---
     apiVersion: v1
     kind: PersistentVolumeClaim
     metadata:
       labels:
         app: server-gitea
-      name: data-server-gitea
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      resources:
-        requests:
-          storage: 1.2G
-      storageClassName: local-path
-      volumeName: data-gitea
-    ---
-    apiVersion: v1
-    kind: PersistentVolumeClaim
-    metadata:
-      labels:
-        app: server-gitea
-      name: repos-server-gitea
+      name: server-gitea-repos
     spec:
       accessModes:
       - ReadWriteOnce
@@ -461,7 +560,22 @@ As with the other components, you should check the output generated by this Kust
         requests:
           storage: 9.3G
       storageClassName: local-path
-      volumeName: repos-gitea
+      volumeName: gitea-hdd-repos
+    ---
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      labels:
+        app: server-gitea
+      name: server-gitea-srv
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1.9G
+      storageClassName: local-path
+      volumeName: gitea-ssd-srv
     ---
     apiVersion: apps/v1
     kind: StatefulSet
@@ -480,171 +594,168 @@ As with the other components, you should check the output generated by this Kust
           labels:
             app: server-gitea
         spec:
+          automountServiceAccountToken: false
           containers:
           - env:
-            - name: GITEA__server__PROTOCOL
-              value: https
-            - name: GITEA__server__DOMAIN
-              value: gitea.deimos.cloud
-            - name: GITEA__server__HTTP_ADDR
-              value: 0.0.0.0
-            - name: GITEA__server__ROOT_URL
-              value: $(GITEA__server__PROTOCOL)://$(GITEA__server__DOMAIN)/
-            - name: GITEA__server__CERT_FILE
-              value: https/wildcard.deimos.cloud-tls.crt
-            - name: GITEA__server__KEY_FILE
-              value: https/wildcard.deimos.cloud-tls.key
-            - name: GITEA__repository__ROOT
-              value: /data/gitea/repos
-            - name: GITEA__metrics__ENABLED
-              value: "true"
-            - name: GITEA__database__DB_TYPE
-              value: postgres
-            - name: POSTGRESQL_HOST_FQDN
-              valueFrom:
-                configMapKeyRef:
-                  key: db-postgresql-svc-fqdn
-                  name: server-gitea-hffkf88tm4
-            - name: GITEA__database__HOST
-              value: $(POSTGRESQL_HOST_FQDN):5432
             - name: GITEA__database__NAME
               valueFrom:
                 configMapKeyRef:
                   key: postgresql-db-name
-                  name: db-postgresql
+                  name: db-postgresql-config
             - name: GITEA__database__USER
               valueFrom:
                 configMapKeyRef:
                   key: gitea-username
-                  name: db-postgresql
+                  name: db-postgresql-config
             - name: GITEA__database__PASSWD
               valueFrom:
                 secretKeyRef:
                   key: gitea-user-password
-                  name: db-postgresql
-            - name: GITEA__database__SSL_MODE
-              value: disable
-            - name: GITEA__cache__ENABLED
-              value: "true"
-            - name: GITEA__cache__ADAPTER
-              value: redis
-            - name: REDIS_HOST_FQDN
-              valueFrom:
-                configMapKeyRef:
-                  key: cache-redis-svc-fqdn
-                  name: server-gitea-hffkf88tm4
-            - name: REDIS_HOST_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  key: redis-password
-                  name: cache-redis
+                  name: db-postgresql-secrets
             - name: GITEA__cache__HOST
-              value: redis://:$(REDIS_HOST_PASSWORD)@$(REDIS_HOST_FQDN):6379/0?pool_size=100&idle_timeout=180s
-            - name: GITEA__queue__TYPE
-              value: redis
-            - name: GITEA__queue__CONN_STR
-              value: redis://:$(REDIS_HOST_PASSWORD)@$(REDIS_HOST_FQDN):6379/0
-            - name: GITEA__session__PROVIDER
-              value: redis
+              value: 'redis://$(GITEA_VALKEY_USERNAME):$(GITEA_VALKEY_PASSWORD)@cache-valkey.gitea:6379/0?pool_size=100&idle_timeout=180s&prefix=gitea:'
             - name: GITEA__session__PROVIDER_CONFIG
               value: $(GITEA__cache__HOST)
-            - name: GITEA__session__COOKIE_SECURE
-              value: "true"
-            - name: GITEA__session__COOKIE_NAME
-              value: gitea_cookie
-            - name: GITEA__log__ROUTER_LOG_LEVEL
-              value: trace
-            image: gitea/gitea:1.15.9
+            envFrom:
+            - configMapRef:
+                name: server-gitea-env-vars-dmth7bdc25
+            - secretRef:
+                name: server-gitea-valkey-user-hbk4b87t87
+            image: gitea/gitea:1.25-rootless
+            livenessProbe:
+              failureThreshold: 10
+              httpGet:
+                httpHeaders:
+                - name: X-Forwarded-Proto
+                  value: https
+                - name: Host
+                  value: server-gitea.gitea
+                path: /api/healthz
+                port: server
+              initialDelaySeconds: 120
+              periodSeconds: 10
+              successThreshold: 1
+              timeoutSeconds: 5
             name: server
             ports:
             - containerPort: 3000
-              name: https
-            - containerPort: 22
+              name: server
+            - containerPort: 2222
               name: ssh
+            readinessProbe:
+              failureThreshold: 10
+              httpGet:
+                httpHeaders:
+                - name: X-Forwarded-Proto
+                  value: https
+                - name: Host
+                  value: server-gitea.gitea
+                path: /api/healthz
+                port: server
+              initialDelaySeconds: 100
+              periodSeconds: 10
+              successThreshold: 1
+              timeoutSeconds: 5
             resources:
-              limits:
-                memory: 256Mi
+              requests:
+                cpu: 250m
+                memory: 128Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              runAsNonRoot: true
+              runAsUser: 1000
             volumeMounts:
             - mountPath: /data
-              name: data-storage
-            - mountPath: /data/gitea/https/wildcard.deimos.cloud-tls.crt
-              name: certificate
-              subPath: wildcard.deimos.cloud-tls.crt
-            - mountPath: /data/gitea/https/wildcard.deimos.cloud-tls.key
-              name: certificate
-              subPath: wildcard.deimos.cloud-tls.key
+              name: gitea-data-storage
             - mountPath: /data/gitea/repos
-              name: repos-storage
+              name: gitea-repos-storage
+            - mountPath: /tmp/gitea
+              name: tmp
+          hostAliases:
+          - hostnames:
+            - gitea.homelab.cloud
+            ip: 10.7.0.1
           volumes:
-          - name: certificate
-            secret:
-              items:
-              - key: tls.crt
-                path: wildcard.deimos.cloud-tls.crt
-              - key: tls.key
-                path: wildcard.deimos.cloud-tls.key
-              secretName: wildcard.deimos.cloud-tls
-          - name: data-storage
+          - name: gitea-data-storage
             persistentVolumeClaim:
-              claimName: data-server-gitea
-          - name: repos-storage
+              claimName: server-gitea-srv
+          - name: gitea-repos-storage
             persistentVolumeClaim:
-              claimName: repos-server-gitea
+              claimName: server-gitea-repos
+          - emptyDir:
+              sizeLimit: 64Mi
+            name: tmp
     ~~~
 
-## Don't deploy this Gitea server project on its own
+## Do not deploy this Gitea server project on its own
 
-This Gitea server cannot be deployed on its own because is missing several elements, like the persistent volumes required by the PVCs and the certificate. As with the Nextcloud platform, you'll tie everything together in this guide's final part.
+This Gitea server setup is missing two critical element, the persistent volumes it needs to store its working directory data and users Git repositories. Do not confuse them with the claims you have configured for your Gitea server. Those persistent volumes and other elements will be declared in the main Kustomize project you will declare in the final part of this Gitea deployment procedure. Until then, do not deploy this Gitea server subproject.
 
 ## Relevant system paths
 
-### _Folders in `kubectl` client system_
+### Folders in `kubectl` client system
 
 - `$HOME/k8sprjs/gitea`
 - `$HOME/k8sprjs/gitea/components`
 - `$HOME/k8sprjs/gitea/components/server-gitea`
 - `$HOME/k8sprjs/gitea/components/server-gitea/configs`
 - `$HOME/k8sprjs/gitea/components/server-gitea/resources`
+- `$HOME/k8sprjs/gitea/components/server-gitea/secrets`
 
-### _Files in `kubectl` client system_
+### Files in `kubectl` client system
 
 - `$HOME/k8sprjs/gitea/components/server-gitea/kustomization.yaml`
-- `$HOME/k8sprjs/gitea/components/server-gitea/configs/params.properties`
-- `$HOME/k8sprjs/gitea/components/server-gitea/resources/data-server-gitea.persistentvolumeclaim.yaml`
-- `$HOME/k8sprjs/gitea/components/server-gitea/resources/repos-server-gitea.persistentvolumeclaim.yaml`
+- `$HOME/k8sprjs/gitea/components/server-gitea/configs/env.properties`
+- `$HOME/k8sprjs/gitea/components/server-gitea/resources/server-gitea-repos.persistentvolumeclaim.yaml`
+- `$HOME/k8sprjs/gitea/components/server-gitea/resources/server-gitea-srv.persistentvolumeclaim.yaml`
 - `$HOME/k8sprjs/gitea/components/server-gitea/resources/server-gitea.service.yaml`
 - `$HOME/k8sprjs/gitea/components/server-gitea/resources/server-gitea.statefulset.yaml`
+- `$HOME/k8sprjs/gitea/components/server-gitea/secrets/valkey_user_env.properties`
 
 ## References
 
-### _Kubernetes_
+### [Gitea](https://about.gitea.com/)
 
-- [Why do we need a port/containerPort in a Kubernetes deployment/container definition?](https://stackoverflow.com/questions/57197095/why-do-we-need-a-port-containerport-in-a-kuberntes-deployment-container-definiti)
-- [Kubernetes API. Ports in containers](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#ports)
-- [Kubernetes & Prometheus Scraping Configuration. Per-pod Prometheus Annotations](https://www.weave.works/docs/cloud/latest/tasks/monitor/configuration-k8s/#per-pod-prometheus-annotations)
-- [How to Setup Prometheus Monitoring On Kubernetes Cluster](https://devopscube.com/setup-prometheus-monitoring-on-kubernetes/)
-- [How to set up auto-discovery of Kubernetes endpoint services in Prometheus](https://www.acagroup.be/en/blog/auto-discovery-of-kubernetes-endpoint-services-prometheus/)
+- [Docs. What is Gitea?](https://docs.gitea.com/)
+  - [Installation](https://docs.gitea.com/installation/install-on-kubernetes)
+    - [Install on Kubernetes](https://docs.gitea.com/installation/install-on-kubernetes)
+    - [Installation with Docker (rootless)](https://docs.gitea.com/installation/install-with-docker-rootless/)
+    - [Installation with Docker. Managing Deployments With Environment Variables](https://docs.gitea.com/next/installation/install-with-docker#managing-deployments-with-environment-variables)
 
-### _Gitea_
+  - [Administration](https://docs.gitea.com/administration/)
+    - [Gitea Command Line. Global options](https://docs.gitea.com/next/administration/command-line#global-options)
+    - [Configuration Cheat Sheet](https://docs.gitea.com/administration/config-cheat-sheet)
 
-- [Gitea Official site](https://gitea.io/en-us/)
-- [Gitea Docker image](https://hub.docker.com/r/gitea/gitea)
-- [Gitea on GitHub](https://github.com/go-gitea/gitea)
-- [Installation with Docker](https://docs.gitea.io/en-us/install-with-docker/)
-- [Configuration Cheat Sheet](https://docs.gitea.io/en-us/config-cheat-sheet/)
-- [Managing Deployments With Environment Variables](https://docs.gitea.io/en-us/install-with-docker/#managing-deployments-with-environment-variables)
-- [HTTPS setup to encrypt connections to Gitea](https://docs.gitea.io/en-us/https-setup/)
-- [Gitea `app.example.ini`](https://github.com/go-gitea/gitea/blob/main/custom/conf/app.example.ini)
-- [Gitea Environment To Ini](https://github.com/go-gitea/gitea/tree/main/contrib/environment-to-ini)
-- [Gitea command line global options](https://docs.gitea.io/en-us/command-line/#global-options)
-- [Gitea Configuration Cheat Sheet](https://docs.gitea.io/en-us/config-cheat-sheet)
-- [Where does Gitea store what file](https://docs.gitea.io/en-us/faq/#where-does-gitea-store-what-file)
-- [Monitor Gitea with Prometheus](https://serverfault.com/questions/999413/monitor-gitea-with-prometheus)
-- [Install and Configure Gitea Git Service on Kubernetes / OpenShift](https://computingforgeeks.com/install-gitea-git-service-on-kubernetes-openshift/)
-- [Running Gitea on Kubernetes](https://ralph.blog.imixs.com/2021/02/25/running-gitea-on-kubernetes/)
-- [Running Gitea on a Virtual Cloud Server](https://ralph.blog.imixs.com/2021/02/26/running-gitea-on-a-virtual-cloud-server/)
-- [Setup a Self-Hosted Git Service with Gitea](https://dev.to/ruanbekker/setup-a-self-hosted-git-service-with-gitea-11ce)
-- [gitea support HA mode for redis & postgres](https://gitanswer.com/gitea-support-ha-mode-for-redis-postgres-go-906452007)
+  - [FAQ](https://docs.gitea.com/next/help/faq)
+    - [Where does Gitea store what file](https://docs.gitea.com/next/help/faq#where-does-gitea-store-what-file)
+
+- [GitHub. Gitea](https://github.com/go-gitea/gitea)
+  - [app.example.ini](https://github.com/go-gitea/gitea/blob/main/custom/conf/app.example.ini)
+  - [Dockerfile.rootles](https://github.com/go-gitea/gitea/blob/release/v1.25/Dockerfile.rootless)
+
+- [Docker Hub. Gitea](https://hub.docker.com/r/gitea/gitea)
+
+### Other Gitea-related contents
+
+- [ServerFault. Monitor Gitea with Prometheus](https://serverfault.com/questions/999413/monitor-gitea-with-prometheus)
+- [Computing for Geeks. Install and Configure Gitea Git Service on Kubernetes / OpenShift](https://computingforgeeks.com/install-gitea-git-service-on-kubernetes-openshift/)
+- [DEV. Setup a Self-Hosted Git Service with Gitea](https://dev.to/ruanbekker/setup-a-self-hosted-git-service-with-gitea-11ce)
+
+- [Ralph's Open Source Blog](https://ralph.blog.imixs.com/)
+  - [Running Gitea on Kubernetes](https://ralph.blog.imixs.com/2021/02/25/running-gitea-on-kubernetes/)
+  - [Running Gitea on a Virtual Cloud Server](https://ralph.blog.imixs.com/2021/02/26/running-gitea-on-a-virtual-cloud-server/)
+
+### [Kubernetes](https://kubernetes.io/docs/)
+
+- [Reference. Kubernetes API. Workload Resources. Pod](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/)
+  - [Ports](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#ports)
+
+### Other Kubernetes-related contents
+
+- [StackOverflow. Why do we need a port/containerPort in a Kubernetes deployment/container definition?](https://stackoverflow.com/questions/57197095/why-do-we-need-a-port-containerport-in-a-kuberntes-deployment-container-definiti)
+- [DevOpsCube. How to Setup Prometheus Monitoring On Kubernetes Cluster](https://devopscube.com/setup-prometheus-monitoring-on-kubernetes/)
+- [ACA Group. Blog. How to set up auto-discovery of Kubernetes endpoint services in Prometheus](https://www.acagroup.be/en/blog/auto-discovery-of-kubernetes-endpoint-services-prometheus/)
 
 ## Navigation
 

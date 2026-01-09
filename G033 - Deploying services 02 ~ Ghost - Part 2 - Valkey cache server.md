@@ -354,6 +354,12 @@ The next thing to do is setting up the `StatefulSet` declaration that will deplo
 
           - The `containerPort` is the same as the `port` set in the `valkey.conf` file. It has a `name` that allows invoking this port by name rather than by port number directly.
 
+            > [!NOTE]
+            > **The `containerPort` declaration is mostly informative**\
+            > The `containerPort` declarations do not actually determine what ports are opened in a pod. That's up to the applications or services running within the pod. The optional `name` attribute is what makes the `containerPort` useful, because it allows you to call the port by name rather than by number. This enables changing the port number when necessary without affecting the `Service` resource that calls the port by name.
+            >
+            > [Check this thread](https://stackoverflow.com/questions/57197095/why-do-we-need-a-port-containerport-in-a-kuberntes-deployment-container-definiti) to know more about this technicality.
+
           - The `resources.requests` declares a minimum requirement of CPU and memory resources to grant to the container when it starts. If the container needs more resources, the Kubernetes control plane will take care of assign them if they are available.
 
           > [!NOTE]
