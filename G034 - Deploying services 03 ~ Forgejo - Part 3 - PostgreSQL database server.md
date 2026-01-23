@@ -1,6 +1,6 @@
-# G034 - Deploying services 03 ~ Gitea - Part 3 - PostgreSQL database server
+# G034 - Deploying services 03 ~ Forgejo - Part 3 - PostgreSQL database server
 
-- [Gitea can use PostgreSQL as database](#gitea-can-use-postgresql-as-database)
+- [Forgejo can use PostgreSQL as database](#forgejo-can-use-postgresql-as-database)
 - [PostgreSQL Kustomize project's folders](#postgresql-kustomize-projects-folders)
 - [PostgreSQL configuration files](#postgresql-configuration-files)
   - [Configuration file `postgresql.conf`](#configuration-file-postgresqlconf)
@@ -22,16 +22,16 @@
   - [Kubernetes](#kubernetes)
 - [Navigation](#navigation)
 
-## Gitea can use PostgreSQL as database
+## Forgejo can use PostgreSQL as database
 
-Gitea is compatible with MariaDB but, instead of essentially repeating [the configuration used for the Ghost platform](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md), it is more interesting to show you how similar can be, from a Kubernetes point of view, the configuration of a different database. Therefore, in this part you will see how to configure the deployment a PostgreSQL instance for your Gitea platform.
+Forgejo is compatible with MariaDB but, instead of essentially repeating [the configuration used for the Ghost platform](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md), it is more interesting to show you how similar can be, from a Kubernetes point of view, the configuration of a different database. Therefore, here you will see how to configure the deployment a PostgreSQL instance for your Forgejo platform.
 
 ## PostgreSQL Kustomize project's folders
 
-Create the corresponding Kustomize subproject's directory tree for this component of your Gitea platform.
+Create the corresponding Kustomize subproject's directory tree for this component of your Forgejo platform.
 
 ~~~sh
-$ mkdir -p $HOME/k8sprjs/gitea/components/db-postgresql/{configs,resources,secrets}
+$ mkdir -p $HOME/k8sprjs/forgejo/components/db-postgresql/{configs,resources,secrets}
 ~~~
 
 ## PostgreSQL configuration files
@@ -45,7 +45,7 @@ The `postgresql.conf` is where you can set the parameters for PostgreSQL.
 1. Create a `postgresql.conf` in the `configs` folder:
 
     ~~~sh
-    $ touch $HOME/k8sprjs/gitea/components/db-postgresql/configs/postgresql.conf
+    $ touch $HOME/k8sprjs/forgejo/components/db-postgresql/configs/postgresql.conf
     ~~~
 
 2. Set the PostgreSQL configuration in `configs/postgresql.conf`:
@@ -140,7 +140,9 @@ The `postgresql.conf` is where you can set the parameters for PostgreSQL.
     - `pg_stat_statements.track`\
       Controls which statements are counted by the `pg_stat_statements` module.
 
-    To know more about the parameters above and many others available in PostgreSQL, check the [official documentation about Server Configuration](https://www.postgresql.org/docs/current/runtime-config.html) and [the `pg_stat_statements` module](https://www.postgresql.org/docs/current/pgstatstatements.html).
+    > [!NOTE]
+    > **Learn more about these parameters in the PostgreSQL official documentation**\
+    > To know more about the parameters above and many others available in PostgreSQL, check the [official documentation about Server Configuration](https://www.postgresql.org/docs/current/runtime-config.html) and [the `pg_stat_statements` module](https://www.postgresql.org/docs/current/pgstatstatements.html).
 
 ### Properties file `dbnames.properties`
 
@@ -149,28 +151,28 @@ You need to load in your PostgreSQL container some names as variables. Better ke
 1. Create a `dbnames.properties` file under the `configs` path:
 
     ~~~sh
-    $ touch $HOME/k8sprjs/gitea/components/db-postgresql/configs/dbnames.properties
+    $ touch $HOME/k8sprjs/forgejo/components/db-postgresql/configs/dbnames.properties
     ~~~
 
 2. Copy the following parameter lines into `configs/dbnames.properties`:
 
     ~~~properties
-    postgresql-db-name=gitea-db
+    postgresql-db-name=forgejo-db
     postgresql-superuser-name=postgres
-    gitea-username=giteadb
+    forgejo-username=forgejodb
     prometheus-exporter-username=prom_metrics
     ~~~
 
     The key-value pairs above mean the following.
 
     - `postgresql-db-name`\
-      A PostgreSQL server always initializes with an empty database named `postgres`, but you can make the server generate another one if you give it a different name such as `gitea-db`.
+      A PostgreSQL server always initializes with an empty database named `postgres`, but you can make the server generate another one if you give it a different name such as `forgejo-db`.
 
     - `postgresql-superuser-name`\
       The default superuser in a PostgreSQL server is named `postgres`, but you could change it for any other.
 
-    - `gitea-username`\
-      Name of the regular user for Gitea.
+    - `forgejo-username`\
+      Name of the regular user for Forgejo.
 
     - `prometheus-exporter-username`\
       Name for the Prometheus metrics exporter user.
@@ -179,18 +181,18 @@ You need to load in your PostgreSQL container some names as variables. Better ke
 
 You need to initialize your PostgreSQL server with the following:
 
-- A regular user for Gitea that has all the privileges on the Gitea database running on your PostgreSQL server.
+- A regular user for Forgejo that has all the privileges on the Forgejo database running on your PostgreSQL server. This user also must have a schema (an entity akin to a namespace in PostgreSQL) where to write tables in the database.
 
-- Enable the `pg_stat_statements` module to make certain stats from the Gitea database accessible for the Prometheus metrics exporter.
+- Enable the `pg_stat_statements` module to make certain stats from the Forgejo database accessible for the Prometheus metrics exporter.
 
-- A regular user and a special schema in the Gitea database for the Prometheus metrics exporter.
+- A regular user and a special schema in the Forgejo database for the Prometheus metrics exporter.
 
 Let's do it all in one initializer shell script:
 
 1. Create an `initdb.sh` file in the `configs` directory:
 
     ~~~sh
-    $ touch $HOME/k8sprjs/gitea/components/db-postgresql/configs/initdb.sh
+    $ touch $HOME/k8sprjs/forgejo/components/db-postgresql/configs/initdb.sh
     ~~~
 
 2. Enter the script in the `configs/initdb.sh` file:
@@ -200,59 +202,38 @@ Let's do it all in one initializer shell script:
     echo ">>> Initializing PostgreSQL server"
     set -e
 
-    echo ">>> Creating user ${POSTGRESQL_GITEA_USERNAME} for Gitea"
+    echo ">>> Creating user and schema ${POSTGRESQL_FORGEJO_USERNAME} for Forgejo"
     psql -v ON_ERROR_STOP=1 --username "${POSTGRES_USER}" --dbname "${POSTGRES_DB}" <<-EOSQL
-        CREATE ROLE ${POSTGRESQL_GITEA_USERNAME} WITH LOGIN PASSWORD '${POSTGRESQL_GITEA_PASSWORD}';
-        GRANT ALL PRIVILEGES ON DATABASE ${POSTGRES_DB} TO ${POSTGRESQL_GITEA_USERNAME};
+        CREATE USER ${POSTGRESQL_FORGEJO_USERNAME} WITH PASSWORD '${POSTGRESQL_FORGEJO_PASSWORD}';
+        CREATE SCHEMA AUTHORIZATION ${POSTGRESQL_FORGEJO_USERNAME};
+        ALTER USER ${POSTGRESQL_FORGEJO_USERNAME} SET SEARCH_PATH TO ${POSTGRESQL_FORGEJO_USERNAME};
+        GRANT ALL PRIVILEGES ON DATABASE ${POSTGRES_DB} TO ${POSTGRESQL_FORGEJO_USERNAME};
     EOSQL
 
 
-    echo ">>> Enabling [pg_stat_statements] module on database ${POSTGRES_DB}"
+    echo ">>> Enabling the pg_stat_statements module on database ${POSTGRES_DB}"
     psql -v ON_ERROR_STOP=1 --username "${POSTGRES_USER}" --dbname "${POSTGRES_DB}" <<-EOSQL
         CREATE EXTENSION pg_stat_statements;
     EOSQL
 
+
     echo ">>> Creating user and schema ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME} for PostgreSQL Prometheus metrics exporter"
     psql -v ON_ERROR_STOP=1 --username "${POSTGRES_USER}" --dbname "${POSTGRES_DB}" <<-EOSQL
-        -- To use IF statements, hence to be able to check if the user exists before
-        -- attempting creation, we need to switch to procedural SQL (PL/pgSQL)
-        -- instead of standard SQL.
-        -- More: https://www.postgresql.org/docs/9.3/plpgsql-overview.html
-        -- To preserve compatibility with <9.0, DO blocks are not used; instead,
-        -- a function is created and dropped.
-        CREATE OR REPLACE FUNCTION __tmp_create_user() returns void as
-        '
-        BEGIN
-          IF NOT EXISTS (
-                  SELECT                       -- SELECT list can stay empty for this
-                  FROM   pg_catalog.pg_user
-                  WHERE  usename = ''${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME}'') THEN
-            CREATE USER ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME};
-          END IF;
-        END;
-        ' language plpgsql;
-
-        SELECT __tmp_create_user();
-        DROP FUNCTION __tmp_create_user();
-
-        ALTER USER ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME} WITH PASSWORD '${POSTGRESQL_PROMETHEUS_EXPORTER_PASSWORD}';
+        CREATE USER ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME} WITH PASSWORD '${POSTGRESQL_PROMETHEUS_EXPORTER_PASSWORD}';
+        CREATE SCHEMA AUTHORIZATION ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME};
         ALTER USER ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME} SET SEARCH_PATH TO ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME},pg_catalog;
-
-        -- If deploying as non-superuser (for example in AWS RDS), uncomment the GRANT
-        -- line below and replace <MASTER_USER> with your root user.
-        -- GRANT ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME} TO <MASTER_USER>;
-
         GRANT CONNECT ON DATABASE ${POSTGRES_DB} TO ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME};
-
         GRANT pg_monitor to ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME};
     EOSQL
     ~~~
 
-    This script is a combination of a few other ones:
-
-    - The one shown at the [Initialization scripts section](https://github.com/docker-library/docs/blob/master/postgres/README.md#initialization-scripts) of the PostgreSQL Docker image README.
-
-    - [The SQL scripts about "running as non-superuser" shown in the Postgres exporter Docker image's readme](https://github.com/prometheus-community/postgres_exporter#running-as-non-superuser).
+    > [!NOTE]
+    > **This custom `initdb.sh` script is based on a few others**\
+    > These are the scripts used as references to build the `initdb.sh` script shown above:
+    > 
+    > - The one shown at the [Initialization scripts section](https://github.com/docker-library/docs/blob/master/postgres/README.md#initialization-scripts) of the PostgreSQL Docker image README.
+    >
+    > - [The SQL scripts about "running as non-superuser" shown in the Postgres exporter Docker image's readme](https://github.com/prometheus-community/postgres_exporter#running-as-non-superuser).
 
     The environment parameters that appear in the `initdb.sh` above mean the following:
 
@@ -262,14 +243,14 @@ Let's do it all in one initializer shell script:
     - `POSTGRES_DB`\
       The PostgreSQL database's name to access.
 
-    - `POSTGRESQL_GITEA_USERNAME`\
-      Name for Gitea's database user.
+    - `POSTGRESQL_FORGEJO_USERNAME`\
+      Name for Forgejo's database user.
 
-    - `POSTGRESQL_GITEA_PASSWORD`\
-      Password for Gitea's database user.
+    - `POSTGRESQL_FORGEJO_PASSWORD`\
+      Password for Forgejo's database user.
 
     - `POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME`\
-      Name for the Prometheus metrics exporter user. It is also used as the name of the schema created for metrics within Gitea's database.
+      Name for the Prometheus metrics exporter user. It is also used as the name of the schema created for metrics within Forgejo's database.
 
     - `POSTGRESQL_PROMETHEUS_EXPORTER_PASSWORD`\
       Password for the Prometheus metrics exporter user.
@@ -279,7 +260,7 @@ Let's do it all in one initializer shell script:
 There are three passwords you need to stablish for your PostgreSQL users.
 
 - The PostgreSQL superuser's password.
-- The Gitea database user's password.
+- The Forgejo database user's password.
 - The Prometheus metrics exporter user's password.
 
 Put them all as variables in the same properties file, to be loaded later as variables of a `Secret` resource:
@@ -287,14 +268,14 @@ Put them all as variables in the same properties file, to be loaded later as var
 1. Create a `dbusers.pwd` file under the `secrets` path:
 
     ~~~sh
-    $ touch $HOME/k8sprjs/gitea/components/db-postgresql/secrets/dbusers.pwd
+    $ touch $HOME/k8sprjs/forgejo/components/db-postgresql/secrets/dbusers.pwd
     ~~~
 
 2. Enter the passwords in `secrets/dbusers.pwd`:
 
     ~~~properties
     postgresql-superuser-password=l0nG.Pl4in_T3xt_sEkRet_p4s5wORD-FoR_s4pEruZ3r!
-    gitea-user-password=l0nG.Pl4in_T3xt_sEkRet_p4s5wORD-FoR_gI7eA_uZ3r!
+    forgejo-user-password=l0nG.Pl4in_T3xt_sEkRet_p4s5wORD-FoR_f0R6ejO_uZ3r!
     prometheus-exporter-password=l0nG.Pl4in_T3xt_sEkRet_p4s5wORD-FoR_3xP0rTeR_uZ3r!
     ~~~
 
@@ -304,18 +285,18 @@ Put them all as variables in the same properties file, to be loaded later as var
 
 ## PostgreSQL persistent storage claim
 
-Declare here the `PersistentVolumeClaim` (_PVC_) that claims the `PersistentVolume` that will be declared in the last part of this Gitea deployment procedure:
+Declare here the `PersistentVolumeClaim` (_PVC_) that claims the `PersistentVolume` that will be declared in the last part of this Forgejo deployment procedure:
 
 1. Create a `db-postgresql.persistentvolumeclaim.yaml` file under the `resources` folder:
 
     ~~~sh
-    $ touch $HOME/k8sprjs/gitea/components/db-postgresql/resources/db-postgresql.persistentvolumeclaim.yaml
+    $ touch $HOME/k8sprjs/forgejo/components/db-postgresql/resources/db-postgresql.persistentvolumeclaim.yaml
     ~~~
 
 2. Declare the `PersistentVolumeClaim` object in `resources/db-postgresql.persistentvolumeclaim.yaml`.
 
     ~~~yaml
-    # Gitea PostgreSQL claim of persistent storage
+    # Forgejo PostgreSQL claim of persistent storage
     apiVersion: v1
     kind: PersistentVolumeClaim
 
@@ -325,13 +306,13 @@ Declare here the `PersistentVolumeClaim` (_PVC_) that claims the `PersistentVolu
       accessModes:
       - ReadWriteOnce
       storageClassName: local-path
-      volumeName: gitea-ssd-db
+      volumeName: forgejo-ssd-db
       resources:
         requests:
           storage: 4.5G
     ~~~
 
-    If you went back and compared this PVC resource with the one declared for MariaDB in the [part 3 of the Ghost deployment procedure](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-persistent-storage-claim), you would notice that they're essentially the same. Just remember here that the specifications you declare in the YAML manifest must match the ones available in the PV you claim with this PVC.
+    If you went back and compared this PVC resource with the one declared for MariaDB in the [part 3 of the Ghost deployment procedure](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-persistent-storage-claim), you would notice that they are essentially the same. Just remember here that the specifications you declare in the YAML manifest must match the ones available in the PV you claim with this PVC.
 
 ## PostgreSQL StatefulSet
 
@@ -340,13 +321,13 @@ Since you already know that databases are better deployed as `StatefulSet` objec
 1. Create a `db-postgresql.statefulset.yaml` in the `resources` path.
 
     ~~~sh
-    $ touch $HOME/k8sprjs/gitea/components/db-postgresql/resources/db-postgresql.statefulset.yaml
+    $ touch $HOME/k8sprjs/forgejo/components/db-postgresql/resources/db-postgresql.statefulset.yaml
     ~~~
 
 2. Declare the `StatefulSet` in `resources/db-postgresql.statefulset.yaml`:
 
     ~~~yaml
-    # Gitea PostgreSQL StatefulSet for a sidecar server pod
+    # Forgejo PostgreSQL StatefulSet for a sidecar server pod
     apiVersion: apps/v1
     kind: StatefulSet
 
@@ -382,16 +363,16 @@ Since you already know that databases are better deployed as `StatefulSet` objec
                 configMapKeyRef:
                   name: db-postgresql-config
                   key: postgresql-db-name
-            - name: POSTGRESQL_GITEA_USERNAME
+            - name: POSTGRESQL_FORGEJO_USERNAME
               valueFrom:
                 configMapKeyRef:
                   name: db-postgresql-config
-                  key: gitea-username
-            - name: POSTGRESQL_GITEA_PASSWORD
+                  key: forgejo-username
+            - name: POSTGRESQL_FORGEJO_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: db-postgresql-secrets
-                  key: gitea-user-password
+                  key: forgejo-user-password
             - name: POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME
               valueFrom:
                 configMapKeyRef:
@@ -408,7 +389,7 @@ Since you already know that databases are better deployed as `StatefulSet` objec
                 memory: 256Mi
             volumeMounts:
             - name: postgresql-storage
-              mountPath: /var/lib/postgresql/data
+              mountPath: /var/lib/postgresql
             - name: postgresql-config
               readOnly: true
               subPath: postgresql.conf
@@ -457,7 +438,7 @@ Since you already know that databases are better deployed as `StatefulSet` objec
     The `StatefulSet` above is pretty much like [the one you made for the MariaDB server of the Ghost platform](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md#mariadb-statefulset). The differences are essentially in the values set and the environment variables used, and more in particular in the containers' declarations:
 
     - `template.spec.containers`\
-      Two containers are set in a sidecar configuration within the pod.
+      Two containers are set in a sidecar configuration within the pod:
 
       - Container `server`\
         Holds the PostgreSQL server instance.
@@ -473,8 +454,8 @@ Since you already know that databases are better deployed as `StatefulSet` objec
             The `config_file` option is for setting an alternative custom configuration file for the PostgreSQL server. In this case, it will be the `postgresql.conf` file you configured previously, and you'll put in the `/etc/postgresql` path.
 
             > [!IMPORTANT]
-            > **It is not possible to directly change the default `postgresql.conf` file that exists in the default data path `/var/lib/postgresql/data`**\
-            > Trying to do so will provoke a `Read-only file system` error that will not allow the container to start. The same happens with any other configuration file you might consider customize within that `/var/lib/postgresql/data` path.
+            > **It is not possible to directly change the default `postgresql.conf` file that exists under the default data path `/var/lib/postgresql`**\
+            > Trying to do so will provoke a `Read-only file system` error that will not allow the container to start. The same happens with any other configuration file you might consider customize within that `/var/lib/postgresql` path.
 
         - At the `env` section:
 
@@ -482,14 +463,14 @@ Since you already know that databases are better deployed as `StatefulSet` objec
 
           - The `POSTGRES_DB` is the name of the database you want to create initially in your PostgreSQL. This variable's also used in the initialization script.
 
-              > [!NOTE]
-              > No matter what, there will be always a `postgres` database created in your PostgreSQL server.
+            > [!NOTE]
+            > No matter what, there will be always a `postgres` database created in your PostgreSQL server.
 
-          - The `POSTGRESQL_GITEA_USERNAME`, `POSTGRESQL_GITEA_PASSWORD`, `POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME` and `POSTGRESQL_PROMETHEUS_EXPORTER_PASSWORD` variables are for the `initdb.sh` script.
+          - The `POSTGRESQL_FORGEJO_USERNAME`, `POSTGRESQL_FORGEJO_PASSWORD`, `POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME` and `POSTGRESQL_PROMETHEUS_EXPORTER_PASSWORD` variables are for the `initdb.sh` script.
 
         - The `volumeMounts` section has three mount points:
 
-          - MountPath `/var/lib/postgresql/data`\
+          - MountPath `/var/lib/postgresql`\
             Mounts the volume claimed by `postgresql-storage` in the default data folder of PostgreSQL.
 
           - MountPath `/etc/postgresql/postgresql.conf`\
@@ -501,7 +482,7 @@ Since you already know that databases are better deployed as `StatefulSet` objec
       - Container `metrics`\
         The Prometheus metrics exporter service related to the PostgreSQL server.
 
-        - The `image` of this exporter does not have detailed [on what Linux Distribution runs](https://hub.docker.com/r/prometheuscommunity/postgres-exporter).
+        - The `image` of this exporter does not indicate [on what Linux Distribution runs](https://hub.docker.com/r/prometheuscommunity/postgres-exporter).
 
         - The `env` block has three environment variables that this `metrics` container directly uses. The `DATA_SOURCE_USER` and `DATA_SOURCE_PASS` specify the user and password in the PostgreSQL server for this exporter, and `DATA_SOURCE_URI` indicates the URI to connect to the database server.
 
@@ -512,13 +493,13 @@ You need a `Service` named `db-postgresql` for the previous `StatefulSet`:
 1. Create a file named `db-postgresql.service.yaml` under `resources`:
 
     ~~~sh
-    $ touch $HOME/k8sprjs/gitea/components/db-postgresql/resources/db-postgresql.service.yaml
+    $ touch $HOME/k8sprjs/forgejo/components/db-postgresql/resources/db-postgresql.service.yaml
     ~~~
 
 2. Declare the Service in `resources/db-postgresql.service.yaml`:
 
     ~~~yaml
-    # Gitea PostgreSQL headless service
+    # Forgejo PostgreSQL headless service
     apiVersion: v1
     kind: Service
 
@@ -541,7 +522,7 @@ You need a `Service` named `db-postgresql` for the previous `StatefulSet`:
         name: metrics
     ~~~
 
-    This is just another `ClusterIP` service, like the one you have [declared previously for the Valkey server](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-service). And, like that Valkey service, you will have to invoke this PostgreSQL service by its FQDN which will be `db-postgresql.gitea`.
+    This is just another `ClusterIP` service, like the one you have [declared previously for the Valkey server](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-service). And, like that Valkey service, you will have to invoke this PostgreSQL service by its cluster FQDN which will be `db-postgresql.forgejo`.
 
 ## PostgreSQL Kustomize project
 
@@ -550,13 +531,13 @@ Produce the main `kustomization.yaml` file for this PostgreSQL Kustomize subproj
 1. Under `db-postgresql`, create a `kustomization.yaml` file:
 
     ~~~sh
-    $ touch $HOME/k8sprjs/gitea/components/db-postgresql/kustomization.yaml
+    $ touch $HOME/k8sprjs/forgejo/components/db-postgresql/kustomization.yaml
     ~~~
 
 2. Declare the Kustomize manifest in `kustomization.yaml`:
 
     ~~~yaml
-    # Gitea PostgreSQL setup
+    # Forgejo PostgreSQL setup
     apiVersion: kustomize.config.k8s.io/v1beta1
     kind: Kustomization
 
@@ -601,70 +582,47 @@ Produce the main `kustomization.yaml` file for this PostgreSQL Kustomize subproj
 
 As usual, check the output of the declared Kustomize project and see that the values are all correct:
 
-1. Execute `kubectl kustomize` and pipe the YAML output on the `less` command or dump it on a file.
+1. Execute `kubectl kustomize` and pipe the YAML output to a text editor like `less` or dump it on a file:
 
     ~~~sh
-    $ kubectl kustomize $HOME/k8sprjs/gitea/components/db-postgresql | less
+    $ kubectl kustomize $HOME/k8sprjs/forgejo/components/db-postgresql | less
     ~~~
 
-2. Your yaml output should be like next.
+2. Your YAML output should look like this:
 
     ~~~yaml
     apiVersion: v1
     data:
-      gitea-username: giteadb
+      forgejo-username: forgejodb
       initdb.sh: |-
         #!/usr/bin/env bash
         echo ">>> Initializing PostgreSQL server"
         set -e
 
-        echo ">>> Creating user ${POSTGRESQL_GITEA_USERNAME} for Gitea"
+        echo ">>> Creating user and schema ${POSTGRESQL_FORGEJO_USERNAME} for Forgejo"
         psql -v ON_ERROR_STOP=1 --username "${POSTGRES_USER}" --dbname "${POSTGRES_DB}" <<-EOSQL
-            CREATE ROLE ${POSTGRESQL_GITEA_USERNAME} WITH LOGIN PASSWORD '${POSTGRESQL_GITEA_PASSWORD}';
-            GRANT ALL PRIVILEGES ON DATABASE ${POSTGRES_DB} TO ${POSTGRESQL_GITEA_USERNAME};
+            CREATE USER ${POSTGRESQL_FORGEJO_USERNAME} WITH PASSWORD '${POSTGRESQL_FORGEJO_PASSWORD}';
+            CREATE SCHEMA AUTHORIZATION ${POSTGRESQL_FORGEJO_USERNAME};
+            ALTER USER ${POSTGRESQL_FORGEJO_USERNAME} SET SEARCH_PATH TO ${POSTGRESQL_FORGEJO_USERNAME};
+            GRANT ALL PRIVILEGES ON DATABASE ${POSTGRES_DB} TO ${POSTGRESQL_FORGEJO_USERNAME};
         EOSQL
 
 
-        echo ">>> Enabling [pg_stat_statements] module on database ${POSTGRES_DB}"
+        echo ">>> Enabling the pg_stat_statements module on database ${POSTGRES_DB}"
         psql -v ON_ERROR_STOP=1 --username "${POSTGRES_USER}" --dbname "${POSTGRES_DB}" <<-EOSQL
             CREATE EXTENSION pg_stat_statements;
         EOSQL
 
+
         echo ">>> Creating user and schema ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME} for PostgreSQL Prometheus metrics exporter"
         psql -v ON_ERROR_STOP=1 --username "${POSTGRES_USER}" --dbname "${POSTGRES_DB}" <<-EOSQL
-            -- To use IF statements, hence to be able to check if the user exists before
-            -- attempting creation, we need to switch to procedural SQL (PL/pgSQL)
-            -- instead of standard SQL.
-            -- More: https://www.postgresql.org/docs/9.3/plpgsql-overview.html
-            -- To preserve compatibility with <9.0, DO blocks are not used; instead,
-            -- a function is created and dropped.
-            CREATE OR REPLACE FUNCTION __tmp_create_user() returns void as
-            '
-            BEGIN
-              IF NOT EXISTS (
-                      SELECT                       -- SELECT list can stay empty for this
-                      FROM   pg_catalog.pg_user
-                      WHERE  usename = ''${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME}'') THEN
-                CREATE USER ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME};
-              END IF;
-            END;
-            ' language plpgsql;
-
-            SELECT __tmp_create_user();
-            DROP FUNCTION __tmp_create_user();
-
-            ALTER USER ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME} WITH PASSWORD '${POSTGRESQL_PROMETHEUS_EXPORTER_PASSWORD}';
+            CREATE USER ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME} WITH PASSWORD '${POSTGRESQL_PROMETHEUS_EXPORTER_PASSWORD}';
+            CREATE SCHEMA AUTHORIZATION ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME};
             ALTER USER ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME} SET SEARCH_PATH TO ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME},pg_catalog;
-
-            -- If deploying as non-superuser (for example in AWS RDS), uncomment the GRANT
-            -- line below and replace <MASTER_USER> with your root user.
-            -- GRANT ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME} TO <MASTER_USER>;
-
             GRANT CONNECT ON DATABASE ${POSTGRES_DB} TO ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME};
-
             GRANT pg_monitor to ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME};
         EOSQL
-      postgresql-db-name: gitea-db
+      postgresql-db-name: forgejo-db
       postgresql-superuser-name: postgres
       postgresql.conf: |-
         # Extension libraries loading
@@ -700,18 +658,18 @@ As usual, check the output of the declared Kustomize project and see that the va
     metadata:
       labels:
         app: db-postgresql
-      name: db-postgresql-config-kh5bhtf7fh
+      name: db-postgresql-config-58kdgmtt5g
     ---
     apiVersion: v1
     data:
-      gitea-user-password: bDBuRy5QbDRpbl9UM3h0X3NFa1JldF9wNHM1d09SRC1Gb1JfZ0k3ZUFfdVozciE=
+      forgejo-user-password: bDBuRy5QbDRpbl9UM3h0X3NFa1JldF9wNHM1d09SRC1Gb1JfZjBSNmVqT191WjNyIQ==
       postgresql-superuser-password: bDBuRy5QbDRpbl9UM3h0X3NFa1JldF9wNHM1d09SRC1Gb1JfczRwRXJ1WjNyIQ==
       prometheus-exporter-password: bDBuRy5QbDRpbl9UM3h0X3NFa1JldF9wNHM1d09SRC1Gb1JfM3hQMHJUZVJfdVozciE=
     kind: Secret
     metadata:
       labels:
         app: db-postgresql
-      name: db-postgresql-secrets-c58f7287gh
+      name: db-postgresql-secrets-7m2t9f4d49
     type: Opaque
     ---
     apiVersion: v1
@@ -751,7 +709,7 @@ As usual, check the output of the declared Kustomize project and see that the va
         requests:
           storage: 4.5G
       storageClassName: local-path
-      volumeName: gitea-ssd-db
+      volumeName: forgejo-ssd-db
     ---
     apiVersion: apps/v1
     kind: StatefulSet
@@ -779,37 +737,37 @@ As usual, check the output of the declared Kustomize project and see that the va
               valueFrom:
                 configMapKeyRef:
                   key: postgresql-superuser-name
-                  name: db-postgresql-config-kh5bhtf7fh
+                  name: db-postgresql-config-58kdgmtt5g
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: postgresql-superuser-password
-                  name: db-postgresql-secrets-c58f7287gh
+                  name: db-postgresql-secrets-7m2t9f4d49
             - name: POSTGRES_DB
               valueFrom:
                 configMapKeyRef:
                   key: postgresql-db-name
-                  name: db-postgresql-config-kh5bhtf7fh
-            - name: POSTGRESQL_GITEA_USERNAME
+                  name: db-postgresql-config-58kdgmtt5g
+            - name: POSTGRESQL_FORGEJO_USERNAME
               valueFrom:
                 configMapKeyRef:
-                  key: gitea-username
-                  name: db-postgresql-config-kh5bhtf7fh
-            - name: POSTGRESQL_GITEA_PASSWORD
+                  key: forgejo-username
+                  name: db-postgresql-config-58kdgmtt5g
+            - name: POSTGRESQL_FORGEJO_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  key: gitea-user-password
-                  name: db-postgresql-secrets-c58f7287gh
+                  key: forgejo-user-password
+                  name: db-postgresql-secrets-7m2t9f4d49
             - name: POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME
               valueFrom:
                 configMapKeyRef:
                   key: prometheus-exporter-username
-                  name: db-postgresql-config-kh5bhtf7fh
+                  name: db-postgresql-config-58kdgmtt5g
             - name: POSTGRESQL_PROMETHEUS_EXPORTER_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: prometheus-exporter-password
-                  name: db-postgresql-secrets-c58f7287gh
+                  name: db-postgresql-secrets-7m2t9f4d49
             image: postgres:18.1-trixie
             name: server
             ports:
@@ -820,7 +778,7 @@ As usual, check the output of the declared Kustomize project and see that the va
                 cpu: "0.75"
                 memory: 256Mi
             volumeMounts:
-            - mountPath: /var/lib/postgresql/data
+            - mountPath: /var/lib/postgresql
               name: postgresql-storage
             - mountPath: /etc/postgresql/postgresql.conf
               name: postgresql-config
@@ -835,12 +793,12 @@ As usual, check the output of the declared Kustomize project and see that the va
               valueFrom:
                 configMapKeyRef:
                   key: prometheus-exporter-username
-                  name: db-postgresql-config-kh5bhtf7fh
+                  name: db-postgresql-config-58kdgmtt5g
             - name: DATA_SOURCE_PASS
               valueFrom:
                 secretKeyRef:
                   key: prometheus-exporter-password
-                  name: db-postgresql-secrets-c58f7287gh
+                  name: db-postgresql-secrets-7m2t9f4d49
             - name: DATA_SOURCE_URI
               value: localhost:5432/?sslmode=disable
             image: prometheuscommunity/postgres-exporter:v0.18.1
@@ -860,7 +818,7 @@ As usual, check the output of the declared Kustomize project and see that the va
                 path: initdb.sh
               - key: postgresql.conf
                 path: postgresql.conf
-              name: db-postgresql-config-kh5bhtf7fh
+              name: db-postgresql-config-58kdgmtt5g
             name: postgresql-config
           - name: postgresql-storage
             persistentVolumeClaim:
@@ -869,29 +827,29 @@ As usual, check the output of the declared Kustomize project and see that the va
 
 ## Do not deploy this PostgreSQL project on its own
 
-This PostgreSQL setup is missing the `PersistentVolume` it needs to store data. Do not confuse it with the claim you have configured here for your PostgreSQL server. The corresponding `PersistentVolume` and other remaining elements will be declared in the main Kustomize project you will prepare in the final part of this Gitea deployment procedure.
+This PostgreSQL setup is missing the `PersistentVolume` it needs to store data. Do not confuse it with the claim you have configured here for your PostgreSQL server. The corresponding `PersistentVolume` and other remaining elements will be declared in the main Kustomize project you will prepare in the final part of this Forgejo deployment procedure.
 
 ## Relevant system paths
 
 ### Folders in `kubectl` client system
 
-- `$HOME/k8sprjs/gitea`
-- `$HOME/k8sprjs/gitea/components`
-- `$HOME/k8sprjs/gitea/components/db-postgresql`
-- `$HOME/k8sprjs/gitea/components/db-postgresql/configs`
-- `$HOME/k8sprjs/gitea/components/db-postgresql/resources`
-- `$HOME/k8sprjs/gitea/components/db-postgresql/secrets`
+- `$HOME/k8sprjs/forgejo`
+- `$HOME/k8sprjs/forgejo/components`
+- `$HOME/k8sprjs/forgejo/components/db-postgresql`
+- `$HOME/k8sprjs/forgejo/components/db-postgresql/configs`
+- `$HOME/k8sprjs/forgejo/components/db-postgresql/resources`
+- `$HOME/k8sprjs/forgejo/components/db-postgresql/secrets`
 
 ### Files in `kubectl` client system
 
-- `$HOME/k8sprjs/gitea/components/db-postgresql/kustomization.yaml`
-- `$HOME/k8sprjs/gitea/components/db-postgresql/configs/dbnames.properties`
-- `$HOME/k8sprjs/gitea/components/db-postgresql/configs/initdb.sh`
-- `$HOME/k8sprjs/gitea/components/db-postgresql/configs/postgresql.conf`
-- `$HOME/k8sprjs/gitea/components/db-postgresql/resources/db-postgresql.persistentvolumeclaim.yaml`
-- `$HOME/k8sprjs/gitea/components/db-postgresql/resources/db-postgresql.service.yaml`
-- `$HOME/k8sprjs/gitea/components/db-postgresql/resources/db-postgresql.statefulset.yaml`
-- `$HOME/k8sprjs/gitea/components/db-postgresql/secrets/dbusers.pwd`
+- `$HOME/k8sprjs/forgejo/components/db-postgresql/kustomization.yaml`
+- `$HOME/k8sprjs/forgejo/components/db-postgresql/configs/dbnames.properties`
+- `$HOME/k8sprjs/forgejo/components/db-postgresql/configs/initdb.sh`
+- `$HOME/k8sprjs/forgejo/components/db-postgresql/configs/postgresql.conf`
+- `$HOME/k8sprjs/forgejo/components/db-postgresql/resources/db-postgresql.persistentvolumeclaim.yaml`
+- `$HOME/k8sprjs/forgejo/components/db-postgresql/resources/db-postgresql.service.yaml`
+- `$HOME/k8sprjs/forgejo/components/db-postgresql/resources/db-postgresql.statefulset.yaml`
+- `$HOME/k8sprjs/forgejo/components/db-postgresql/secrets/dbusers.pwd`
 
 ## References
 
@@ -933,8 +891,11 @@ This PostgreSQL setup is missing the `PersistentVolume` it needs to store data. 
   - [Postgis pg_stat_statements errors](https://stackoverflow.com/questions/68185097/postgis-pg-stat-statements-errors)
   - [pg_stat_statements enabled, but the table does not exist](https://stackoverflow.com/questions/31021174/pg-stat-statements-enabled-but-the-table-does-not-exist)
 
-- [GitHub. Docker-library. Postgres. Issues](github.com/docker-library/postgres/issues/)
-  - [chown: changing ownership of ‘/var/lib/postgresql/data’: Operation not permitted, when running in kubernetes with mounted "/var/lib/postgres/data" volume](https://github.com/docker-library/postgres/issues/361)
+- [GitHub. Docker-library. Postgres](github.com/docker-library/postgres/)
+  - [Pull requests](https://github.com/docker-library/postgres/pulls)
+    - [Change PGDATA in 18+ to /var/lib/postgresql/MAJOR/docker](https://github.com/docker-library/postgres/pull/1259)
+  - [Issues](https://github.com/docker-library/postgres/issues)
+    - [chown: changing ownership of ‘/var/lib/postgresql/data’: Operation not permitted, when running in kubernetes with mounted "/var/lib/postgres/data" volume](https://github.com/docker-library/postgres/issues/361)
 
 - [Neon. PostgreSQL Tutorial](https://neon.com/postgresql/tutorial)
   - [Advanced](https://neon.com/postgresql/postgresql-advanced)
@@ -947,4 +908,4 @@ This PostgreSQL setup is missing the `PersistentVolume` it needs to store data. 
 
 ## Navigation
 
-[<< Previous (**G034. Deploying services 03. Gitea Part 2**)](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%202%20-%20Valkey%20cache%20server.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G034. Deploying services 03. Gitea Part 4**) >>](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%204%20-%20Gitea%20server.md)
+[<< Previous (**G034. Deploying services 03. Forgejo Part 2**)](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%202%20-%20Valkey%20cache%20server.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G034. Deploying services 03. Forgejo Part 4**) >>](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%204%20-%20Gitea%20server.md)

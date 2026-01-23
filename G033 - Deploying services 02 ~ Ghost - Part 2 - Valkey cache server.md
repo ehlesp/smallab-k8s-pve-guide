@@ -533,7 +533,7 @@ What remains to declare is the main `kustomization.yaml` file that describes the
 
 With everything in place, you can check out the YAML resulting from the Ghost Valkey's Kustomize subproject:
 
-1. Execute the `kubectl kustomize` command on the Ghost Valkey Kustomize subproject's root folder, piped to `less` to get the output paginated:
+1. Execute the `kubectl kustomize` command on the Ghost Valkey Kustomize subproject's root folder, piped to `less` (or your favorite text editor) to get the output paginated:
 
     ~~~sh
     $ kubectl kustomize $HOME/k8sprjs/ghost/components/cache-valkey | less

@@ -1,7 +1,7 @@
-# G034 - Deploying services 03 ~ Gitea - Part 2 - Valkey cache server
+# G034 - Deploying services 03 ~ Forgejo - Part 2 - Valkey cache server
 
-- [Valkey can be the cache server of Gitea](#valkey-can-be-the-cache-server-of-gitea)
-- [Kustomize project folders for Gitea and Valkey](#kustomize-project-folders-for-gitea-and-valkey)
+- [Valkey can be the cache server of Forgejo](#valkey-can-be-the-cache-server-of-forgejo)
+- [Kustomize project folders for Forgejo and Valkey](#kustomize-project-folders-for-forgejo-and-valkey)
 - [Valkey configuration file](#valkey-configuration-file)
 - [Valkey secrets](#valkey-secrets)
   - [Valkey ACL user list](#valkey-acl-user-list)
@@ -32,26 +32,26 @@
     - [About CPU requests and limits](#about-cpu-requests-and-limits)
 - [Navigation](#navigation)
 
-## Valkey can be the cache server of Gitea
+## Valkey can be the cache server of Forgejo
 
-Like with the gitea platform, you can improve Gitea's performance by setting up Valkey as its caching server. Furthermore, deploying Valkey in the Gitea setup is done just like you did [for the gitea platform](G033%20-%20Deploying%20services%2002%20~%20gitea%20-%20Part%202%20-%20Valkey%20cache%20server.md).
+Like with the Ghost platform, you can improve Forgejo's performance by setting up Valkey as its caching server. Furthermore, deploying Valkey in the Forgejo setup is done like you did [for the Ghost platform](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md).
 
-## Kustomize project folders for Gitea and Valkey
+## Kustomize project folders for Forgejo and Valkey
 
-First, you have to create a folder for your Gitea's main Kustomize project and, within it, a directory tree for the Valkey subproject. You can do this with just one `mkdir` command:
+First, you have to create a folder for your Forgejo's main Kustomize project and, within it, a directory tree for the Valkey subproject. You can do this with just one `mkdir` command:
 
 ~~~sh
-$ mkdir -p $HOME/k8sprjs/gitea/components/cache-valkey/{configs,resources,secrets}
+$ mkdir -p $HOME/k8sprjs/forgejo/components/cache-valkey/{configs,resources,secrets}
 ~~~
 
 ## Valkey configuration file
 
-Prepare the `valkey.conf` file that will specify some configuration values for your Gitea's Valkey server.
+Prepare the `valkey.conf` file that will specify some configuration values for your Forgejo's Valkey server.
 
 1. In the `configs` subfolder of the Valkey project, create a `valkey.conf` file.
 
     ~~~sh
-    $ touch $HOME/k8sprjs/gitea/components/cache-valkey/configs/valkey.conf
+    $ touch $HOME/k8sprjs/forgejo/components/cache-valkey/configs/valkey.conf
     ~~~
 
 2. Copy in `valkey.conf` the lines below.
@@ -67,11 +67,11 @@ Prepare the `valkey.conf` file that will specify some configuration values for y
     dir /data
     ~~~
 
-    The parameters are exactly the same ones set up in the [part 2 of the gitea deployment procedure](G033%20-%20Deploying%20services%2002%20~%20gitea%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-configuration-file).
+    The parameters are exactly the same ones set up in the [part 2 of the Ghost deployment procedure](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-configuration-file).
 
 ## Valkey secrets
 
-As in the gitea case, securing the access to this Valkey instance requires setting up two users stored in a secret resource within your Kubernetes cluster.
+As in the Ghost case, securing the access to this Valkey instance requires setting up two users stored in a secret resource within your Kubernetes cluster.
 
 > [!NOTE]
 > **Your K3s Kubernetes cluster encrypts secrets automatically**\
@@ -79,19 +79,19 @@ As in the gitea case, securing the access to this Valkey instance requires setti
 
 ### Valkey ACL user list
 
-The [Access Control List](https://valkey.io/topics/acl/) declared here configures the `default` user and one specific for Gitea:
+The [Access Control List](https://valkey.io/topics/acl/) declared here configures the `default` user and one specific for Forgejo:
 
 1. Create a new `users.acl` file in the `configs` folder:
 
     ~~~sh
-    $ touch $HOME/k8sprjs/gitea/components/cache-valkey/secrets/users.acl
+    $ touch $HOME/k8sprjs/forgejo/components/cache-valkey/secrets/users.acl
     ~~~
 
-2. In `secrets/users.acl` enter the ACL rules redefining the `default` user and specifying the user for gitea:
+2. In `secrets/users.acl` enter the ACL rules redefining the `default` user and specifying the user for Forgejo:
 
     ~~~acl
     user default on ~* &* +@all >P4s5W0rd_FOr_7h3_DeF4u1t_uSEr
-    user giteacache on ~gitea:* &* allcommands >pAS2wOrD_f0r_T#e_G17e4_Us3R
+    user forgejocache on ~forgejo:* &* allcommands >pAS2wOrD_f0r_The_F0rgEJ0_Us3R
     ~~~
 
     > [!WARNING]
@@ -100,12 +100,12 @@ The [Access Control List](https://valkey.io/topics/acl/) declared here configure
 
 ### User for Prometheus metrics exporter
 
-The Valkey instance for Gitea will have its own Prometheus metrics exporter module. This module uses the `default` Valkey user to access the metrics from the Valkey instance. [As it happened in the gitea's case](G033%20-%20Deploying%20services%2002%20~%20gitea%20-%20Part%202%20-%20Valkey%20cache%20server.md#user-for-prometheus-metrics-exporter), you have to duplicate the default user's information to make it available as environment variables for this exporter module:
+The Valkey instance for Forgejo will have its own Prometheus metrics exporter module. This module uses the `default` Valkey user to access the metrics from the Valkey instance. [As it happened in the Ghost's case](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#user-for-prometheus-metrics-exporter), you have to duplicate the default user's information to make it available as environment variables for this exporter module:
 
 1. Create a `default_user_env.properties` under the `secrets` folder:
 
     ~~~sh
-    $ touch $HOME/k8sprjs/gitea/components/cache-valkey/secrets/default_user_env.properties
+    $ touch $HOME/k8sprjs/forgejo/components/cache-valkey/secrets/default_user_env.properties
     ~~~
 
 2. Enter the `default` user's name and password in `secrets/default_user_env.properties` as environment variables:
@@ -121,18 +121,18 @@ The Valkey instance for Gitea will have its own Prometheus metrics exporter modu
 
 ## Valkey persistent storage claim
 
-To link Gitea's Valkey instance with the persistent volume that will be declared in the last part of this procedure, you need to declare a `PersistentVolumeClaim` resource:
+To link Forgejo's Valkey instance with the persistent volume that will be declared in the last part of this procedure, you need to declare a `PersistentVolumeClaim` resource:
 
 1. Create a `cache-valkey.persistentvolumeclaim.yaml` file under the `resources` folder:
 
     ~~~sh
-    $ touch $HOME/k8sprjs/gitea/components/cache-valkey/resources/cache-valkey.persistentvolumeclaim.yaml
+    $ touch $HOME/k8sprjs/forgejo/components/cache-valkey/resources/cache-valkey.persistentvolumeclaim.yaml
     ~~~
 
 2. Declare Valkey's `PersistentVolumeClaim` in the `resources/cache-valkey.persistentvolumeclaim.yaml` file:
 
     ~~~yaml
-    # Gitea Valkey claim of persistent storage
+    # Forgejo Valkey claim of persistent storage
     apiVersion: v1
     kind: PersistentVolumeClaim
 
@@ -142,7 +142,7 @@ To link Gitea's Valkey instance with the persistent volume that will be declared
       accessModes:
       - ReadWriteOnce
       storageClassName: local-path
-      volumeName: gitea-ssd-cache
+      volumeName: forgejo-ssd-cache
       resources:
         requests:
           storage: 2.8G
@@ -150,18 +150,18 @@ To link Gitea's Valkey instance with the persistent volume that will be declared
 
 ## Valkey StatefulSet
 
-Since Gitea's Valkey instance keeps its state stored, it has to be deployed with a `StatefulSet`:
+Since Forgejo's Valkey instance stores state, it has to be deployed with a `StatefulSet`:
 
 1. Create a `cache-valkey.statefulset.yaml` file under the `resources` subfolder:
 
     ~~~sh
-    $ touch $HOME/k8sprjs/gitea/components/cache-valkey/resources/cache-valkey.statefulset.yaml
+    $ touch $HOME/k8sprjs/forgejo/components/cache-valkey/resources/cache-valkey.statefulset.yaml
     ~~~
 
 2. Declare the `StatefulSet` resource for the Valkey instance in `resources/cache-valkey.statefulset.yaml`:
 
     ~~~yaml
-    # Gitea Valkey StatefulSet for a sidecar server pod
+    # Forgejo Valkey StatefulSet for a sidecar server pod
     apiVersion: apps/v1
     kind: StatefulSet
 
@@ -228,22 +228,22 @@ Since Gitea's Valkey instance keeps its state stored, it has to be deployed with
                 path: users.acl
     ~~~
 
-    You may notice that this declaration is identical to [the `StatefulSet` resource declared for the gitea's Valkey instance](G033%20-%20Deploying%20services%2002%20~%20gitea%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-statefulset). This will not be an issue since the whole Gitea's setup will be deployed in its own distinct `gitea` namespace in the final part of this deployment procedure.
+    You may notice that this declaration is identical to [the `StatefulSet` resource declared for the Ghost's Valkey instance](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-statefulset). This will not be an issue since the whole Forgejo's setup will be deployed in its own distinct `forgejo` namespace in the final part of this deployment procedure.
 
 ## Valkey Service
 
-Declare the `Service` object required for Gitea's Valkey `StatefulSet` pod:
+Declare the `Service` object required for Forgejo's Valkey `StatefulSet` pod:
 
 1. Generate a new file named `cache-valkey.service.yaml`, also under the `resources` subfolder:
 
     ~~~sh
-    $ touch $HOME/k8sprjs/gitea/components/cache-valkey/resources/cache-valkey.service.yaml
+    $ touch $HOME/k8sprjs/forgejo/components/cache-valkey/resources/cache-valkey.service.yaml
     ~~~
 
 2. Declare the Valkey `Service` resource in `resources/cache-valkey.service.yaml`:
 
     ~~~yaml
-    # Gitea Valkey headless service
+    # Forgejo Valkey headless service
     apiVersion: v1
     kind: Service
 
@@ -266,22 +266,22 @@ Declare the `Service` object required for Gitea's Valkey `StatefulSet` pod:
         name: metrics
     ~~~
 
-    Again, this `Service` object is exactly [like the one declared for the gitea Valkey instance](G033%20-%20Deploying%20services%2002%20~%20gitea%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-service). Since this Valkey `Service` will be put under the `gitea` namespace, its hostname will be `cache-valkey.gitea`.
+    Again, this `Service` object is exactly [like the one declared for the Ghost Valkey instance](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-service). Since this Valkey `Service` will be put under the `forgejo` namespace, its hostname will be `cache-valkey.forgejo`.
 
 ## Valkey Kustomize project
 
-Now declare the main `kustomization.yaml` file that describes the whole Gitea's Valkey Kustomize subproject:
+Now declare the main `kustomization.yaml` file that describes the whole Forgejo's Valkey Kustomize subproject:
 
 1. In the main `cache-valkey` folder, create a `kustomization.yaml` file:
 
     ~~~sh
-    $ touch $HOME/k8sprjs/gitea/components/cache-valkey/kustomization.yaml
+    $ touch $HOME/k8sprjs/forgejo/components/cache-valkey/kustomization.yaml
     ~~~
 
 2. Enter the following `Kustomization` declaration in the `kustomization.yaml` file:
 
     ~~~yaml
-    # Gitea Valkey setup
+    # Forgejo Valkey setup
     apiVersion: kustomize.config.k8s.io/v1beta1
     kind: Kustomization
 
@@ -320,24 +320,24 @@ Now declare the main `kustomization.yaml` file that describes the whole Gitea's 
       - secrets/users.acl
     ~~~
 
-    This `kustomization.yaml` file is exactly the same as the one you declared for [gitea's Valkey deployment](G033%20-%20Deploying%20services%2002%20~%20gitea%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-kustomize-project).
+    This `kustomization.yaml` file is exactly the same as the one you declared for [Ghost's Valkey deployment](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-kustomize-project).
 
 ### Validating the Kustomize YAML output
 
-With all the necessary resources declared for your Gitea Valkey instance, review the YAML resulting from the Gitea Valkey's Kustomize subproject:
+With all the necessary resources declared for your Forgejo Valkey instance, review the YAML resulting from the Forgejo Valkey's Kustomize subproject:
 
-1. Execute the `kubectl kustomize` command on the Gitea Valkey Kustomize subproject's root folder, piped to `less` to get the output paginated:
+1. Execute the `kubectl kustomize` command on the Forgejo Valkey Kustomize subproject's root folder, piped to `less` (or your text editor of choice) to get the output paginated:
 
     ~~~sh
-    $ kubectl kustomize $HOME/k8sprjs/gitea/components/cache-valkey | less
+    $ kubectl kustomize $HOME/k8sprjs/forgejo/components/cache-valkey | less
     ~~~
 
-2. The obtained YAML should be like this one:
+2. The resulting YAML should be like this one:
 
     ~~~yaml
     apiVersion: v1
     data:
-    valkey.conf: |-
+      valkey.conf: |-
         # Custom Valkey configuration
         bind 0.0.0.0
         protected-mode no
@@ -348,170 +348,170 @@ With all the necessary resources declared for your Gitea Valkey instance, review
         dir /data
     kind: ConfigMap
     metadata:
-    labels:
+      labels:
         app: cache-valkey
-    name: cache-valkey-config-c86dc4fh5d
+      name: cache-valkey-config-c86dc4fh5d
     ---
     apiVersion: v1
     data:
-    users.acl: |
+      users.acl: |
         dXNlciBkZWZhdWx0IG9uIH4qICYqICtAYWxsID5QNHM1VzByZF9GT3JfN2gzX0RlRjR1MX
-        RfdVNFcgp1c2VyIGdpdGVhY2FjaGUgb24gfmdpdGVhOiogJiogYWxsY29tbWFuZHMgPnBB
-        UzJ3T3JEX2Ywcl9UI2VfRzE3ZTRfVXMzUg==
+        RfdVNFcgp1c2VyIGZvcmdlam9jYWNoZSBvbiB+Zm9yZ2VqbzoqICYqIGFsbGNvbW1hbmRz
+        ID5wQVMyd09yRF9mMHJfVGhlX0YwcmdFSjBfVXMzUg==
     kind: Secret
     metadata:
-    labels:
+      labels:
         app: cache-valkey
-    name: cache-valkey-acl-hcdk9cfm8b
+      name: cache-valkey-acl-9d8g27k94b
     type: Opaque
     ---
     apiVersion: v1
     data:
-    REDIS_PASSWORD: UDRzNVcwcmRfRk9yXzdoM19EZUY0dTF0X3VTRXI=
-    REDIS_USER: ZGVmYXVsdA==
+      REDIS_PASSWORD: UDRzNVcwcmRfRk9yXzdoM19EZUY0dTF0X3VTRXI=
+      REDIS_USER: ZGVmYXVsdA==
     kind: Secret
     metadata:
-    labels:
+      labels:
         app: cache-valkey
-    name: cache-valkey-exporter-user-6mdd99ft8d
+      name: cache-valkey-exporter-user-6mdd99ft8d
     type: Opaque
     ---
     apiVersion: v1
     kind: Service
     metadata:
-    annotations:
+      annotations:
         prometheus.io/port: "9121"
         prometheus.io/scrape: "true"
-    labels:
+      labels:
         app: cache-valkey
-    name: cache-valkey
+      name: cache-valkey
     spec:
-    clusterIP: None
-    ports:
-    - name: server
+      clusterIP: None
+      ports:
+      - name: server
         port: 6379
         protocol: TCP
         targetPort: server
-    - name: metrics
+      - name: metrics
         port: 9121
         protocol: TCP
         targetPort: metrics
-    selector:
+      selector:
         app: cache-valkey
-    type: ClusterIP
+      type: ClusterIP
     ---
     apiVersion: v1
     kind: PersistentVolumeClaim
     metadata:
-    labels:
+      labels:
         app: cache-valkey
-    name: cache-valkey
+      name: cache-valkey
     spec:
-    accessModes:
-    - ReadWriteOnce
-    resources:
+      accessModes:
+      - ReadWriteOnce
+      resources:
         requests:
-        storage: 2.8G
-    storageClassName: local-path
-    volumeName: gitea-ssd-cache
+          storage: 2.8G
+      storageClassName: local-path
+      volumeName: forgejo-ssd-cache
     ---
     apiVersion: apps/v1
     kind: StatefulSet
     metadata:
-    labels:
+      labels:
         app: cache-valkey
-    name: cache-valkey
+      name: cache-valkey
     spec:
-    replicas: 1
-    selector:
+      replicas: 1
+      selector:
         matchLabels:
-        app: cache-valkey
-    serviceName: cache-valkey
-    template:
+          app: cache-valkey
+      serviceName: cache-valkey
+      template:
         metadata:
-        labels:
+          labels:
             app: cache-valkey
         spec:
-        containers:
-        - command:
+          containers:
+          - command:
             - valkey-server
             - /etc/valkey/valkey.conf
             image: valkey/valkey:9.0-alpine
             name: server
             ports:
             - containerPort: 6379
-            name: server
+              name: server
             resources:
-            requests:
+              requests:
                 cpu: "0.5"
                 memory: 64Mi
             volumeMounts:
             - mountPath: /data
-            name: valkey-storage
+              name: valkey-storage
             - mountPath: /etc/valkey/valkey.conf
-            name: valkey-config
-            readOnly: true
-            subPath: valkey.conf
+              name: valkey-config
+              readOnly: true
+              subPath: valkey.conf
             - mountPath: /etc/valkey/users.acl
-            name: valkey-acl
-            readOnly: true
-            subPath: users.acl
-        - envFrom:
+              name: valkey-acl
+              readOnly: true
+              subPath: users.acl
+          - envFrom:
             - secretRef:
                 name: cache-valkey-exporter-user-6mdd99ft8d
             image: oliver006/redis_exporter:v1.80.0-alpine
             name: metrics
             ports:
             - containerPort: 9121
-            name: metrics
+              name: metrics
             resources:
-            requests:
+              requests:
                 cpu: "0.25"
                 memory: 16Mi
-        volumes:
-        - name: valkey-storage
+          volumes:
+          - name: valkey-storage
             persistentVolumeClaim:
-            claimName: cache-valkey
-        - configMap:
-            defaultMode: 444
-            items:
-            - key: valkey.conf
+              claimName: cache-valkey
+          - configMap:
+              defaultMode: 444
+              items:
+              - key: valkey.conf
                 path: valkey.conf
-            name: cache-valkey-config-c86dc4fh5d
+              name: cache-valkey-config-c86dc4fh5d
             name: valkey-config
-        - name: valkey-acl
+          - name: valkey-acl
             secret:
-            defaultMode: 444
-            items:
-            - key: users.acl
+              defaultMode: 444
+              items:
+              - key: users.acl
                 path: users.acl
-            secretName: cache-valkey-acl-hcdk9cfm8b
+              secretName: cache-valkey-acl-9d8g27k94b
     ~~~
 
 ## Do not deploy this Valkey project on its own
 
-This Valkey setup is missing one critical element, the persistent volume it needs to store its working directory data. Do not confuse it with the claim you have configured for your Valkey cache server. That persistent volume and other elements will be declared in the main Kustomize project you will declare in the final part of this Gitea deployment procedure. Until then, do not deploy this Valkey subproject.
+This Valkey setup is missing one critical element, the persistent volume it needs to store its working directory data. Do not confuse it with the claim you have configured for your Valkey cache server. That persistent volume and other elements will be declared in the main Kustomize project you will declare in the final part of this Forgejo deployment procedure. Until then, do not deploy this Valkey subproject.
 
 ## Relevant system paths
 
 ### Folders in `kubectl` client system
 
-- `$HOME/k8sprjs/gitea`
-- `$HOME/k8sprjs/gitea/components`
-- `$HOME/k8sprjs/gitea/components/cache-valkey`
-- `$HOME/k8sprjs/gitea/components/cache-valkey/configs`
-- `$HOME/k8sprjs/gitea/components/cache-valkey/resources`
-- `$HOME/k8sprjs/gitea/components/cache-valkey/secrets`
+- `$HOME/k8sprjs/forgejo`
+- `$HOME/k8sprjs/forgejo/components`
+- `$HOME/k8sprjs/forgejo/components/cache-valkey`
+- `$HOME/k8sprjs/forgejo/components/cache-valkey/configs`
+- `$HOME/k8sprjs/forgejo/components/cache-valkey/resources`
+- `$HOME/k8sprjs/forgejo/components/cache-valkey/secrets`
 
 ### Files in `kubectl` client system
 
-- `$HOME/k8sprjs/gitea/components/cache-valkey/kustomization.yaml`
-- `$HOME/k8sprjs/gitea/components/cache-valkey/configs/valkey.conf`
-- `$HOME/k8sprjs/gitea/components/cache-valkey/resources/cache-valkey.persistentvolumeclaim.yaml`
-- `$HOME/k8sprjs/gitea/components/cache-valkey/resources/cache-valkey.service.yaml`
-- `$HOME/k8sprjs/gitea/components/cache-valkey/resources/cache-valkey.statefulset.yaml`
-- `$HOME/k8sprjs/gitea/components/cache-valkey/secrets/default_user_env.properties`
-- `$HOME/k8sprjs/gitea/components/cache-valkey/secrets/users.acl`
+- `$HOME/k8sprjs/forgejo/components/cache-valkey/kustomization.yaml`
+- `$HOME/k8sprjs/forgejo/components/cache-valkey/configs/valkey.conf`
+- `$HOME/k8sprjs/forgejo/components/cache-valkey/resources/cache-valkey.persistentvolumeclaim.yaml`
+- `$HOME/k8sprjs/forgejo/components/cache-valkey/resources/cache-valkey.service.yaml`
+- `$HOME/k8sprjs/forgejo/components/cache-valkey/resources/cache-valkey.statefulset.yaml`
+- `$HOME/k8sprjs/forgejo/components/cache-valkey/secrets/default_user_env.properties`
+- `$HOME/k8sprjs/forgejo/components/cache-valkey/secrets/users.acl`
 
 ## References
 
@@ -543,37 +543,37 @@ This Valkey setup is missing one critical element, the persistent volume it need
 
 #### Pods and containers
 
-- [Configure Pods and Containers](https://kubernetes.io/docs/tasks/configure-pod-container/)
+- [Tasks. Configure Pods and Containers](https://kubernetes.io/docs/tasks/configure-pod-container/)
   - [Assign Pods to Nodes using Node Affinity](https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes-using-node-affinity/)
   - [Configure a Pod to Use a ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/)
 
-- [Inject Data Into Applications](https://kubernetes.io/docs/tasks/inject-data-application/)
+- [Tasks. Inject Data Into Applications](https://kubernetes.io/docs/tasks/inject-data-application/)
   - [Define Dependent Environment Variables](https://kubernetes.io/docs/tasks/inject-data-application/define-interdependent-environment-variables/)
   - [Define Environment Variables for a Container](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/)
 
-- [Scheduling, Preemption and Eviction](https://kubernetes.io/docs/concepts/scheduling-eviction/)
+- [Concepts. Scheduling, Preemption and Eviction](https://kubernetes.io/docs/concepts/scheduling-eviction/)
   - [Assigning Pods to Nodes](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/)
 
-- [Workload Resources](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/)
+- [Reference. Kubernetes API. Workload Resources](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/)
   - [Pod](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/)
     - [Scheduling](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#scheduling)
 
 #### ConfigMaps
 
-- [Configuration](https://kubernetes.io/docs/concepts/configuration/)
+- [Concepts. Configuration](https://kubernetes.io/docs/concepts/configuration/)
   - [ConfigMaps](https://kubernetes.io/docs/concepts/configuration/configmap/)
 
-- [Configuration](https://kubernetes.io/docs/tutorials/configuration/)
+- [Tutorials. Configuration](https://kubernetes.io/docs/tutorials/configuration/)
   - [Configuring Redis using a ConfigMap](https://kubernetes.io/docs/tutorials/configuration/configure-redis-using-configmap/)
 
 #### Labels
 
-- [Overview. Objects in Kubernetes](https://kubernetes.io/docs/concepts/overview/working-with-objects/)
+- [Concepts. Overview. Objects in Kubernetes](https://kubernetes.io/docs/concepts/overview/working-with-objects/)
   - [Labels and Selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/)
 
 #### Services
 
-- [Services, Load Balancing, and Networking](https://kubernetes.io/docs/concepts/services-networking/)
+- [Concepts. Services, Load Balancing, and Networking](https://kubernetes.io/docs/concepts/services-networking/)
   - [Service. Headless Services](https://kubernetes.io/docs/concepts/services-networking/service/#headless-services)
 
 ### Other Kubernetes-related contents
@@ -606,4 +606,4 @@ This Valkey setup is missing one critical element, the persistent volume it need
 
 ## Navigation
 
-[<< Previous (**G034. Deploying services 03. Gitea Part 1**)](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G034. Deploying services 03. Gitea Part 3**) >>](G034%20-%20Deploying%20services%2003%20~%20Gitea%20-%20Part%203%20-%20PostgreSQL%20database%20server.md)
+[<< Previous (**G034. Deploying services 03. Forgejo Part 1**)](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G034. Deploying services 03. Forgejo Part 3**) >>](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%203%20-%20PostgreSQL%20database%20server.md)
