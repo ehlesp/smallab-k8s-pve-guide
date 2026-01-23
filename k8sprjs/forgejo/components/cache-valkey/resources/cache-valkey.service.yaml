@@ -1,0 +1,21 @@
+# Forgejo Valkey headless service
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: cache-valkey
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9121"
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+  - port: 6379
+    targetPort: server
+    protocol: TCP
+    name: server
+  - port: 9121
+    targetPort: metrics
+    protocol: TCP
+    name: metrics

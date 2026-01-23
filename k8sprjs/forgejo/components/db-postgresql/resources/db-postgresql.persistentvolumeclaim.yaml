@@ -1,0 +1,14 @@
+# Forgejo PostgreSQL claim of persistent storage
+apiVersion: v1
+kind: PersistentVolumeClaim
+
+metadata:
+  name: db-postgresql
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: local-path
+  volumeName: forgejo-ssd-db
+  resources:
+    requests:
+      storage: 4.5G

@@ -1,0 +1,37 @@
+# Forgejo PostgreSQL setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+labels:
+  - pairs:
+      app: db-postgresql
+    includeSelectors: true
+    includeTemplates: true
+
+resources:
+- resources/db-postgresql.persistentvolumeclaim.yaml
+- resources/db-postgresql.service.yaml
+- resources/db-postgresql.statefulset.yaml
+
+replicas:
+- name: db-postgresql
+  count: 1
+
+images:
+- name: postgres
+  newTag: 18.1-trixie
+- name: prometheuscommunity/postgres-exporter
+  newTag: v0.18.1
+
+configMapGenerator:
+- name: db-postgresql-config
+  envs:
+  - configs/dbnames.properties
+  files:
+  - configs/initdb.sh
+  - configs/postgresql.conf
+
+secretGenerator:
+- name: db-postgresql-secrets
+  envs:
+  - secrets/dbusers.pwd

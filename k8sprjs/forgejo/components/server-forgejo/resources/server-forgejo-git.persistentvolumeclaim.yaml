@@ -1,0 +1,14 @@
+# Forgejo server claim of persistent storage for Forgejo users' Git repositories and LFS contents
+apiVersion: v1
+kind: PersistentVolumeClaim
+
+metadata:
+  name: server-forgejo-git
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: local-path
+  volumeName: forgejo-hdd-git
+  resources:
+    requests:
+      storage: 19G
