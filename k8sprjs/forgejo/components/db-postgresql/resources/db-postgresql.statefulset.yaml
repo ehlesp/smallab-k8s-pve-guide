@@ -1,0 +1,106 @@
+# Forgejo PostgreSQL StatefulSet for a sidecar server pod
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: db-postgresql
+spec:
+  replicas: 1
+  serviceName: db-postgresql
+  template:
+    spec:
+      containers:
+      - name: server
+        image: postgres:18.1-trixie
+        ports:
+        - name: server
+          containerPort: 5432
+        args:
+        - "-c"
+        - "config_file=/etc/postgresql/postgresql.conf"
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            configMapKeyRef:
+              name: db-postgresql-config
+              key: postgresql-superuser-name
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-postgresql-secrets
+              key: postgresql-superuser-password
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: db-postgresql-config
+              key: postgresql-db-name
+        - name: POSTGRESQL_FORGEJO_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: db-postgresql-config
+              key: forgejo-username
+        - name: POSTGRESQL_FORGEJO_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-postgresql-secrets
+              key: forgejo-user-password
+        - name: POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: db-postgresql-config
+              key: prometheus-exporter-username
+        - name: POSTGRESQL_PROMETHEUS_EXPORTER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-postgresql-secrets
+              key: prometheus-exporter-password
+        resources:
+          requests:
+            cpu: "0.75"
+            memory: 256Mi
+        volumeMounts:
+        - name: postgresql-storage
+          mountPath: /var/lib/postgresql
+        - name: postgresql-config
+          readOnly: true
+          subPath: postgresql.conf
+          mountPath: /etc/postgresql/postgresql.conf
+        - name: postgresql-config
+          readOnly: true
+          subPath: initdb.sh
+          mountPath: /docker-entrypoint-initdb.d/initdb.sh
+      - name: metrics
+        image: prometheuscommunity/postgres-exporter:v0.18.1
+        ports:
+        - name: metrics
+          containerPort: 9187
+        env:
+        - name: DATA_SOURCE_USER
+          valueFrom:
+            configMapKeyRef:
+              name: db-postgresql-config
+              key: prometheus-exporter-username
+        - name: DATA_SOURCE_PASS
+          valueFrom:
+            secretKeyRef:
+              name: db-postgresql-secrets
+              key: prometheus-exporter-password
+        - name: DATA_SOURCE_URI
+          value: "localhost:5432/?sslmode=disable"
+        resources:
+          requests:
+            cpu: "0.25"
+            memory: 16Mi
+      volumes:
+      - name: postgresql-config
+        configMap:
+          name: db-postgresql-config
+          defaultMode: 444
+          items:
+          - key: initdb.sh
+            path: initdb.sh
+          - key: postgresql.conf
+            path: postgresql.conf
+      - name: postgresql-storage
+        persistentVolumeClaim:
+          claimName: db-postgresql

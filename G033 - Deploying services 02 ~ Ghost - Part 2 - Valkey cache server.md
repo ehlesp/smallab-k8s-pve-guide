@@ -106,7 +106,7 @@ You need to fit Valkey to your needs, and the best way is by setting its paramet
 
 ## Valkey secrets
 
-To secure the access to this Valkey instance you need to create a couple of users that have to be stored as secret resources in your Kubernetes cluster.
+To secure the access to this Valkey instance, you need to create a couple of users stored in a secret resource of your Kubernetes cluster.
 
 > [!NOTE]
 > **Your K3s Kubernetes cluster encrypts secrets automatically**\
@@ -183,7 +183,7 @@ Running in the same pod as the Valkey server, there is going to be a Prometheus 
     $ touch $HOME/k8sprjs/ghost/components/cache-valkey/secrets/default_user_env.properties
     ~~~
 
-2. Enter the `default` user's name and password in the `secrets/default_user_env.properties` as environment variables:
+2. Enter the `default` user's name and password in `secrets/default_user_env.properties` as environment variables:
 
     ~~~properties
     REDIS_USER=default
@@ -206,13 +206,13 @@ Running in the same pod as the Valkey server, there is going to be a Prometheus 
 
 Storage in Kubernetes has two sides: enabling storage as persistent volumes (PVs), and the claims (PVCs) on each of those persistent volumes. For your Ghost's Valkey instance you need one persistent volume (to be declared in the last part of this Ghost deployment procedure), and the claim on that particular PV. See next how to declare the `PersistentVolumeClaim` resource for your Valkey instance:
 
-1. A persistent volume claim is a resource, so create a `db-mariadb.persistentvolumeclaim.yaml` file under the `resources` folder:
+1. A persistent volume claim is a resource, so create a `cache-valkey.persistentvolumeclaim.yaml` file under the `resources` folder:
 
     ~~~sh
     $ touch $HOME/k8sprjs/ghost/components/cache-valkey/resources/cache-valkey.persistentvolumeclaim.yaml
     ~~~
 
-2. Declare Seafile's `PersistentVolumeClaim` in the `resources/cache-valkey.persistentvolumeclaim.yaml` file:
+2. Declare Valkey's `PersistentVolumeClaim` in the `resources/cache-valkey.persistentvolumeclaim.yaml` file:
 
     ~~~yaml
     # Ghost Valkey claim of persistent storage
@@ -353,6 +353,12 @@ The next thing to do is setting up the `StatefulSet` declaration that will deplo
           - In the `command` section you can see how the configuration file path is directly specified to the service.
 
           - The `containerPort` is the same as the `port` set in the `valkey.conf` file. It has a `name` that allows invoking this port by name rather than by port number directly.
+
+            > [!NOTE]
+            > **The `containerPort` declaration is mostly informative**\
+            > The `containerPort` declarations do not actually determine what ports are opened in a pod. That's up to the applications or services running within the pod. The optional `name` attribute is what makes the `containerPort` useful, because it allows you to call the port by name rather than by number. This enables changing the port number when necessary without affecting the `Service` resource that calls the port by name.
+            >
+            > [Check this thread](https://stackoverflow.com/questions/57197095/why-do-we-need-a-port-containerport-in-a-kuberntes-deployment-container-definiti) to know more about this technicality.
 
           - The `resources.requests` declares a minimum requirement of CPU and memory resources to grant to the container when it starts. If the container needs more resources, the Kubernetes control plane will take care of assign them if they are available.
 
@@ -525,9 +531,9 @@ What remains to declare is the main `kustomization.yaml` file that describes the
 
 ### Validating the Kustomize YAML output
 
-With everything in place, you can check out the YAML resulting from the Seafile Valkey' Kustomize subproject:
+With everything in place, you can check out the YAML resulting from the Ghost Valkey's Kustomize subproject:
 
-1. Execute the `kubectl kustomize` command on the Valkey Kustomize subproject's root folder, piped to `less` to get the output paginated:
+1. Execute the `kubectl kustomize` command on the Ghost Valkey Kustomize subproject's root folder, piped to `less` (or your favorite text editor) to get the output paginated:
 
     ~~~sh
     $ kubectl kustomize $HOME/k8sprjs/ghost/components/cache-valkey | less

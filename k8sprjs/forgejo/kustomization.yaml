@@ -1,0 +1,23 @@
+# Forgejo platform setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: forgejo
+
+labels:
+  - pairs:
+      platform: forgejo
+    includeSelectors: true
+    includeTemplates: true
+
+resources:
+- resources/forgejo-hdd-git.persistentvolume.yaml
+- resources/forgejo-ssd-cache.persistentvolume.yaml
+- resources/forgejo-ssd-db.persistentvolume.yaml
+- resources/forgejo-ssd-data.persistentvolume.yaml
+- resources/forgejo.homelab.cloud-tls.certificate.cert-manager.yaml
+- resources/forgejo.homelab.cloud.ingressroute.traefik.yaml
+- resources/forgejo.namespace.yaml
+- components/cache-valkey
+- components/db-postgresql
+- components/server-forgejo

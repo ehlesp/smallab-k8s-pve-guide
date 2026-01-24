@@ -1,0 +1,21 @@
+# Forgejo PostgreSQL headless service
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: db-postgresql
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9187"
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+  - port: 5432
+    targetPort: server
+    protocol: TCP
+    name: server
+  - port: 9187
+    targetPort: metrics
+    protocol: TCP
+    name: metrics

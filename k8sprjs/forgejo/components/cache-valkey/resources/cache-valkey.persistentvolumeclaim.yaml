@@ -1,0 +1,14 @@
+# Forgejo Valkey claim of persistent storage
+apiVersion: v1
+kind: PersistentVolumeClaim
+
+metadata:
+  name: cache-valkey
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: local-path
+  volumeName: forgejo-ssd-cache
+  resources:
+    requests:
+      storage: 2.8G

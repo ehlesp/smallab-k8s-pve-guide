@@ -1,0 +1,161 @@
+# Forgejo StatefulSet for a server pod
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: server-forgejo
+spec:
+  replicas: 1
+  serviceName: server-forgejo
+  template:
+    spec:
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+      initContainers:
+      - name: permissions-fix
+        image: docker.io/busybox:stable-musl
+        env:
+        - name: FORGEJO_APP_DATA_PATH
+          value: /var/lib/gitea
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        command:
+          - /bin/sh
+          - '-c'
+          - |
+            set -e
+
+            chown -Rfv 1000:1000 $FORGEJO_APP_DATA_PATH && echo "chown ok on $FORGEJO_APP_DATA_PATH" || echo "Error changing ownership of $FORGEJO_APP_DATA_PATH directory"
+            chown -Rfv 1000:1000 /tmp/forgejo && echo "chown ok on /tmp/forgejo" || echo "Error changing ownership of /tmp/forgejo directory"
+
+            export DIRS='git git/custom git/repositories git/lfs'
+            echo 'Check if base dirs exists, if not, create them'
+            echo "Directories to check: $DIRS"
+            for dir in $DIRS; do
+              if [ ! -d $FORGEJO_APP_DATA_PATH/$dir ]; then
+                echo "Creating $FORGEJO_APP_DATA_PATH/$dir directory"
+                mkdir -pv $FORGEJO_APP_DATA_PATH/$dir || echo "Error creating $FORGEJO_APP_DATA_PATH/$dir directory"
+              fi
+              chown -Rfv 1000:1000 $FORGEJO_APP_DATA_PATH/$dir && echo "chown ok on $dir" || echo "Error changing ownership of $FORGEJO_APP_DATA_PATH/$dir directory"
+            done
+
+            exit 0
+        volumeMounts:
+        - name: forgejo-data-storage
+          mountPath: /var/lib/gitea
+          readOnly: false
+        - name: forgejo-git-storage
+          mountPath: /var/lib/gitea/git
+          readOnly: false
+        - name: tmp
+          mountPath: /tmp/gitea
+          readOnly: false
+      containers:
+      - name: server
+        image: codeberg.org/forgejo/forgejo:14.0-rootless
+        ports:
+        - containerPort: 3000
+          name: server
+        - containerPort: 2222
+          name: ssh
+        readinessProbe:
+          httpGet:
+            path: /api/healthz
+            port: server
+            httpHeaders:
+            - name: X-Forwarded-Proto
+              value: https
+            - name: Host
+              value: server-forgejo.forgejo
+          initialDelaySeconds: 100
+          timeoutSeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 10
+        livenessProbe:
+          httpGet:
+            path: /api/healthz
+            port: server
+            httpHeaders:
+            - name: X-Forwarded-Proto
+              value: https
+            - name: Host
+              value: server-forgejo.forgejo
+          initialDelaySeconds: 120
+          timeoutSeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 10
+        envFrom:
+        - configMapRef:
+            name: server-forgejo-env-vars
+        - secretRef:
+            name: server-forgejo-valkey-user
+        env:
+        - name: FORGEJO__database__NAME
+          valueFrom:
+            configMapKeyRef:
+              name: db-postgresql-config
+              key: postgresql-db-name
+        - name: FORGEJO__database__USER
+          valueFrom:
+            configMapKeyRef:
+              name: db-postgresql-config
+              key: forgejo-username
+        - name: FORGEJO__database__PASSWD
+          valueFrom:
+            secretKeyRef:
+              name: db-postgresql-secrets
+              key: forgejo-user-password
+        - name: FORGEJO__database__SCHEMA
+          valueFrom:
+            configMapKeyRef:
+              name: db-postgresql-config
+              key: forgejo-username
+        - name: FORGEJO__cache__HOST
+          value: 'redis://$(FORGEJO_VALKEY_USERNAME):$(FORGEJO_VALKEY_PASSWORD)@cache-valkey.forgejo:6379/0?pool_size=100&idle_timeout=180s&prefix=forgejo%3A'
+        - name: FORGEJO__session__PROVIDER_CONFIG
+          value: $(FORGEJO__cache__HOST)
+        - name: FORGEJO__queue__CONN_STR
+          value: $(FORGEJO__cache__HOST)
+        resources:
+          requests:
+            cpu: 250m
+            memory: 128Mi
+        volumeMounts:
+        - name: forgejo-data-storage
+          mountPath: /var/lib/gitea
+          readOnly: false
+        - name: forgejo-git-storage
+          mountPath: /var/lib/gitea/git
+          readOnly: false
+        - name: tmp
+          mountPath: /tmp/gitea
+          readOnly: false
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
+      automountServiceAccountToken: false
+      hostAliases:
+      - ip: "10.7.0.1"
+        hostnames:
+        - "forgejo.homelab.cloud"
+      volumes:
+      - name: forgejo-data-storage
+        persistentVolumeClaim:
+          claimName: server-forgejo-data
+      - name: forgejo-git-storage
+        persistentVolumeClaim:
+          claimName: server-forgejo-git
+      - name: tmp
+        emptyDir:
+          sizeLimit: 64Mi

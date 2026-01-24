@@ -4,7 +4,7 @@
 - [Requirements for the K3s cluster and the services to deploy in it](#requirements-for-the-k3s-cluster-and-the-services-to-deploy-in-it)
   - [Rancher K3s Kubernetes cluster](#rancher-k3s-kubernetes-cluster)
   - [Ghost](#ghost)
-  - [Gitea](#gitea)
+  - [Forgejo](#forgejo)
   - [Kubernetes cluster monitoring stack](#kubernetes-cluster-monitoring-stack)
     - [Prometheus](#prometheus)
     - [Grafana](#grafana)
@@ -46,14 +46,14 @@ The [Ghost](https://ghost.org/) publishing platform [has a different set of prer
 - OS: Ubuntu 22.04 or 24.04.
 - Database: MySQL 8.
 
-### Gitea
+### Forgejo
 
-[Gitea](https://gitea.io/) is a lightweight self-hosted git service that requires the following:
+[Forgejo](https://forgejo.org) is a lightweight self-hosted git service that requires the following:
 
-- Database: PostgreSQL (>= 12), MySQL (>= 8.0), MariaDB (>= 10.4), SQLite (builtin), and MSSQL (>= 2012 SP4).
-- Git version >= 2.0.
+- Database: MariaDB (>= 10.6), MySQL (>= 8.0), PostgreSQL (>= 13), or SQLite3 (builtin)
+- A Git installation.
 - A functioning SSH server to make connections through SSH rather than HTTPS.
-- In the official Gitea docs there's no minimum or recommended hardware requirements specified.
+- In the official Forgejo docs there are no minimum or recommended hardware requirements specified.
 
 ### Kubernetes cluster monitoring stack
 

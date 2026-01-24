@@ -1,0 +1,6 @@
+# Namespace for the Forgejo components
+apiVersion: v1
+kind: Namespace
+
+metadata:
+  name: forgejo

@@ -1,0 +1,14 @@
+# Forgejo server claim of persistent storage for server data
+apiVersion: v1
+kind: PersistentVolumeClaim
+
+metadata:
+  name: server-forgejo-data
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: local-path
+  volumeName: forgejo-ssd-data
+  resources:
+    requests:
+      storage: 1.9G

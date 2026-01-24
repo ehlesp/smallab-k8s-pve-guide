@@ -1,0 +1,20 @@
+# HTTPS ingress for Forgejo
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+
+metadata:
+  name: forgejo.homelab.cloud
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - kind: Rule
+    match: Host(`forgejo.homelab.cloud`)
+    services:
+    - kind: Service
+      name: server-forgejo
+      passHostHeader: true
+      port: server
+      scheme: http
+  tls:
+    secretName: forgejo.homelab.cloud-tls
