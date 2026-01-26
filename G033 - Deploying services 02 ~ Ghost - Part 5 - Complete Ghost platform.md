@@ -139,7 +139,7 @@ All these `PersistentVolume` declarations use exactly the same parameters:
 
 - In the `spec` section there are a number or particularities:
 
-  - The `spec.capacity.storage` is a decimal number in gigabytes (`G`). Internally the decimal value will be converted to megabytes (`M`). Be sure of not assigning more capacity than is really available in the underlying storage, something you can check on the node with `df -h`.
+  - The `spec.capacity.storage` is a decimal number in gigabytes (`G`). Internally the decimal value will be converted to megabytes (`M`). Be sure of not assigning more capacity than is really available in the underlying storage, something you can check on the node with the command `df -h`.
 
   > [!IMPORTANT]
   > **Be careful with the units you use in Kubernetes**\
@@ -197,7 +197,6 @@ To encrypt the communications between your Ghost platform and its clients, you n
       renewBefore: 168h # Certificates must be renewed some time before they expire (7 days)
       dnsNames:
         - ghost.homelab.cloud
-        - ghostadmin.homelab.cloud
       privateKey:
         algorithm: ECDSA
         size: 521
@@ -213,36 +212,15 @@ To encrypt the communications between your Ghost platform and its clients, you n
 
 ## Traefik IngressRoute for enabling HTTPS access to the Ghost platform
 
-As you did with the [Traefik dashboard](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md) or [Headlamp](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md), better handle the ingress into your Ghost platform with a Traefik `IngressRoute`. This will allow you to provide a proper HTTPS access that uses [the TLS certificate you have declared in the previous section](#tls-certificate). Also, this `IngressRoute` will have a `Middleware` enabling a white list of external IPs restricting access to the Ghost Admin API path:
+As you did with the [Traefik dashboard](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md) or [Headlamp](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md), better handle the ingress into your Ghost platform with a Traefik `IngressRoute`. This will allow you to provide a proper HTTPS access that uses [the TLS certificate you have declared in the previous section](#ghost-platforms-tls-certificate):
 
-1. Create the `ghost.homelab.cloud.ingressroute.traefik.yaml` and  files in the `resources` folder:
+1. Create the `ghost.homelab.cloud.ingressroute.traefik.yaml` in the `resources` folder:
 
     ~~~sh
-    $ touch $HOME/k8sprjs/ghost/resources/{ghost.homelab.cloud.ingressroute,ghostadmin.ipwhitelist.middleware}.traefik.yaml
+    $ touch $HOME/k8sprjs/ghost/resources/ghost.homelab.cloud.ingressroute.traefik.yaml
     ~~~
 
-2. Declare the Traefik `Middleware` object that will contain the IP white list in `resources/ghostadmin.ipwhitelist.middleware.traefik.yaml`:
-
-    ~~~yaml
-    # White list of external IPs allowed to access the Ghost administration
-    apiVersion: traefik.io/v1alpha1
-    kind: Middleware
-
-    metadata:
-      name: ghostadmin.ipwhitelist
-    spec:
-      ipWhiteList:
-        sourceRange:
-        - 10.0.0.0/8
-    ~~~
-
-    The IP white list declared in this Traefik middleware is just an example that you must adapt to fit your particular local network setup. Remember that this white list is only for restricting clients from your local network to access your Ghost server Admin API. Also be aware that you can list specific client IPs, not just ranges like the one specified (`10.0.0.0/8`) in the YAML declaration above.
-
-    > [!NOTE]
-    > **This white list only restricts traffic to external IPs (the ones coming from the LAN)**\
-    > This white list will not affect in any way the internal networking of this guide's K3s cluster.
-
-3. Declare the Traefik `IngressRoute` object in `resources/ghost.homelab.cloud.ingressroute.traefik.yaml`:
+2. Declare the Traefik `IngressRoute` object in `resources/ghost.homelab.cloud.ingressroute.traefik.yaml`:
 
     ~~~yaml
     # HTTPS ingress for Ghost
@@ -263,33 +241,17 @@ As you did with the [Traefik dashboard](G030%20-%20K3s%20cluster%20setup%2013%20
           passHostHeader: true
           port: server
           scheme: http
-      - kind: Rule
-        match: Host(`ghostadmin.homelab.cloud`) && PathPrefix(`/ghost/api/admin`)
-        middlewares:
-        - name: ghostadmin.ipwhitelist
-        services:
-        - kind: Service
-          name: server-ghost
-          passHostHeader: true
-          port: server
-          scheme: http
       tls:
         secretName: ghost.homelab.cloud-tls
     ~~~
 
-    This ingress configures two HTTPS routes into the Ghost platform:
+    This ingress configures an HTTPS route into the Ghost platform:
 
-    - The `spec.entryPoints` only enables the websecure (HTTPS) access to the routes declared below.
+    - The `spec.entryPoints` only enables the websecure (HTTPS) access to the route declared below.
 
-    - There are two routes enabled in `spec.routes`:
+    - The route to get into the Ghost platform is enabled in `spec.routes`.
 
-      - The first `Rule` enables the route into the Ghost platform for regular users that only want to use the platform.
-
-      - The second `Rule` is for enabling access to the [Ghost platform's Admin API](https://docs.ghost.org/admin-api). [According to the official Ghost documentation](https://docs.ghost.org/admin-api#base-url), the base URL of this Admin API is composed of the admin domain (the DNS name `ghostadmin.homelab.cloud` in this case) and the path `/ghost/api/admin`.
-
-        Also see in this second rule how it invokes the `ghostadmin.ipwhitelist` middleware for enabling the IP white list restricting which clients can access this Ghost Admin API route.
-
-      - Both rules invoke the same `server-ghost` service and call its port by name (which is named `server`). Also enable forwarding the client's Host header to the Ghost server with the `passHostHeader` option and specify that requests have the http `scheme`.
+    - This route invokes the `server-ghost` service and calls its port by name (which is named `server`). Also enables forwarding the client's Host header to the Ghost server with the `passHostHeader` option and specify that requests have the http `scheme`.
 
     - The TLS certificate is set in the `tls.secretName` parameter.
 
@@ -346,7 +308,6 @@ With every required element declared or configured, now you need to put everythi
     - resources/ghost-ssd-cache.persistentvolume.yaml
     - resources/ghost-ssd-db.persistentvolume.yaml
     - resources/ghost.homelab.cloud-tls.certificate.cert-manager.yaml
-    - resources/ghostadmin.ipwhitelist.middleware.traefik.yaml
     - resources/ghost.homelab.cloud.ingressroute.traefik.yaml
     - resources/ghost.namespace.yaml
     - components/cache-valkey
@@ -467,7 +428,7 @@ With every required element declared or configured, now you need to put everythi
       labels:
         app: cache-valkey
         platform: ghost
-      name: cache-valkey-acl-k2bm2h5fgk
+      name: cache-valkey-acl-bcc5gh9d6g
       namespace: ghost
     type: Opaque
     ---
@@ -480,7 +441,7 @@ With every required element declared or configured, now you need to put everythi
       labels:
         app: cache-valkey
         platform: ghost
-      name: cache-valkey-exporter-user-4thcmd49m2
+      name: cache-valkey-exporter-user-6mdd99ft8d
       namespace: ghost
     type: Opaque
     ---
@@ -494,69 +455,68 @@ With every required element declared or configured, now you need to put everythi
       labels:
         app: db-mariadb
         platform: ghost
-      name: db-mariadb-passwords-8g2hdgch72
+      name: db-mariadb-passwords-dtt9d6h2b9
       namespace: ghost
     type: Opaque
     ---
     apiVersion: v1
     data:
       config.production.json: |
-        ewogICJ1cmwiOiAiaHR0cHM6Ly9naG9zdC5ob21lbGFiLmNsb3VkIiwKICAiYWRtaW4iOi
-        B7CiAgICAidXJsIjogImh0dHBzOi8vZ2hvc3RhZG1pbi5ob21lbGFiLmNsb3VkIgogIH0s
-        CiAgInNlcnZlciI6IHsKICAgICJob3N0IjogIjAuMC4wLjAiLAogICAgInBvcnQiOiAyMz
-        Y4CiAgfSwKICAibG9nZ2luZyI6IHsKICAgICJ0cmFuc3BvcnRzIjogWwogICAgICAgICJz
-        dGRvdXQiCiAgICBdCiAgfSwKICAibWFpbCI6IHsKICAgICJ0cmFuc3BvcnQiOiAiU01UUC
-        IsCiAgICAiZnJvbSI6ICJpbmZvQGdob3N0LmhvbWVsYWIuY2xvdWQiLAogICAgIm9wdGlv
-        bnMiOiB7CiAgICAgICJzZXJ2aWNlIjogIkdvb2dsZSIsCiAgICAgICJob3N0IjogInNtdH
-        AuZ21haWwuY29tIiwKICAgICAgInBvcnQiOiA0NjUsCiAgICAgICJzZWN1cmUiOiB0cnVl
-        LAogICAgICAiYXV0aCI6IHsKICAgICAgICAidXNlciI6ICJ2YXJpZWRyb0BnbWFpbC5jb2
-        0iLAogICAgICAgICJwYXNzIjogIkQzczFnTmVSITpsRTdhdl9BLiIKICAgICAgfQogICAg
-        fQogIH0sCiAgImFkYXB0ZXJzIjogewogICAgImNhY2hlIjogewogICAgICAiUmVkaXMiOi
-        B7CiAgICAgICAgImhvc3QiOiAiY2FjaGUtdmFsa2V5Lmdob3N0IiwKICAgICAgICAicG9y
-        dCI6IDYzNzksCiAgICAgICAgInVzZXJuYW1lIjogImdob3N0Y2FjaGUiLAogICAgICAgIC
-        JwYXNzd29yZCI6ICJwQVMyd09SVF9mMHJfVCNlX0doMDVUX1VzM1IiLAogICAgICAgICJr
-        ZXlQcmVmaXgiOiAiZ2hvc3Q6IiwKICAgICAgICAidHRsIjogMzYwMCwKICAgICAgICAicm
-        V1c2VDb25uZWN0aW9uIjogdHJ1ZSwKICAgICAgICAicmVmcmVzaEFoZWFkRmFjdG9yIjog
-        MC44LAogICAgICAgICJnZXRUaW1lb3V0TWlsbGlzZWNvbmRzIjogNTAwMCwKICAgICAgIC
-        Aic3RvcmVDb25maWciOiB7CiAgICAgICAgICAicmV0cnlDb25uZWN0U2Vjb25kcyI6IDEw
-        LAogICAgICAgICAgImxhenlDb25uZWN0IjogdHJ1ZSwKICAgICAgICAgICJlbmFibGVPZm
-        ZsaW5lUXVldWUiOiB0cnVlLAogICAgICAgICAgIm1heFJldHJpZXNQZXJSZXF1ZXN0Ijog
-        MwogICAgICAgIH0KICAgICAgfSwKICAgICAgImdzY2FuIjogewogICAgICAgICJhZGFwdG
-        VyIjogIlJlZGlzIiwKICAgICAgICAidHRsIjogNDMyMDAsCiAgICAgICAgInJlZnJlc2hB
-        aGVhZEZhY3RvciI6IDAuOSwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0OmdzY2FuLi
-        IKICAgICAgfSwKICAgICAgImltYWdlU2l6ZXMiOiB7CiAgICAgICAgImFkYXB0ZXIiOiAi
-        UmVkaXMiLAogICAgICAgICJ0dGwiOiA4NjQwMCwKICAgICAgICAicmVmcmVzaEFoZWFkRm
-        FjdG9yIjogMC45NSwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0OmltYWdlU2l6ZXMu
-        IgogICAgICB9LAogICAgICAibGlua1JlZGlyZWN0c1B1YmxpYyI6IHsKICAgICAgICAiYW
-        RhcHRlciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6IDcyMDAsCiAgICAgICAgInJlZnJl
-        c2hBaGVhZEZhY3RvciI6IDAuOSwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0Omxpbm
-        tSZWRpcmVjdHNQdWJsaWMuIgogICAgICB9LAogICAgICAicG9zdHNQdWJsaWMiOiB7CiAg
-        ICAgICAgImFkYXB0ZXIiOiAiUmVkaXMiLAogICAgICAgICJ0dGwiOiAxODAwLAogICAgIC
-        AgICJyZWZyZXNoQWhlYWRGYWN0b3IiOiAwLjcsCiAgICAgICAgImtleVByZWZpeCI6ICJn
-        aG9zdDpwb3N0c1B1YmxpYy4iCiAgICAgIH0sCiAgICAgICJzdGF0cyI6IHsKICAgICAgIC
-        AiYWRhcHRlciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6IDkwMCwKICAgICAgICAicmVm
-        cmVzaEFoZWFkRmFjdG9yIjogMC44LAogICAgICAgICJrZXlQcmVmaXgiOiAiZ2hvc3Q6c3
-        RhdHMuIgogICAgICB9LAogICAgICAidGFnc1B1YmxpYyI6IHsKICAgICAgICAiYWRhcHRl
-        ciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6IDM2MDAsCiAgICAgICAgInJlZnJlc2hBaG
-        VhZEZhY3RvciI6IDAuOCwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0OnRhZ3NQdWJs
-        aWMuIgogICAgICB9CiAgICB9CiAgfSwKICAiaG9zdFNldHRpbmdzIjogewogICAgImxpbm
-        tSZWRpcmVjdHNQdWJsaWNDYWNoZSI6IHsKICAgICAgImVuYWJsZWQiOiB0cnVlCiAgICB9
-        LAogICAgInBvc3RzUHVibGljQ2FjaGUiOiB7CiAgICAgICJlbmFibGVkIjogdHJ1ZQogIC
-        AgfSwKICAgICJzdGF0c0NhY2hlIjogewogICAgICAiZW5hYmxlZCI6IHRydWUKICAgIH0s
-        CiAgICAidGFnc1B1YmxpY0NhY2hlIjogewogICAgICAiZW5hYmxlZCI6IHRydWUKICAgIH
-        0KICB9LAogICJkYXRhYmFzZSI6IHsKICAgICJjbGllbnQiOiAibXlzcWwiLAogICAgImNv
-        bm5lY3Rpb24iOiB7CiAgICAgICJob3N0IjogImRiLW1hcmlhZGIuZ2hvc3QiLAogICAgIC
-        AidXNlciI6ICJnaG9zdGRiIiwKICAgICAgInBhc3N3b3JkIjogImwwbkcuUGw0aW5fVDN4
-        dF9zRWtSZXRfcDRzNXdPUkQtRm9SXzZoMHNUX3VaM3IhIiwKICAgICAgImRhdGFiYXNlIj
-        ogImdob3N0LWRiIiwKICAgICAgInBvcnQiOiAiMzMwNiIKICAgIH0KICB9LAogICJwcm9j
-        ZXNzIjogImxvY2FsIiwKICAicGF0aHMiOiB7CiAgICAiY29udGVudFBhdGgiOiAiL2hvbW
-        Uvbm9ucm9vdC9hcHAvZ2hvc3QvY29udGVudCIKICB9Cn0=
+        ewogICJ1cmwiOiAiaHR0cHM6Ly9naG9zdC5ob21lbGFiLmNsb3VkIiwKICAic2VydmVyIj
+        ogewogICAgImhvc3QiOiAiMC4wLjAuMCIsCiAgICAicG9ydCI6IDIzNjgKICB9LAogICJs
+        b2dnaW5nIjogewogICAgInRyYW5zcG9ydHMiOiBbCiAgICAgICAgInN0ZG91dCIKICAgIF
+        0KICB9LAogICJtYWlsIjogewogICAgInRyYW5zcG9ydCI6ICJTTVRQIiwKICAgICJmcm9t
+        IjogImluZm9AZ2hvc3QuaG9tZWxhYi5jbG91ZCIsCiAgICAib3B0aW9ucyI6IHsKICAgIC
+        AgInNlcnZpY2UiOiAiR29vZ2xlIiwKICAgICAgImhvc3QiOiAic210cC5nbWFpbC5jb20i
+        LAogICAgICAicG9ydCI6IDQ2NSwKICAgICAgInNlY3VyZSI6IHRydWUsCiAgICAgICJhdX
+        RoIjogewogICAgICAgICJ1c2VyIjogInlvdXJfZ2hvc3RfZW1haWxAZ21haWwuY29tIiwK
+        ICAgICAgICAicGFzcyI6ICJZMHVyXzZoTzV0X2VNNDFsX1A0U3N2dm9SZCIKICAgICAgfQ
+        ogICAgfQogIH0sCiAgImFkYXB0ZXJzIjogewogICAgImNhY2hlIjogewogICAgICAiUmVk
+        aXMiOiB7CiAgICAgICAgImhvc3QiOiAiY2FjaGUtdmFsa2V5Lmdob3N0IiwKICAgICAgIC
+        AicG9ydCI6IDYzNzksCiAgICAgICAgInVzZXJuYW1lIjogImdob3N0Y2FjaGUiLAogICAg
+        ICAgICJwYXNzd29yZCI6ICJwQVMyd09SVF9mMHJfVCNlX0doMDVUX1VzM1IiLAogICAgIC
+        AgICJrZXlQcmVmaXgiOiAiZ2hvc3Q6IiwKICAgICAgICAidHRsIjogMzYwMCwKICAgICAg
+        ICAicmV1c2VDb25uZWN0aW9uIjogdHJ1ZSwKICAgICAgICAicmVmcmVzaEFoZWFkRmFjdG
+        9yIjogMC44LAogICAgICAgICJnZXRUaW1lb3V0TWlsbGlzZWNvbmRzIjogNTAwMCwKICAg
+        ICAgICAic3RvcmVDb25maWciOiB7CiAgICAgICAgICAicmV0cnlDb25uZWN0U2Vjb25kcy
+        I6IDEwLAogICAgICAgICAgImxhenlDb25uZWN0IjogdHJ1ZSwKICAgICAgICAgICJlbmFi
+        bGVPZmZsaW5lUXVldWUiOiB0cnVlLAogICAgICAgICAgIm1heFJldHJpZXNQZXJSZXF1ZX
+        N0IjogMwogICAgICAgIH0KICAgICAgfSwKICAgICAgImdzY2FuIjogewogICAgICAgICJh
+        ZGFwdGVyIjogIlJlZGlzIiwKICAgICAgICAidHRsIjogNDMyMDAsCiAgICAgICAgInJlZn
+        Jlc2hBaGVhZEZhY3RvciI6IDAuOSwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0Omdz
+        Y2FuLiIKICAgICAgfSwKICAgICAgImltYWdlU2l6ZXMiOiB7CiAgICAgICAgImFkYXB0ZX
+        IiOiAiUmVkaXMiLAogICAgICAgICJ0dGwiOiA4NjQwMCwKICAgICAgICAicmVmcmVzaEFo
+        ZWFkRmFjdG9yIjogMC45NSwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0OmltYWdlU2
+        l6ZXMuIgogICAgICB9LAogICAgICAibGlua1JlZGlyZWN0c1B1YmxpYyI6IHsKICAgICAg
+        ICAiYWRhcHRlciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6IDcyMDAsCiAgICAgICAgIn
+        JlZnJlc2hBaGVhZEZhY3RvciI6IDAuOSwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0
+        OmxpbmtSZWRpcmVjdHNQdWJsaWMuIgogICAgICB9LAogICAgICAicG9zdHNQdWJsaWMiOi
+        B7CiAgICAgICAgImFkYXB0ZXIiOiAiUmVkaXMiLAogICAgICAgICJ0dGwiOiAxODAwLAog
+        ICAgICAgICJyZWZyZXNoQWhlYWRGYWN0b3IiOiAwLjcsCiAgICAgICAgImtleVByZWZpeC
+        I6ICJnaG9zdDpwb3N0c1B1YmxpYy4iCiAgICAgIH0sCiAgICAgICJzdGF0cyI6IHsKICAg
+        ICAgICAiYWRhcHRlciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6IDkwMCwKICAgICAgIC
+        AicmVmcmVzaEFoZWFkRmFjdG9yIjogMC44LAogICAgICAgICJrZXlQcmVmaXgiOiAiZ2hv
+        c3Q6c3RhdHMuIgogICAgICB9LAogICAgICAidGFnc1B1YmxpYyI6IHsKICAgICAgICAiYW
+        RhcHRlciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6IDM2MDAsCiAgICAgICAgInJlZnJl
+        c2hBaGVhZEZhY3RvciI6IDAuOCwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0OnRhZ3
+        NQdWJsaWMuIgogICAgICB9CiAgICB9CiAgfSwKICAiaG9zdFNldHRpbmdzIjogewogICAg
+        ImxpbmtSZWRpcmVjdHNQdWJsaWNDYWNoZSI6IHsKICAgICAgImVuYWJsZWQiOiB0cnVlCi
+        AgICB9LAogICAgInBvc3RzUHVibGljQ2FjaGUiOiB7CiAgICAgICJlbmFibGVkIjogdHJ1
+        ZQogICAgfSwKICAgICJzdGF0c0NhY2hlIjogewogICAgICAiZW5hYmxlZCI6IHRydWUKIC
+        AgIH0sCiAgICAidGFnc1B1YmxpY0NhY2hlIjogewogICAgICAiZW5hYmxlZCI6IHRydWUK
+        ICAgIH0KICB9LAogICJkYXRhYmFzZSI6IHsKICAgICJjbGllbnQiOiAibXlzcWwiLAogIC
+        AgImNvbm5lY3Rpb24iOiB7CiAgICAgICJob3N0IjogImRiLW1hcmlhZGIuZ2hvc3QiLAog
+        ICAgICAidXNlciI6ICJnaG9zdGRiIiwKICAgICAgInBhc3N3b3JkIjogImwwbkcuUGw0aW
+        5fVDN4dF9zRWtSZXRfcDRzNXdPUkQtRm9SXzZoMHNUX3VaM3IhIiwKICAgICAgImRhdGFi
+        YXNlIjogImdob3N0LWRiIiwKICAgICAgInBvcnQiOiAiMzMwNiIKICAgIH0KICB9LAogIC
+        Jwcm9jZXNzIjogImxvY2FsIiwKICAicGF0aHMiOiB7CiAgICAiY29udGVudFBhdGgiOiAi
+        L2hvbWUvbm9ucm9vdC9hcHAvZ2hvc3QvY29udGVudCIKICB9Cn0=
     kind: Secret
     metadata:
       labels:
         app: server-ghost
         platform: ghost
-      name: server-ghost-config-k6b85fg6bb
+      name: server-ghost-config-526bm4m7t9
       namespace: ghost
     type: Opaque
     ---
@@ -807,7 +767,7 @@ With every required element declared or configured, now you need to put everythi
               subPath: users.acl
           - envFrom:
             - secretRef:
-                name: cache-valkey-exporter-user-4thcmd49m2
+                name: cache-valkey-exporter-user-6mdd99ft8d
             image: oliver006/redis_exporter:v1.80.0-alpine
             name: metrics
             ports:
@@ -834,7 +794,7 @@ With every required element declared or configured, now you need to put everythi
               items:
               - key: users.acl
                 path: users.acl
-              secretName: cache-valkey-acl-k2bm2h5fgk
+              secretName: cache-valkey-acl-bcc5gh9d6g
     ---
     apiVersion: apps/v1
     kind: StatefulSet
@@ -868,7 +828,7 @@ With every required element declared or configured, now you need to put everythi
               valueFrom:
                 secretKeyRef:
                   key: root-password
-                  name: db-mariadb-passwords-8g2hdgch72
+                  name: db-mariadb-passwords-dtt9d6h2b9
             - name: MYSQL_USER
               valueFrom:
                 configMapKeyRef:
@@ -878,7 +838,7 @@ With every required element declared or configured, now you need to put everythi
               valueFrom:
                 secretKeyRef:
                   key: ghost-user-password
-                  name: db-mariadb-passwords-8g2hdgch72
+                  name: db-mariadb-passwords-dtt9d6h2b9
             - name: MARIADB_PROMETHEUS_EXPORTER_USERNAME
               valueFrom:
                 configMapKeyRef:
@@ -888,7 +848,7 @@ With every required element declared or configured, now you need to put everythi
               valueFrom:
                 secretKeyRef:
                   key: prometheus-exporter-password
-                  name: db-mariadb-passwords-8g2hdgch72
+                  name: db-mariadb-passwords-dtt9d6h2b9
             image: mariadb:11.8-noble
             name: server
             ports:
@@ -949,7 +909,7 @@ With every required element declared or configured, now you need to put everythi
               valueFrom:
                 secretKeyRef:
                   key: prometheus-exporter-password
-                  name: db-mariadb-passwords-8g2hdgch72
+                  name: db-mariadb-passwords-dtt9d6h2b9
             image: prom/mysqld-exporter:v0.18.0
             name: metrics
             ports:
@@ -1007,7 +967,7 @@ With every required element declared or configured, now you need to put everythi
                 - name: X-Forwarded-Proto
                   value: https
                 - name: Host
-                  value: server-ghost.ghost
+                  value: ghost.homelab.cloud
                 path: /ghost/api/admin/site/
                 port: server
               initialDelaySeconds: 30
@@ -1026,7 +986,7 @@ With every required element declared or configured, now you need to put everythi
                 - name: X-Forwarded-Proto
                   value: https
                 - name: Host
-                  value: server-ghost.ghost
+                  value: ghost.homelab.cloud
                 path: /ghost/api/admin/site/
                 port: server
               initialDelaySeconds: 10
@@ -1054,7 +1014,6 @@ With every required element declared or configured, now you need to put everythi
           hostAliases:
           - hostnames:
             - ghost.homelab.cloud
-            - ghostadmin.homelab.cloud
             ip: 10.7.0.1
           initContainers:
           - command:
@@ -1103,7 +1062,7 @@ With every required element declared or configured, now you need to put everythi
               items:
               - key: config.production.json
                 path: config.production.json
-              secretName: server-ghost-config-k6b85fg6bb
+              secretName: server-ghost-config-526bm4m7t9
           - emptyDir:
               sizeLimit: 64Mi
             name: tmp
@@ -1118,7 +1077,6 @@ With every required element declared or configured, now you need to put everythi
     spec:
       dnsNames:
       - ghost.homelab.cloud
-      - ghostadmin.homelab.cloud
       duration: 2190h
       isCA: false
       issuerRef:
@@ -1152,30 +1110,8 @@ With every required element declared or configured, now you need to put everythi
           passHostHeader: true
           port: server
           scheme: http
-      - kind: Rule
-        match: Host(`ghostadmin.homelab.cloud`) && PathPrefix(`/ghost/api/admin`)
-        middlewares:
-        - name: ghostadmin.ipwhitelist
-        services:
-        - kind: Service
-          name: server-ghost
-          passHostHeader: true
-          port: server
-          scheme: http
       tls:
         secretName: ghost.homelab.cloud-tls
-    ---
-    apiVersion: traefik.io/v1alpha1
-    kind: Middleware
-    metadata:
-      labels:
-        platform: ghost
-      name: ghostadmin.ipwhitelist
-      namespace: ghost
-    spec:
-      ipWhiteList:
-        sourceRange:
-        - 10.0.0.0/8
     ~~~
 
     The most important thing here is to verify that the resources that get their names modified by Kustomize with an autogenerated suffix, in particular `ConfigMaps` and `Secrets`, are called by their modified name wherever they are used in this setup.
@@ -1272,13 +1208,69 @@ When the pod for the Ghost server is listed as READY, browse to your Ghost platf
 
 ![Ghost platform empty homepage](images/g033/ghost-empty-homepage.webp "Ghost platform empty homepage")
 
-Also, you can try to access the administrator URL (found in `https://ghostadmin.homelab.cloud/ghost/api/admin` for this guide) but you will be met with a "Forbidden" warning returned by the Ghost server.
+Ghost gets deployed without any user, not even an administrative one. To create the administrative one:
 
-Neither in the [official Ghost documentation](https://docs.ghost.org/introduction), nor [in the SREDevOps.org contents this Ghost platform deployment is based on](https://www.sredevops.org/en/how-to-deploy-ghost-cms-on-kubernetes/) is explained how to enable an administrator or how to perform administration tasks. I will not cover those details here, since they are outside of the scope of this guide.
+1. Press on the "Sign up" link found at the bottom of your Ghost's home page:
 
-> [!NOTE]
-> **Get help in the [Ghost forum](https://forum.ghost.org/)**\
-> Given the gaps in the official documentation, try asking in the Ghost forum. In particular, it has a [specific category for questions about using Ghost](https://forum.ghost.org/c/general/14).
+    ![Ghost Sign up link at the bottom of the home page](images/g033/ghost-sign-up-link.webp "Ghost Sign up link at the bottom of the home page")
+
+2. The Sign up form will appear, where you can enter a name and an email to register your user:
+
+    ![Ghost Sign up form to register a user](images/g033/ghost-sign-up-window.webp "Ghost Sign up form to register a user")
+
+    Enter a real email address, because the Ghost server will send an email to that address with a link to finish the user sign up.
+
+    ![Ghost Sign up email sent notification](images/g033/ghost-sign-up-email-sent-notif.webp "Ghost Sign up email sent notification")
+
+3. The email you will receive in the address you specified will look like this:
+
+    ![Ghost Sign up email with confirmation link](images/g033/ghost-sign-up-email-with-confirm-link.webp "Ghost Sign up email with confirmation link")
+
+4. Click on the "Confirm signup" button in the email you received and your user will be confirmed as a member of your Ghost server. This action will directly sign you into the Ghost server as that new user:
+
+    ![Home page of new Ghost user autosigned in Ghost server](images/g033/ghost-home-page-of-new-user-auto-signed-in.webp  "Home page of new Ghost user autosigned in Ghost server")
+
+    Notice that your user will get into a slightly different version of the Ghost server's homepage. In particular, see that the header section "Thoughs, stories and ideas" with the "Subscribe" form is gone and that you have an "Account" button at the top right hand of the page.
+
+5. Pressing the "Account" button raises the "Your account" window:
+
+    ![Ghost Your account window with admin user details](images/g033/ghost-your-account-window.webp "Ghost Your account window with admin user details")
+
+    It is important to see here the "Admin Ghost" line and the user email below. This means that this user is the administrator of Ghost. In Ghost, the first member registered in the server gets the administrator role assigned by default.
+
+6. If you press the "Edit" link available in that "Your account" window, you will get into the "Account settings" form:
+
+    ![Ghost administrator user Account settings form](images/g033/ghost-admin-user-account-settings-form.webp "Ghost administrator user Account settings form")
+
+    The only details you can edit here are the user's name and email address. There is no option for entering a password here, implying that the sign in process will be done through an email message.
+
+You might wonder at this point that this does not make much sense. Where is the administration area and its dashboard? To have access to all the CMS features of Ghost, what you really need to do is to create the site that this Ghost server will manage:
+
+1. Browse into the `/ghost` subpath in your Ghost server which, in this guide's Ghost server, its full url would be `https://ghost.homelab.cloud/ghost`. It will take you to this welcome form:
+
+    ![Ghost new site form](images/g033/ghost-welcome-new-site-form.webp "Ghost new site form")
+
+    Fill this form to create the new site and a new "staff" user to manage it.
+
+2. After pressing the "Create account & start publishing" button in the previous form, you will get directly logged in as that new staff user in the onboarding page of the new site's administration dashboard:
+
+    ![Ghost new site administration dashboard in onboarding page](images/g033/ghost-new-site-admin-dashboard-onboarding.webp "Ghost new site administration dashboard in onboarding page")
+
+    Here at last you find the CMS features you can expect from Ghost to properly manage the contents of your site. Be aware that the staff user you define when creating the new site will be the owner of that site, not the administrator member created earlier. Also notice that, at this point, the site will just be the default one.
+
+    Also, you will receive a welcome email in the email address of your new staff user:
+
+    ![Ghost new site welcome email](images/g033/ghost-welcome-email-new-site.webp  "Ghost new site welcome email")
+
+3. To sign in as a staff user (not as a member), you have to browse again into the subpath `/ghost`. Ghost will redirect you to the "Sign in" page for staff users. In this guide's homelab the staff sign in page is found in the url `https://ghost.homelab.cloud/ghost/#/signin`:
+
+    ![Ghost site staff user sign in form](images/g033/ghost-site-sign-in-form.webp "Ghost site staff user sign in form")
+
+    Know that you will NOT get to this page by pressing the "Sign in" button shown in the default Ghost site. You have to browse to this url explicitly since it is a "hidden" administration page, not meant for regular members (including the first one created with the admin role) of your Ghost platform.
+
+> [!IMPORTANT]
+> **A Ghost server instance only supports one site**\
+> Once you have created a site in your Ghost server instance, you will not be able to create another one on it.
 
 ## Ghost platform's Kustomize project attached to this guide series
 
@@ -1306,7 +1298,6 @@ You can find the Kustomize project for this Ghost platform deployment in the fol
 - `$HOME/k8sprjs/ghost/resources/ghost.homelab.cloud-tls.certificate.cert-manager.yaml`
 - `$HOME/k8sprjs/ghost/resources/ghost.homelab.cloud.ingressroute.traefik.yaml`
 - `$HOME/k8sprjs/ghost/resources/ghost.namespace.yaml`
-- `$HOME/k8sprjs/ghost/resources/ghostadmin.ipwhitelist.middleware.traefik.yaml`
 
 ## References
 

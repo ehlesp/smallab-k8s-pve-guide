@@ -81,7 +81,7 @@ You need to fit Valkey to your needs, and the best way is by setting its paramet
       > It is better to leave this parameter with a "flexible" value to avoid worrying about putting a particular IP in several places.
 
     - `protected-mode`\
-      Security option for restricting Valkey from listening in interfaces other than localhost. Enabled by default, is disabled with value `no` so Valkey can listen through the interface that will have the service cluster IP assigned.
+      Security option for restricting Valkey from listening in interfaces other than localhost. Enabled by default, is disabled with value `no` so Valkey can listen through the interface that will have the corresponding service's cluster IP assigned.
 
     - `port`\
       The default Valkey port is `6379`, specified here just for clarity.
@@ -98,7 +98,7 @@ You need to fit Valkey to your needs, and the best way is by setting its paramet
       [This ACL file is specified in the next section](#valkey-acl-user-list).
 
     - `dir`\
-      This is the working directory of Valkey where it stores its own database and logs (when configured to be stored). The `/data` path is the one alredy set in the container image of Valkey, so it is specified here as a reminder of where this working directory is.
+      This is the working directory of Valkey where it stores its own database and logs (if configured to be stored). The `/data` path is the one already set in the container image of Valkey. It is specified in this configuration as a reminder of where this working directory is.
 
     > [!NOTE]
     > **The Valkey configuration parameters are described in the official example configuration file**\
@@ -114,7 +114,7 @@ To secure the access to this Valkey instance, you need to create a couple of use
 
 ### Valkey ACL user list
 
-Valkey comes with a `default` user that you could use, but it is better to declare one more specific for Ghost. Since [Valkey supports Access Control Lists](https://valkey.io/topics/acl/), you can declare the users you need in an ACL file:
+Valkey comes with a `default` user that you could use, but it is better to declare a more specific one for Ghost. Since [Valkey supports Access Control Lists](https://valkey.io/topics/acl/), you can declare the users you need in an ACL file:
 
 1. Create a new `users.acl` file in the `configs` folder:
 
@@ -167,7 +167,9 @@ Valkey comes with a `default` user that you could use, but it is better to decla
         Alias for the `+@all` option. Enables the `ghostcache` user to use all commands.
 
       - `>pAS2wORT_f0r_T#e_Gh05T_Us3R`\
-        A clear string specifying the password for the `ghostcache` user. **Remember that the initial `>` character is not part of the password**, it is just indicating that the following string is the user's password within the rule.
+        A clear string specifying the password for the `ghostcache` user.
+
+        **Remember that the initial `>` character is not part of the password**, it is just indicating that the following string is the user's password within the rule.
 
     > [!WARNING]
     > **The passwords in this `secrets/users.acl` file are plain unencrypted strings**\
@@ -175,7 +177,7 @@ Valkey comes with a `default` user that you could use, but it is better to decla
 
 ### User for Prometheus metrics exporter
 
-Running in the same pod as the Valkey server, there is going to be a Prometheus metrics exporter module that will use the `default` Valkey user to access the metrics from the Valkey instance. The problem is that you have to duplicate the default user's information to make it available for this exporter module as environment variables:
+Running in the same pod as the Valkey server, there is going to be a Prometheus metrics exporter module that will use the `default` Valkey user to access the metrics from the Valkey instance. The problem is that you have to duplicate the default user's credentials to make them available as environment variables for this exporter module:
 
 1. Create a `default_user_env.properties` under the `secrets` folder:
 
@@ -327,13 +329,13 @@ The next thing to do is setting up the `StatefulSet` declaration that will deplo
                 path: users.acl
     ~~~
 
-    This `StatefulSet` resource describes the template for the pod that will contain the Valkey server and its Prometheus metrics exporter service, each running on their own containers:
+    This `StatefulSet` resource describes the template for the pod that will contain the Valkey server and its Prometheus metrics exporter service, each running in their own containers:
 
     - `replicas`\
       Given the limitations of the cluster, only one replica of the Valkey pod is requested.
 
     - `serviceName`\
-      Links the pod deployed by this `StatefulSet` to a headless `Service`.
+      Links the pod deployed by this `StatefulSet` to the specified headless `Service`.
 
       > [!IMPORTANT]
       > **The pod gets a predictable hostname within the cluster**\
@@ -352,7 +354,7 @@ The next thing to do is setting up the `StatefulSet` declaration that will deplo
 
           - In the `command` section you can see how the configuration file path is directly specified to the service.
 
-          - The `containerPort` is the same as the `port` set in the `valkey.conf` file. It has a `name` that allows invoking this port by name rather than by port number directly.
+          - The `containerPort` is the same as the `port` set in the `valkey.conf` file. This `containerPort` has a `name` that allows invoking it by name rather than by port number directly.
 
             > [!NOTE]
             > **The `containerPort` declaration is mostly informative**\
@@ -388,7 +390,7 @@ The next thing to do is setting up the `StatefulSet` declaration that will deplo
           - This container also has minimum requirements of RAM and CPU `resources`. Its `containerPort` has a `name` too, and its number is the one used by default by the exporter, matching the one you will see declared [in the next section within the corresponding Valkey's `Service` resource](#valkey-service).
 
       - `spec.volumes`\
-        This section declares the volumes that can be mounted in the pod. In particular, here are enabled all the volumes mounted in the Valkey container:
+        This section declares the volumes that will be mounted in the pod. In particular, here are enabled all the volumes mounted in the Valkey container:
 
         - `cache-valkey-storage`\
           Invokes the `cache-valkey` `PersistentVolumeClaim` declared earlier for enabling the persistent storage that will contain Valkey's working data.
@@ -405,7 +407,7 @@ The next thing to do is setting up the `StatefulSet` declaration that will deplo
 
 ## Valkey Service
 
-You have declared the pod that will execute the containers running the Valkey server and its Prometheus statistics exporter, now you need to define the `Service` resource that will give access to them:
+You have declared the pod that will execute the containers running the Valkey server and its Prometheus statistics exporter. Now you need to define the `Service` resource that will give access to them:
 
 1. Generate a new file named `cache-valkey.service.yaml`, also under the `resources` subfolder:
 
@@ -448,16 +450,16 @@ You have declared the pod that will execute the containers running the Valkey se
       By default, any `Service` resource is of type `ClusterIP`, meaning that the service is only reachable from within the cluster's internal network. You can omit this parameter altogether from the YAML when you are using this default type.
 
     - `spec.clusterIP`\
-      `StatefulSets` are limited to use [headless services](https://kubernetes.io/docs/concepts/services-networking/service/#headless-services), which are services with no **cluster** IP assigned (which explains the `None` value here). The Valkey service becomes reachable within the cluster through a predictable hostname granted by the DNS service (CoreDNS in your K3s cluster) already running in the Kubernetes cluster. This hostname is constructed following the following template:
+      `StatefulSets` are limited to use [headless services](https://kubernetes.io/docs/concepts/services-networking/service/#headless-services), which are services with no **cluster** IP assigned (which explains the `None` value here). The Valkey service becomes reachable within the cluster through a predictable _Fully Qualified Domain Name_ (_FQDN_) or hostname granted by the DNS service (CoreDNS in your K3s cluster) already running in the Kubernetes cluster. This FQDN is constructed following this template:
 
       ~~~txt
       <service name>.<namespace>
       ~~~
 
-      For the Valkey service the hostname would be `cache-valkey.ghost`, and you will use it to make the Ghost platform connect with its Valkey instance.
+      For the Valkey service, the FQDN would be `cache-valkey.ghost`. You will use it to make the Ghost platform connect with its Valkey instance.
 
     - `spec.ports`\
-      Describe the ports open in this service. Notice how I made the `name` and `port` on each port of this `Service` to match the ones already defined for the containers in the previous `Deployment` resource.
+      Describe the ports open in this service. Notice how I made the `name` and `port` on each port of this `Service` to match the ones already defined for the containers in the [previous `StatefulSet` resource](#valkey-statefulset).
 
       Also see how the `targetPort` parameters invoke the ports in the containers by name, not by number. This technique allows you to change the port number in the containers without affecting this `Service` declaration.
 
@@ -519,7 +521,7 @@ What remains to declare is the main `kustomization.yaml` file that describes the
 
       The `includeSelectors` and `includeTemplates` are parameters for controlling if the labels must be also included within the `spec.selector` and `spec.template` blocks of resource declarations such as the `Deployment` one you have for your Valkey server.
 
-    - The `replicas` section allows you to handle the number of replicas you want for deployments, overriding whatever number is already set in their base declaration. In this case you only have one deployment listed, and the value put here is the same as the one set in the `cache-valkey` deployment definition.
+    - The `replicas` section allows you to handle the number of replicas you want for deployments, overriding whatever number is already set in their base declaration. In this case you only have one deployment listed, and the value put here is the same as the one set in the `cache-valkey` `StatefulSet` definition.
 
     - The `images` block gives you a handy way of changing the images specified within the `StatefulSet` resource, particularly useful for when you want to upgrade to newer minor versions without changing anything else from the deployment declaration.
 
@@ -575,7 +577,7 @@ With everything in place, you can check out the YAML resulting from the Ghost Va
     metadata:
       labels:
         app: cache-valkey
-      name: cache-valkey-acl-k2bm2h5fgk
+      name: cache-valkey-acl-bcc5gh9d6g
     type: Opaque
     ---
     apiVersion: v1
@@ -586,7 +588,7 @@ With everything in place, you can check out the YAML resulting from the Ghost Va
     metadata:
       labels:
         app: cache-valkey
-      name: cache-valkey-exporter-user-4thcmd49m2
+      name: cache-valkey-exporter-user-6mdd99ft8d
     type: Opaque
     ---
     apiVersion: v1
@@ -671,7 +673,7 @@ With everything in place, you can check out the YAML resulting from the Ghost Va
               subPath: users.acl
           - envFrom:
             - secretRef:
-                name: cache-valkey-exporter-user-4thcmd49m2
+                name: cache-valkey-exporter-user-6mdd99ft8d
             image: oliver006/redis_exporter:v1.80.0-alpine
             name: metrics
             ports:
@@ -698,12 +700,12 @@ With everything in place, you can check out the YAML resulting from the Ghost Va
               items:
               - key: users.acl
                 path: users.acl
-              secretName: cache-valkey-acl-k2bm2h5fgk
+              secretName: cache-valkey-acl-bcc5gh9d6g
     ~~~
 
     There are a few things to highlight in the YAML output above:
 
-    - You might have noticed this in the previous Kustomize projects you have deployed before, but the generated YAML output has the parameters within each resource sorted alphabetically. Be aware of this when you compare this output with the files you created and your expected results.
+    - You might have noticed this in the previous Kustomize projects you have deployed before, but the generated YAML output has the parameters within each resource sorted alphabetically. Be aware of this when you compare this output with the files you have created and your expected results.
 
     - The names of the `cache-valkey-config` config map, `cache-valkey-acl` and `cache-valkey-exporter-user` secrets have a hash as a suffix, added by Kustomize. The hash is calculated from the content of the renamed resources.
 
@@ -711,7 +713,7 @@ With everything in place, you can check out the YAML resulting from the Ghost Va
 
       - Since the `cache-valkey-exporter-user` secret is a set of environment variables, only their values are obfuscated.
 
-      - The `cache-valkey-acl` secret is declared as a file, so its whole content is printed obfuscated.
+      - The `cache-valkey-acl` secret is declared as a file, so its whole content is obfuscated.
 
     - Another detail to notice is how the label `app: cache-valkey` appears not only as label in the `metadata` section of all the resources, but Kustomize has also set it as `selector` both in the `Service` and the `StatefulSet` resources declarations.
 

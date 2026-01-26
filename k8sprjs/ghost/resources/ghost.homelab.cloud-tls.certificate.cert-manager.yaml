@@ -11,7 +11,6 @@ spec:
   renewBefore: 168h # Certificates must be renewed some time before they expire (7 days)
   dnsNames:
     - ghost.homelab.cloud
-    - ghostadmin.homelab.cloud
   privateKey:
     algorithm: ECDSA
     size: 521

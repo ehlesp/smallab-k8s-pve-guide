@@ -16,15 +16,5 @@ spec:
       passHostHeader: true
       port: server
       scheme: http
-  - kind: Rule
-    match: Host(`ghostadmin.homelab.cloud`) && PathPrefix(`/ghost/api/admin`)
-    middlewares:
-    - name: ghostadmin.ipwhitelist
-    services:
-    - kind: Service
-      name: server-ghost
-      passHostHeader: true
-      port: server
-      scheme: http
   tls:
     secretName: ghost.homelab.cloud-tls

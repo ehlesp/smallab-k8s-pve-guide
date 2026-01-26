@@ -28,19 +28,19 @@ In this first part, you will see how to outline the setup of your Ghost platform
 
 First, you must define how you want to setup Ghost in your cluster. This means that you have to decide beforehand how to solve the following points:
 
-- For storing operation-related data, Ghost requires a database. Which one are you going to use and how you will setup it?
+- Ghost can use a cache server. Which one will you use and will it be exclusive to the Ghost instance?
 
-- Ghost can also use a cache server. Which one will you use and will it be exclusive to the Ghost instance?
+- For storing operation-related data, Ghost requires a database. Which one are you going to use and how you will setup it?
 
 - Where in your K3s cluster the Ghost's data should be placed?
 
 This guide solves the previous points as follows.
 
-- **Database**\
-  [Ghost's documentation specifies](https://docs.ghost.org/install/ubuntu) [MySQL](https://www.mysql.com/) as the database of choice, but this guide will use instead the compatible alternative [MariaDB](https://mariadb.org/) with its data saved in a local SSD storage drive.
-
 - **Cache server**\
   Ghost can work with [Redis](https://redis.io/), but this guide rather opts for the compatible alternative [Valkey](https://valkey.io/) configured to have data persistence on a local SSD storage drive.
+
+- **Database**\
+  [Ghost's documentation specifies](https://docs.ghost.org/install/ubuntu) [MySQL](https://www.mysql.com/) as the database of choice, but this guide will use instead the compatible alternative [MariaDB](https://mariadb.org/) with its data saved in a local SSD storage drive.
 
 - **Ghost server**\
   Its contents data will be stored in a persistent volume prepared on a local HDD storage drive.
