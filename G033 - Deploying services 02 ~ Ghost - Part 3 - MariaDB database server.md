@@ -211,7 +211,7 @@ For convenience, declare all of these passwords as variables in the same propert
           storage: 6.5G
     ~~~
 
-    This persistent volume claim is exactly like the one for the Valkey server, although with its own `metadata.name`, different referred volume in `spec.volumeName` and adjusted capacity in `spec.resources.requests.storage`.
+    This persistent volume claim is exactly like the one for the Valkey server, although with its own `metadata.name`, different claimed volume in `spec.volumeName` and adjusted capacity in `spec.resources.requests.storage`.
 
 ## MariaDB StatefulSet
 
@@ -376,7 +376,7 @@ Since MariaDB is a program whose main purpose is to store _state_ (meaning data)
 
       - Container `metrics` is for the Prometheus metrics exporter service related to the MariaDB server:
 
-        - The `image` of this exporter is not clear [on what Linux Distribution is based](https://hub.docker.com/r/prom/mysqld-exporter), although probably is Debian.
+        - The `image` of this metrics exporter service does not clearly states [what Linux distribution is based on](https://hub.docker.com/r/prom/mysqld-exporter).
 
         - In `args` are set a number of parameters meant for the command launching the Prometheus metrics exporter service in the container. Pay attention to the last two arguments:
 
@@ -497,7 +497,7 @@ Now you have to create the main `kustomization.yaml` file describing your Ghost 
 
 At this point, you can verify with `kubectl` that the Kustomize project for Ghost's MariaDB in stance gives you the proper YAML output:
 
-1. Execute `kubectl kustomize` and pipe the YAML output to the `less` command or dump it into a file:
+1. Execute `kubectl kustomize` and pipe the YAML output to the `less` command or other text editor, or dump it into a file:
 
     ~~~sh
     $ kubectl kustomize $HOME/k8sprjs/ghost/components/db-mariadb | less
@@ -552,7 +552,7 @@ At this point, you can verify with `kubectl` that the Kustomize project for Ghos
     metadata:
       labels:
         app: db-mariadb
-      name: db-mariadb-passwords-8g2hdgch72
+      name: db-mariadb-passwords-dtt9d6h2b9
     type: Opaque
     ---
     apiVersion: v1
@@ -622,7 +622,7 @@ At this point, you can verify with `kubectl` that the Kustomize project for Ghos
               valueFrom:
                 secretKeyRef:
                   key: root-password
-                  name: db-mariadb-passwords-8g2hdgch72
+                  name: db-mariadb-passwords-dtt9d6h2b9
             - name: MYSQL_USER
               valueFrom:
                 configMapKeyRef:
@@ -632,7 +632,7 @@ At this point, you can verify with `kubectl` that the Kustomize project for Ghos
               valueFrom:
                 secretKeyRef:
                   key: ghost-user-password
-                  name: db-mariadb-passwords-8g2hdgch72
+                  name: db-mariadb-passwords-dtt9d6h2b9
             - name: MARIADB_PROMETHEUS_EXPORTER_USERNAME
               valueFrom:
                 configMapKeyRef:
@@ -642,7 +642,7 @@ At this point, you can verify with `kubectl` that the Kustomize project for Ghos
               valueFrom:
                 secretKeyRef:
                   key: prometheus-exporter-password
-                  name: db-mariadb-passwords-8g2hdgch72
+                  name: db-mariadb-passwords-dtt9d6h2b9
             image: mariadb:11.8-noble
             name: server
             ports:
@@ -703,7 +703,7 @@ At this point, you can verify with `kubectl` that the Kustomize project for Ghos
               valueFrom:
                 secretKeyRef:
                   key: prometheus-exporter-password
-                  name: db-mariadb-passwords-8g2hdgch72
+                  name: db-mariadb-passwords-dtt9d6h2b9
             image: prom/mysqld-exporter:v0.18.0
             name: metrics
             ports:

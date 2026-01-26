@@ -16,6 +16,7 @@
   - [Files in `kubectl` client system](#files-in-kubectl-client-system)
 - [References](#references)
   - [Ghost](#ghost)
+  - [Google Account Help](#google-account-help)
   - [SREDevOps.org](#sredevopsorg)
   - [Kubernetes](#kubernetes)
     - [ConfigMaps](#configmaps)
@@ -47,13 +48,11 @@ The SREDevOps.org container image of Ghost already includes what is necessary to
 
 ## Ghost server Kustomize subproject's folders
 
-As with the other components, you need a folder structure to contain the Ghost server Kustomize subproject:
+As with the other components, you need a folder structure to contain the resources part of the Ghost server Kustomize subproject:
 
 ~~~sh
 $ mkdir -p $HOME/k8sprjs/ghost/components/server-ghost/{configs,resources,secrets}
 ~~~
-
-Notice that, unlike for the other components, there is no `configs` folder here. This is because the single configuration file required for setting up Ghost will be treated as a secret. [Learn why in the next section](#ghost-server-configuration-file).
 
 ## Ghost server configuration file
 
@@ -65,16 +64,13 @@ The whole configuration of Ghost goes into a single JSON file. Among other param
     $ touch $HOME/k8sprjs/ghost/components/server-ghost/secrets/config.production.json
     ~~~
 
-    The `production` suffix is because Ghost has "environment support, essentially meaning that you could switch the same Ghost instance from being a production environment to a development one if needed.
+    The `production` suffix is because Ghost has "environment support". This means that you could switch the same Ghost instance from being a production environment to a development one if needed.
 
 2. Enter the configuration for your Ghost server in `secrets/config.production.json`:
 
     ~~~json
     {
       "url": "https://ghost.homelab.cloud",
-      "admin": {
-        "url": "https://ghostadmin.homelab.cloud"
-      },
       "server": {
         "host": "0.0.0.0",
         "port": 2368
@@ -191,19 +187,16 @@ The whole configuration of Ghost goes into a single JSON file. Among other param
     - `url`\
       Ghost instance's base url. Remember to enable the domain specified here in your local network.
 
-    - `admin.url`\
-      Ghost instance's alternative url only for accessing its [Admin API](https://docs.ghost.org/admin-api). This is a hardening measure to allow differentiate between the regular traffic towards the Ghost instance and requests meant only for the Admin API. Notice that the domain name for the Admin API is different from the one in the `url` parameter set before.
-
       > [!NOTE]
-      > **Remember to associate the hostnames in both URLs to the Traefik service's IP**\
+      > **Remember to associate the hostname of this URL to the Traefik service's IP**\
       > As you could have done for accessing the Traefik dashboard or Headlamp, you can add in the `hosts` file of your client system another entry right below the one you may have setup already:
       >
       > ~~~txt
       > 10.7.0.1 traefik.homelab.cloud headlamp.homelab.cloud
-      > 10.7.0.1 ghost.homelab.cloud ghostadmin.homelab.cloud
+      > 10.7.0.1 ghost.homelab.cloud
       > ~~~
       >
-      > This way, rather than having one bloated `hosts` line with all the DNS names related to the Traefik service IP, you can have those hostnames separated for clarity.
+      > This way, rather than having one bloated `hosts` line with all the DNS names related to the Traefik service IP, you can have those hostnames more clearly separated for readability.
 
     - `server`\
       This block has the parameters declaring through which IP (the `host` value) and `port` the Ghost instance has to listen. In this case, Ghost will listen through all available IPs (`0.0.0.0`) in the port 2368, which is the default one for Ghost.
@@ -217,6 +210,10 @@ The whole configuration of Ghost goes into a single JSON file. Among other param
       - The `from` parameter is where you specify the email representing your Ghost instance.
 
       - You have to enter the user and password of your email service of choice in the `options.auth` section.
+
+        > [!NOTE]
+        > **A regular email user might not be enough**\
+        > Certain email services like the one provided by Google do not allow using a regular user for sending emails from an app or service like Ghost. They require configuring something like an "app password" ([as Google requires](https://support.google.com/accounts/answer/185833)) associated to the regular user, or they may demand you to employ some other type of email account.
 
     - `adapters.cache`\
       This section is about configuring the cache adapter for Ghost. Ghost has an adapter to connect with Redis, which also works with [the Valkey instance configured previously](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md):
@@ -248,7 +245,7 @@ The whole configuration of Ghost goes into a single JSON file. Among other param
       This parameter allows to pick which process manager to use for handling the Ghost server process, and supports only the `local` and `systemd` options. Beyond this, there is no further explanation about this parameter as you can see [in the _Service options_ section found here](https://docs.ghost.org/ghost-cli#options).
 
     - `paths.contentPath`\
-      This path is where Ghost will keep contents like data, images, logs and adapters. The path specified here is correlated to the ones you will see configured in the custom Ghost container image specified in the `StateFulSet` declared later in this part.
+      This path is where Ghost will keep contents like data, images, logs and adapters. The path specified here correlates to the ones you will see configured in the custom rootless Ghost container image specified in the `StateFulSet` declared later in this part.
 
     > [!WARNING]
     > **The passwords are put in `secrets/config.production.json` as plain unencrypted text**\
@@ -281,7 +278,7 @@ There are a few environment variables you will have to declare in the Ghost serv
       Path where the contents stored by Ghost will be kept.
 
     - `NODE_ENV`\
-      Determines the mode in which the Ghost server is going to run. Ghost supports the `production` and `development` modes which, among other details, determine which type of database is used with Ghost. In `production` mode, Ghost requires using a MySQL database, whereas in `development` mode it is possible to use an SQLite one.
+      Determines the mode in which the Ghost server is going to run. Ghost supports the `production` and `development` modes which, among other details, determine which type of database is used with Ghost. In `production` mode, Ghost requires using a MySQL database, whereas in `development` mode also allows using an SQLite one instead.
 
 ## Ghost server persistent storage claim
 
@@ -390,7 +387,7 @@ The Ghost server stores content, making necessary to deploy it as a `StatefulSet
                 - name: X-Forwarded-Proto
                   value: https
                 - name: Host
-                  value: server-ghost.ghost
+                  value: ghost.homelab.cloud
               periodSeconds: 10
               timeoutSeconds: 3
               successThreshold: 1
@@ -404,7 +401,7 @@ The Ghost server stores content, making necessary to deploy it as a `StatefulSet
                 - name: X-Forwarded-Proto
                   value: https
                 - name: Host
-                  value: server-ghost.ghost
+                  value: ghost.homelab.cloud
               periodSeconds: 300
               timeoutSeconds: 3
               successThreshold: 1
@@ -436,7 +433,6 @@ The Ghost server stores content, making necessary to deploy it as a `StatefulSet
           - ip: "10.7.0.1"
             hostnames:
             - "ghost.homelab.cloud"
-            - "ghostadmin.homelab.cloud"
           volumes:
           - name: ghost-storage
             persistentVolumeClaim:
@@ -453,7 +449,7 @@ The Ghost server stores content, making necessary to deploy it as a `StatefulSet
               sizeLimit: 64Mi
     ~~~
 
-    First thing you must know about this particular `StatefulSet` declaration is that it is an adaptation of [the one included in the _Ghost on Kubernetes_ project](https://github.com/sredevopsorg/ghost-on-kubernetes/blob/main/deploy/06-ghost-deployment.yaml).
+    First thing you must know about this particular `StatefulSet` declaration is that it is based on [the one included in the _Ghost on Kubernetes_ project](https://github.com/sredevopsorg/ghost-on-kubernetes/blob/main/deploy/06-ghost-deployment.yaml).
 
     > [!NOTE]
     > **_Ghost on Kubernetes_ is a project maintained by the people at SREDevOps**\
@@ -461,9 +457,9 @@ The Ghost server stores content, making necessary to deploy it as a `StatefulSet
     >
     > [Check out this SREDevOps article to better understand it](https://www.sredevops.org/en/how-to-deploy-ghost-cms-on-kubernetes/).
 
-    Beyond the parameters you have already seen declared in the `StatefulSet` for the Valkey and MariaDB instances, this StatefulSet for the Ghost server characterizes itself in:
+    Beyond the parameters you have already seen declared in the `StatefulSet` for the Valkey and MariaDB instances, this `StatefulSet` for the Ghost server characterizes itself in:
 
-    - Having an init container that prepares the Ghost folder structure to be run by a non-root user.
+    - Having an init container that prepares the Ghost folder structure to be accessible by a non-root user.
 
     - Configuring a hardened container where the Ghost instance is run by a non-root user.
 
@@ -474,7 +470,7 @@ The Ghost server stores content, making necessary to deploy it as a `StatefulSet
 
       - The init container `image` is of a BusyBox utility environment. This is a lightweight utility system that comes with a set of common tools helpful in managing Kubernetes clusters.
 
-      - The `GHOST_CONTENT` environment variable is the path to where the Ghost server will store all its contents. Notice that this variable is loaded in a `ConfigMap` resource you will set later in the corresponding Kustomize declaration for this Ghost server subproject.
+      - The `GHOST_CONTENT` environment variable is the path where the Ghost server will store all its contents. Notice that this variable is loaded in a `ConfigMap` resource you will set later in the corresponding Kustomize declaration for this Ghost server subproject.
 
       - The init container has a `securityContext` to limit its security footprint:
 
@@ -496,11 +492,9 @@ The Ghost server stores content, making necessary to deploy it as a `StatefulSet
     - `spec.template.spec.containers.server`\
       In the containers block there is only the container for the Ghost server itself, which is called `server`:
 
-      - This container's `image` is not an official Ghost one, but the customized version prepared by the people at SREDevOps.org to run with the non-root `65532` user. This customized image uses different "non-root" paths to store the Ghost installation files and the contents, plus it is configured to run in production mode by default.
+      - This container's `image` is not an official Ghost one, but a customized version prepared by the people at SREDevOps.org to run with the non-root `65532` user. This customized image uses different "non-root" paths to store the Ghost installation files and the contents, plus it is configured to run in production mode by default.
 
       - This container has two probes enabled, one to check if the Ghost server is ready (the `readinessProbe` section) and the other to test if the server is live (the `livenessProbe` section). Both probes have a similar configuration, where they make an HTTP Get request every `periodSeconds` to a specific [Ghost Admin API `/site/` endpoint](https://docs.ghost.org/admin-api#endpoints) to see if it responds within `timeoutSeconds`.
-
-        A detail to notice is that the `Host` value in the `httpGet` block of both probes points to the internal cluster hostname of this Ghost server's service. Usually, you would enter here the public DNS name of the server. Since this guide's setup does not contemplate having a DNS system available in the local network, you can either put the external IP that will be assigned to the Ghost `Service` resource, the internal cluster IP or the internal cluster hostname of the corresponding Ghost service running in this setup. Remember that, [in the Ghost server's configuration file](#ghost-server-configuration-file), the Ghost server is set to listen through all its available interfaces (`0.0.0.0`).
 
         > [!NOTE]
         > [Learn more about how to configure these probes in this official Kubernetes documentation](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes).
@@ -513,7 +507,7 @@ The Ghost server stores content, making necessary to deploy it as a `StatefulSet
 
         - The configuration file of the Ghost server in `/home/nonroot/app/ghost/config.production.json`.
 
-        - An ephemeral in-memory storage that provides the Ghost server with a `tmp` folder where to put temporary data. This temporary storage is necessary since the Ghost server container's filesystem is set up as read-only in the `securityContext` and the server needs a place where it can write data while running.
+        - An ephemeral in-memory storage that provides the Ghost server with a `tmp` folder where to put temporary data. This temporary storage is necessary since the Ghost server container's filesystem is set up as read-only in the `securityContext` and the server needs a place where it can write temporary data while running.
 
         > [!NOTE]
         > **Using an ephemeral path outside of the container's filesystem for temporary operations is a hardening action**
@@ -529,13 +523,13 @@ The Ghost server stores content, making necessary to deploy it as a `StatefulSet
 
         > [!WARNING]
         > **The container image must be prepared to be run by a non-root user**\
-        > To be able to run a container with a non-root user, its image must have been prepared explicitly to be run with such user. Before running a container with a non-root user, investigate if its image has been already prepared for it, and which user is using to configurate the pod accordingly.
+        > To be able to run a container with a non-root user, its image must have been prepared explicitly to be run with such user. Before running a container with a non-root user, investigate if its image has been already prepared for it, and which user is using to configure the pod accordingly.
 
     - The `automountServiceAccountToken` is another security option related to how Kubernetes gives access to its control plane API. For pods that are not supposed to use the control plane API, you can block their access to that API by not linking them with [the security token of the default `ServiceAccount` existing in their namespace](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/). This essentially disables the capacity of the pod to authenticate with the Kubernetes control plane, effectively blocking its access to such API.
 
     - The `hostAliases` block allows adding entries to the `/etc/hosts` file of the pod generated by this StatefulSet. Since Ghost needs to find its own `url` active, and there is no external DNS service resolving its hostname, it is necessary to enable it within the pod's `/etc/hosts` file.
 
-      The `ip` value is the static IP of the Traefik service through which the Ghost server will be reachable. The `hostnames` list has the two hostnames entered [in the `url` and `admin.url` parameters of the Ghost configuration file](#ghost-server-configuration-file).
+      The `ip` value is the static IP of the Traefik service through which the Ghost server will be reachable. The `hostnames` list has the hostname specified [in the `url` parameter of the Ghost configuration file](#ghost-server-configuration-file).
 
     - In the `volumes` block you have the three storage resources needed in this Ghost server pod:
 
@@ -574,7 +568,7 @@ Your Ghost server's `StatefulSet` requires a `Service` called `server-ghost` to 
         name: server
     ~~~
 
-    This `Service`'s `type` is `ClusterIP` and has no `clusterIP` set. This means that this service should be reached only by its internal hostname in the Kubernetes cluster. Knowing that the namespace for the whole Ghost setup will be `ghost`, the hostname will be `server-ghost.ghost`.
+    This `Service`'s `type` is `ClusterIP` and has no `clusterIP` set. Therefore, this service should be reached only by its internal hostname in the Kubernetes cluster. Knowing that the namespace for the whole Ghost setup will be `ghost`, the hostname will be `server-ghost.ghost`.
 
     Since there is no Prometheus metric exporter nor a port through which the Ghost server could provide such metrics, there is only one port declared in this `Service` resource that redirects all traffic to the Ghost server container's `server` port. Notice that the port number specified here is the same one set in the container, which is the default Ghost server's `2368`.
 
@@ -627,7 +621,7 @@ With all the necessary elements for your Ghost server component declared in thei
       - secrets/config.production.json
     ~~~
 
-    This `kustomization.yaml`, compared to the ones you have already set up for the Valkey and MariaDB components, does not have anything in particular to highlight. All the parameters specified there should be familiar to you at this point.
+    This `kustomization.yaml`, compared to the ones you have already set up for the Valkey and MariaDB components, does not have anything in particular to highlight. You should be familiar with all the parameters specified here at this point.
 
 ### Validating the Kustomize YAML output
 
@@ -656,61 +650,60 @@ As with the other components, you should check the output generated by the Ghost
     apiVersion: v1
     data:
       config.production.json: |
-        ewogICJ1cmwiOiAiaHR0cHM6Ly9naG9zdC5ob21lbGFiLmNsb3VkIiwKICAiYWRtaW4iOi
-        B7CiAgICAidXJsIjogImh0dHBzOi8vZ2hvc3RhZG1pbi5ob21lbGFiLmNsb3VkIgogIH0s
-        CiAgInNlcnZlciI6IHsKICAgICJob3N0IjogIjAuMC4wLjAiLAogICAgInBvcnQiOiAyMz
-        Y4CiAgfSwKICAibG9nZ2luZyI6IHsKICAgICJ0cmFuc3BvcnRzIjogWwogICAgICAgICJz
-        dGRvdXQiCiAgICBdCiAgfSwKICAibWFpbCI6IHsKICAgICJ0cmFuc3BvcnQiOiAiU01UUC
-        IsCiAgICAiZnJvbSI6ICJpbmZvQGdob3N0LmhvbWVsYWIuY2xvdWQiLAogICAgIm9wdGlv
-        bnMiOiB7CiAgICAgICJzZXJ2aWNlIjogIkdvb2dsZSIsCiAgICAgICJob3N0IjogInNtdH
-        AuZ21haWwuY29tIiwKICAgICAgInBvcnQiOiA0NjUsCiAgICAgICJzZWN1cmUiOiB0cnVl
-        LAogICAgICAiYXV0aCI6IHsKICAgICAgICAidXNlciI6ICJ2YXJpZWRyb0BnbWFpbC5jb2
-        0iLAogICAgICAgICJwYXNzIjogIkQzczFnTmVSITpsRTdhdl9BLiIKICAgICAgfQogICAg
-        fQogIH0sCiAgImFkYXB0ZXJzIjogewogICAgImNhY2hlIjogewogICAgICAiUmVkaXMiOi
-        B7CiAgICAgICAgImhvc3QiOiAiY2FjaGUtdmFsa2V5Lmdob3N0IiwKICAgICAgICAicG9y
-        dCI6IDYzNzksCiAgICAgICAgInVzZXJuYW1lIjogImdob3N0Y2FjaGUiLAogICAgICAgIC
-        JwYXNzd29yZCI6ICJwQVMyd09SVF9mMHJfVCNlX0doMDVUX1VzM1IiLAogICAgICAgICJr
-        ZXlQcmVmaXgiOiAiZ2hvc3Q6IiwKICAgICAgICAidHRsIjogMzYwMCwKICAgICAgICAicm
-        V1c2VDb25uZWN0aW9uIjogdHJ1ZSwKICAgICAgICAicmVmcmVzaEFoZWFkRmFjdG9yIjog
-        MC44LAogICAgICAgICJnZXRUaW1lb3V0TWlsbGlzZWNvbmRzIjogNTAwMCwKICAgICAgIC
-        Aic3RvcmVDb25maWciOiB7CiAgICAgICAgICAicmV0cnlDb25uZWN0U2Vjb25kcyI6IDEw
-        LAogICAgICAgICAgImxhenlDb25uZWN0IjogdHJ1ZSwKICAgICAgICAgICJlbmFibGVPZm
-        ZsaW5lUXVldWUiOiB0cnVlLAogICAgICAgICAgIm1heFJldHJpZXNQZXJSZXF1ZXN0Ijog
-        MwogICAgICAgIH0KICAgICAgfSwKICAgICAgImdzY2FuIjogewogICAgICAgICJhZGFwdG
-        VyIjogIlJlZGlzIiwKICAgICAgICAidHRsIjogNDMyMDAsCiAgICAgICAgInJlZnJlc2hB
-        aGVhZEZhY3RvciI6IDAuOSwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0OmdzY2FuLi
-        IKICAgICAgfSwKICAgICAgImltYWdlU2l6ZXMiOiB7CiAgICAgICAgImFkYXB0ZXIiOiAi
-        UmVkaXMiLAogICAgICAgICJ0dGwiOiA4NjQwMCwKICAgICAgICAicmVmcmVzaEFoZWFkRm
-        FjdG9yIjogMC45NSwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0OmltYWdlU2l6ZXMu
-        IgogICAgICB9LAogICAgICAibGlua1JlZGlyZWN0c1B1YmxpYyI6IHsKICAgICAgICAiYW
-        RhcHRlciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6IDcyMDAsCiAgICAgICAgInJlZnJl
-        c2hBaGVhZEZhY3RvciI6IDAuOSwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0Omxpbm
-        tSZWRpcmVjdHNQdWJsaWMuIgogICAgICB9LAogICAgICAicG9zdHNQdWJsaWMiOiB7CiAg
-        ICAgICAgImFkYXB0ZXIiOiAiUmVkaXMiLAogICAgICAgICJ0dGwiOiAxODAwLAogICAgIC
-        AgICJyZWZyZXNoQWhlYWRGYWN0b3IiOiAwLjcsCiAgICAgICAgImtleVByZWZpeCI6ICJn
-        aG9zdDpwb3N0c1B1YmxpYy4iCiAgICAgIH0sCiAgICAgICJzdGF0cyI6IHsKICAgICAgIC
-        AiYWRhcHRlciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6IDkwMCwKICAgICAgICAicmVm
-        cmVzaEFoZWFkRmFjdG9yIjogMC44LAogICAgICAgICJrZXlQcmVmaXgiOiAiZ2hvc3Q6c3
-        RhdHMuIgogICAgICB9LAogICAgICAidGFnc1B1YmxpYyI6IHsKICAgICAgICAiYWRhcHRl
-        ciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6IDM2MDAsCiAgICAgICAgInJlZnJlc2hBaG
-        VhZEZhY3RvciI6IDAuOCwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0OnRhZ3NQdWJs
-        aWMuIgogICAgICB9CiAgICB9CiAgfSwKICAiaG9zdFNldHRpbmdzIjogewogICAgImxpbm
-        tSZWRpcmVjdHNQdWJsaWNDYWNoZSI6IHsKICAgICAgImVuYWJsZWQiOiB0cnVlCiAgICB9
-        LAogICAgInBvc3RzUHVibGljQ2FjaGUiOiB7CiAgICAgICJlbmFibGVkIjogdHJ1ZQogIC
-        AgfSwKICAgICJzdGF0c0NhY2hlIjogewogICAgICAiZW5hYmxlZCI6IHRydWUKICAgIH0s
-        CiAgICAidGFnc1B1YmxpY0NhY2hlIjogewogICAgICAiZW5hYmxlZCI6IHRydWUKICAgIH
-        0KICB9LAogICJkYXRhYmFzZSI6IHsKICAgICJjbGllbnQiOiAibXlzcWwiLAogICAgImNv
-        bm5lY3Rpb24iOiB7CiAgICAgICJob3N0IjogImRiLW1hcmlhZGIuZ2hvc3QiLAogICAgIC
-        AidXNlciI6ICJnaG9zdGRiIiwKICAgICAgInBhc3N3b3JkIjogImwwbkcuUGw0aW5fVDN4
-        dF9zRWtSZXRfcDRzNXdPUkQtRm9SXzZoMHNUX3VaM3IhIiwKICAgICAgImRhdGFiYXNlIj
-        ogImdob3N0LWRiIiwKICAgICAgInBvcnQiOiAiMzMwNiIKICAgIH0KICB9LAogICJwcm9j
-        ZXNzIjogImxvY2FsIiwKICAicGF0aHMiOiB7CiAgICAiY29udGVudFBhdGgiOiAiL2hvbW
-        Uvbm9ucm9vdC9hcHAvZ2hvc3QvY29udGVudCIKICB9Cn0=
+        ewogICJ1cmwiOiAiaHR0cHM6Ly9naG9zdC5ob21lbGFiLmNsb3VkIiwKICAic2VydmVyIj
+        ogewogICAgImhvc3QiOiAiMC4wLjAuMCIsCiAgICAicG9ydCI6IDIzNjgKICB9LAogICJs
+        b2dnaW5nIjogewogICAgInRyYW5zcG9ydHMiOiBbCiAgICAgICAgInN0ZG91dCIKICAgIF
+        0KICB9LAogICJtYWlsIjogewogICAgInRyYW5zcG9ydCI6ICJTTVRQIiwKICAgICJmcm9t
+        IjogImluZm9AZ2hvc3QuaG9tZWxhYi5jbG91ZCIsCiAgICAib3B0aW9ucyI6IHsKICAgIC
+        AgInNlcnZpY2UiOiAiR29vZ2xlIiwKICAgICAgImhvc3QiOiAic210cC5nbWFpbC5jb20i
+        LAogICAgICAicG9ydCI6IDQ2NSwKICAgICAgInNlY3VyZSI6IHRydWUsCiAgICAgICJhdX
+        RoIjogewogICAgICAgICJ1c2VyIjogInlvdXJfZ2hvc3RfZW1haWxAZ21haWwuY29tIiwK
+        ICAgICAgICAicGFzcyI6ICJZMHVyXzZoTzV0X2VNNDFsX1A0U3N2dm9SZCIKICAgICAgfQ
+        ogICAgfQogIH0sCiAgImFkYXB0ZXJzIjogewogICAgImNhY2hlIjogewogICAgICAiUmVk
+        aXMiOiB7CiAgICAgICAgImhvc3QiOiAiY2FjaGUtdmFsa2V5Lmdob3N0IiwKICAgICAgIC
+        AicG9ydCI6IDYzNzksCiAgICAgICAgInVzZXJuYW1lIjogImdob3N0Y2FjaGUiLAogICAg
+        ICAgICJwYXNzd29yZCI6ICJwQVMyd09SVF9mMHJfVCNlX0doMDVUX1VzM1IiLAogICAgIC
+        AgICJrZXlQcmVmaXgiOiAiZ2hvc3Q6IiwKICAgICAgICAidHRsIjogMzYwMCwKICAgICAg
+        ICAicmV1c2VDb25uZWN0aW9uIjogdHJ1ZSwKICAgICAgICAicmVmcmVzaEFoZWFkRmFjdG
+        9yIjogMC44LAogICAgICAgICJnZXRUaW1lb3V0TWlsbGlzZWNvbmRzIjogNTAwMCwKICAg
+        ICAgICAic3RvcmVDb25maWciOiB7CiAgICAgICAgICAicmV0cnlDb25uZWN0U2Vjb25kcy
+        I6IDEwLAogICAgICAgICAgImxhenlDb25uZWN0IjogdHJ1ZSwKICAgICAgICAgICJlbmFi
+        bGVPZmZsaW5lUXVldWUiOiB0cnVlLAogICAgICAgICAgIm1heFJldHJpZXNQZXJSZXF1ZX
+        N0IjogMwogICAgICAgIH0KICAgICAgfSwKICAgICAgImdzY2FuIjogewogICAgICAgICJh
+        ZGFwdGVyIjogIlJlZGlzIiwKICAgICAgICAidHRsIjogNDMyMDAsCiAgICAgICAgInJlZn
+        Jlc2hBaGVhZEZhY3RvciI6IDAuOSwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0Omdz
+        Y2FuLiIKICAgICAgfSwKICAgICAgImltYWdlU2l6ZXMiOiB7CiAgICAgICAgImFkYXB0ZX
+        IiOiAiUmVkaXMiLAogICAgICAgICJ0dGwiOiA4NjQwMCwKICAgICAgICAicmVmcmVzaEFo
+        ZWFkRmFjdG9yIjogMC45NSwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0OmltYWdlU2
+        l6ZXMuIgogICAgICB9LAogICAgICAibGlua1JlZGlyZWN0c1B1YmxpYyI6IHsKICAgICAg
+        ICAiYWRhcHRlciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6IDcyMDAsCiAgICAgICAgIn
+        JlZnJlc2hBaGVhZEZhY3RvciI6IDAuOSwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0
+        OmxpbmtSZWRpcmVjdHNQdWJsaWMuIgogICAgICB9LAogICAgICAicG9zdHNQdWJsaWMiOi
+        B7CiAgICAgICAgImFkYXB0ZXIiOiAiUmVkaXMiLAogICAgICAgICJ0dGwiOiAxODAwLAog
+        ICAgICAgICJyZWZyZXNoQWhlYWRGYWN0b3IiOiAwLjcsCiAgICAgICAgImtleVByZWZpeC
+        I6ICJnaG9zdDpwb3N0c1B1YmxpYy4iCiAgICAgIH0sCiAgICAgICJzdGF0cyI6IHsKICAg
+        ICAgICAiYWRhcHRlciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6IDkwMCwKICAgICAgIC
+        AicmVmcmVzaEFoZWFkRmFjdG9yIjogMC44LAogICAgICAgICJrZXlQcmVmaXgiOiAiZ2hv
+        c3Q6c3RhdHMuIgogICAgICB9LAogICAgICAidGFnc1B1YmxpYyI6IHsKICAgICAgICAiYW
+        RhcHRlciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6IDM2MDAsCiAgICAgICAgInJlZnJl
+        c2hBaGVhZEZhY3RvciI6IDAuOCwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0OnRhZ3
+        NQdWJsaWMuIgogICAgICB9CiAgICB9CiAgfSwKICAiaG9zdFNldHRpbmdzIjogewogICAg
+        ImxpbmtSZWRpcmVjdHNQdWJsaWNDYWNoZSI6IHsKICAgICAgImVuYWJsZWQiOiB0cnVlCi
+        AgICB9LAogICAgInBvc3RzUHVibGljQ2FjaGUiOiB7CiAgICAgICJlbmFibGVkIjogdHJ1
+        ZQogICAgfSwKICAgICJzdGF0c0NhY2hlIjogewogICAgICAiZW5hYmxlZCI6IHRydWUKIC
+        AgIH0sCiAgICAidGFnc1B1YmxpY0NhY2hlIjogewogICAgICAiZW5hYmxlZCI6IHRydWUK
+        ICAgIH0KICB9LAogICJkYXRhYmFzZSI6IHsKICAgICJjbGllbnQiOiAibXlzcWwiLAogIC
+        AgImNvbm5lY3Rpb24iOiB7CiAgICAgICJob3N0IjogImRiLW1hcmlhZGIuZ2hvc3QiLAog
+        ICAgICAidXNlciI6ICJnaG9zdGRiIiwKICAgICAgInBhc3N3b3JkIjogImwwbkcuUGw0aW
+        5fVDN4dF9zRWtSZXRfcDRzNXdPUkQtRm9SXzZoMHNUX3VaM3IhIiwKICAgICAgImRhdGFi
+        YXNlIjogImdob3N0LWRiIiwKICAgICAgInBvcnQiOiAiMzMwNiIKICAgIH0KICB9LAogIC
+        Jwcm9jZXNzIjogImxvY2FsIiwKICAicGF0aHMiOiB7CiAgICAiY29udGVudFBhdGgiOiAi
+        L2hvbWUvbm9ucm9vdC9hcHAvZ2hvc3QvY29udGVudCIKICB9Cn0=
     kind: Secret
     metadata:
       labels:
         app: server-ghost
-      name: server-ghost-config-6dbcdffbdc
+      name: server-ghost-config-526bm4m7t9
     type: Opaque
     ---
     apiVersion: v1
@@ -775,7 +768,7 @@ As with the other components, you should check the output generated by the Ghost
                 - name: X-Forwarded-Proto
                   value: https
                 - name: Host
-                  value: server-ghost.ghost
+                  value: ghost.homelab.cloud
                 path: /ghost/api/admin/site/
                 port: server
               initialDelaySeconds: 30
@@ -794,7 +787,7 @@ As with the other components, you should check the output generated by the Ghost
                 - name: X-Forwarded-Proto
                   value: https
                 - name: Host
-                  value: server-ghost.ghost
+                  value: ghost.homelab.cloud
                 path: /ghost/api/admin/site/
                 port: server
               initialDelaySeconds: 10
@@ -822,7 +815,6 @@ As with the other components, you should check the output generated by the Ghost
           hostAliases:
           - hostnames:
             - ghost.homelab.cloud
-            - ghostadmin.homelab.cloud
             ip: 10.7.0.1
           initContainers:
           - command:
@@ -871,7 +863,7 @@ As with the other components, you should check the output generated by the Ghost
               items:
               - key: config.production.json
                 path: config.production.json
-              secretName: server-ghost-config-6dbcdffbdc
+              secretName: server-ghost-config-526bm4m7t9
           - emptyDir:
               sizeLimit: 64Mi
             name: tmp
@@ -882,8 +874,6 @@ As with the other components, you should check the output generated by the Ghost
     - As expected, the `ConfigMap` and `Secret` resources you have declared in this Kustomize project have their names appended with a hash suffix.
 
     - Since the `config.production.json` file is a `Secret` resource, it has been fully encoded in base64.
-
-    - Remember that Kustomize transforms the values you put at the `defaultMode` parameters set for the files you configure as `volumes`. [You already saw this happening while preparing the Valkey Kustomize subproject](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#validating-the-kustomize-yaml-output).
 
 ## Do not deploy this Ghost server project on its own
 
@@ -933,6 +923,10 @@ Again I must tell you to wait to the upcoming final part of this Ghost deploymen
 
 - [Forum](https://forum.ghost.org/)
   - [HOWTO: Deploy ghost with helm on kubernetes](https://forum.ghost.org/t/howto-deploy-ghost-with-helm-on-kubernetes/47053)
+
+### [Google Account Help](https://support.google.com/accounts)
+
+- [2-Step Verification. Signing in with 2-Step Verification. Sign in with app passwords](https://support.google.com/accounts/answer/185833)
 
 ### [SREDevOps.org](https://www.sredevops.org/)
 

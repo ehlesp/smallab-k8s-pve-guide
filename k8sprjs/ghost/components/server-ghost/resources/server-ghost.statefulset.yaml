@@ -61,7 +61,7 @@ spec:
             - name: X-Forwarded-Proto
               value: https
             - name: Host
-              value: server-ghost.ghost
+              value: ghost.homelab.cloud
           periodSeconds: 10
           timeoutSeconds: 3
           successThreshold: 1
@@ -75,7 +75,7 @@ spec:
             - name: X-Forwarded-Proto
               value: https
             - name: Host
-              value: server-ghost.ghost
+              value: ghost.homelab.cloud
           periodSeconds: 300
           timeoutSeconds: 3
           successThreshold: 1
@@ -107,7 +107,6 @@ spec:
       - ip: "10.7.0.1"
         hostnames:
         - "ghost.homelab.cloud"
-        - "ghostadmin.homelab.cloud"
       volumes:
       - name: ghost-storage
         persistentVolumeClaim:
