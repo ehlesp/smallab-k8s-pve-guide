@@ -7,7 +7,8 @@
 - [Traefik IngressRoute for enabling HTTPS access to the Ghost platform](#traefik-ingressroute-for-enabling-https-access-to-the-ghost-platform)
 - [Ghost Namespace](#ghost-namespace)
 - [Main Kustomize project for the Ghost platform](#main-kustomize-project-for-the-ghost-platform)
-- [Browsing into Ghost](#browsing-into-ghost)
+- [Start using Ghost](#start-using-ghost)
+- [Security considerations in Ghost](#security-considerations-in-ghost)
 - [Ghost platform's Kustomize project attached to this guide series](#ghost-platforms-kustomize-project-attached-to-this-guide-series)
 - [Relevant system paths](#relevant-system-paths)
   - [Folders in `kubectl` client system](#folders-in-kubectl-client-system)
@@ -1202,75 +1203,53 @@ With every required element declared or configured, now you need to put everythi
 
     - The last components listed are `Service`s, and you can see them listed all as headless (no cluster IP assigned) ones with no external IP whatsoever. Also worth mentioning the list of `PORT(S)` each of them have open, and how the labels applied to them appear in the `SELECTOR` column.
 
-## Browsing into Ghost
+## Start using Ghost
 
-When the pod for the Ghost server is listed as READY, browse to your Ghost platform (found in `https://ghost.homelab.cloud` for this guide) and you will be met with its basic empty homepage:
+When the pod for the Ghost server is listed as READY, browse to your Ghost platform (found in `https://ghost.homelab.cloud` for this guide) and you will be met with the homepage of its basic default site:
 
-![Ghost platform empty homepage](images/g033/ghost-empty-homepage.webp "Ghost platform empty homepage")
+![Ghost default site homepage](images/g033/ghost-default-site.webp "Ghost default site homepage")
 
-Ghost gets deployed without any user, not even an administrative one. To create the administrative one:
+This is not really "your" site yet, it is just some default content for Ghost to serve initially. You still need to explicitly setup your site, and register your first staff user:
 
-1. Press on the "Sign up" link found at the bottom of your Ghost's home page:
+1. Browse into the `/ghost` subpath in your Ghost server. You will be redirected to a setup form where you can give a title to your site and configure your first staff user. In this guide, this setup page's full URL would be `https://ghost.homelab.cloud/ghost`:
 
-    ![Ghost Sign up link at the bottom of the home page](images/g033/ghost-sign-up-link.webp "Ghost Sign up link at the bottom of the home page")
+    ![Ghost site setup form](images/g033/ghost-welcome-setup-site-form.webp "Ghost site setup form")
 
-2. The Sign up form will appear, where you can enter a name and an email to register your user:
+2. After pressing the "Create account & start publishing" button in the previous form, you will get directly signed in as that new staff user in the Analytics dashboard of the site's administration area:
 
-    ![Ghost Sign up form to register a user](images/g033/ghost-sign-up-window.webp "Ghost Sign up form to register a user")
+    ![Ghost site administration area analytics dashboard](images/g033/ghost-site-admin-area-analytics-dashboard.webp "Ghost site administration area analytics dashboard")
 
-    Enter a real email address, because the Ghost server will send an email to that address with a link to finish the user sign up.
+    Here you have the CMS and newsletter features you can expect from Ghost to properly manage and serve your site's contents. Be aware that Ghost will automatically make your first staff user the owner of the site.
 
-    ![Ghost Sign up email sent notification](images/g033/ghost-sign-up-email-sent-notif.webp "Ghost Sign up email sent notification")
+    Also, you will receive a welcome email in the email address of your staff user:
 
-3. The email you will receive in the address you specified will look like this:
+    ![Ghost new site welcome email](images/g033/ghost-welcome-email-site-staff-user.webp  "Ghost new site welcome email")
 
-    ![Ghost Sign up email with confirmation link](images/g033/ghost-sign-up-email-with-confirm-link.webp "Ghost Sign up email with confirmation link")
+3. With the site initialized and your first staff user registered, everytime you need to sign back into your Ghost site, remember to browse to the "hidden" administration subpath `/ghost`. Ghost will redirect you directly to the "Sign in" for staff users:
 
-4. Click on the "Confirm signup" button in the email you received and your user will be confirmed as a member of your Ghost server. This action will directly sign you into the Ghost server as that new user:
+    ![Ghost site sign in form for staff users](images/g033/ghost-site-sign-in-staff-users.webp "Ghost site sign in form for staff users")
 
-    ![Home page of new Ghost user autosigned in Ghost server](images/g033/ghost-home-page-of-new-user-auto-signed-in.webp  "Home page of new Ghost user autosigned in Ghost server")
+    The full subpath of this page is `/ghost/#/signin`. Ghost will redirect you here automatically when browsing to the `/ghost` subpath if you do not have a staff user session active in the site yet.
 
-    Notice that your user will get into a slightly different version of the Ghost server's homepage. In particular, see that the header section "Thoughs, stories and ideas" with the "Subscribe" form is gone and that you have an "Account" button at the top right hand of the page.
+    > [!IMPORTANT]
+    > **Staff users and members are different types of accounts in Ghost**\
+    > While staff users take care of the management of the site and its contents, members are just people subscribed to the site to receive its newsletters.
+    >
+    > This means that the "Sign in" and "Sign up" links offered in the site's homepage are meant only for members, while staff users must sign in through the `/ghost` subpath.
 
-5. Pressing the "Account" button raises the "Your account" window:
+## Security considerations in Ghost
 
-    ![Ghost Your account window with admin user details](images/g033/ghost-your-account-window.webp "Ghost Your account window with admin user details")
+Once you have your Ghost platform running, consider the following security concerns:
 
-    It is important to see here the "Admin Ghost" line and the user email below. This means that this user is the administrator of Ghost. In Ghost, the first member registered in the server gets the administrator role assigned by default.
+1. Enable the two-factor authentication of your owner staff user:
 
-6. If you press the "Edit" link available in that "Your account" window, you will get into the "Account settings" form:
+    - Avoid using it as a regular staff user for creating content in the site.
 
-    ![Ghost administrator user Account settings form](images/g033/ghost-admin-user-account-settings-form.webp "Ghost administrator user Account settings form")
+2. Create staff users with more limited roles to cover specific concerns:
 
-    The only details you can edit here are the user's name and email address. There is no option for entering a password here, implying that the sign in process will be done through an email message.
-
-You might wonder at this point that this does not make much sense. Where is the administration area and its dashboard? To have access to all the CMS features of Ghost, what you really need to do is to create the site that this Ghost server will manage:
-
-1. Browse into the `/ghost` subpath in your Ghost server which, in this guide's Ghost server, its full url would be `https://ghost.homelab.cloud/ghost`. It will take you to this welcome form:
-
-    ![Ghost new site form](images/g033/ghost-welcome-new-site-form.webp "Ghost new site form")
-
-    Fill this form to create the new site and a new "staff" user to manage it.
-
-2. After pressing the "Create account & start publishing" button in the previous form, you will get directly logged in as that new staff user in the onboarding page of the new site's administration dashboard:
-
-    ![Ghost new site administration dashboard in onboarding page](images/g033/ghost-new-site-admin-dashboard-onboarding.webp "Ghost new site administration dashboard in onboarding page")
-
-    Here at last you find the CMS features you can expect from Ghost to properly manage the contents of your site. Be aware that the staff user you define when creating the new site will be the owner of that site, not the administrator member created earlier. Also notice that, at this point, the site will just be the default one.
-
-    Also, you will receive a welcome email in the email address of your new staff user:
-
-    ![Ghost new site welcome email](images/g033/ghost-welcome-email-new-site.webp  "Ghost new site welcome email")
-
-3. To sign in as a staff user (not as a member), you have to browse again into the subpath `/ghost`. Ghost will redirect you to the "Sign in" page for staff users. In this guide's homelab the staff sign in page is found in the url `https://ghost.homelab.cloud/ghost/#/signin`:
-
-    ![Ghost site staff user sign in form](images/g033/ghost-site-sign-in-form.webp "Ghost site staff user sign in form")
-
-    Know that you will NOT get to this page by pressing the "Sign in" button shown in the default Ghost site. You have to browse to this url explicitly since it is a "hidden" administration page, not meant for regular members (including the first one created with the admin role) of your Ghost platform.
-
-> [!IMPORTANT]
-> **A Ghost server instance only supports one site**\
-> Once you have created a site in your Ghost server instance, you will not be able to create another one on it.
+    - Content creators should worry only with producing contents for the site and their corresponding analytics, nothing more.
+    - Consider creating a moderator staff user to handle members subscribed to the site.
+    - Do not forget to enable the two-factor authentication to all staff users registered in your site.
 
 ## Ghost platform's Kustomize project attached to this guide series
 
