@@ -1209,7 +1209,13 @@ When the pod for the Ghost server is listed as READY, browse to your Ghost platf
 
 ![Ghost default site homepage](images/g033/ghost-default-site.webp "Ghost default site homepage")
 
-This is not really "your" site yet, it is just some default content for Ghost to serve initially. You still need to explicitly setup your site, and register your first staff user:
+This is not really "your" site yet, it is just some default content for Ghost to serve initially.
+
+> [!IMPORTANT]
+> **A Ghost server instance only supports one site**\
+> In other words, you need a different Ghost instance for each new site you want to have.
+
+You still need to explicitly setup your site, and register your first staff user:
 
 1. Browse into the `/ghost` subpath in your Ghost server. You will be redirected to a setup form where you can give a title to your site and configure your first staff user. In this guide, this setup page's full URL would be `https://ghost.homelab.cloud/ghost`:
 
@@ -1237,18 +1243,20 @@ This is not really "your" site yet, it is just some default content for Ghost to
     >
     > This means that the "Sign in" and "Sign up" links offered in the site's homepage are meant only for members, while staff users must sign in through the `/ghost` subpath.
 
+To learn more about what you can do with a Ghost site, [take a look to the official Ghost manual](https://ghost.org/help/site-setup/).
+
 ## Security considerations in Ghost
 
 Once you have your Ghost platform running, consider the following security concerns:
 
 1. Enable the two-factor authentication of your owner staff user:
 
-    - Avoid using it as a regular staff user for creating content in the site.
+    - Avoid using it as a regular staff user for publishing content in the site.
 
-2. Create staff users with more limited roles to cover specific concerns:
+2. Create staff users with the appropiate privilege level:
 
-    - Content creators should worry only with producing contents for the site and their corresponding analytics, nothing more.
-    - Consider creating a moderator staff user to handle members subscribed to the site.
+    - Ghost offers four roles with different privilege levels. From lowest to highest privilege level, these roles are: contributor, author, editor and administrator. Always try to assign the lowest possible privilege level to each staff user.
+
     - Do not forget to enable the two-factor authentication to all staff users registered in your site.
 
 ## Ghost platform's Kustomize project attached to this guide series
@@ -1281,6 +1289,9 @@ You can find the Kustomize project for this Ghost platform deployment in the fol
 ## References
 
 ### [Ghost](https://ghost.org/)
+
+- [Ghost manual](https://ghost.org/help/manual/)
+  - [Getting started. Site setup](https://ghost.org/help/site-setup/)
 
 - [Documentation](https://docs.ghost.org/)
   - [Getting Started. Introduction](https://docs.ghost.org/introduction)
