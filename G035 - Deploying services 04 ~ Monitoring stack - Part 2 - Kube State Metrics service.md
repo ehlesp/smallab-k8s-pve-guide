@@ -8,20 +8,20 @@
 - [Kube State Metrics Deployment](#kube-state-metrics-deployment)
 - [Kube State Metrics Service](#kube-state-metrics-service)
 - [Kube State Metrics Kustomize project](#kube-state-metrics-kustomize-project)
-  - [Validating the Kustomize yaml output](#validating-the-kustomize-yaml-output)
+  - [Validating the Kustomize YAML output](#validating-the-kustomize-yaml-output)
 - [Do not deploy this Kube State Metrics project on its own](#do-not-deploy-this-kube-state-metrics-project-on-its-own)
 - [Relevant system paths](#relevant-system-paths)
   - [Folders in `kubectl` client system](#folders-in-kubectl-client-system)
   - [Files in `kubectl` client system](#files-in-kubectl-client-system)
 - [References](#references)
+  - [Kube State Metrics](#kube-state-metrics)
+  - [Other Kube State Metrics related contents](#other-kube-state-metrics-related-contents)
   - [Kubernetes](#kubernetes)
     - [Security concerns](#security-concerns)
     - [Pods Scheduling](#pods-scheduling)
   - [Other Kubernetes-related contents](#other-kubernetes-related-contents)
     - [About security concerns](#about-security-concerns)
     - [About pods scheduling](#about-pods-scheduling)
-  - [Kube State Metrics](#kube-state-metrics)
-  - [Other Kube State Metrics related contents](#other-kube-state-metrics-related-contents)
 - [Navigation](#navigation)
 
 ## Start by deploying the Kube State Metrics service
@@ -397,7 +397,6 @@ Now put together all the declared resources under a `Kustomization` subproject, 
       - pairs:
           app.kubernetes.io/component: exporter
           app.kubernetes.io/name: kube-state-metrics
-          app.kubernetes.io/version: 2.18.0
         includeSelectors: true
         includeTemplates: true
 
@@ -417,11 +416,11 @@ Now put together all the declared resources under a `Kustomization` subproject, 
       newTag: v2.18.0
     ~~~
 
-    Under `labels` there are three labels that also appear in the resources declared in [the official standard example for deploying Kube State Metrics](https://github.com/kubernetes/kube-state-metrics/tree/main/examples/standard). Be aware of the `version` one: whenever you update the Kube State Metrics image's version, you should update that value too.
+    Under `labels` there are two labels that also appear in the resources declared in [the official standard example for deploying Kube State Metrics](https://github.com/kubernetes/kube-state-metrics/tree/main/examples/standard). Compared with that example, there is one `version` label missing. I have omitted it because it felt redundant and easy to forget when updating the Kube State Metrics image version.
 
-### Validating the Kustomize yaml output
+### Validating the Kustomize YAML output
 
-To ensure that is valid, review the complete output of the Kustomize project for your Kube State Metrics deployment:
+To ensure that is valid, review the complete YAML output of the Kustomize project for your Kube State Metrics deployment:
 
 1. Dump the output of this Kustomize project in a file named `agent-kube-state-metrics.k.output.yaml` (or just redirect it to your preferred text editor):
 
@@ -439,7 +438,6 @@ To ensure that is valid, review the complete output of the Kustomize project for
       labels:
         app.kubernetes.io/component: exporter
         app.kubernetes.io/name: kube-state-metrics
-        app.kubernetes.io/version: 2.18.0
       name: agent-kube-state-metrics
     ---
     apiVersion: rbac.authorization.k8s.io/v1
@@ -448,7 +446,6 @@ To ensure that is valid, review the complete output of the Kustomize project for
       labels:
         app.kubernetes.io/component: exporter
         app.kubernetes.io/name: kube-state-metrics
-        app.kubernetes.io/version: 2.18.0
       name: agent-kube-state-metrics
     rules:
     - apiGroups:
@@ -577,7 +574,6 @@ To ensure that is valid, review the complete output of the Kustomize project for
       labels:
         app.kubernetes.io/component: exporter
         app.kubernetes.io/name: kube-state-metrics
-        app.kubernetes.io/version: 2.18.0
       name: agent-kube-state-metrics
     roleRef:
       apiGroup: rbac.authorization.k8s.io
@@ -593,7 +589,6 @@ To ensure that is valid, review the complete output of the Kustomize project for
       labels:
         app.kubernetes.io/component: exporter
         app.kubernetes.io/name: kube-state-metrics
-        app.kubernetes.io/version: 2.18.0
       name: agent-kube-state-metrics
     spec:
       clusterIP: None
@@ -607,7 +602,6 @@ To ensure that is valid, review the complete output of the Kustomize project for
       selector:
         app.kubernetes.io/component: exporter
         app.kubernetes.io/name: kube-state-metrics
-        app.kubernetes.io/version: 2.18.0
       type: ClusterIP
     ---
     apiVersion: apps/v1
@@ -616,7 +610,6 @@ To ensure that is valid, review the complete output of the Kustomize project for
       labels:
         app.kubernetes.io/component: exporter
         app.kubernetes.io/name: kube-state-metrics
-        app.kubernetes.io/version: 2.18.0
       name: agent-kube-state-metrics
     spec:
       replicas: 1
@@ -624,13 +617,11 @@ To ensure that is valid, review the complete output of the Kustomize project for
         matchLabels:
           app.kubernetes.io/component: exporter
           app.kubernetes.io/name: kube-state-metrics
-          app.kubernetes.io/version: 2.18.0
       template:
         metadata:
           labels:
             app.kubernetes.io/component: exporter
             app.kubernetes.io/name: kube-state-metrics
-            app.kubernetes.io/version: 2.18.0
         spec:
           automountServiceAccountToken: true
           containers:
@@ -701,6 +692,22 @@ This component is part of a bigger project yet to be completed: your monitoring 
 
 ## References
 
+### [Kube State Metrics](https://github.com/kubernetes/kube-state-metrics)
+
+- [GitHub. Kube State Metrics. Standard Kustomize deployment example](https://github.com/kubernetes/kube-state-metrics/tree/main/examples/standard)
+
+- [Kubernetes Documentation. Concepts. Cluster Administration](https://kubernetes.io/docs/concepts/cluster-administration/)
+  - [Metrics for Kubernetes Object States](https://kubernetes.io/docs/concepts/cluster-administration/kube-state-metrics/)
+
+### Other Kube State Metrics related contents
+
+- [Kubex. Guide To Kubernetes Tools](https://kubex.ai/kubernetes-tools/)
+  - [Guide To Kube-State-Metrics](https://kubex.ai/kubernetes-tools/kube-state-metrics)
+
+- [DevOpsCube. How To Setup Kube State Metrics on Kubernetes](https://devopscube.com/setup-kube-state-metrics/)
+
+- [GitHub. DevOpsCube. Kube state metrics kubernetes deployment configs](https://github.com/devopscube/kube-state-metrics-configs)
+
 ### [Kubernetes](https://kubernetes.io/docs/)
 
 #### Security concerns
@@ -743,22 +750,6 @@ This component is part of a bigger project yet to be completed: your monitoring 
 - [Theodo. Working with taints and tolerations in Kubernetes](https://www.theodo.com/en-fr/blog/working-with-taints-and-tolerations-in-kubernetes)
 
 - [GitHub. K3s. Issues. Node taint k3s-controlplane=true:NoExecute](https://github.com/k3s-io/k3s/issues/1401)
-
-### [Kube State Metrics](https://github.com/kubernetes/kube-state-metrics)
-
-- [GitHub. Kube State Metrics. Standard Kustomize deployment example](https://github.com/kubernetes/kube-state-metrics/tree/main/examples/standard)
-
-- [Kubernetes Documentation. Concepts. Cluster Administration](https://kubernetes.io/docs/concepts/cluster-administration/)
-  - [Metrics for Kubernetes Object States](https://kubernetes.io/docs/concepts/cluster-administration/kube-state-metrics/)
-
-### Other Kube State Metrics related contents
-
-- [Kubex. Guide To Kubernetes Tools](https://kubex.ai/kubernetes-tools/)
-  - [Guide To Kube-State-Metrics](https://kubex.ai/kubernetes-tools/kube-state-metrics)
-
-- [DevOpsCube. How To Setup Kube State Metrics on Kubernetes](https://devopscube.com/setup-kube-state-metrics/)
-
-- [GitHub. DevOpsCube. Kube state metrics kubernetes deployment configs](https://github.com/devopscube/kube-state-metrics-configs)
 
 ## Navigation
 
