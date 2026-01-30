@@ -670,7 +670,7 @@ To ensure that is valid, review the complete YAML output of the Kustomize projec
 
 ## Do not deploy this Kube State Metrics project on its own
 
-This component is part of a bigger project yet to be completed: your monitoring stack. Wait until you have every component ready for deploying in your cluster.
+This Kube State Metrics agent is a component part of a bigger project yet to be completed: your monitoring stack. Wait until reaching the final part of this chapter G035 where you will have every component ready for deploying in your cluster.
 
 ## Relevant system paths
 

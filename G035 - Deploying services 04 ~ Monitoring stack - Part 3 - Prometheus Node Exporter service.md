@@ -277,7 +277,7 @@ Proceed now to validate the Kustomize project for your Prometheus Node Exporter 
 
 ## Do not deploy this Prometheus Node Exporter project on its own
 
-This component is part of a bigger project yet to be completed: your monitoring stack. Wait till you have every component ready for deploying in your cluster.
+This Prometheus Node Exporter is a component part of a bigger project yet to be completed: your monitoring stack. Wait until reaching the final part of this chapter G035 where you will have every component ready for deploying in your cluster.
 
 ## Relevant system paths
 

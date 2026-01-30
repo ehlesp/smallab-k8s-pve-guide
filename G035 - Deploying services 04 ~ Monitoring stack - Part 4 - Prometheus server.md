@@ -46,7 +46,7 @@ The configuration file for Prometheus is a YAML file for configuring the scrapin
     $ touch $HOME/k8sprjs/monitoring/components/server-prometheus/configs/prometheus.yaml
     ~~~
 
-2. Enter the Prometheus configuration in the `prometheus.yaml` file:
+2. Enter the Prometheus configuration in the `configs/prometheus.yaml` file:
 
     ~~~yaml
     # Prometheus main configuration file
@@ -243,13 +243,13 @@ In this guide, The `prometheus.rules.yaml` file contains just a simple example w
 > **Learn more about Prometheus rules in its official documentation**\
 > To know more about the Prometheus rules, remember to check out the official documentation about "_[recording](https://prometheus.io/docs/prometheus/latest/configuration/recording_rules/)_" and "_[alerting](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/)_" rules
 
-1. Create the file `prometheus.rules.yaml` file in the `configs` folder.
+1. Create the file `prometheus.rules.yaml` file in the `configs` folder:
 
     ~~~sh
     $ touch $HOME/k8sprjs/monitoring/components/server-prometheus/configs/prometheus.rules.yaml
     ~~~
 
-2. Enter the  below in `prometheus.rules.yaml`.
+2. Enter the example alert rule shown below in `configs/prometheus.rules.yaml`:
 
     ~~~yaml
     # Example of alerting rule for Prometheus
@@ -266,7 +266,7 @@ In this guide, The `prometheus.rules.yaml` file contains just a simple example w
           summary: High request latency
     ~~~
 
-    Just a couple of things to highlight from this configuration:
+    Just a couple of things to highlight from this configuration file:
 
     - The `name` of each group has to be a **string unique within the file**.
 
@@ -284,7 +284,7 @@ In the [first part of this chapter G035](G035%20-%20Deploying%20services%2004%20
     $ touch $HOME/k8sprjs/monitoring/components/server-prometheus/resources/server-prometheus.persistentvolumeclaim.yaml
     ~~~
 
-2. Declare the `PersistentVolumeClaim` for the Prometheus server in `server-prometheus.persistentvolumeclaim.yaml`:
+2. Declare the `PersistentVolumeClaim` for the Prometheus server in `resources/server-prometheus.persistentvolumeclaim.yaml`:
 
     ~~~yaml
     # Prometheus server claim of persistent storage
@@ -313,7 +313,7 @@ Since your Prometheus server will store data, you better deploy it with a `State
     $ touch $HOME/k8sprjs/monitoring/components/server-prometheus/resources/server-prometheus.statefulset.yaml
     ~~~
 
-2. Declare your Prometheus server's `StatefulSet` in `server-prometheus.statefulset.yaml`:
+2. Declare your Prometheus server's `StatefulSet` in `resources/server-prometheus.statefulset.yaml`:
 
     ~~~yaml
     # Prometheus server StatefulSet for a regular pod
@@ -425,7 +425,7 @@ To make Prometheus usable, you need to create it's corresponding `Service` objec
     $ touch $HOME/k8sprjs/monitoring/components/server-prometheus/resources/server-prometheus.service.yaml
     ~~~
 
-2. Edit `server-prometheus.service.yaml` and put the following yaml in it.
+2. Declare the `Service` for your Prometheus server in `resources/server-prometheus.service.yaml`:
 
     ~~~yaml
     # Prometheus server headless service
@@ -458,7 +458,7 @@ After declaring all the required resources for the Prometheus server, you need t
     $ touch $HOME/k8sprjs/monitoring/components/server-prometheus/kustomization.yaml
     ~~~
 
-2. Fill `kustomization.yaml` with the following yaml.
+2. Declare the `Kustomization` object for the Prometheus server setup in the `kustomization.yaml` file:
 
     ~~~yaml
     # Prometheus server setup
@@ -503,7 +503,7 @@ As in previous cases, you must check the output of this Kustomize project:
     $ kubectl kustomize $HOME/k8sprjs/monitoring/components/server-prometheus > server-prometheus.k.output.yaml
     ~~~
 
-2. Open the `server-prometheus.k.output.yaml`, it should be like this YAML:
+2. Open the `server-prometheus.k.output.yaml` and see if it is like this YAML:
 
     ~~~yaml
     apiVersion: v1
@@ -769,7 +769,7 @@ As in previous cases, you must check the output of this Kustomize project:
 
 ## Do not deploy this Prometheus server project on its own
 
-This Prometheus server cannot be deployed on its own because is missing several elements, such as the persistent volume required by the PVC and also a Traefik ingress to give access to this . All the missing elements will be declared and put together with all the other componentes in the final part of this monitoring stack deployment chapter.
+This Prometheus server cannot be deployed on its own because is missing several elements, such as the persistent volume required by the PVC, or the Traefik ingress that enables access to it. All the missing elements will be declared and put together with all the other components in the final part of this chapter G035.
 
 ## Relevant system paths
 
@@ -829,4 +829,4 @@ This Prometheus server cannot be deployed on its own because is missing several 
 
 ## Navigation
 
-[<< Previous (**G035. Deploying services 04. Monitoring stack Part 3**)](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%203%20-%20Prometheus%20Node%20Exporter%20service.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G035. Deploying services 04. Monitoring stack Part 5**) >>](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana.md)
+[<< Previous (**G035. Deploying services 04. Monitoring stack Part 3**)](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%203%20-%20Prometheus%20Node%20Exporter%20service.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G035. Deploying services 04. Monitoring stack Part 5**) >>](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana%20server.md)

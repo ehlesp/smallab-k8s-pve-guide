@@ -514,17 +514,17 @@
 - [Relevant system paths](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%204%20-%20Prometheus%20server.md#relevant-system-paths)
 - [References](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%204%20-%20Prometheus%20server.md#references)
 
-### [G035 - Deploying services 04 ~ Monitoring stack - Part 5 - Grafana](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana.md#g035-deploying-services-04-monitoring-stack-part-5-grafana)
+### [G035 - Deploying services 04 ~ Monitoring stack - Part 5 - Grafana](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana%20server.md)
 
-- [Kustomize project folders for Grafana](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana.md#kustomize-project-folders-for-grafana)
-- [Grafana data storage](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana.md#grafana-data-storage)
-- [Grafana Stateful resource](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana.md#grafana-stateful-resource)
-- [Grafana Service resource](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana.md#grafana-service-resource)
-- [Grafana Traefik IngressRoute resource](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana.md#grafana-traefik-ingressroute-resource)
-- [Grafana Kustomize project](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana.md#grafana-kustomize-project)
-- [Don't deploy this Grafana project on its own](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana.md#dont-deploy-this-grafana-project-on-its-own)
-- [Relevant system paths](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana.md#relevant-system-paths)
-- [References](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana.md#references)
+- [Grafana is your monitoring dashboard](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana%20server.md#grafana-is-your-monitoring-dashboard)
+- [Kustomize project folders for Grafana](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana%20server.md#kustomize-project-folders-for-grafana)
+- [Grafana server persistent storage claim](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana%20server.md#grafana-server-persistent-storage-claim)
+- [Grafana server StatefulSet](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana%20server.md#grafana-server-statefulset)
+- [Grafana server Service](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana%20server.md#grafana-server-service)
+- [Grafana server Kustomize project](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana%20server.md#grafana-server-kustomize-project)
+- [Do not deploy this Grafana server project on its own](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana%20server.md#do-not-deploy-this-grafana-server-project-on-its-own)
+- [Relevant system paths](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana%20server.md#relevant-system-paths)
+- [References](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana%20server.md#references)
 
 ### [G035 - Deploying services 04 ~ Monitoring stack - Part 6 - Complete monitoring stack setup](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#g035-deploying-services-04-monitoring-stack-part-6-complete-monitoring-stack-setup)
 
