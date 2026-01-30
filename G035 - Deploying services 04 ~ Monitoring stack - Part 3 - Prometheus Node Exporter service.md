@@ -125,7 +125,7 @@ Only a `Service` remains to be declared for completing this Prometheus Node Expo
 2. Declare the `Service` in `resources/agent-prometheus-node-exporter.service.yaml`:
 
     ~~~yaml
-    # Prometheus Node Exporter headless Service
+    # Prometheus Node Exporter headless service
     apiVersion: v1
     kind: Service
 
