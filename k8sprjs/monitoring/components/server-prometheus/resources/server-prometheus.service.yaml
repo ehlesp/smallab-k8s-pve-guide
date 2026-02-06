@@ -1,0 +1,17 @@
+# Prometheus server headless service
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: server-prometheus
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/port:   '9090'
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+  - name: server
+    port: 9090
+    targetPort: server
+    protocol: TCP

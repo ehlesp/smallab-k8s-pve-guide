@@ -1,0 +1,13 @@
+# Kube State Metrics ClusterRoleBinding to bind the service account with the read-only ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+
+metadata:
+  name: agent-kube-state-metrics
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: agent-kube-state-metrics
+subjects:
+- kind: ServiceAccount
+  name: agent-kube-state-metrics

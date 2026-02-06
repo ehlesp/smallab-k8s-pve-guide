@@ -1,0 +1,13 @@
+# Monitoring stack ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+
+metadata:
+  name: server-prometheus
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: server-prometheus
+subjects:
+- kind: ServiceAccount
+  name: server-prometheus

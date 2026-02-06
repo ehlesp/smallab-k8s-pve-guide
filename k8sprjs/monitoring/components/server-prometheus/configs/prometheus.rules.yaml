@@ -1,0 +1,44 @@
+# Alerting rules for Prometheus
+
+groups:
+  - name: kubernetes_infrastructure_alerts
+    rules:
+    # Raise alert if any target is unreachable for 5 minutes
+    - alert: TargetDown
+      expr: up == 0
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Target unreachable: {{ $labels.instance }}"
+        description: "The target {{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes."
+
+    # Raise specific alert for Prometheus self-scraping when it fails for 2 minutes
+    - alert: PrometheusSelfScrapeFailed
+      expr: up{job="prometheus-self"} == 0
+      for: 2m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Prometheus cannot scrape itself"
+        description: "Prometheus is failing to scrape its own /metrics endpoint on localhost. This might indicate the process is hanging or overloaded."
+
+    # Raise alert if the Kubernetes API Server is down for 1 minute
+    - alert: KubernetesApiServerDown
+      expr: up{job="kubernetes-apiservers"} == 0
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Kubernetes API Server is unreachable"
+        description: "Prometheus cannot connect to the Kubernetes API Server. Cluster management and discovery might be compromised."
+
+    # Raise alert when high memory usage detected in Prometheus for 10 minutes
+    - alert: PrometheusHighMemoryUsage
+      expr: (process_resident_memory_bytes{job="prometheus-self"} / 1e9) > 1
+      for: 10m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Prometheus high memory usage"
+        description: "Prometheus is consuming more than 1GB of RAM on {{ $labels.instance }}."

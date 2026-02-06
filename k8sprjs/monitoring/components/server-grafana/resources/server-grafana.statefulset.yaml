@@ -1,0 +1,53 @@
+# Grafana server StatefulSet for a regular pod
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: server-grafana
+spec:
+  replicas: 1
+  serviceName: server-grafana
+  template:
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        fsGroup: 472
+        supplementalGroups:
+        - 0
+      containers:
+      - name: server
+        image: grafana/grafana-dev:12.4.0-21524955964
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: server
+          containerPort: 3000
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          successThreshold: 1
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 2
+          httpGet:
+            path: /robots.txt
+            port: 3000
+            scheme: HTTP
+        livenessProbe:
+          failureThreshold: 3
+          successThreshold: 1
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 1
+          tcpSocket:
+            port: 3000
+        resources:
+          requests:
+            cpu: 250m
+            memory: 128Mi
+        volumeMounts:
+        - mountPath: /var/lib/grafana
+          name: grafana-storage
+      volumes:
+        - name: grafana-storage
+          persistentVolumeClaim:
+            claimName: server-grafana

@@ -1,0 +1,22 @@
+# Grafana server setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+labels:
+  - pairs:
+      app: server-grafana
+    includeSelectors: true
+    includeTemplates: true
+
+resources:
+- resources/server-grafana.persistentvolumeclaim.yaml
+- resources/server-grafana.service.yaml
+- resources/server-grafana.statefulset.yaml
+
+replicas:
+- name: server-grafana
+  count: 1
+
+images:
+- name: grafana/grafana-dev
+  newTag: 12.4.0-21524955964

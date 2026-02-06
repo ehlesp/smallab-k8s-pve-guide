@@ -1,0 +1,14 @@
+# Grafana server claim of persistent storage
+apiVersion: v1
+kind: PersistentVolumeClaim
+
+metadata:
+  name: server-grafana
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: local-path
+  volumeName: monitoring-ssd-grafana-data
+  resources:
+    requests:
+      storage: 1.9G
