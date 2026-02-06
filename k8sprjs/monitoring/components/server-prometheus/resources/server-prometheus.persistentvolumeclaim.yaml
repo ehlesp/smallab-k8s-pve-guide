@@ -1,0 +1,14 @@
+# Prometheus server claim of persistent storage
+apiVersion: v1
+kind: PersistentVolumeClaim
+
+metadata:
+  name: server-prometheus
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: local-path
+  volumeName: monitoring-ssd-prometheus-data
+  resources:
+    requests:
+      storage: 9.8G

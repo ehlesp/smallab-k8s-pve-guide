@@ -1,0 +1,28 @@
+# HTTPS ingress for the monitoring stack
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+
+metadata:
+  name: monitoring.homelab.cloud
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - kind: Rule
+    match: Host(`prometheus.homelab.cloud`)
+    services:
+    - kind: Service
+      name: server-prometheus
+      passHostHeader: true
+      port: server
+      scheme: http
+  - kind: Rule
+    match: Host(`grafana.homelab.cloud`)
+    services:
+    - kind: Service
+      name: server-grafana
+      passHostHeader: true
+      port: server
+      scheme: http
+  tls:
+    secretName: monitoring.homelab.cloud-tls

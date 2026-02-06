@@ -1,0 +1,23 @@
+# TLS certificate for the monitoring stack
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
+  name: monitoring.homelab.cloud-tls
+spec:
+  isCA: false
+  secretName: monitoring.homelab.cloud-tls
+  duration: 2190h # 3 months
+  renewBefore: 168h # Certificates must be renewed some time before they expire (7 days)
+  dnsNames:
+    - prometheus.homelab.cloud
+    - grafana.homelab.cloud
+  privateKey:
+    algorithm: ECDSA
+    size: 521
+    encoding: PKCS8
+    rotationPolicy: Always
+  issuerRef:
+    name: homelab.cloud-intm-ca01-issuer
+    kind: ClusterIssuer
+    group: cert-manager.io

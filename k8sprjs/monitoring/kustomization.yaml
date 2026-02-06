@@ -1,0 +1,22 @@
+# Monitoring stack setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: monitoring
+
+labels:
+  - pairs:
+      platform: monitoring
+    includeSelectors: true
+    includeTemplates: true
+
+resources:
+- resources/monitoring-ssd-grafana-data.persistentvolume.yaml
+- resources/monitoring-ssd-prometheus-data.persistentvolume.yaml
+- resources/monitoring.homelab.cloud-tls.certificate.cert-manager.yaml
+- resources/monitoring.homelab.cloud.ingressroute.traefik.yaml
+- resources/monitoring.namespace.yaml
+- components/agent-kube-state-metrics
+- components/agent-prometheus-node-exporter
+- components/server-grafana
+- components/server-prometheus

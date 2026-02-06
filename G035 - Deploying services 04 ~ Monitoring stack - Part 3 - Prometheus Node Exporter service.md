@@ -3,7 +3,8 @@
 - [The Prometheus Node Exporter is simpler to deploy](#the-prometheus-node-exporter-is-simpler-to-deploy)
 - [Kustomize project folders for Prometheus Node Exporter](#kustomize-project-folders-for-prometheus-node-exporter)
 - [Prometheus Node Exporter DaemonSet](#prometheus-node-exporter-daemonset)
-- [Prometheus Node Exporter Service resource](#prometheus-node-exporter-service-resource)
+- [Prometheus Node Exporter Service](#prometheus-node-exporter-service)
+  - [Service's absolute internal FQDN](#services-absolute-internal-fqdn)
 - [Prometheus Node Exporter Kustomize project](#prometheus-node-exporter-kustomize-project)
   - [Validating the Kustomize YAML output](#validating-the-kustomize-yaml-output)
 - [Do not deploy this Prometheus Node Exporter project on its own](#do-not-deploy-this-prometheus-node-exporter-project-on-its-own)
@@ -23,7 +24,7 @@
 
 ## The Prometheus Node Exporter is simpler to deploy
 
-In this part you will prepare the Kustomize project for the Prometheus Node Exporter. Compared to other services like the Kube State Metrics, this Node Exporter is less complex to declare. The YAML manifests declared here are adaptations based on the ones shown in [this article by Ichlaw posted in Medium](https://medium.com/@lchlaw/tutorial-run-prometheus-node-exporter-using-daemon-set-for-kubernetes-service-discovery-c38421d548ed) and [this other one found in GeeksForGeeks](https://www.geeksforgeeks.org/devops/setup-prometheus-node-exporter-on-kubernetes/).
+This part covers the preparation of the Kustomize project for the Prometheus Node Exporter. Compared to other services like the Kube State Metrics, this Node Exporter is less complex to declare. The YAML manifests declared here are adaptations based on the ones shown in [this article by Ichlaw posted in Medium](https://medium.com/@lchlaw/tutorial-run-prometheus-node-exporter-using-daemon-set-for-kubernetes-service-discovery-c38421d548ed) and [this other one found in GeeksForGeeks](https://www.geeksforgeeks.org/devops/setup-prometheus-node-exporter-on-kubernetes/).
 
 ## Kustomize project folders for Prometheus Node Exporter
 
@@ -35,7 +36,7 @@ $ mkdir -p $HOME/k8sprjs/monitoring/components/agent-prometheus-node-exporter/re
 
 ## Prometheus Node Exporter DaemonSet
 
-The Prometheus Node Exporter service does not require to store anything but, instead of using a `Deployment` resource, you will declare its pod in a [`DaemonSet`](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/). This is because the node exporter is essentially an agent that gets metrics from the Linux subsystem of the Kubernetes cluster nodes, and you want to get those statistics from all the nodes in your K3s cluster. With a `DaemonSet` you can make a pod run in all your nodes automatically, right what you want for this service:
+The Prometheus Node Exporter service does not require to store anything but, instead of using a `Deployment` resource, you will declare its pod in a [`DaemonSet`](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/). This is because the node exporter is essentially an agent that gets metrics from the Linux subsystem of the Kubernetes cluster nodes, and you want to get those values from all your K3s cluster's nodes. With a `DaemonSet` you can replicate a pod in all your nodes automatically, right what you want for this service:
 
 1. Create a file named `agent-prometheus-node-exporter.daemonset.yaml` under the `agent-prometheus-node-exporter/resources` folder:
 
@@ -43,7 +44,7 @@ The Prometheus Node Exporter service does not require to store anything but, ins
     $ touch $HOME/k8sprjs/monitoring/components/agent-prometheus-node-exporter/resources/agent-prometheus-node-exporter.daemonset.yaml
     ~~~
 
-2. Declare the DaemonSet for the Prometheus Node Exporter in the `resources/agent-prometheus-node-exporter.daemonset.yaml` file:
+2. Declare the DaemonSet for the Prometheus Node Exporter in the `agent-prometheus-node-exporter.daemonset.yaml` file:
 
     ~~~yaml
     # Prometheus Node Exporter DaemonSet for a regular pod
@@ -94,7 +95,7 @@ The Prometheus Node Exporter service does not require to store anything but, ins
             operator: Exists
     ~~~
 
-    This `DaemonSet` resource has some particularities:
+    This `DaemonSet` resource has some particularities in its `spec.template.spec` block:
 
     - `metrics` container:\
       Executes the Prometheus Node Exporter service:
@@ -112,9 +113,9 @@ The Prometheus Node Exporter service does not require to store anything but, ins
     - `tolerations`:\
       As it was specified in the [Kube State Metrics deployment](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%202%20-%20Kube%20State%20Metrics%20service.md#kube-state-metrics-deployment), you need this section to allow the Prometheus Node Exporter pod to be scheduled in nodes that have the `NoSchedule` taint. Remember that [your K3s server node is tainted to not allow any kind of workload being scheduled in it](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#the-k3sserver01-nodes-configyaml-file).
 
-## Prometheus Node Exporter Service resource
+## Prometheus Node Exporter Service
 
-Only a `Service` remains to be declared for completing this Prometheus Node Exporter setup:
+Declare the necessary `Service` resource for completing this Prometheus Node Exporter setup:
 
 1. Generate an `agent-prometheus-node-exporter.service.yaml` under the `agent-prometheus-node-exporter/resources` folder:
 
@@ -122,7 +123,7 @@ Only a `Service` remains to be declared for completing this Prometheus Node Expo
     $ touch $HOME/k8sprjs/monitoring/components/agent-prometheus-node-exporter/resources/agent-prometheus-node-exporter.service.yaml
     ~~~
 
-2. Declare the `Service` in `resources/agent-prometheus-node-exporter.service.yaml`:
+2. Declare the `Service` in `agent-prometheus-node-exporter.service.yaml`:
 
     ~~~yaml
     # Prometheus Node Exporter headless service
@@ -144,7 +145,19 @@ Only a `Service` remains to be declared for completing this Prometheus Node Expo
         targetPort: metrics
     ~~~
 
-    There is nothing special about this service. Just notice that it does have the annotations to inform Prometheus it can scrape metrics from this service. The internal cluster FQDN or hostname for this service will be `agent-prometheus-node-exporter.monitoring`.
+    There is nothing special about this service. Just notice that it does have the annotations to inform Prometheus that it can scrape metrics from this service.
+
+### Service's absolute internal FQDN
+
+As a component of the monitoring stack, this headless service is going to be placed under the `monitoring` namespace. This means that its absolute _Fully Qualified Domain Name_ (_FQDN_) will be:
+
+~~~http
+agent-prometheus-node-exporter.monitoring.svc.homelab.cluster.
+~~~
+
+> [!NOTE]
+> **The last dot in the absolute FQDN is not a mistake!**\
+> It explicitly brands the FQDN as absolute, which avoids doing any searches in the cluster's internal DNS service. This technique allows calling services directly, improving your Kubernetes cluster performance.
 
 ## Prometheus Node Exporter Kustomize project
 

@@ -7,6 +7,7 @@
 - [Kube State Metrics ClusterRoleBinding](#kube-state-metrics-clusterrolebinding)
 - [Kube State Metrics Deployment](#kube-state-metrics-deployment)
 - [Kube State Metrics Service](#kube-state-metrics-service)
+  - [Service's absolute internal FQDN](#services-absolute-internal-fqdn)
 - [Kube State Metrics Kustomize project](#kube-state-metrics-kustomize-project)
   - [Validating the Kustomize YAML output](#validating-the-kustomize-yaml-output)
 - [Do not deploy this Kube State Metrics project on its own](#do-not-deploy-this-kube-state-metrics-project-on-its-own)
@@ -26,11 +27,11 @@
 
 ## Start by deploying the Kube State Metrics service
 
-This part shows you how to deploy the _Kube State Metrics_ service to make the "hidden" metrics of your Kubernetes cluster available for the other components of the monitoring stack. This deployment will use a Kustomize configuration based on the [Kubernetes standard deployment example](https://github.com/kubernetes/kube-state-metrics/tree/main/examples/standard) found in [the official GitHub page of the Kube State Metrics project](https://github.com/kubernetes/kube-state-metrics), albeit with some modifications.
+This part is about deploying the _Kube State Metrics_ service to make the "hidden" metrics of your Kubernetes cluster available for the other components of the monitoring stack. This deployment will use a Kustomize configuration based on the [Kubernetes standard deployment example](https://github.com/kubernetes/kube-state-metrics/tree/main/examples/standard) found in [the official GitHub page of the Kube State Metrics project](https://github.com/kubernetes/kube-state-metrics), albeit with some modifications.
 
 ## Kustomize project folders for your monitoring stack and Kube State Metrics
 
-The components of your monitoring stack need to be under a common Kustomize project. Create the usual folders as you have seen in previous deployments. Like in those cases, this guide will assume you are working in a special folder for your Kustomize projects, set in a `$HOME/k8sprjs` folder of your `kubectl` client system:
+Your monitoring stack's components need to be under a common Kustomize project. Create the usual folders as you have seen in previous deployments. Like in those cases, this guide will assume you are working in a special folder for your Kustomize projects, set in a `$HOME/k8sprjs` folder of your `kubectl` client system:
 
 ~~~sh
 $ mkdir -p $HOME/k8sprjs/monitoring/components/agent-kube-state-metrics/resources
@@ -40,9 +41,9 @@ In the command above, the main Kustomize project folder for the monitoring stack
 
 ## Kube State Metrics ServiceAccount
 
-To deploy the Kube State Metrics service, you need some objects you already saw in the [Headlamp deployment](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md). One of those objects is a service account, which provides an identity for processes running in a pod. In other words, this is an standard Kubernetes authentication resource [explained in this official Kubernetes documentation](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/).
+To deploy the Kube State Metrics service, you need some objects you already met in the [Headlamp deployment](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md). One of those objects is a service account, which provides an identity for processes running in a pod. In other words, this is an standard Kubernetes authentication resource [explained in this official Kubernetes documentation](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/).
 
-Configure one service account for your Kube State Metrics service as follows:
+Prepare one service account for your Kube State Metrics service like this:
 
 1. Create an `agent-kube-state-metrics.serviceaccount.yaml` file in the `agent-kube-state-metrics/resources/` folder:
 
@@ -50,7 +51,7 @@ Configure one service account for your Kube State Metrics service as follows:
     $ touch $HOME/k8sprjs/monitoring/components/agent-kube-state-metrics/resources/agent-kube-state-metrics.serviceaccount.yaml
     ~~~
 
-2. Declare a `ServiceAccount` for the Kube State Metrics service in the `resources/agent-kube-state-metrics.serviceaccount.yaml` file:
+2. Declare a `ServiceAccount` for the Kube State Metrics service in the `agent-kube-state-metrics.serviceaccount.yaml` file:
 
     ~~~yaml
     # Kube State Metrics ServiceAccount
@@ -62,9 +63,9 @@ Configure one service account for your Kube State Metrics service as follows:
       name: agent-kube-state-metrics
     ~~~
 
-    As shown above, it is a really simple resource to declare but also has other parameters available. Check them out in its [official API definition](https://kubernetes.io/docs/reference/kubernetes-api/authentication-resources/service-account-v1/).
+    This is a really simple resource to declare but also has other parameters available. Check them out in its [official API definition](https://kubernetes.io/docs/reference/kubernetes-api/authentication-resources/service-account-v1/).
 
-    Notice that it has the parameter `automountServiceAccountToken` set explicitly to `false` as a security hardening measure, as you have seen applied already in the [Ghost server](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#ghost-server-statefulset) or [Forgejo server](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%204%20-%20Forgejo%20server.md#forgejo-server-statefulset) respective stateful sets.
+    In this case, it has the parameter `automountServiceAccountToken` set explicitly to `false` as a security hardening measure, as you have seen applied already in the [Ghost server](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#ghost-server-statefulset) or [Forgejo server](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%204%20-%20Forgejo%20server.md#forgejo-server-statefulset) respective stateful sets.
 
     > [!NOTE]
     > **Setting to `false` the `automountServiceAccountToken` parameter helps in protecting the cluster's Kubernetes API**\
@@ -72,7 +73,7 @@ Configure one service account for your Kube State Metrics service as follows:
 
 ## Kube State Metrics ClusterRole
 
-For the previous service account to be able to do anything in your cluster, you need to associate it with a role that includes concrete actions to perform. In the case of the Kube State Metrics agents you want to deploy in all your cluster nodes, you will need a reader role able to act cluster-wide. This implies declaring a [ClusterRole resource](https://kubernetes.io/docs/reference/kubernetes-api/authorization-resources/cluster-role-v1/):
+For the previous service account to be able to do anything in your cluster, you need to associate it with a role that grants concrete actions to perform. In the case of the Kube State Metrics agents you want to deploy in all your cluster nodes, you will need a reader role able to act cluster-wide. This implies declaring a [ClusterRole resource](https://kubernetes.io/docs/reference/kubernetes-api/authorization-resources/cluster-role-v1/):
 
 1. Generate a file `agent-kube-state-metrics.clusterrole.yaml` within the `agent-kube-state-metrics/resources/` directory:
 
@@ -80,7 +81,7 @@ For the previous service account to be able to do anything in your cluster, you 
     $ touch $HOME/k8sprjs/monitoring/components/agent-kube-state-metrics/resources/agent-kube-state-metrics.clusterrole.yaml
     ~~~
 
-2. Declare the `ClusterRole` object in the `resources/agent-kube-state-metrics.clusterrole.yaml` file:
+2. Declare the `ClusterRole` object in the `agent-kube-state-metrics.clusterrole.yaml` file:
 
     ~~~yaml
     # Kube State Metrics read-only ClusterRole to read Kubernetes metrics
@@ -90,136 +91,121 @@ For the previous service account to be able to do anything in your cluster, you 
     metadata:
       name: agent-kube-state-metrics
     rules:
-      - apiGroups:
-          - ""
-        resources:
-          - configmaps
-          - secrets
-          - nodes
-          - pods
-          - services
-          - serviceaccounts
-          - resourcequotas
-          - replicationcontrollers
-          - limitranges
-          - persistentvolumeclaims
-          - persistentvolumes
-          - namespaces
-          - endpoints
-        verbs:
-          - list
-          - watch
-      - apiGroups:
-          - apps
-        resources:
-          - statefulsets
-          - daemonsets
-          - deployments
-          - replicasets
-        verbs:
-          - list
-          - watch
-      - apiGroups:
-          - batch
-        resources:
-          - cronjobs
-          - jobs
-        verbs:
-          - list
-          - watch
-      - apiGroups:
-          - autoscaling
-        resources:
-          - horizontalpodautoscalers
-        verbs:
-          - list
-          - watch
-      - apiGroups:
-          - authentication.k8s.io
-        resources:
-          - tokenreviews
-        verbs:
-          - create
-      - apiGroups:
-          - authorization.k8s.io
-        resources:
-          - subjectaccessreviews
-        verbs:
-          - create
-      - apiGroups:
-          - policy
-        resources:
-          - poddisruptionbudgets
-        verbs:
-          - list
-          - watch
-      - apiGroups:
-          - certificates.k8s.io
-        resources:
-          - certificatesigningrequests
-        verbs:
-          - list
-          - watch
-      - apiGroups:
-          - discovery.k8s.io
-        resources:
-          - endpointslices
-        verbs:
-          - list
-          - watch
-      - apiGroups:
-          - storage.k8s.io
-        resources:
-          - storageclasses
-          - volumeattachments
-        verbs:
-          - list
-          - watch
-      - apiGroups:
-          - admissionregistration.k8s.io
-        resources:
-          - mutatingwebhookconfigurations
-          - validatingwebhookconfigurations
-        verbs:
-          - list
-          - watch
-      - apiGroups:
-          - networking.k8s.io
-        resources:
-          - networkpolicies
-          - ingressclasses
-          - ingresses
-        verbs:
-          - list
-          - watch
-      - apiGroups:
-          - coordination.k8s.io
-        resources:
-          - leases
-        verbs:
-          - list
-          - watch
-      - apiGroups:
-          - rbac.authorization.k8s.io
-        resources:
-          - clusterrolebindings
-          - clusterroles
-          - rolebindings
-          - roles
-        verbs:
-          - list
-          - watch
+    # Core resources: management of pods, nodes, services, namespaces and quotas
+    - apiGroups: [""]
+      resources:
+      - configmaps
+    # SENSIBLE INFO: Uncomment ONLY for security audits!
+    #  - secrets
+      - nodes
+      - pods
+      - services
+      - serviceaccounts
+      - resourcequotas
+      - replicationcontrollers
+      - limitranges
+      - persistentvolumeclaims
+      - persistentvolumes
+      - namespaces
+      - endpoints
+      verbs: ["list", "watch"]
+
+    # Apps controllers: management of deployments, replicas and sets with state
+    - apiGroups: ["apps"]
+      resources:
+      - statefulsets
+      - daemonsets
+      - deployments
+      - replicasets
+      verbs: ["list", "watch"]
+
+    # Batch workloads: jobs and cronjobs monitoring
+    - apiGroups: ["batch"]
+      resources:
+      - cronjobs
+      - jobs
+      verbs: ["list", "watch"]
+
+    # Autoscaling: metrics about Horizontal Pod Autoscalers (HPA)
+    - apiGroups: ["autoscaling"]
+      resources:
+      - horizontalpodautoscalers
+      verbs: ["list", "watch"]
+
+    # Disruption policies: guaranteed availability of pods, or Pod Disruption Budget (PDB)
+    - apiGroups: ["policy"]
+      resources: ["poddisruptionbudgets"]
+      verbs: ["list", "watch"]
+
+    # Certificates: state of Certificates Signing Requests (CSR)
+    - apiGroups: ["certificates.k8s.io"]
+      resources: ["certificatesigningrequests"]
+      verbs: ["list", "watch"]
+
+    # Discovery: advanced management of endpoints at big scale (EndpointSlices)
+    - apiGroups: ["discovery.k8s.io"]
+      resources: ["endpointslices"]
+      verbs: ["list", "watch"]
+
+    # Storage: storage classes and volume attachments
+    - apiGroups: ["storage.k8s.io"]
+      resources:
+      - storageclasses
+      - volumeattachments
+      verbs: ["list", "watch"]
+
+    # Admission registry: configuration of validating and mutating webhooks
+    - apiGroups: ["admissionregistration.k8s.io"]
+      resources:
+      - mutatingwebhookconfigurations
+      - validatingwebhookconfigurations
+      verbs: ["list", "watch"]
+
+    # Networking: management of ingress and network policies
+    - apiGroups: ["networking.k8s.io"]
+      resources:
+      - networkpolicies
+      - ingressclasses
+      - ingresses
+      verbs: ["list", "watch"]
+
+    # Coordination: leases control for high availability
+    - apiGroups: ["coordination.k8s.io"]
+      resources: ["leases"]
+      verbs: ["list", "watch"]
+
+    # SENSIBLE INFO: Uncomment ONLY for security audits!
+    # Authentication: security tokens review (internal/advanced usage)
+    #- apiGroups: ["authentication.k8s.io"]
+    #  resources: ["tokenreviews"]
+    #  verbs: ["create"]
+    #
+    # Authorization: access permissions review (dynamic RBAC)
+    #- apiGroups: ["authorization.k8s.io"]
+    #  resources: ["subjectaccessreviews"]
+    #  verbs: ["create"]
+    #
+    # RBAC: metrics about role bindings and permissions in the cluster
+    #- apiGroups: ["rbac.authorization.k8s.io"]
+    #  resources:
+    #  - clusterrolebindings
+    #  - clusterroles
+    #  - rolebindings
+    #  - roles
+    #  verbs: ["list", "watch"]
     ~~~
 
-    See how the `agent-kube-state-metrics` cluster role is a collection of `rules` that define what actions (`verbs`) can be done on concrete `resources` available in concrete apis (`apiGroups`). Also notice how the verbs are almost always `list` or `watch`, limiting this cluster role to a read-only behavior.
+    A cluster role is a collection of `rules` that define what actions (`verbs`) can be done on concrete `resources` available in concrete apis (`apiGroups`). The verbs granted by this cluster role are almost always `list` or `watch`, limiting this particular cluster role to a read-only behavior.
+
+    On the other hand, I have commented out the sensible security-related resources that usually you do not want to leave exposed in metrics (or in any way in general). Uncomment them only if you need to do something like running a security audit on them and, when you are done, **do not forget to block their access again in this cluster role**.
 
     > [!NOTE]
     > **`ClusterRole` resources are not namespaced**\
-    > You will never find a `namespace` parameter in standard `ClusterRole` objects.
+    > As its name implies, any role of this type has a cluster-wide reach. This is why namespaces do not apply to them.
 
 ## Kube State Metrics ClusterRoleBinding
 
-To link the [cluster role](#kube-state-metrics-clusterrole) with the [service account](#kube-state-metrics-serviceaccount), you need to bind them through a [ClusterRoleBinding](https://kubernetes.io/docs/reference/kubernetes-api/authorization-resources/cluster-role-binding-v1/) object:
+To link the [cluster role](#kube-state-metrics-clusterrole) with the [service account](#kube-state-metrics-serviceaccount), you need to tie them together through a [ClusterRoleBinding](https://kubernetes.io/docs/reference/kubernetes-api/authorization-resources/cluster-role-binding-v1/) object:
 
 1. Create the `agent-kube-state-metrics.clusterrolebinding.yaml` file under the `agent-kube-state-metrics/resources/` path:
 
@@ -227,7 +213,7 @@ To link the [cluster role](#kube-state-metrics-clusterrole) with the [service ac
     $ touch $HOME/k8sprjs/monitoring/components/agent-kube-state-metrics/resources/agent-kube-state-metrics.clusterrolebinding.yaml
     ~~~
 
-2. Declare the `ClusterRoleBinding` object that connects the service account and cluster roles created previously in `resources/agent-kube-state-metrics.clusterrolebinding.yaml`:
+2. Declare the `ClusterRoleBinding` object that connects the service account and cluster roles created previously in `agent-kube-state-metrics.clusterrolebinding.yaml`:
 
     ~~~yaml
     # Kube State Metrics ClusterRoleBinding to bind the service account with the read-only ClusterRole
@@ -245,11 +231,11 @@ To link the [cluster role](#kube-state-metrics-clusterrole) with the [service ac
       name: agent-kube-state-metrics
     ~~~
 
-    This cluster role binding specifies in `roleRef` what is the role to bind, and in `subjects` you have a list of resources which is limited here to the `agent-kube-state-metrics` service account. Notice how the `kind` of the resources being binded is also specified.
+    Cluster role bindings specify in `roleRef` what is the role to bind. In `subjects` is the list of resources to bind with the role. In this case, the only subject is the `agent-kube-state-metrics` service account. Notice how the `kind` of the resource being bound also has to be specified.
 
     > [!NOTE]
     > **`ClusterRoleBinding` resources are not namespaced**\
-    > You will never see a `namespace` parameter in standard `ClusterRoleBinding` objects.
+    > Like the `ClusterRole`, its binding also has cluster-wide reach.
 
 ## Kube State Metrics Deployment
 
@@ -261,7 +247,7 @@ The Kube State Metrics service is just an agent that does not need to store any 
     $ touch $HOME/k8sprjs/monitoring/components/agent-kube-state-metrics/resources/agent-kube-state-metrics.deployment.yaml
     ~~~
 
-2. Declare the `Deployment` object for Kube State Metrics in `resources/agent-kube-state-metrics.deployment.yaml`:
+2. Declare the `Deployment` object for Kube State Metrics in `agent-kube-state-metrics.deployment.yaml`:
 
     ~~~yaml
     # Kube State Metrics deployment in a regular pod
@@ -274,6 +260,7 @@ The Kube State Metrics service is just an agent that does not need to store any 
       replicas: 1
       template:
         spec:
+          serviceAccountName: agent-kube-state-metrics
           automountServiceAccountToken: true
           containers:
           - name: agent
@@ -311,13 +298,15 @@ The Kube State Metrics service is just an agent that does not need to store any 
               timeoutSeconds: 5
           nodeSelector:
             kubernetes.io/os: linux
-          serviceAccountName: agent-kube-state-metrics
           tolerations:
           - effect: NoSchedule
             operator: Exists
     ~~~
 
-    This `Deployment` object deploys just one pod, and comes with some particularities compared with the `StatefulSet` objects you have seen in previous deployments:
+    This `Deployment` object deploys just one pod, and comes with some particularities compared with the `StatefulSet` objects you have seen in previous deployments. In particular, the differences worth highlighting are all in the `spec.template.spec` section:
+
+    - `serviceAccountName`\
+      Instead of using the `default` service account that always exists in any Kubernetes namespace, this parameter here declares [the name of the one created specifically for this service](#kube-state-metrics-serviceaccount).
 
     - `automountServiceAccountToken`\
       This parameter appears again in this deployment procedure, but here is set to `true`. Why is `true` here rather than in the `ServiceAccount` resource? It is a matter of hierarchy and precedence within the Kubernetes cluster. The `ServiceAccount` object defines a global policy in which that parameter set to `false` disables the associated feature for any service using that account. On the other hand, setting the parameter to `true` in the pod enables that feature only for that specific pod.
@@ -347,13 +336,13 @@ The Kube State Metrics service is just an agent that does not need to store any 
 
 The last resource you need to describe for your Kube State Metrics setup is a `Service`:
 
-1. Create the file `agent-kube-state-metrics.service.yaml` within `agent-kube-state-metrics/resources/`.
+1. Create the file `agent-kube-state-metrics.service.yaml` within `agent-kube-state-metrics/resources/`:
 
     ~~~sh
     $ touch $HOME/k8sprjs/monitoring/components/agent-kube-state-metrics/resources/agent-kube-state-metrics.service.yaml
     ~~~
 
-2. Declare the `Service` in `resources/agent-kube-state-metrics.service.yaml` :
+2. Declare the `Service` in `agent-kube-state-metrics.service.yaml`:
 
     ~~~yaml
     # Kube State Metrics headless service
@@ -374,11 +363,21 @@ The last resource you need to describe for your Kube State Metrics setup is a `S
         targetPort: telemetry
     ~~~
 
-    Since every component of this monitoring stack is going to be under the `monitoring` namespace, this headless service's hostname will be `agent-kube-state-metrics.monitoring`.
+### Service's absolute internal FQDN
+
+Since every component of this monitoring stack is going to be under the `monitoring` namespace, this headless Kube State Metrics service's absolute _Fully Qualified Domain Name_ (_FQDN_) will be:
+
+~~~http
+agent-kube-state-metrics.monitoring.svc.homelab.cluster.
+~~~
+
+> [!NOTE]
+> **The last dot in the absolute FQDN is not a mistake!**\
+> It explicitly brands the FQDN as absolute, which avoids doing any searches in the cluster's internal DNS service. This technique allows calling services directly, improving your Kubernetes cluster performance.
 
 ## Kube State Metrics Kustomize project
 
-Now put together all the declared resources under a `Kustomization` subproject, declared with the corresponding `kustomization.yaml` file:
+Now put together all the Kube State Metrics resources under a `Kustomization` subproject, declared with the corresponding `kustomization.yaml` file:
 
 1. Generate a `kustomization.yaml` file in the `agent-kube-state-metrics` folder:
 
@@ -452,7 +451,6 @@ To ensure that is valid, review the complete YAML output of the Kustomize projec
       - ""
       resources:
       - configmaps
-      - secrets
       - nodes
       - pods
       - services
@@ -492,18 +490,6 @@ To ensure that is valid, review the complete YAML output of the Kustomize projec
       verbs:
       - list
       - watch
-    - apiGroups:
-      - authentication.k8s.io
-      resources:
-      - tokenreviews
-      verbs:
-      - create
-    - apiGroups:
-      - authorization.k8s.io
-      resources:
-      - subjectaccessreviews
-      verbs:
-      - create
     - apiGroups:
       - policy
       resources:
@@ -554,16 +540,6 @@ To ensure that is valid, review the complete YAML output of the Kustomize projec
       - coordination.k8s.io
       resources:
       - leases
-      verbs:
-      - list
-      - watch
-    - apiGroups:
-      - rbac.authorization.k8s.io
-      resources:
-      - clusterrolebindings
-      - clusterroles
-      - rolebindings
-      - roles
       verbs:
       - list
       - watch
@@ -666,7 +642,7 @@ To ensure that is valid, review the complete YAML output of the Kustomize projec
             operator: Exists
     ~~~
 
-    The main thing to notice in the output is how the labels and selectors have been automatically applied on the resources.
+    The main thing to notice in the output is how the labels and selectors have been automatically applied on the resources. Also ensure that in `agent-kube-state-metrics` cluster role only appear those `resources` or `apiGroups` left intentionaly uncommented.
 
 ## Do not deploy this Kube State Metrics project on its own
 

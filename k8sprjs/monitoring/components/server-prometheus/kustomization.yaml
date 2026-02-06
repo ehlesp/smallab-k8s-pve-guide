@@ -1,0 +1,37 @@
+# Prometheus server setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+labels:
+  - pairs:
+      app: server-prometheus
+    includeSelectors: true
+    includeTemplates: true
+
+resources:
+- resources/server-prometheus.serviceaccount.yaml
+- resources/server-prometheus.clusterrole.yaml
+- resources/server-prometheus.clusterrolebinding.yaml
+- resources/server-prometheus.persistentvolumeclaim.yaml
+- resources/server-prometheus.service.yaml
+- resources/server-prometheus.statefulset.yaml
+
+replicas:
+- name: server-prometheus
+  count: 1
+
+images:
+- name: prom/prometheus
+  newTag: v3.9.1
+
+configMapGenerator:
+- name: server-prometheus-config
+  files:
+  - configs/prometheus.rules.yaml
+  - configs/prometheus.yaml
+
+secretGenerator:
+- name: server-prometheus-web-config
+  files:
+  - secrets/prometheus.web.yaml
+  - secrets/basic_auth.pwd

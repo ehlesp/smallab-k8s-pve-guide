@@ -1,0 +1,79 @@
+# Prometheus server StatefulSet for a regular pod
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: server-prometheus
+spec:
+  replicas: 1
+  serviceName: server-prometheus
+  template:
+    spec:
+      serviceAccountName: server-prometheus
+      automountServiceAccountToken: true
+      securityContext:
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
+      containers:
+      - name: server
+        image: prom/prometheus:v3.9.1
+        ports:
+        - containerPort: 9090
+          name: server
+        args:
+        - "--config.file=/etc/prometheus/prometheus.yaml"
+        - "--web.config.file=/etc/prometheus/prometheus.web.yaml"
+        - "--storage.tsdb.path=/prometheus"
+        - "--storage.tsdb.retention.time=1w"
+        - "--storage.tsdb.retention.size=8GB"
+        resources:
+          requests:
+            cpu: 250m
+            memory: 128Mi
+        volumeMounts:
+        - name: prometheus-config
+          subPath: prometheus.yaml
+          mountPath: /etc/prometheus/prometheus.yaml
+        - name: prometheus-config
+          subPath: prometheus.rules.yaml
+          mountPath: /etc/prometheus/prometheus.rules.yaml
+        - name: prometheus-secrets
+          subPath: prometheus.web.yaml
+          mountPath: /etc/prometheus/prometheus.web.yaml
+        - name: prometheus-secrets
+          subPath: basic_auth.pwd
+          mountPath: /etc/prometheus/secrets/basic_auth.pwd
+        - name: prometheus-storage
+          mountPath: /prometheus
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 65534
+          runAsGroup: 65534
+      hostAliases:
+      - ip: "10.7.0.1"
+        hostnames:
+        - "prometheus.homelab.cloud"
+      volumes:
+      - name: prometheus-config
+        configMap:
+          name: server-prometheus-config
+          defaultMode: 440
+          items:
+          - key: prometheus.yaml
+            path: prometheus.yaml
+          - key: prometheus.rules.yaml
+            path: prometheus.rules.yaml
+      - name: prometheus-secrets
+        secret:
+          secretName: server-prometheus-web-config
+          defaultMode: 440
+          items:
+          - key: prometheus.web.yaml
+            path: prometheus.web.yaml
+          - key: basic_auth.pwd
+            path: basic_auth.pwd
+      - name: prometheus-storage
+        persistentVolumeClaim:
+          claimName: server-prometheus

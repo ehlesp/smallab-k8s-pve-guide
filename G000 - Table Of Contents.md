@@ -470,7 +470,7 @@
 
 ### [G035 - Deploying services 04 ~ Monitoring stack - Part 1 - Outlining setup and arranging storage](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md)
 
-- [Improve your K3s cluster's observability with a Prometheus-based monitoring stack](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%201%20-%20Outlining%20setup#improve-your-k3s-clusters-observability-with-a-prometheus-based-monitoring-stack)
+- [Improve your K3s cluster's observability with a Prometheus-based monitoring stack](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#improve-your-k3s-clusters-observability-with-a-prometheus-based-monitoring-stack)
 - [Outlining your monitoring stack setup](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#outlining-your-monitoring-stack-setup)
 - [Setting up new storage drives in the K3s agents](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#setting-up-new-storage-drives-in-the-k3s-agents)
 - [Relevant system paths](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#relevant-system-paths)
@@ -495,7 +495,7 @@
 - [The Prometheus Node Exporter is simpler to deploy](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%203%20-%20Prometheus%20Node%20Exporter%20service.md#the-prometheus-node-exporter-is-simpler-to-deploy)
 - [Kustomize project folders for Prometheus Node Exporter](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%203%20-%20Prometheus%20Node%20Exporter%20service.md#kustomize-project-folders-for-prometheus-node-exporter)
 - [Prometheus Node Exporter DaemonSet](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%203%20-%20Prometheus%20Node%20Exporter%20service.md#prometheus-node-exporter-daemonset)
-- [Prometheus Node Exporter Service resource](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%203%20-%20Prometheus%20Node%20Exporter%20service.md#prometheus-node-exporter-service-resource)
+- [Prometheus Node Exporter Service](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%203%20-%20Prometheus%20Node%20Exporter%20service.md#prometheus-node-exporter-service)
 - [Prometheus Node Exporter Kustomize project](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%203%20-%20Prometheus%20Node%20Exporter%20service.md#prometheus-node-exporter-kustomize-project)
 - [Do not deploy this Prometheus Node Exporter project on its own](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%203%20-%20Prometheus%20Node%20Exporter%20service.md#do-not-deploy-this-prometheus-node-exporter-project-on-its-own)
 - [Relevant system paths](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%203%20-%20Prometheus%20Node%20Exporter%20service.md#relevant-system-paths)
@@ -507,6 +507,9 @@
 - [Kustomize project folders for Prometheus server](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%204%20-%20Prometheus%20server.md#kustomize-project-folders-for-prometheus-server)
 - [Prometheus configuration files](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%204%20-%20Prometheus%20server.md#prometheus-configuration-files)
 - [Prometheus server persistent storage claim](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%204%20-%20Prometheus%20server.md#prometheus-server-persistent-storage-claim)
+- [Prometheus server ServiceAccount](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%204%20-%20Prometheus%20server.md#prometheus-server-serviceaccount)
+- [Prometheus server ClusterRole](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%204%20-%20Prometheus%20server.md#prometheus-server-clusterrole)
+- [Prometheus server ClusterRoleBinding](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%204%20-%20Prometheus%20server.md#prometheus-server-clusterrolebinding)
 - [Prometheus server StatefulSet](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%204%20-%20Prometheus%20server.md#prometheus-server-statefulset)
 - [Prometheus server Service](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%204%20-%20Prometheus%20server.md#prometheus-server-service)
 - [Prometheus server's Kustomize project](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%204%20-%20Prometheus%20server.md#prometheus-servers-kustomize-project)
@@ -526,14 +529,19 @@
 - [Relevant system paths](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana%20server.md#relevant-system-paths)
 - [References](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana%20server.md#references)
 
-### [G035 - Deploying services 04 ~ Monitoring stack - Part 6 - Complete monitoring stack setup](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#g035-deploying-services-04-monitoring-stack-part-6-complete-monitoring-stack-setup)
+### [G035 - Deploying services 04 ~ Monitoring stack - Part 6 - Complete monitoring stack setup](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md)
 
-- [Declaring the remaining monitoring stack components](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#declaring-the-remaining-monitoring-stack-components)
-- [Kustomize project for the monitoring setup](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#kustomize-project-for-the-monitoring-setup)
-- [Checking Prometheus](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#checking-prometheus)
+- [Completing your monitoring stack](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#completing-your-monitoring-stack)
+- [Create a folder to hold the missing monitoring stack components](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#create-a-folder-to-hold-the-missing-monitoring-stack-components)
+- [Monitoring stack persistent volumes](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#monitoring-stack-persistent-volumes)
+- [Monitoring stack TLS certificate](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#monitoring-stack-tls-certificate)
+- [Traefik IngressRoute for enabling HTTPS access to the monitoring stack's Prometheus and Grafana](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#traefik-ingressroute-for-enabling-https-access-to-the-monitoring-stacks-prometheus-and-grafana)
+- [Monitoring stack Namespace](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#monitoring-stack-namespace)
+- [Main Kustomize project for the monitoring stack](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#main-kustomize-project-for-the-monitoring-stack)
+- [Deploying the main Kustomize project in the cluster](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#deploying-the-main-kustomize-project-in-the-cluster)
+- [Checking on Prometheus](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#checking-on-prometheus)
 - [Finishing Grafana's setup](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#finishing-grafanas-setup)
-- [Security concerns on Prometheus and Grafana](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#security-concerns-on-prometheus-and-grafana)
-- [Monitoring stack's Kustomize project attached to this guide series](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#monitoring-stacks-kustomize-project-attached-to-this-guide-series)
+- [Monitoring stack Kustomize project attached to this guide series](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#monitoring-stack-kustomize-project-attached-to-this-guide-series)
 - [Relevant system paths](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#relevant-system-paths)
 - [References](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#references)
 
@@ -696,9 +704,9 @@
 - [Relevant system paths](G910%20-%20Appendix%2010%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md#relevant-system-paths)
 - [References](G910%20-%20Appendix%2010%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md#references)
 
-### [G911 - Appendix 11 ~ Checking the K8s API endpoints' status](G912%20-%20Appendix%2012%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md)
+### [G911 - Appendix 11 ~ Checking the K8s API endpoints' status](G911%20-%20Appendix%2011%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md)
 
-- [References](G912%20-%20Appendix%2012%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md#references)
+- [References](G911%20-%20Appendix%2011%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md#references)
 
 ### [G912 - Appendix 12 ~ Updating MariaDB to a newer major version](G912%20-%20Appendix%2012%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md)
 

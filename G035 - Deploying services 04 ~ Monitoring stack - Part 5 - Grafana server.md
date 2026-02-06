@@ -5,6 +5,7 @@
 - [Grafana server persistent storage claim](#grafana-server-persistent-storage-claim)
 - [Grafana server StatefulSet](#grafana-server-statefulset)
 - [Grafana server Service](#grafana-server-service)
+  - [Service's absolute internal FQDN](#services-absolute-internal-fqdn)
 - [Grafana server Kustomize project](#grafana-server-kustomize-project)
   - [Validating the Kustomize YAML output](#validating-the-kustomize-yaml-output)
 - [Do not deploy this Grafana server project on its own](#do-not-deploy-this-grafana-server-project-on-its-own)
@@ -19,7 +20,7 @@
 
 ## Grafana is your monitoring dashboard
 
-Prometheus has its own dashboard for handling all its functionality and notifications, but it is not as powerful or popular as Grafana for visualizing the metrics it gathers from its sources. To give your monitoring stack a Grafana-based metrics dashboard, follow this part to deploy it as a Kustomize project based on the [official installation documentation for this tool](https://grafana.com/docs/grafana/latest/setup-grafana/installation/kubernetes/).
+Prometheus has its own dashboard for handling all its functionality and notifications, but it is not as powerful or popular as Grafana for visualizing the metrics gathered from its sources. To give your monitoring stack a Grafana-based metrics dashboard, follow this part to deploy it as a Kustomize project based on the [official installation documentation for this tool](https://grafana.com/docs/grafana/latest/setup-grafana/installation/kubernetes/).
 
 ## Kustomize project folders for Grafana
 
@@ -31,7 +32,7 @@ $ mkdir -p $HOME/k8sprjs/monitoring/components/server-grafana/resources
 
 ## Grafana server persistent storage claim
 
-You have to make available for your Grafana server the 2GiB LVM persistent volume you created for it in the [first part of this chapter G035](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#lvm-storage-set-up). As usual, configure a persistent volume claim for connecting Grafana to it:
+You have to make available for your Grafana server the 2GiB LVM persistent volume created in the [first part of this chapter G035](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#lvm-storage-set-up). As usual, configure a persistent volume claim for connecting Grafana to it:
 
 1. Create a file named `server-grafana.persistentvolumeclaim.yaml` under `resources/`:
 
@@ -39,7 +40,7 @@ You have to make available for your Grafana server the 2GiB LVM persistent volum
     $ touch $HOME/k8sprjs/monitoring/components/server-grafana/resources/server-grafana.persistentvolumeclaim.yaml
     ~~~
 
-2. Declare the `PersistentVolumeClaim` for Grafana in `resources/server-grafana.persistentvolumeclaim.yaml`:
+2. Declare the `PersistentVolumeClaim` for Grafana in `server-grafana.persistentvolumeclaim.yaml`:
 
     ~~~yaml
     # Grafana server claim of persistent storage
@@ -68,7 +69,7 @@ Grafana needs to store some data, so you should deploy this observability tool w
     $ touch $HOME/k8sprjs/monitoring/components/server-grafana/resources/server-grafana.statefulset.yaml
     ~~~
 
-2. Declare the `StatefulSet` for your Grafana server in `resources/server-grafana.statefulset.yaml`:
+2. Declare the `StatefulSet` for your Grafana server in `server-grafana.statefulset.yaml`:
 
     ~~~yaml
     # Grafana server StatefulSet for a regular pod
@@ -82,6 +83,7 @@ Grafana needs to store some data, so you should deploy this observability tool w
       serviceName: server-grafana
       template:
         spec:
+          automountServiceAccountToken: false
           securityContext:
             fsGroup: 472
             supplementalGroups:
@@ -125,7 +127,10 @@ Grafana needs to store some data, so you should deploy this observability tool w
                 claimName: server-grafana
     ~~~
 
-    This `StatefulSet` for your Grafana server has a number of particularities, some inherited from the YAML specified in [Grafana's Kubernetes deployment documentation](https://grafana.com/docs/grafana/latest/setup-grafana/installation/kubernetes/#deploy-grafana-oss-on-kubernetes):
+    This `StatefulSet` for your Grafana server has a number of particularities in its `spec.template.spec` block, some inherited from the YAML specified in [Grafana's Kubernetes deployment documentation](https://grafana.com/docs/grafana/latest/setup-grafana/installation/kubernetes/#deploy-grafana-oss-on-kubernetes):
+
+    - `automountServiceAccountToken`\
+      This parameter is set to `false` here because Grafana will get the information it needs from Prometheus, not directly from the Kubernetes API.
 
     - `securityContext`\
       This is the same `securityContext` specified in the official Grafana documentation at the pod level of this Grafana `StatefulSet`:
@@ -139,7 +144,7 @@ Grafana needs to store some data, so you should deploy this observability tool w
     - `server` container\
       Only one container will run in this pod.
 
-      - The `image` is the Alpine-based version of Grafana Open Source (there is also an Enterprise edition of Grafana). The particularity here is that, [by recommendation of the Grafana documentation](https://grafana.com/docs/grafana/latest/setup-grafana/configure-docker/#run-the-grafana-main-branch), it is better to use the image from the `grafana/grafana-dev` branch rather than the main one and pick a specific tagged version like `12.4.0-21524955964`.
+      - The `image` is the Alpine-based version of Grafana Open Source (there is also an Enterprise edition of Grafana). The particularity here is that, [by recommendation from the Grafana documentation](https://grafana.com/docs/grafana/latest/setup-grafana/configure-docker/#run-the-grafana-main-branch), it is better to use the image from the `grafana/grafana-dev` branch rather than the main one and pick a specific tagged version like `12.4.0-21524955964`.
 
         This is to avoid unexpected issues when a new commit enters in the main Grafana branch that could potentially disrupt the Grafana instance running in your setup. In other words, Grafana recommends to keep total control of the version run in your Kubernetes cluster. Where possible (when version tags are available), you have already seen this criteria applied in previous deployments of this guide.
 
@@ -163,7 +168,7 @@ Declare the `Service` object for your Grafana server like this:
     $ touch $HOME/k8sprjs/monitoring/components/server-grafana/resources/server-grafana.service.yaml
     ~~~
 
-2. Declare the `Service` for your Grafana server in `resources/server-grafana.service.yaml`:
+2. Declare the `Service` for your Grafana server in `server-grafana.service.yaml`:
 
     ~~~yaml
     # Grafana server headless service
@@ -185,7 +190,19 @@ Declare the `Service` object for your Grafana server like this:
         protocol: TCP
     ~~~
 
-    The main thing to notice in this particular headless service is that Grafana also has metrics that Prometheus can scrape. Therefore, the required annotation `prometheus.io` labels are set in the metadata block. Also, the FQDN to reach this service will be `server-grafana.monitoring`.
+    The main thing to notice in this particular headless service is that Grafana also has metrics that Prometheus can scrape. Therefore, the required annotation `prometheus.io` labels are set in the metadata block.
+
+### Service's absolute internal FQDN
+
+As a component of the monitoring stack, this headless service is going to be placed under the `monitoring` namespace. This means that its absolute _Fully Qualified Domain Name_ (_FQDN_) will be:
+
+~~~http
+server-grafana.monitoring.svc.homelab.cluster.
+~~~
+
+> [!NOTE]
+> **The last dot in the absolute FQDN is not a mistake!**\
+> It explicitly brands the FQDN as absolute, which avoids doing any searches in the cluster's internal DNS service. This technique allows calling services directly, improving your Kubernetes cluster performance.
 
 ## Grafana server Kustomize project
 
@@ -224,7 +241,7 @@ With all the previous components declared, put them together in a Kustomize subp
       newTag: 12.4.0-21524955964
     ~~~
 
-    The only particularity to highlight from this `kustomization.yaml` is the fact that there is neither a `configMapGenerator` nor a `secretGenerator` block in it.
+    The only particularity to highlight from this `kustomization.yaml` is the fact that there is neither a `configMapGenerator` nor a `secretGenerator` block in it. This implies that Grafana is deployed with a default configuration.
 
 ### Validating the Kustomize YAML output
 
@@ -291,6 +308,7 @@ Like in previous guides, you should validate this Kustomize project's complete Y
           labels:
             app: server-grafana
         spec:
+          automountServiceAccountToken: false
           containers:
           - image: grafana/grafana-dev:12.4.0-21524955964
             imagePullPolicy: IfNotPresent
@@ -334,7 +352,7 @@ Like in previous guides, you should validate this Kustomize project's complete Y
               claimName: server-grafana
     ~~~
 
-    Beyond checking the correctness of all the values and paths, there is nothing special to say about this particular output.
+    Beyond checking the correctness of all the values, names and paths, there is nothing special to say about this particular output.
 
 ## Do not deploy this Grafana server project on its own
 

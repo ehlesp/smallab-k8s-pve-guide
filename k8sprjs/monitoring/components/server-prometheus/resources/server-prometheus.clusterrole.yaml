@@ -1,0 +1,30 @@
+# Prometheus server read-only ClusterRole to read Kubernetes metrics
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+
+metadata:
+  name: server-prometheus
+rules:
+# Permissions for discovery of nodes, services, endpoints and pods
+- apiGroups: [""]
+  resources:
+    - nodes
+    - nodes/proxy
+    - nodes/metrics # Needed for Kubelet/cAdvisor metrics
+    - services
+    - pods
+  verbs: ["get", "list", "watch"]
+
+# Permissions for discovery of endpoint slices
+- apiGroups: ["discovery.k8s.io"]
+  resources: ["endpointslices"]
+  verbs: ["get", "list", "watch"]
+
+# Permissions for ingresses discovery
+- apiGroups: ["networking.k8s.io"]
+  resources: ["ingresses"]
+  verbs: ["get", "list", "watch"]
+
+# Specific permissions for reading metrics directly from the API Server
+- nonResourceURLs: ["/metrics"]
+  verbs: ["get"]

@@ -1,0 +1,18 @@
+# Prometheus Node Exporter setup
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+labels:
+  - pairs:
+      app.kubernetes.io/component: exporter
+      app.kubernetes.io/name: node-exporter
+    includeSelectors: true
+    includeTemplates: true
+
+resources:
+- resources/agent-prometheus-node-exporter.daemonset.yaml
+- resources/agent-prometheus-node-exporter.service.yaml
+
+images:
+- name: prom/node-exporter
+  newTag: v1.10.2

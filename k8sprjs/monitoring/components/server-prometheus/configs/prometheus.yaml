@@ -1,0 +1,163 @@
+# Prometheus main configuration file
+
+# Global settings for the Prometheus server
+global:
+  scrape_interval: 20s     # How often to scrape targets by default
+  evaluation_interval: 25s # How often to evaluate rules
+
+# Alerting rules periodically evaluated according to the global 'evaluation_interval'
+rule_files:
+  - /etc/prometheus/prometheus.rules.yaml
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+  - scheme: http
+    static_configs:
+    - targets:
+      # - "alertmanager.monitoring.svc.homelab.cluster.:9093"
+
+# Scrape jobs configuration
+scrape_configs:
+  # Scrapes the Kubernetes API servers for cluster health metrics
+  - job_name: 'kubernetes-apiservers'
+    scrape_interval: 60s
+    kubernetes_sd_configs:
+    - role: endpointslice
+    scheme: https
+    tls_config:
+      ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+    relabel_configs:
+    - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name, __meta_kubernetes_endpointslice_port_name]
+      action: keep
+      regex: default;kubernetes;https
+
+  # Scrapes Kubelet metrics from each cluster node via the Kubernetes API server proxy
+  - job_name: 'kubernetes-nodes'
+    scrape_interval: 55s
+    scheme: https
+    tls_config:
+      ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+    kubernetes_sd_configs:
+    - role: node
+    relabel_configs:
+    - action: labelmap
+      regex: __meta_kubernetes_node_label_(.+)
+    - target_label: __address__
+      replacement: kubernetes.default.svc.homelab.cluster.:443
+    - source_labels: [__meta_kubernetes_node_name]
+      regex: (.+)
+      target_label: __metrics_path__
+      replacement: /api/v1/nodes/${1}/proxy/metrics
+
+  # Scrapes pods that have specific "prometheus.io" annotations
+  - job_name: 'kubernetes-pods'
+    scrape_interval: 30s
+    kubernetes_sd_configs:
+    - role: pod
+    relabel_configs:
+    - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+      action: keep
+      regex: true
+    - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+      action: replace
+      target_label: __metrics_path__
+      regex: (.+)
+    - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+      action: replace
+      regex: ([^:]+)(?::\d+)?;(\d+)
+      replacement: $1:$2
+      target_label: __address__
+    - action: labelmap
+      regex: __meta_kubernetes_pod_label_(.+)
+    - source_labels: [__meta_kubernetes_namespace]
+      action: replace
+      target_label: kubernetes_namespace
+    - source_labels: [__meta_kubernetes_pod_name]
+      action: replace
+      target_label: kubernetes_pod_name
+
+  # Scrapes container resource usage metrics (cAdvisor) from nodes
+  - job_name: 'kubernetes-cadvisor'
+    scrape_interval: 180s
+    scheme: https
+    tls_config:
+      ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+    kubernetes_sd_configs:
+    - role: node
+    relabel_configs:
+    - action: labelmap
+      regex: __meta_kubernetes_node_label_(.+)
+    - target_label: __address__
+      replacement: kubernetes.default.svc.homelab.cluster.:443
+    - source_labels: [__meta_kubernetes_node_name]
+      regex: (.+)
+      target_label: __metrics_path__
+      replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
+
+  # Scrapes services that have specific "prometheus.io" annotations
+  - job_name: 'kubernetes-service-endpoints'
+    scrape_interval: 45s
+    kubernetes_sd_configs:
+    - role: endpointslice
+    relabel_configs:
+    - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
+      action: keep
+      regex: true
+    - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]
+      action: replace
+      target_label: __scheme__
+      regex: (https?)
+    - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
+      action: replace
+      target_label: __metrics_path__
+      regex: (.+)
+    - source_labels: [__address__, __meta_kubernetes_service_annotation_prometheus_io_port]
+      action: replace
+      target_label: __address__
+      regex: ([^:]+)(?::\d+)?;(\d+)
+      replacement: $1:$2
+    - action: labelmap
+      regex: __meta_kubernetes_service_label_(.+)
+    - source_labels: [__meta_kubernetes_namespace]
+      action: replace
+      target_label: kubernetes_namespace
+    - source_labels: [__meta_kubernetes_service_name]
+      action: replace
+      target_label: kubernetes_name
+    # Excludes the Prometheus service from this scrapping job
+    - source_labels: [__meta_kubernetes_service_name]
+      action: drop
+      regex: 'server-prometheus'
+
+  # Static job for Kube State Metrics (cluster object state)
+  - job_name: 'kube-state-metrics'
+    scrape_interval: 50s
+    static_configs:
+    - targets: ['agent-kube-state-metrics.monitoring.svc.homelab.cluster.:8080']
+
+  # Scrapes hardware and OS metrics from Node Exporter agents
+  - job_name: 'node-exporter'
+    scrape_interval: 65s
+    kubernetes_sd_configs:
+    - role: endpointslice
+    relabel_configs:
+    - source_labels: [__meta_kubernetes_endpointslice_name]
+      regex: '.*node-exporter'
+      action: keep
+
+  # Self-scraping bypass using localhost
+  # Avoids the Prometheus server getting 401 Unauthorized errors when scraping its own local process directly,
+  # bypassing the Kubernetes Service and any RBAC proxies.
+  - job_name: 'prometheus-self'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['localhost:9090']
+    # User for basic web authentication in the Prometheus server
+    basic_auth:
+      username: 'prometricsjob'
+      # Path to the file containing the password inside the container
+      password_file: '/etc/prometheus/secrets/basic_auth.pwd'

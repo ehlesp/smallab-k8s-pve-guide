@@ -1,0 +1,109 @@
+# Kube State Metrics read-only ClusterRole to read Kubernetes metrics
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+
+metadata:
+  name: agent-kube-state-metrics
+rules:
+# Core resources: management of pods, nodes, services, namespaces and quotas
+- apiGroups: [""]
+  resources:
+  - configmaps
+# SENSIBLE INFO: Uncomment ONLY for security audits!
+#  - secrets
+  - nodes
+  - pods
+  - services
+  - serviceaccounts
+  - resourcequotas
+  - replicationcontrollers
+  - limitranges
+  - persistentvolumeclaims
+  - persistentvolumes
+  - namespaces
+  - endpoints
+  verbs: ["list", "watch"]
+
+# Apps controllers: management of deployments, replicas and sets with state
+- apiGroups: ["apps"]
+  resources:
+  - statefulsets
+  - daemonsets
+  - deployments
+  - replicasets
+  verbs: ["list", "watch"]
+
+# Batch workloads: jobs and cronjobs monitoring
+- apiGroups: ["batch"]
+  resources:
+  - cronjobs
+  - jobs
+  verbs: ["list", "watch"]
+
+# Autoscaling: metrics about Horizontal Pod Autoscalers (HPA)
+- apiGroups: ["autoscaling"]
+  resources:
+  - horizontalpodautoscalers
+  verbs: ["list", "watch"]
+
+# Disruption policies: guaranteed availability of pods, or Pod Disruption Budget (PDB)
+- apiGroups: ["policy"]
+  resources: ["poddisruptionbudgets"]
+  verbs: ["list", "watch"]
+
+# Certificates: state of Certificates Signing Requests (CSR)
+- apiGroups: ["certificates.k8s.io"]
+  resources: ["certificatesigningrequests"]
+  verbs: ["list", "watch"]
+
+# Discovery: advanced management of endpoints at big scale (EndpointSlices)
+- apiGroups: ["discovery.k8s.io"]
+  resources: ["endpointslices"]
+  verbs: ["list", "watch"]
+
+# Storage: storage classes and volume attachments
+- apiGroups: ["storage.k8s.io"]
+  resources:
+  - storageclasses
+  - volumeattachments
+  verbs: ["list", "watch"]
+
+# Admission registry: configuration of validating and mutating webhooks
+- apiGroups: ["admissionregistration.k8s.io"]
+  resources:
+  - mutatingwebhookconfigurations
+  - validatingwebhookconfigurations
+  verbs: ["list", "watch"]
+
+# Networking: management of ingress and network policies
+- apiGroups: ["networking.k8s.io"]
+  resources:
+  - networkpolicies
+  - ingressclasses
+  - ingresses
+  verbs: ["list", "watch"]
+
+# Coordination: leases control for high availability
+- apiGroups: ["coordination.k8s.io"]
+  resources: ["leases"]
+  verbs: ["list", "watch"]
+
+# SENSIBLE INFO: Uncomment ONLY for security audits!
+# Authentication: security tokens review (internal/advanced usage)
+#- apiGroups: ["authentication.k8s.io"]
+#  resources: ["tokenreviews"]
+#  verbs: ["create"]
+#
+# Authorization: access permissions review (dynamic RBAC)
+#- apiGroups: ["authorization.k8s.io"]
+#  resources: ["subjectaccessreviews"]
+#  verbs: ["create"]
+#
+# RBAC: metrics about role bindings and permissions in the cluster
+#- apiGroups: ["rbac.authorization.k8s.io"]
+#  resources:
+#  - clusterrolebindings
+#  - clusterroles
+#  - rolebindings
+#  - roles
+#  verbs: ["list", "watch"]

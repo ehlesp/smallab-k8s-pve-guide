@@ -22,7 +22,7 @@
   - [Folders in K3s agent nodes' VMs](#folders-in-k3s-agent-nodes-vms)
   - [Files in K3s agent nodes' VMs](#files-in-k3s-agent-nodes-vms)
 - [References](#references)
-  - [Prometheus-based monitoring stack](#prometheus-based-monitoring-stack)
+  - [Monitoring stack components](#monitoring-stack-components)
 - [Navigation](#navigation)
 
 ## Improve your K3s cluster's observability with a Prometheus-based monitoring stack
@@ -725,11 +725,11 @@ After some time, your monitoring services may end being close to fill up their s
 
 ## References
 
-### Prometheus-based monitoring stack
+### Monitoring stack components
 
-- [Prometheus](https://prometheus.io/)
-- [Prometheus Node Exporter](https://github.com/prometheus/node_exporter)
 - [Kube State Metrics](https://github.com/kubernetes/kube-state-metrics)
+- [Prometheus Node Exporter](https://github.com/prometheus/node_exporter)
+- [Prometheus](https://prometheus.io/)
 - [Grafana](https://grafana.com/grafana/)
 
 ## Navigation

@@ -1,0 +1,16 @@
+# Kube State Metrics headless service
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: agent-kube-state-metrics
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+  - name: http-metrics
+    port: 8080
+    targetPort: http-metrics
+  - name: telemetry
+    port: 8081
+    targetPort: telemetry
