@@ -3,6 +3,10 @@
 - [Deploy a metric-server service that you can fully configure](#deploy-a-metric-server-service-that-you-can-fully-configure)
 - [Checking the metrics-server's manifest](#checking-the-metrics-servers-manifest)
 - [Deployment of metrics-server](#deployment-of-metrics-server)
+  - [Preparing the Kustomize folder structure](#preparing-the-kustomize-folder-structure)
+  - [Patch for the metrics-server deployment](#patch-for-the-metrics-server-deployment)
+  - [Kustomize manifest for the metrics-server project](#kustomize-manifest-for-the-metrics-server-project)
+  - [Deploying metrics-server](#deploying-metrics-server)
 - [Checking the metrics-server service](#checking-the-metrics-server-service)
 - [Metrics-server's Kustomize project attached to this guide](#metrics-servers-kustomize-project-attached-to-this-guide)
 - [Relevant system paths](#relevant-system-paths)
@@ -16,7 +20,7 @@
 
 ## Deploy a metric-server service that you can fully configure
 
-The other embedded service disabled in your K3s cluster deployment is the metrics-server. This service scrapes resource usage data from your cluster nodes and offers it through its API. The problem with the embedded metrics-server, and with any other embedded service included in K3s, is that you cannot change their configuration directly. You can adjust what's configurable through the parameters you can set to the K3s service itself, or make manual temporary changes through `kubectl`.
+The other embedded service disabled in your K3s cluster deployment is the metrics-server. This service scrapes resource usage data from your cluster nodes and offers it through its API. The problem with the embedded metrics-server, and with any other embedded service included in K3s, is that you cannot change their configuration directly. You can adjust what is configurable through the parameters you can set to the K3s service itself, or make manual temporary changes through `kubectl`.
 
 In particular, the embedded metrics-server comes with a default configuration that is not adequate for the setup of your K3s cluster. Since you cannot change the default configuration permanently, it is better to deploy the metrics-server independently in your cluster, but with the proper configuration already set in it.
 
@@ -111,7 +115,11 @@ This is the object you need to modify to adapt metrics-server to your particular
 
 ## Deployment of metrics-server
 
-As you did with MetalLB in the [previous **G027** chapter](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md#deploying-metallb-on-your-k3s-cluster), you are going to use a Kustomize project to deploy the metrics-server in your cluster:
+As you did with MetalLB in the [previous **G027** chapter](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md#deploying-metallb-on-your-k3s-cluster), you are going to use a Kustomize project to deploy the metrics-server in your cluster.
+
+### Preparing the Kustomize folder structure
+
+Create the folder structure to hold the Kustomize project for your metrics-server deployment:
 
 1. In your `kubectl` client system, create a folder structure for the Kustomize project:
 
@@ -121,7 +129,11 @@ As you did with MetalLB in the [previous **G027** chapter](G027%20-%20K3s%20clus
 
     In the command above you can see that, inside the `metrics-server` folder, I have created a `patches` one. The idea is to patch the default configuration of the service by adding a couple of parameters.
 
-2. Create a new `metrics-server.deployment.patch.yaml` file under the `patches` folder:
+### Patch for the metrics-server deployment
+
+The patch to apply to the metrics-server deployment is some sort of "partial" manifest that is declared like any other Kubernetes resource:
+
+1. Create a new `metrics-server.deployment.patch.yaml` file under the `patches` folder:
 
     ~~~sh
     $ touch $HOME/k8sprjs/metrics-server/patches/metrics-server.deployment.patch.yaml
@@ -129,7 +141,7 @@ As you did with MetalLB in the [previous **G027** chapter](G027%20-%20K3s%20clus
 
     This file will contain only the patch to modify the metrics-server deployment object.
 
-3. Declare in `metrics-server.deployment.patch.yaml` the patch for the metrics-server deployment:
+2. Declare in `metrics-server.deployment.patch.yaml` the patch for the metrics-server deployment:
 
     ~~~yaml
     apiVersion: apps/v1
@@ -194,13 +206,17 @@ As you did with MetalLB in the [previous **G027** chapter](G027%20-%20K3s%20clus
     > **Review this patch whenever you update the metrics-server!**\
     > Every time you update the metrics-server service in your setup, do not forget to see how the patched values look in the official deployment declaration of the newer version you deploy. Otherwise, you could end up having errors due to using deprecated arguments or incorrect values.
 
-4. Create the `kustomization.yaml` file:
+### Kustomize manifest for the metrics-server project
+
+The Kustomize manifest of the metrics-server deployment is also where you specify the patches to apply to the resources of this deployment:
+
+1. Create the `kustomization.yaml` file:
 
     ~~~sh
     $ touch $HOME/k8sprjs/metrics-server/kustomization.yaml
     ~~~
 
-5. Fill the `kustomization.yaml` file like this:
+2. Fill the `kustomization.yaml` file like this:
 
     ~~~yaml
     # Metrics server setup
@@ -220,7 +236,7 @@ As you did with MetalLB in the [previous **G027** chapter](G027%20-%20K3s%20clus
 
     - The `patches` section is where you specify all the patches you want to apply over the resources you deploy in the Kustomize project. This section supports different ways to declare and apply patches on resources, [check them out in its official Kubernetes documentation](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/patches/). The method used here is probably the cleanest one, since it only needs specifying the path to the patch file.
 
-6. Test the Kustomize project with `kubectl`:
+3. Test the Kustomize project with `kubectl`:
 
     ~~~sh
     $ kubectl kustomize $HOME/k8sprjs/metrics-server | less
@@ -312,13 +328,17 @@ As you did with MetalLB in the [previous **G027** chapter](G027%20-%20K3s%20clus
     ---
     ~~~
 
-7. Apply the Kustomize project to finally deploy metrics-server in your cluster:
+### Deploying metrics-server
+
+With the metrics-server Kustomize project ready, you can deploy it:
+
+1. Apply the Kustomize project to finally deploy metrics-server in your cluster:
 
     ~~~sh
     $ kubectl apply -k $HOME/k8sprjs/metrics-server/
     ~~~
 
-8. After a minute or so, check if the metrics-server pod and service are running:
+2. After a minute or so, check if the metrics-server pod and service are running:
 
     ~~~sh
     $ kubectl get pods,svc -n kube-system | grep metrics
@@ -395,24 +415,25 @@ You can find the Kustomize project for this metrics-server deployment in the fol
 
 ### [Kubernetes Metrics Server](https://github.com/kubernetes-sigs/metrics-server)
 
-- [Kubernetes Metrics Server v0.8.0 release](https://github.com/kubernetes-sigs/metrics-server/releases/tag/v0.8.0)
-- [Configuration](https://github.com/kubernetes-sigs/metrics-server#configuration)
-- [command-line-flags.txt](https://github.com/kubernetes-sigs/metrics-server/blob/master/docs/command-line-flags.txt)
-- [Metrics server issue with hostname resolution of kubelet and apiserver unable to communicate with metric-server clusterIP](https://github.com/kubernetes-sigs/metrics-server/issues/131)
+- [GitHub. kubernetes-sigs. metrics-server](https://github.com/kubernetes-sigs/metrics-server/)
+  - [Configuration](https://github.com/kubernetes-sigs/metrics-server#configuration)
+  - [command-line-flags.txt](https://github.com/kubernetes-sigs/metrics-server/blob/master/docs/command-line-flags.txt)
+  - [releases. Kubernetes Metrics Server v0.8.0](https://github.com/kubernetes-sigs/metrics-server/releases/tag/v0.8.0)
+  - [Issues. Metrics server issue with hostname resolution of kubelet and apiserver unable to communicate with metric-server clusterIP](https://github.com/kubernetes-sigs/metrics-server/issues/131)
 
 ### Related to Kubernetes Metrics Server
 
-- [K3s v1.33.4+k3s1 release](https://github.com/k3s-io/k3s/releases/tag/v1.33.4%2Bk3s1)
+- [GitHub. K3s. releases. K3s v1.33.4+k3s1](https://github.com/k3s-io/k3s/releases/tag/v1.33.4%2Bk3s1)
 
-- [How To Install Metrics Server on a Kubernetes Cluster](https://computingforgeeks.com/how-to-deploy-metrics-server-to-kubernetes-cluster/)
+- [ComputingForGeeks. How To Install Metrics Server on a Kubernetes Cluster](https://computingforgeeks.com/how-to-deploy-metrics-server-to-kubernetes-cluster/)
 
-- [How to troubleshoot metrics-server on kubeadm?](https://stackoverflow.com/questions/57137683/how-to-troubleshoot-metrics-server-on-kubeadm)
+- [StackOverflow. How to troubleshoot metrics-server on kubeadm?](https://stackoverflow.com/questions/57137683/how-to-troubleshoot-metrics-server-on-kubeadm)
 
-- [[learner] Debugging issue with metrics-server](https://www.reddit.com/r/kubernetes/comments/ktuour/learner_debugging_issue_with_metricsserver/)
+- [Reddit. Kubernetes. [learner] Debugging issue with metrics-server](https://www.reddit.com/r/kubernetes/comments/ktuour/learner_debugging_issue_with_metricsserver/)
 
-- [The case of disappearing metrics in Kubernetes](https://dev.to/shyamala_u/the-case-of-disappearing-metrics-in-kubernetes-1kdh)
+- [DEV. The case of disappearing metrics in Kubernetes](https://dev.to/shyamala_u/the-case-of-disappearing-metrics-in-kubernetes-1kdh)
 
-- [Query on kubernetes metrics-server metrics values](https://stackoverflow.com/questions/55684789/query-on-kubernetes-metrics-server-metrics-values)
+- [StackOverflow. Query on kubernetes metrics-server metrics values](https://stackoverflow.com/questions/55684789/query-on-kubernetes-metrics-server-metrics-values)
 
 ## Navigation
 
