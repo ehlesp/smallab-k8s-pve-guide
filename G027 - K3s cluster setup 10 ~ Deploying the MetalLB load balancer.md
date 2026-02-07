@@ -10,6 +10,8 @@
 - [Deploying MetalLB on your K3s cluster](#deploying-metallb-on-your-k3s-cluster)
   - [Preparing the Kustomize folder structure](#preparing-the-kustomize-folder-structure)
   - [Declaring the resources](#declaring-the-resources)
+    - [Static IP address pool](#static-ip-address-pool)
+    - [Kustomize manifest](#kustomize-manifest)
   - [Deploying MetalLB](#deploying-metallb)
 - [MetalLB's Kustomize project attached to this guide](#metallbs-kustomize-project-attached-to-this-guide)
 - [Relevant system paths](#relevant-system-paths)
@@ -18,6 +20,7 @@
 - [References](#references)
   - [MetalLB](#metallb)
   - [Kustomize](#kustomize)
+  - [Other contents regarding Kustomize](#other-contents-regarding-kustomize)
 - [Navigation](#navigation)
 
 ## MetalLB as the load balancer of choice
@@ -91,22 +94,26 @@ Therefore, begin by creating a folder structure for your MetalLB deployment file
 $ mkdir -p $HOME/k8sprjs/metallb/resources
 ~~~
 
-Notice that I've created a structure of three folders:
+Notice that I have created a structure of three nested folders:
 
 - `k8sprjs`\
-  Where the MetalLB and any future Kustomize projects can be kept.
+  Where this MetalLB and the other Kustomize projects of this guide will be kept.
 
 - `metallb`\
-  For the MetalLB deployment Kustomize project.
+  For the MetalLB deployment Kustomize project itself.
 
 - `resources`\
   Holds MetalLB resources' YAML declaration files.
 
-Needless to say that you could use any other base path instead of `$HOME` within your `kubectl` client system.
+You can use any other base path instead of `$HOME` within your `kubectl` client system.
 
 ### Declaring the resources
 
-Now you need to create the files that describe the resources of your MetalLB deployment:
+There are certain resources you have to declare to make MetalLB work [as specified previously in this chapter](#considerations-before-deploying-metallb). This way, MetalLB will be deployed with the right configuration right away.
+
+#### Static IP address pool
+
+The first resource you need to declare is the pool of public Static IP addresses you want MetalLB to use when assigning public IPs to services running in your cluster:
 
 1. In the `resources` folder, create the files `l2-ip.l2advertisement.metallb.yaml` and `default-pool.ipaddresspool.metallb.yaml`:
 
@@ -114,7 +121,7 @@ Now you need to create the files that describe the resources of your MetalLB dep
     $ touch $HOME/k8sprjs/metallb/resources/{l2-ip.l2advertisement.metallb.yaml,default-pool.ipaddresspool.metallb.yaml}
     ~~~
 
-2. In `l2-ip.l2advertisement.metallb.yaml` you specify the operation mode and pool to use:
+2. In `l2-ip.l2advertisement.metallb.yaml`, specify the operation mode and pool to use:
 
     ~~~yaml
     # Operation mode and pool list
@@ -128,7 +135,7 @@ Now you need to create the files that describe the resources of your MetalLB dep
       - default-pool
     ~~~
 
-    This YAML indicates to MetalLB the following:
+    This manifest sets a specific configuration to MetalLB:
 
     - The kind `L2Advertisement` sets the mode used as L2.
 
@@ -148,7 +155,7 @@ Now you need to create the files that describe the resources of your MetalLB dep
       - 10.7.0.1-10.7.0.20
     ~~~
 
-    Here you have configured a simple pool of IP addresses:
+    This manifest configures a simple pool of static IP addresses:
 
     - The kind `IPAddressPool` indicates that this is a MetalLB pool of IP addresses.
 
@@ -164,13 +171,17 @@ Now you need to create the files that describe the resources of your MetalLB dep
       - 10.7.0.11-10.7.0.20
     ~~~
 
-4. Create the `kustomization.yaml` file where to describe the deployment of MetalLB in Kustomize format:
+#### Kustomize manifest
+
+To put together the resources declared earlier with the official manifest describing MetalLB's deployment, you can use a Kustomize manifest:
+
+1. Create the `kustomization.yaml` file where to describe the deployment of MetalLB in Kustomize format:
 
     ~~~sh
     $ touch $HOME/k8sprjs/metallb/kustomization.yaml
     ~~~
 
-5. Specify all the MetalLB resources declared in the previous steps in your new `kustomization.yaml` file:
+2. Specify all the MetalLB resources declared in the previous steps in your new `kustomization.yaml` file:
 
     ~~~yaml
     # MetalLB setup
@@ -185,7 +196,9 @@ Now you need to create the files that describe the resources of your MetalLB dep
     - resources/default-pool.ipaddresspool.metallb.yaml
     ~~~
 
-    Things to notice in this `Kustomization` declaration:
+    Things to notice in this manifest:
+
+    - Kustomize manifests are identified in Kubernetes with the `Kustomization` kind.
 
     - This declaration is based on the one offered [in the official MetalLB documentation](https://metallb.org/installation/#installation-with-kustomize).
 
@@ -197,15 +210,15 @@ Now you need to create the files that describe the resources of your MetalLB dep
 
       - The other two items point to the local YAML files you have created previously to declare the alloted IP range for MetalLB.
 
-6. You can check how the final deployment looks like as a YAML manifest with `kubectl`:
+3. You can check how the final deployment looks like as a YAML manifest with `kubectl`:
 
     ~~~sh
     $ kubectl kustomize $HOME/k8sprjs/metallb/ | less
     ~~~
 
-    With the `kustomize` option, `kubectl` builds the whole deployment YAML manifest resulting from processing the `kustomization.yaml` file. Since the output can be quite long, it is better to append a `| less` to the command for getting a paginated view of the YAML.
+    With the `kustomize` option, `kubectl` builds the whole deployment YAML manifest resulting from processing the `kustomization.yaml` file. Since the output can be quite long, better to append a `| less` (`less` or some other text editor of your choice) to the command for getting a paginated view of the YAML.
 
-    The command takes a moment to finish because it has to download the MetalLB manifests first, then process and combine it with the other resource files found in your client system. When you finally see the result, you will get a quite long YAML output that embeds all of the specified resources. Furthermore, you may notice in the resulting YAML that MetalLB is prepared to look for `L2Advertisement` resources automatically, which means that you do not have to explicitly tell MetalLB which one to use.
+    The command takes a moment to finish because it has to download the MetalLB manifest first, then process and combine it with the other resource files found in your client system. When you finally see the result, you will get a quite long YAML output that embeds all of the specified resources. Furthermore, you may notice in the resulting YAML that MetalLB is prepared to look for `L2Advertisement` resources automatically, which means that you do not have to explicitly tell MetalLB which one to use.
 
 ### Deploying MetalLB
 
@@ -320,23 +333,32 @@ You can find the Kustomize project for this MetalLB deployment in the following 
 
 ### [MetalLB](https://metallb.io/)
 
-- [GitHub. MetalLB](https://github.com/metallb/metallb)
-
 - [Concepts](https://metallb.io/concepts/)
   - [MetalLB in layer 2 mode](https://metallb.io/concepts/layer2/)
   - [MetalLB in BGP mode](https://metallb.io/concepts/bgp/)
 - [Installation](https://metallb.io/installation/)
-- [MetalLB Configuration](https://metallb.io/configuration/)
+- [Configuration](https://metallb.io/configuration/)
+
+- [GitHub. MetalLB](https://github.com/metallb/metallb)
 
 ### [Kustomize](https://kustomize.io/)
 
+- [SIG CLI.](https://kubectl.docs.kubernetes.io/)
+  - [Guides](guides/)
+    - [Introduction. Kustomize](https://kubectl.docs.kubernetes.io/guides/introduction/kustomize/)
+  - [Reference](https://kubectl.docs.kubernetes.io/references/)
+    - [kustomization. The Kustomization File](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/)
+
+- [Kubernetes Documentation. Tasks. Manage Kubernetes Objects](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/)
+  - [Declarative Management of Kubernetes Objects Using Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/)
+
 - [Github. Kustomize](https://github.com/kubernetes-sigs/kustomize)
-- [Introduction to Kustomize](https://kubectl.docs.kubernetes.io/guides/introduction/kustomize/)
-- [Declarative Management of Kubernetes Objects Using Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/)
-- [The Kustomization File](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/)
-- [Kustomize Tutorial: Creating a Kubernetes app out of multiple pieces](https://www.mirantis.com/blog/introduction-to-kustomize-part-1-creating-a-kubernetes-app-out-of-multiple-pieces/)
-- [Modify your Kubernetes manifests with Kustomize](https://opensource.com/article/21/6/kustomize-kubernetes)
-- [Kustomize Best Practices](https://www.openanalytics.eu/blog/2021/02/23/kustomize-best-practices/)
+
+### Other contents regarding Kustomize
+
+- [Mirantis. Blog. Kustomize Tutorial: Creating a Kubernetes app out of multiple pieces](https://www.mirantis.com/blog/introduction-to-kustomize-part-1-creating-a-kubernetes-app-out-of-multiple-pieces/)
+- [OpenSource.com. Modify your Kubernetes manifests with Kustomize](https://opensource.com/article/21/6/kustomize-kubernetes)
+- [Open Analytics. Kustomize Best Practices](https://www.openanalytics.eu/blog/2021/02/23/kustomize-best-practices/)
 
 ## Navigation
 
