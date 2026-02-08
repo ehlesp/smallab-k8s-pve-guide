@@ -4,7 +4,13 @@
 - [Deploying cert-manager](#deploying-cert-manager)
   - [Verifying the deployment of cert-manager](#verifying-the-deployment-of-cert-manager)
   - [Installing the cert-manager plugin in your `kubectl` client system](#installing-the-cert-manager-plugin-in-your-kubectl-client-system)
-- [Setting up a self-signed CA for your cluster](#setting-up-a-self-signed-ca-for-your-cluster)
+- [Setting up self-signed CAs for your cluster](#setting-up-self-signed-cas-for-your-cluster)
+  - [Preparing the Kustomize folder structure](#preparing-the-kustomize-folder-structure)
+  - [Root CA](#root-ca)
+  - [Intermediate CA](#intermediate-ca)
+  - [Kustomize manifest for the self-signed CAs project](#kustomize-manifest-for-the-self-signed-cas-project)
+    - [Validating the Kustomize YAML output](#validating-the-kustomize-yaml-output)
+- [Deploying the self-signed CAs](#deploying-the-self-signed-cas)
 - [Checking your certificates with the cert-manager command line tool](#checking-your-certificates-with-the-cert-manager-command-line-tool)
 - [Cert-manager's Kustomize project attached to this guide](#cert-managers-kustomize-project-attached-to-this-guide)
 - [Relevant system paths](#relevant-system-paths)
@@ -22,7 +28,7 @@ Although Traefik has some capabilities to handle certificates, it is better to u
 
 ## Deploying cert-manager
 
-At the time of writing this, there is no official Kustomize way for deploying cert-manager. The closest method is by applying a YAML manifest, but you can build your own Kustomize procedure with it (as you've done for the `metrics-server` deployment in the [previous **G028** guide](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md#deployment-of-metrics-server)).
+At the time of writing this, there is no official Kustomize way for deploying cert-manager. The closest method is by applying a YAML manifest, but you can build your own Kustomize procedure with it (as you have done for the `metrics-server` deployment in the [previous **G028** guide](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md#deployment-of-metrics-server)).
 
 1. In your `kubectl` client system, create a folder structure for the cert-manager deployment project:
 
@@ -59,7 +65,7 @@ At the time of writing this, there is no official Kustomize way for deploying ce
     $ kubectl apply -k $HOME/k8sprjs/cert-manager/deployment/
     ~~~
 
-    This command prints a long output of lines indicating the many components that get created in the deployment of cert-manager.
+    This command prints a long output of lines indicating the many components created in the deployment of cert-manager.
 
 ### Verifying the deployment of cert-manager
 
@@ -150,25 +156,29 @@ You can install this cert-manager command line tool in a `kubectl` client system
 
 Know that the cert-manager's `kubectl` plugin has other commands available, [check them out in its official page](https://cert-manager.io/docs/reference/cmctl/).
 
-## Setting up a self-signed CA for your cluster
+## Setting up self-signed CAs for your cluster
 
-You have the tools deployed in your cluster, now you can create a self-signed CA for it. This CA will be necessary to be able to issue self-signed certificates for the other services you will deploy in later chapters of this guide:
+You have the tools deployed for handling certificates in your cluster. Now you can create a structure of self-signed _Certification Authorities_ (_CA_s) for issuing certificates.
 
-1. Create a folder structure for a Kustomize project within the already existing `cert-manager` path:
+### Preparing the Kustomize folder structure
+
+Create a folder structure for a Kustomize subproject within the already existing `cert-manager` path:
+
+~~~sh
+$ mkdir -p $HOME/k8sprjs/cert-manager/certificates/resources
+~~~
+
+### Root CA
+
+The root CA is the head of your CA structure. This CA only certifies the intermediate CAs that do take care of issuing certificates for apps or services:
+
+1. In the `resources` directory, create these empty YAML files:
 
     ~~~sh
-    $ mkdir -p $HOME/k8sprjs/cert-manager/certificates/resources
+    $ touch $HOME/k8sprjs/cert-manager/certificates/resources/{homelab.cloud-root-ca-issuer-selfsigned.cluster-issuer,homelab.cloud-root-ca-tls.certificate,homelab.cloud-root-ca-issuer.cluster-issuer}.cert-manager.yaml
     ~~~
 
-2. In the `resources` directory, create five empty YAML files:
-
-    ~~~sh
-    $ touch $HOME/k8sprjs/cert-manager/certificates/resources/{homelab.cloud-root-ca-issuer-selfsigned.cluster-issuer.cert-manager,homelab.cloud-root-ca-tls.certificate.cert-manager,homelab.cloud-root-ca-issuer.cluster-issuer.cert-manager,homelab.cloud-intm-ca01-tls.certificate.cert-manager,homelab.cloud-intm-ca01-issuer.cluster-issuer.cert-manager}.yaml
-    ~~~
-
-    Each YAML will describe a particular resource required for setting up the root CA properly.
-
-3. In the `resources/homelab.cloud-root-ca-issuer-selfsigned.cluster-issuer.cert-manager.yaml` file, configure the self-signed root CA `ClusterIssuer` for your entire cluster:
+2. In the `homelab.cloud-root-ca-issuer-selfsigned.cluster-issuer.cert-manager.yaml` file, configure the self-signed root CA `ClusterIssuer` for your entire cluster:
 
     ~~~yaml
     # Self-signed cluster-wide issuer for the root CA's certificate
@@ -191,7 +201,7 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
 
     - Within the `spec` section, you see the empty parameter `selfSigned`. This means that this issuer is of the simplest type you can have, the self-signed one. **It is not trusted by browsers**, but it is enough to generate certificates that you can use within your own local or home network.
 
-4. Issue a certificate with the self-signed root CA issuer in `resources/homelab.cloud-root-ca-tls.certificate.cert-manager.yaml`:
+3. Issue a certificate with the self-signed root CA issuer in `homelab.cloud-root-ca-tls.certificate.cert-manager.yaml`:
 
     ~~~yaml
     # Certificate for root CA
@@ -218,7 +228,7 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
         group: cert-manager.io
     ~~~
 
-    To know more about all the parameters shown above, check [the cert-manager v1 api document here](https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1). Still, here you have an explanation of some particularities of this certificate declaration:
+    To know more about all the parameters shown above, check [the cert-manager v1 api document here](https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1). Still, here you have an explanation of some particularities from this certificate declaration:
 
     - Many of the parameters are optional, and there are more that are not used here.
 
@@ -242,7 +252,7 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
 
     - In the `spec.issuerRef` you specify the issuer of this certificate, in this case the `homelab.cloud-root-ca-issuer-selfsigned` one you created in previous steps. Be careful of always also specifying its `kind`, in particular for `ClusterIssuer` types, so you know clearly what kind of issuer you are using with each certificate.
 
-5. Declare another `ClusterIssuer` in the `resources/homelab.cloud-root-ca-issuer.cluster-issuer.cert-manager.yaml` file:
+4. Declare another `ClusterIssuer` in the `homelab.cloud-root-ca-issuer.cluster-issuer.cert-manager.yaml` file:
 
     ~~~yaml
     # Cluster-wide issuer using root CA's secret
@@ -256,9 +266,19 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
         secretName: homelab.cloud-root-ca-tls
     ~~~
 
-    This is a different cluster wide issuer that uses the root CA's `homelab.cloud-root-ca-tls` secret to issue and sign other certificates. In particular, you will use this issuer only to issue intermediate CA certificates.
+    This is a different cluster wide issuer that uses the root CA's `homelab.cloud-root-ca-tls` secret to issue and sign other certificates. In particular, you will use this issuer only to issue certificates for intermediate CAs like the one you will declare next.
 
-6. Declare a certificate for an intermediate CA in the `resources/homelab.cloud-intm-ca01-tls.certificate.cert-manager.yaml`:
+### Intermediate CA
+
+Prepare here the intermediate CA that will certify the apps or services you deploy in your cluster:
+
+1. Create the following empty YAML files in the `resources` directory:
+
+    ~~~sh
+    $ touch $HOME/k8sprjs/cert-manager/certificates/resources/{homelab.cloud-intm-ca01-tls.certificate,homelab.cloud-intm-ca01-issuer.cluster-issuer}.cert-manager.yaml
+    ~~~
+
+2. Declare a certificate for an intermediate CA in the `homelab.cloud-intm-ca01-tls.certificate.cert-manager.yaml`:
 
     ~~~yaml
     # Certificate for intermediate CA 01
@@ -287,7 +307,7 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
 
     This certificate is like the one for the root CA issuer, but is meant for an _intermediate_ CA issuer. Since this certificate's secret will be the one used to issue and sign the certificates for the apps you will deploy in later chapters, it has a shorter `duration` and `renewBefore` time periods. Also notice that this certificate's name is numbered (`01`), hinting at the possibility of having more than one intermediate CA. And like the root CA's certificate, see how this certificate is not attached to any particular domain.
 
-7. Declare in `resources/homelab.cloud-intm-ca01-issuer.cluster-issuer.cert-manager.yaml` an intermediate CA cluster issuer:
+3. Declare in `homelab.cloud-intm-ca01-issuer.cluster-issuer.cert-manager.yaml` an intermediate CA cluster issuer:
 
     ~~~yaml
     # Cluster-wide issuer using intermediate CA 01's secret
@@ -307,13 +327,17 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
     > **Cluster issuers can issue certificates in any namespace**\
     > The apps and services you will deploy in later chapters of this guide are going to run in other namespaces than `cert-manager`. This makes necessary the use of a cluster issuer to issue the certificates and their corresponding secrets, since **secrets in Kubernetes are not shared among namespaces**.
 
-8. Next, create the `kustomization.yaml` file in the `certificates` folder:
+### Kustomize manifest for the self-signed CAs project
+
+After declaring all the cluster issuers and certificates, assemble them under one Kustomize manifest:
+
+1. Create the `kustomization.yaml` file in the `certificates` folder:
 
     ~~~sh
     $ touch $HOME/k8sprjs/cert-manager/certificates/kustomization.yaml
     ~~~
 
-9. Copy in `kustomization.yaml` the following yaml.
+2. Enter the Kustomize manifest for your whole CA structure in `kustomization.yaml`:
 
     ~~~yaml
     # Certificates deployment
@@ -330,13 +354,94 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
 
     The resources are ordered to ensure that the issuer created first is the root CA, then the intermediate CA 01.
 
-10. Apply the Kustomize project into your cluster:
+#### Validating the Kustomize YAML output
+
+To be sure that you got the Kustomize declaration right, redirect its `kubectl` YAML output to less or your text editor of choice:
+
+~~~sh
+$ kubectl kustomize $HOME/k8sprjs/cert-manager/certificates/ | less
+~~~
+
+The output should look like this:
+
+~~~yaml
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: homelab.cloud-intm-ca01-tls
+  namespace: cert-manager
+spec:
+  commonName: homelab.cloud-intm-ca01-tls
+  duration: 4380h
+  isCA: true
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: homelab.cloud-root-ca-issuer
+  privateKey:
+    algorithm: ECDSA
+    encoding: PKCS8
+    rotationPolicy: Always
+    size: 521
+  renewBefore: 360h
+  secretName: homelab.cloud-intm-ca01-tls
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: homelab.cloud-root-ca-tls
+  namespace: cert-manager
+spec:
+  commonName: homelab.cloud-root-ca-tls
+  duration: 8760h
+  isCA: true
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: homelab.cloud-root-ca-issuer-selfsigned
+  privateKey:
+    algorithm: ECDSA
+    encoding: PKCS8
+    rotationPolicy: Always
+    size: 521
+  renewBefore: 720h
+  secretName: homelab.cloud-root-ca-tls
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: homelab.cloud-intm-ca01-issuer
+spec:
+  ca:
+    secretName: homelab.cloud-intm-ca01-tls
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: homelab.cloud-root-ca-issuer
+spec:
+  ca:
+    secretName: homelab.cloud-root-ca-tls
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: homelab.cloud-root-ca-issuer-selfsigned
+spec:
+  selfSigned: {}
+~~~
+
+## Deploying the self-signed CAs
+
+The Kustomize manifest is ready, so deploy it:
+
+1. Apply the Kustomize project into your cluster:
 
     ~~~sh
     $ kubectl apply -k $HOME/k8sprjs/cert-manager/certificates
     ~~~
 
-11. Confirm that the resources have been deployed in the cluster:
+2. Confirm that the resources have been deployed in the cluster:
 
     ~~~sh
     $ kubectl -n kube-system get clusterissuer
@@ -357,7 +462,7 @@ You have the tools deployed in your cluster, now you can create a self-signed CA
     homelab.cloud-root-ca-tls     kubernetes.io/tls   3      73s
     ~~~
 
-12. As a final verification, use `kubectl` to get a detailed description of your new issuers' current status:
+3. As a final verification, use `kubectl` to get a detailed description of your new issuers' current status:
 
     ~~~sh
     $ kubectl describe ClusterIssuer
@@ -492,47 +597,48 @@ You can find the Kustomize project for the cert-manager deployment in this folde
 
 - `$HOME/bin`
 - `$HOME/k8sprjs/cert-manager`
-- `$HOME/k8sprjs/cert-manager/deployment`
-- `$HOME/k8sprjs/cert-manager/deployment/patches`
-- `$HOME/k8sprjs/cert-manager/deployment/resources`
 - `$HOME/k8sprjs/cert-manager/certificates`
 - `$HOME/k8sprjs/cert-manager/certificates/resources`
+- `$HOME/k8sprjs/cert-manager/deployment`
 
 ### Files in `kubectl` client system
 
 - `$HOME/bin/cmctl`
 - `$HOME/bin/kubectl-cert_manager`
-- `$HOME/k8sprjs/cert-manager/deployment/kustomization.yaml`
 - `$HOME/k8sprjs/cert-manager/certificates/kustomization.yaml`
 - `$HOME/k8sprjs/cert-manager/certificates/resources/homelab.cloud-intm-ca01-issuer.cluster-issuer.cert-manager.yaml`
 - `$HOME/k8sprjs/cert-manager/certificates/resources/homelab.cloud-intm-ca01-tls.certificate.cert-manager.yaml`
 - `$HOME/k8sprjs/cert-manager/certificates/resources/homelab.cloud-root-ca-issuer-selfsigned.cluster-issuer.cert-manager.yaml`
 - `$HOME/k8sprjs/cert-manager/certificates/resources/homelab.cloud-root-ca-issuer.cluster-issuer.cert-manager.yaml`
 - `$HOME/k8sprjs/cert-manager/certificates/resources/homelab.cloud-root-ca-tls.certificate.cert-manager.yaml`
+- `$HOME/k8sprjs/cert-manager/deployment/kustomization.yaml`
 
 ## References
 
 ### [cert-manager](https://cert-manager.io/)
 
-- [Documentation](https://cert-manager.io/docs/)
-  - [cert-manager installation with Kubectl](https://cert-manager.io/docs/installation/kubectl/)
-  - [The cert-manager Command Line Tool (cmctl)](https://cert-manager.io/docs/reference/cmctl/)
-  - [API reference](https://cert-manager.io/docs/reference/api-docs/)
+- [Documentation. Introduction](https://cert-manager.io/docs/)
+  - [0. Installation](https://cert-manager.io/docs/installation/)
+    - [a. kubectl apply](https://cert-manager.io/docs/installation/kubectl/)
+  - [Reference](https://cert-manager.io/docs/reference/)
+    - [The cert-manager Command Line Tool (cmctl)](https://cert-manager.io/docs/reference/cmctl/)
+    - [API reference](https://cert-manager.io/docs/reference/api-docs/)
 
-- [cert-manager on GitHub](https://github.com/jetstack/cert-manager)
+- [GitHub. cert-manager](https://github.com/jetstack/cert-manager)
 
 ### About setting up cert-manager
 
-- [Deep Dive into cert-manager and Cluster Issuers in Kubernetes](https://support.tools/cert-manager-deep-dive/)
-- [Setting up HTTPS with cert-manager (self-signed, LetsEncrypt) in kubernetes](https://someweb.github.io/devops/cert-manager-kubernetes/)
-- [Creating Self Signed Certificates on Kubernetes](https://tech.paulcz.net/blog/creating-self-signed-certs-on-kubernetes/)
-- [Install Certificate Manager Controller in Kubernetes](https://blog.zachinachshon.com/cert-manager/#self-signed-certificate)
-- [How to configure Traefik on Kubernetes with Cert-manager?](https://cloud.theodo.com/en/blog/traefik-kubernetes-certmanager)
-- [PKCS#1 and PKCS#8 format for RSA private key](https://stackoverflow.com/questions/48958304/pkcs1-and-pkcs8-format-for-rsa-private-key)
+- [Support Tools. Deep Dive into cert-manager and Cluster Issuers in Kubernetes](https://support.tools/cert-manager-deep-dive/)
+- [Some Web. Setting up HTTPS with cert-manager (self-signed, LetsEncrypt) in kubernetes](https://someweb.github.io/devops/cert-manager-kubernetes/)
+- [Paul Czarkowski. Creating Self Signed Certificates on Kubernetes](https://tech.paulcz.net/blog/creating-self-signed-certs-on-kubernetes/)
+- [Zachi Nachshon's Blog. Install Certificate Manager Controller in Kubernetes](https://blog.zachinachshon.com/cert-manager/)
+  - [Self Signed](https://blog.zachinachshon.com/cert-manager/#self-signed-certificate)
+- [Theodo. How to configure Traefik on Kubernetes with Cert-manager?](https://www.theodo.com/en-fr/blog/how-to-configure-traefik-on-kubernetes-with-cert-manager)
+- [StackOverflow. PKCS#1 and PKCS#8 format for RSA private key](https://stackoverflow.com/questions/48958304/pkcs1-and-pkcs8-format-for-rsa-private-key)
 
 ### About the self-signed CA
 
-- [Self-signed Root CA in Kubernetes with k3s, cert-manager and traefik. Bonus howto on regular certificates](https://raymii.org/s/tutorials/Self_signed_Root_CA_in_Kubernetes_with_k3s_cert-manager_and_traefik.html)
+- [Raymii.org. Self-signed Root CA in Kubernetes with k3s, cert-manager and traefik. Bonus howto on regular certificates](https://raymii.org/s/tutorials/Self_signed_Root_CA_in_Kubernetes_with_k3s_cert-manager_and_traefik.html)
 - [Wikipedia. Certificate authority](https://en.wikipedia.org/wiki/Certificate_authority)
 
 ## Navigation

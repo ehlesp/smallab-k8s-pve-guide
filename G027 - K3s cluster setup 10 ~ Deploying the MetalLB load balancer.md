@@ -14,6 +14,7 @@
     - [Operation mode L2Advertisement](#operation-mode-l2advertisement)
     - [Static IP address pool](#static-ip-address-pool)
     - [Kustomize manifest](#kustomize-manifest)
+    - [Validating the Kustomize YAML output](#validating-the-kustomize-yaml-output)
   - [Deploying MetalLB](#deploying-metallb)
 - [MetalLB's Kustomize project attached to this guide](#metallbs-kustomize-project-attached-to-this-guide)
 - [Relevant system paths](#relevant-system-paths)
@@ -147,7 +148,7 @@ First, prepare the resource that sets the operation mode of your MetalLB service
 
 #### Static IP address pool
 
-Like when setting [the operation mode](#operation-mode), MetalLB uses a specific kind of resource for its static IP pools:
+Like with [the operation mode](#operation-mode-l2advertisement), MetalLB uses its own specific kind of resource for setting its static IP pools:
 
 1. Create the file `default-pool.ipaddresspool.metallb.yaml` in the `resources` folder:
 
@@ -216,6 +217,12 @@ To put together the resources declared earlier with the official manifest descri
 
     - This declaration is based on the one offered [in the official MetalLB documentation](https://metallb.org/installation/#installation-with-kustomize).
 
+      > [!IMPORTANT]
+      > **GitHub may give you trouble with the MetalLB manifest URL**\
+      > If you happen to have issues like timeouts when `kubectl` tries to download the MetalLB manifest, try changing its URL to the one indicated in the [Installation by manifest section of the MetalLB documentation](https://metallb.io/installation/#installation-by-manifest). That URL will look like this:
+      >
+      > `https://raw.githubusercontent.com/metallb/metallb/v0.15.2/config/manifests/metallb-native.yaml`
+
     - The `namespace` for all the MetalLB resources deployed in your K3s cluster is going to be `metallb-system`. The resources in this project that already have a `namespace` specified will get it changed to this one, and those who do not have one will be set to `metallb-system` too.
 
     - The `resources` section lists the files describing the resources used to deploy MetalLB:
@@ -224,15 +231,39 @@ To put together the resources declared earlier with the official manifest descri
 
       - The other two items point to the local YAML files you have created previously to declare the alloted IP range for MetalLB.
 
-3. You can check how the final deployment looks like as a YAML manifest with `kubectl`:
+#### Validating the Kustomize YAML output
 
-    ~~~sh
-    $ kubectl kustomize $HOME/k8sprjs/metallb/ | less
-    ~~~
+You can check how the final deployment looks like as a YAML manifest with `kubectl`:
 
-    With the `kustomize` option, `kubectl` builds the whole deployment YAML manifest resulting from processing the `kustomization.yaml` file. Since the output can be quite long, better to append a `| less` (`less` or some other text editor of your choice) to the command for getting a paginated view of the YAML.
+~~~sh
+$ kubectl kustomize $HOME/k8sprjs/metallb/ | less
+~~~
 
-    The command takes a moment to finish because it has to download the MetalLB manifest first, then process and combine it with the other resource files found in your client system. When you finally see the result, you will get a quite long YAML output that embeds all of the specified resources. Furthermore, you may notice in the resulting YAML that MetalLB is prepared to look for `L2Advertisement` resources automatically, which means that you do not have to explicitly tell MetalLB which one to use.
+With the `kustomize` option, `kubectl` builds the whole deployment YAML manifest resulting from processing the `kustomization.yaml` file. Since the output can be quite long, better to append a `| less` (`less` or some other text editor of your choice) to the command for getting a paginated view of the YAML. The command takes a moment to finish because it has to download the MetalLB manifest first, then process and combine it with the other resource files found in your client system. When you finally see the result, you will get a quite long YAML output that embeds the resources you declared together with the others required in the MetalLB deployment. In particular, your L2Advertisement and IPAddressPool objects should look like this:
+
+~~~yaml
+---
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: default-pool
+  namespace: metallb-system
+spec:
+  addresses:
+  - 10.7.0.1-10.7.0.20
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: l2-ip
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+  - default-pool
+---
+~~~
+
+Furthermore, you may also notice in the resulting YAML that MetalLB is prepared to look for `L2Advertisement` resources automatically. This implies that you do not have to explicitly tell MetalLB which one to use.
 
 ### Deploying MetalLB
 
@@ -351,6 +382,8 @@ You can find the Kustomize project for this MetalLB deployment in the following 
   - [MetalLB in layer 2 mode](https://metallb.io/concepts/layer2/)
   - [MetalLB in BGP mode](https://metallb.io/concepts/bgp/)
 - [Installation](https://metallb.io/installation/)
+  - [Installation by manifest](https://metallb.io/installation/#installation-by-manifest)
+  - [Installation with kustomize](https://metallb.io/installation/#installation-with-kustomize)
 - [Configuration](https://metallb.io/configuration/)
 
 - [GitHub. MetalLB](https://github.com/metallb/metallb)

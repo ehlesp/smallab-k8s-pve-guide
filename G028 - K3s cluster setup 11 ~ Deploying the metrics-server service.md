@@ -6,6 +6,7 @@
   - [Preparing the Kustomize folder structure](#preparing-the-kustomize-folder-structure)
   - [Patch for the metrics-server deployment](#patch-for-the-metrics-server-deployment)
   - [Kustomize manifest for the metrics-server project](#kustomize-manifest-for-the-metrics-server-project)
+    - [Validating the Kustomize YAML output](#validating-the-kustomize-yaml-output)
   - [Deploying metrics-server](#deploying-metrics-server)
 - [Checking the metrics-server service](#checking-the-metrics-server-service)
 - [Metrics-server's Kustomize project attached to this guide](#metrics-servers-kustomize-project-attached-to-this-guide)
@@ -111,7 +112,7 @@ spec:
 ---
 ~~~
 
-This is the object you need to modify to adapt metrics-server to your particular cluster setup. You also have to take some values from the yaml manifest used to deploy this service embedded in K3s, a yaml you can find in [the K3s GitHub page](https://github.com/k3s-io/k3s/blob/master/manifests/metrics-server/metrics-server-deployment.yaml).
+This is the object you need to modify to adapt metrics-server to your particular cluster setup. You also have to take some values from the manifest used to deploy this service embedded in K3s. You can find that YAML in [the K3s GitHub page](https://github.com/k3s-io/k3s/blob/master/manifests/metrics-server/metrics-server-deployment.yaml).
 
 ## Deployment of metrics-server
 
@@ -236,97 +237,99 @@ The Kustomize manifest of the metrics-server deployment is also where you specif
 
     - The `patches` section is where you specify all the patches you want to apply over the resources you deploy in the Kustomize project. This section supports different ways to declare and apply patches on resources, [check them out in its official Kubernetes documentation](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/patches/). The method used here is probably the cleanest one, since it only needs specifying the path to the patch file.
 
-3. Test the Kustomize project with `kubectl`:
+#### Validating the Kustomize YAML output
 
-    ~~~sh
-    $ kubectl kustomize $HOME/k8sprjs/metrics-server | less
-    ~~~
+Test the Kustomize project with `kubectl`, redirecting its output to `less` or some other text editor:
 
-    In the output, look for the `Deployment` object and ensure that the `args` parameters and the `tolerations` section appear set as expected:
+~~~sh
+$ kubectl kustomize $HOME/k8sprjs/metrics-server | less
+~~~
 
-    ~~~yaml
-    ---
-    apiVersion: apps/v1
-    kind: Deployment
+In the output, look for the `Deployment` object and ensure that the `args` parameters and the `tolerations` section appear set as expected:
+
+~~~yaml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    k8s-app: metrics-server
+  name: metrics-server
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      k8s-app: metrics-server
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+  template:
     metadata:
       labels:
         k8s-app: metrics-server
-      name: metrics-server
-      namespace: kube-system
     spec:
-      selector:
-        matchLabels:
-          k8s-app: metrics-server
-      strategy:
-        rollingUpdate:
-          maxUnavailable: 0
-      template:
-        metadata:
-          labels:
-            k8s-app: metrics-server
-        spec:
-          containers:
-          - args:
-            - --cert-dir=/tmp
-            - --secure-port=10250
-            - --kubelet-preferred-address-types=InternalIP
-            - --kubelet-use-node-status-port
-            - --metric-resolution=15s
-            - --tls-cipher-suites=TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
-            image: registry.k8s.io/metrics-server/metrics-server:v0.8.0
-            imagePullPolicy: IfNotPresent
-            livenessProbe:
-              failureThreshold: 3
-              httpGet:
-                path: /livez
-                port: https
-                scheme: HTTPS
-              periodSeconds: 10
-            name: metrics-server
-            ports:
-            - containerPort: 10250
-              name: https
-              protocol: TCP
-            readinessProbe:
-              failureThreshold: 3
-              httpGet:
-                path: /readyz
-                port: https
-                scheme: HTTPS
-              initialDelaySeconds: 20
-              periodSeconds: 10
-            resources:
-              requests:
-                cpu: 100m
-                memory: 200Mi
-            securityContext:
-              allowPrivilegeEscalation: false
-              capabilities:
-                drop:
-                - ALL
-              readOnlyRootFilesystem: true
-              runAsNonRoot: true
-              runAsUser: 1000
-              seccompProfile:
-                type: RuntimeDefault
-            volumeMounts:
-            - mountPath: /tmp
-              name: tmp-dir
-          nodeSelector:
-            kubernetes.io/os: linux
-          priorityClassName: system-cluster-critical
-          serviceAccountName: metrics-server
-          tolerations:
-          - key: CriticalAddonsOnly
-            operator: Exists
-          - effect: NoSchedule
-            key: node-role.kubernetes.io/control-plane
-            operator: Exists
-          volumes:
-          - emptyDir: {}
-            name: tmp-dir
-    ---
-    ~~~
+      containers:
+      - args:
+        - --cert-dir=/tmp
+        - --secure-port=10250
+        - --kubelet-preferred-address-types=InternalIP
+        - --kubelet-use-node-status-port
+        - --metric-resolution=15s
+        - --tls-cipher-suites=TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
+        image: registry.k8s.io/metrics-server/metrics-server:v0.8.0
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /livez
+            port: https
+            scheme: HTTPS
+          periodSeconds: 10
+        name: metrics-server
+        ports:
+        - containerPort: 10250
+          name: https
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /readyz
+            port: https
+            scheme: HTTPS
+          initialDelaySeconds: 20
+          periodSeconds: 10
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000
+          seccompProfile:
+            type: RuntimeDefault
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-dir
+      nodeSelector:
+        kubernetes.io/os: linux
+      priorityClassName: system-cluster-critical
+      serviceAccountName: metrics-server
+      tolerations:
+      - key: CriticalAddonsOnly
+        operator: Exists
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/control-plane
+        operator: Exists
+      volumes:
+      - emptyDir: {}
+        name: tmp-dir
+---
+~~~
 
 ### Deploying metrics-server
 
