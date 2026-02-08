@@ -4,12 +4,14 @@
 - [Considerations before deploying MetalLB](#considerations-before-deploying-metallb)
   - [Choosing the right mode of operation for MetalLB](#choosing-the-right-mode-of-operation-for-metallb)
   - [Reserve an IP range for services](#reserve-an-ip-range-for-services)
+    - [How to deal with IP conflicts in your LAN](#how-to-deal-with-ip-conflicts-in-your-lan)
   - [Ports used by MetalLB](#ports-used-by-metallb)
   - [Deploying from an external `kubectl` client](#deploying-from-an-external-kubectl-client)
 - [Choosing the IP ranges for MetalLB](#choosing-the-ip-ranges-for-metallb)
 - [Deploying MetalLB on your K3s cluster](#deploying-metallb-on-your-k3s-cluster)
   - [Preparing the Kustomize folder structure](#preparing-the-kustomize-folder-structure)
   - [Declaring the resources](#declaring-the-resources)
+    - [Operation mode L2Advertisement](#operation-mode-l2advertisement)
     - [Static IP address pool](#static-ip-address-pool)
     - [Kustomize manifest](#kustomize-manifest)
   - [Deploying MetalLB](#deploying-metallb)
@@ -44,19 +46,21 @@ The layer 2 option is the one that fits your K3s cluster, and is the most simple
 
 ### Reserve an IP range for services
 
-You need to reserve a range, continuous if possible, of free IP addresses in your network. MetalLB, in layer 2 mode, will then assign IPs to each service you expose directly through it. This is to avoid collisions between services that happen to use the same ports, like the widely used 80 or 443. There is also the possibility of assigning just one IP to the load balancer, but it would imply micromanaging the ports of each service you deploy in your K3s cluster.
+You need to reserve a range, continuous if possible, of free IP addresses in your network. MetalLB, in layer 2 mode, will then assign IPs to each service you expose directly through it. This is to avoid collisions between services that happen to use the same ports, like the widely used 80 (for unencrypted HTTP communications) or 443 (for encrypted HTTPS communications).
 
-On the other hand, remember that you have configured your cluster to use two networks, one for internal communications and other to face the external network. You only have to reserve an IP range in your external network (your LAN), since the internal communications will remain within your cluster. You have to ensure having enough IPs available for your services, something that could be problematic in your external network, since it is also where your other devices are connecting to.
+On the other hand, remember that you have configured your cluster to use two networks, one for internal communications and other to face the external network. You only have to reserve an IP range in your external/public network (your LAN), since the internal communications will remain within your cluster. You have to ensure having enough IPs available for the services you want to make public in your network with their own static IP. This could be problematic in your LAN since it is also where your other devices are connecting to.
 
-You have two ways to deal with the issue of possible IP conflicts between your devices and the apps exposed to your LAN by MetalLB:
+#### How to deal with IP conflicts in your LAN
+
+Assuming that you have a regular consumer router handling your LAN, you have two ways for dealing with the issue of possible IP conflicts between your devices and the apps exposed to your LAN by MetalLB:
 
 - **Assign static IPs to all devices in your LAN**\
-  Doable although cumbersome since this demands the manual handling of all IP assignments in your LAN. Still, this is the one that can almost (if you also leave the dynamic IP assignment enabled, conflicts may still happen) guarantee that your devices and apps will not collide in their IP assignments. If you opt to this method, be sure of clearing a range of IPs in your router (meaning, do not assign any IP from that range to any device) that MetalLB can use freely.
+  Doable although cumbersome since this demands the manual handling of all IP assignments in your LAN, and also disabling the use of randomized MACs in all devices connected to the LAN. Still, this is the one that can almost (if you also leave the dynamic IP assignment enabled, conflicts may still happen) guarantee that your devices and apps will not collide in their IP assignments. If you opt to this method, be sure of clearing a range of IPs in your router (meaning, do not assign any IP from that range to any device) that MetalLB can use freely.
 
 - **Making your private network assign IPs from the `10.0.0.0/8` range**\
-  As I already explained [back in chapter **G025**](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#criteria-for-ips), for my LAN I opted to use the biggest IPv4 range available for private networks: `10.0.0.0/8`. Still, this measure only mitigates the possibility of conflict between a device and a service exposed by MetalLB (or just with another device). This also depends on how capable your LAN's router is handling IP assignments. The good thing is that you do not have to manage manually the IPs assigned to your devices.
+  As I already explained [back in chapter **G025**](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#criteria-for-ips), for my LAN I opted to use the biggest IPv4 range available for private networks: `10.0.0.0/8`. Still, this measure only mitigates the possibility of conflict between a device and a service exposed by MetalLB (or just with another device). This also depends on how capable your LAN's router is handling IP assignments. The good thing is that you do not have to manage manually the IPs assigned to your devices nor disable the use of randomized MACS in all of them.
 
-In my case, I opted to "risk it" and stick with the dynamic IP assignment to allow devices to connect with randomized MACs, which is the default behavior nowadays.
+In my case, I opted to "risk it" and stick with the dynamic IP assignment to allow devices to connect with randomized MACs, which is the default (and more secure) behavior nowadays.
 
 ### Ports used by MetalLB
 
@@ -68,9 +72,9 @@ In the previous [chapter **G026**](G026%20-%20K3s%20cluster%20setup%2009%20~%20S
 
 ## Choosing the IP ranges for MetalLB
 
-You have to choose an IP range on the external network your K3s cluster is connected to. This IP range should leave out the IPs already used by the K3s nodes themselves, helping you in keeping the nodes differentiated from the services deployed in them.
+You have to choose an IP range on the external or public network your K3s cluster is connected to. This IP range should leave out the IPs already used by the K3s nodes themselves, helping you in keeping the nodes differentiated from the services deployed in them.
 
-In this chapter, the chosen IP subrange "reserved" for MetalLB is `10.7.0.1-10.7.0.20`. It only has twenty IPs, and you may be wondering why so few. The reason is that this guide will show you how to access the services you deploy not by assigning them a specific IP, but through the Traefik ingress service already running in your K3s cluster. The main exception to this is the Traefik service itself, which needs its own external IP to be reachable to do its job. In general, you either expose services directly through an external IP assigned by the load balancer or make them reachable through the ingress service, **never in both ways at the same time**.
+In this chapter, the chosen IP subrange "reserved" for MetalLB is `10.7.0.1-10.7.0.20`. It only has twenty IPs, and you may be wondering why so few. The reason is that this guide will show you how to access the services you deploy not by assigning them a specific static IP, but through the Traefik ingress service already running in your K3s cluster. The main exception to this is the Traefik service itself, which needs its own public static IP to be reachable to do its job. In general, you either expose services directly through an external IP assigned by the load balancer or make them reachable through the ingress service, **never in both ways at the same time**.
 
 > [!IMPORTANT]
 > **The bigger the reserved IP range, the greater the risk of having IP conflicts**\
@@ -82,7 +86,7 @@ On the other hand, know that MetalLB links IPs to services. When MetalLB moves a
 
 ## Deploying MetalLB on your K3s cluster
 
-Next, see how to deploy MetalLB using `kubectl` and [Kustomize](https://kubectl.docs.kubernetes.io/guides/introduction/kustomize/). **Kustomize** is the official Kubernetes tool for customizing resource configuration without using templates or other techniques as is done with tools such as Helm. Kustomize is already integrated in the `kubectl` command, so you do not need to install anything else in your client system.
+Next, see how to deploy MetalLB using `kubectl` and [Kustomize](https://kubectl.docs.kubernetes.io/guides/introduction/kustomize/). **Kustomize** is the official Kubernetes tool for customizing resource configuration without using templates or other techniques as is usually done with tools such as Helm. Kustomize is already integrated in the `kubectl` command, so you do not need to install anything else in your client system.
 
 ### Preparing the Kustomize folder structure
 
@@ -111,14 +115,14 @@ You can use any other base path instead of `$HOME` within your `kubectl` client 
 
 There are certain resources you have to declare to make MetalLB work [as specified previously in this chapter](#considerations-before-deploying-metallb). This way, MetalLB will be deployed with the right configuration right away.
 
-#### Static IP address pool
+#### Operation mode L2Advertisement
 
-The first resource you need to declare is the pool of public Static IP addresses you want MetalLB to use when assigning public IPs to services running in your cluster:
+First, prepare the resource that sets the operation mode of your MetalLB service to L2 and picks the pool of static IPs to use:
 
-1. In the `resources` folder, create the files `l2-ip.l2advertisement.metallb.yaml` and `default-pool.ipaddresspool.metallb.yaml`:
+1. In the `resources` folder, create the files `l2-ip.l2advertisement.metallb.yaml`:
 
     ~~~sh
-    $ touch $HOME/k8sprjs/metallb/resources/{l2-ip.l2advertisement.metallb.yaml,default-pool.ipaddresspool.metallb.yaml}
+    $ touch $HOME/k8sprjs/metallb/resources/l2-ip.l2advertisement.metallb.yaml
     ~~~
 
 2. In `l2-ip.l2advertisement.metallb.yaml`, specify the operation mode and pool to use:
@@ -135,13 +139,23 @@ The first resource you need to declare is the pool of public Static IP addresses
       - default-pool
     ~~~
 
-    This manifest sets a specific configuration to MetalLB:
+    This manifest sets the desired configuration to MetalLB:
 
-    - The kind `L2Advertisement` sets the mode used as L2.
+    - The kind `L2Advertisement` sets the mode used as L2. Notice that you need to use a specific MetalLB (not Kubernetes standard) kind of resource to set the operation mode of MetalLB, not just adjust some parameter.
 
-    - The `spec.ipAddressPool` parameter points to the pools of usable IPs. In this case it is just one named `default-pool`.
+    - The `spec.ipAddressPool` parameter points to the pools of usable IPs. In this case, it is just one pool named `default-pool` you will declare right after this `L2Advertisement` object.
 
-3. Declare the IP address pool in `default-pool.ipaddresspool.metallb.yaml`:
+#### Static IP address pool
+
+Like when setting [the operation mode](#operation-mode), MetalLB uses a specific kind of resource for its static IP pools:
+
+1. Create the file `default-pool.ipaddresspool.metallb.yaml` in the `resources` folder:
+
+    ~~~sh
+    $ touch $HOME/k8sprjs/metallb/resources/default-pool.ipaddresspool.metallb.yaml
+    ~~~
+
+2. Declare the IP address pool in `default-pool.ipaddresspool.metallb.yaml`:
 
     ~~~yaml
     # Default IP address pool setup
@@ -155,7 +169,7 @@ The first resource you need to declare is the pool of public Static IP addresses
       - 10.7.0.1-10.7.0.20
     ~~~
 
-    This manifest configures a simple pool of static IP addresses:
+    This manifest configures a simple pool of 20 static IP addresses:
 
     - The kind `IPAddressPool` indicates that this is a MetalLB pool of IP addresses.
 
@@ -173,7 +187,7 @@ The first resource you need to declare is the pool of public Static IP addresses
 
 #### Kustomize manifest
 
-To put together the resources declared earlier with the official manifest describing MetalLB's deployment, you can use a Kustomize manifest:
+To put together the resources declared earlier with the official manifest describing MetalLB's deployment, use a Kustomize manifest:
 
 1. Create the `kustomization.yaml` file where to describe the deployment of MetalLB in Kustomize format:
 
@@ -260,13 +274,13 @@ l2advertisement.metallb.io/l2-ip created
 validatingwebhookconfiguration.admissionregistration.k8s.io/metallb-webhook-configuration created
 ~~~
 
-The lines inform about the resources created by your deployment. They could also show sporadic warnings about deprecated apis still used by the software you're installing in your cluster.
+The lines inform about the resources created by your deployment. They could also show sporadic warnings about deprecated apis being used in the application's deployment.
 
 > [!IMPORTANT]
 > **The deployment in the cluster may be successful, but the deployed service may have issues**\
-> Be aware that, even if you do not get a lot of warnings or, worse, errors, the deployment may not have been truly successful due to issues that go beyond what Kubernetes can detect, like configuration problems specific to the deployed service.
+> Even if you do not get a lot of warnings or, worse, errors, the deployment may not have been truly successful due to issues that go beyond what Kubernetes can detect, like configuration problems specific to the deployed service.
 
-Give MetalLB around a couple of minutes to get ready, then check with `kubectl` that it's been deployed in your cluster.
+Give MetalLB a couple of minutes to get ready, then check with `kubectl` that it has been deployed in your cluster.
 
 ~~~sh
 $ kubectl get -n metallb-system all -o wide

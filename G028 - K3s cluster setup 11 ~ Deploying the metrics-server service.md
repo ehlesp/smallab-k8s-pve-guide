@@ -26,11 +26,11 @@ In particular, the embedded metrics-server comes with a default configuration th
 
 ## Checking the metrics-server's manifest
 
-First you would need to check out the manifest used for deploying the metrics-server and see where you have to apply the required change. This also means that you have to be aware of which version you're going to deploy in your cluster. K3s `v1.33.4+k3s1` comes with the `v0.8.0` release of metrics-server which is, at the time of writing this, the latest version available.
+First you would need to check out the manifest used for deploying the metrics-server and see where you have to apply the required change. This also means that you have to be aware of which version you're going to deploy in your cluster. K3s `v1.33.4+k3s1` comes with the `v0.8.0` release of metrics-server which is, at the time of writing this, also happens to be the latest version available.
 
 > [!IMPORTANT]
 > **Ensure the service's version is compatible with your cluster's Kubernetes version**\
-> Each release of any service comes with its own particularities regarding compatibilities, in particular with your cluster's Kubernetes engine. Always check that the release of a software you want to deploy in your cluster is compatible with the Kubernetes version running your cluster.
+> Each release of any service comes with their own particularities regarding compatibilities, in particular with your cluster's Kubernetes engine. Always check that the release of any software you want to deploy in your cluster is compatible with the Kubernetes version running your cluster. This detail is more important in particular with applications that work with the Kubernetes API.
 
 Download the `components.yaml` manifest for metrics-server `v0.8.0` from the **Assets** section found [at this Github release page](https://github.com/kubernetes-sigs/metrics-server/releases/tag/v0.8.0). Open it and look for the `Deployment` object declared in it:
 
@@ -242,7 +242,7 @@ The Kustomize manifest of the metrics-server deployment is also where you specif
     $ kubectl kustomize $HOME/k8sprjs/metrics-server | less
     ~~~
 
-    In the output, look for the `Deployment` object and ensure that the `args` parameters and the `tolerations` section are set as expected:
+    In the output, look for the `Deployment` object and ensure that the `args` parameters and the `tolerations` section appear set as expected:
 
     ~~~yaml
     ---
@@ -424,15 +424,10 @@ You can find the Kustomize project for this metrics-server deployment in the fol
 ### Related to Kubernetes Metrics Server
 
 - [GitHub. K3s. releases. K3s v1.33.4+k3s1](https://github.com/k3s-io/k3s/releases/tag/v1.33.4%2Bk3s1)
-
 - [ComputingForGeeks. How To Install Metrics Server on a Kubernetes Cluster](https://computingforgeeks.com/how-to-deploy-metrics-server-to-kubernetes-cluster/)
-
 - [StackOverflow. How to troubleshoot metrics-server on kubeadm?](https://stackoverflow.com/questions/57137683/how-to-troubleshoot-metrics-server-on-kubeadm)
-
 - [Reddit. Kubernetes. [learner] Debugging issue with metrics-server](https://www.reddit.com/r/kubernetes/comments/ktuour/learner_debugging_issue_with_metricsserver/)
-
 - [DEV. The case of disappearing metrics in Kubernetes](https://dev.to/shyamala_u/the-case-of-disappearing-metrics-in-kubernetes-1kdh)
-
 - [StackOverflow. Query on kubernetes metrics-server metrics values](https://stackoverflow.com/questions/55684789/query-on-kubernetes-metrics-server-metrics-values)
 
 ## Navigation
