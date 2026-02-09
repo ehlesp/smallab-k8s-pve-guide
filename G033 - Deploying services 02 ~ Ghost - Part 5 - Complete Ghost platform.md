@@ -174,7 +174,7 @@ All these `PersistentVolume` declarations use exactly the same parameters:
 
 ## Ghost platform's TLS certificate
 
-To encrypt the communications between your Ghost platform and its clients, you need a TLS certificate [like the one created previously in the deployment of Headlamp back in the chapter **G031**](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md#deploying-headlamp).
+To encrypt the communications between your Ghost platform and its clients, you need a TLS certificate [like the one created previously in the deployment of Headlamp back in the chapter **G031**](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md#headlamp-tls-certificate).
 
 1. Create a `ghost.homelab.cloud-tls.certificate.cert-manager.yaml` file under `resources`:
 
