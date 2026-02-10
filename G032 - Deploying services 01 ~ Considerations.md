@@ -7,13 +7,13 @@
 
 ## Upcoming chapters are about deploying services in your K3s cluster
 
-The next chapters of this guide will show you how to deploy in your K3s cluster the services listed in the [chapter **G018**](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md#requirements-for-the-k3s-cluster-and-the-services-to-deploy-in-it). Of course, you might want to deploy other apps, so consider the ones deployed in the following chapters as examples of how you could do it for other deployments.
+The next chapters of this guide will show you how to deploy in your K3s cluster the services listed in the [chapter **G018**](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md#requirements-for-the-k3s-cluster-and-the-services-to-deploy-in-it). Of course, you may want to deploy other apps, so consider the ones deployed in the following chapters as examples of how you could do it for other deployments.
 
 ## Be watchful of your system's resources usage
 
-Your K3s Kubernetes cluster is not running "empty" at this point. It has a number of services running that already eat up a good chunk of your hardware's resources. Be always aware of the current resources usage in your setup before you deploy any new app or service in your cluster.
+Your K3s Kubernetes cluster is not running "empty" at this point. It is already executing a number of services that eat up a good chunk of your hardware's resources. Be always aware of the current resources usage in your setup before you deploy any new app or service in your cluster.
 
-Remember that you can get the resource usages from your setup in these ways:
+At this point of the guide, you can monitor the resource usages in your setup in these ways:
 
 - **The Proxmox VE's web console has a `Summary` view on every level**\
   Datacenter, node and VMs have all a `Summary` page in which you can see the current resource usages.

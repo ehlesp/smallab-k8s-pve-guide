@@ -357,7 +357,7 @@ In this guide, the `prometheus.rules.yaml` file contains a set of rules for aler
 
 ### Secret configuration file `prometheus.web.yaml`
 
-Enable your Prometheus' basic authentication by configuring it as indicated [in this official guide](https://prometheus.io/docs/guides/basic-auth/). This implies producing users with the `htpasswd` command [like you had to do for the Traefik dashboard](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md#creating-a-user-for-the-traefik-dashboard). In this case, you need to create a user for each entity that will need access to Prometheus. Those entities are yourself, the job for scraping metrics, and Grafana (which [you will prepare in the next part of this chapter G035](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana%20server.md)):
+Enable your Prometheus' basic authentication by configuring it as indicated [in this official guide](https://prometheus.io/docs/guides/basic-auth/). This implies producing users with the `htpasswd` command [like you had to do for the Traefik dashboard](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md#creating-the-user-with-htpasswd). In this case, you need to create a user for each entity that will need access to Prometheus. Those entities are yourself, the job for scraping metrics, and Grafana (which [you will prepare in the next part of this chapter G035](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana%20server.md)):
 
 1. In your `kubectl` client system, use the `htpasswd` command to generate three users called `promuser`, `prometricsjob` and `grafuser` with their passwords hashed out with the BCrypt encryption:
 

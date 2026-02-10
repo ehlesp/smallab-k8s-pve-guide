@@ -26,7 +26,7 @@ In this first part, you will see how to outline the setup of your Ghost platform
 
 ## Outlining Ghost's setup
 
-First, you must define how you want to setup Ghost in your cluster. This means that you have to decide beforehand how to solve the following points:
+You must define how you want to setup Ghost in your cluster, meaning that you have to decide beforehand how to solve the following points:
 
 - Ghost can use a cache server. Which one will you use and will it be exclusive to the Ghost instance?
 
@@ -34,7 +34,7 @@ First, you must define how you want to setup Ghost in your cluster. This means t
 
 - Where in your K3s cluster the Ghost's data should be placed?
 
-This guide solves the previous points as follows.
+This guide solves the previous points as follows:
 
 - **Cache server**\
   Ghost can work with [Redis](https://redis.io/), but this guide rather opts for the compatible alternative [Valkey](https://valkey.io/) configured to have data persistence on a local SSD storage drive.

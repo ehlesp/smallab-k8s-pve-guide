@@ -7,6 +7,8 @@
 - [Traefik IngressRoute for enabling HTTPS access to the Forgejo platform](#traefik-ingressroute-for-enabling-https-access-to-the-forgejo-platform)
 - [Forgejo Namespace resource](#forgejo-namespace-resource)
 - [Main Kustomize project for the Forgejo platform](#main-kustomize-project-for-the-forgejo-platform)
+  - [Validating the Kustomize YAML output](#validating-the-kustomize-yaml-output)
+- [Deploying the main Kustomize project in the cluster](#deploying-the-main-kustomize-project-in-the-cluster)
 - [Finishing Forgejo installation](#finishing-forgejo-installation)
 - [Security considerations in Forgejo](#security-considerations-in-forgejo)
 - [Forgejo platform's Kustomize project attached to this guide series](#forgejo-platforms-kustomize-project-attached-to-this-guide-series)
@@ -331,13 +333,17 @@ Once you have all the remaining elements declared, create the main Kustomize pro
 
     - Under `resources` are listed all the resources created in this part of the procedure, together with the Kustomize subprojects of this Forgejo platform's main components.
 
-3. Do not forget to check the Kustomize YAML output for this project. Since this particular output is going to be quite long, you may find more convenient to dump it into a file such as `forgejo.k.output.yaml` to review it later:
+### Validating the Kustomize YAML output
+
+Do not forget to review the Kustomize YAML output for this Forgejo project:
+
+1. Since this particular output is going to be quite long, you may find more convenient to dump it into a file such as `forgejo.k.output.yaml` to review it later:
 
     ~~~sh
     $ kubectl kustomize $HOME/k8sprjs/forgejo > forgejo.k.output.yaml
     ~~~
 
-4. Open the `forgejo.k.output.yaml` file and compare it with the following one:
+2. Open the `forgejo.k.output.yaml` file and compare it with the following one:
 
     ~~~yaml
     apiVersion: v1
@@ -442,7 +448,7 @@ Once you have all the remaining elements declared, create the main Kustomize pro
       FORGEJO__cache__ADAPTER: redis
       FORGEJO__cache__ENABLED: "true"
       FORGEJO__database__DB_TYPE: postgres
-      FORGEJO__database__HOST: db-postgresql.forgejo:5432
+      FORGEJO__database__HOST: db-postgresql.forgejo.svc.homelab.cluster.:5432
       FORGEJO__database__SSL_MODE: disable
       FORGEJO__metrics__ENABLED: "true"
       FORGEJO__queue__QUEUE_NAME: _queue_forgejo
@@ -458,7 +464,7 @@ Once you have all the remaining elements declared, create the main Kustomize pro
       labels:
         app: server-forgejo
         platform: forgejo
-      name: server-forgejo-env-vars-8bbhc794fb
+      name: server-forgejo-env-vars-bht2m829kt
       namespace: forgejo
     ---
     apiVersion: v1
@@ -1004,14 +1010,14 @@ Once you have all the remaining elements declared, create the main Kustomize pro
                   key: forgejo-username
                   name: db-postgresql-config-58kdgmtt5g
             - name: FORGEJO__cache__HOST
-              value: redis://$(FORGEJO_VALKEY_USERNAME):$(FORGEJO_VALKEY_PASSWORD)@cache-valkey.forgejo:6379/0?pool_size=100&idle_timeout=180s&prefix=forgejo%3A
+              value: redis://$(FORGEJO_VALKEY_USERNAME):$(FORGEJO_VALKEY_PASSWORD)@cache-valkey.forgejo.svc.homelab.cluster.:6379/0?pool_size=100&idle_timeout=180s&prefix=forgejo%3A
             - name: FORGEJO__session__PROVIDER_CONFIG
               value: $(FORGEJO__cache__HOST)
             - name: FORGEJO__queue__CONN_STR
               value: $(FORGEJO__cache__HOST)
             envFrom:
             - configMapRef:
-                name: server-forgejo-env-vars-8bbhc794fb
+                name: server-forgejo-env-vars-bht2m829kt
             - secretRef:
                 name: server-forgejo-valkey-user-5k8kmm9bk4
             image: codeberg.org/forgejo/forgejo:14.0-rootless
@@ -1022,7 +1028,7 @@ Once you have all the remaining elements declared, create the main Kustomize pro
                 - name: X-Forwarded-Proto
                   value: https
                 - name: Host
-                  value: server-forgejo.forgejo
+                  value: forgejo.homelab.cloud
                 path: /api/healthz
                 port: server
               initialDelaySeconds: 120
@@ -1042,7 +1048,7 @@ Once you have all the remaining elements declared, create the main Kustomize pro
                 - name: X-Forwarded-Proto
                   value: https
                 - name: Host
-                  value: server-forgejo.forgejo
+                  value: forgejo.homelab.cloud
                 path: /api/healthz
                 port: server
               initialDelaySeconds: 100
@@ -1184,13 +1190,17 @@ Once you have all the remaining elements declared, create the main Kustomize pro
     > **Kustomize will not change the names if they have been put in non-standard Kubernetes parameters**\
     > It might also be possible that Kustomize may not even touch values in certain particular standard ones.
 
-5. If you find the previous YAML satisfying, apply the Forgejo platform Kustomize project to your cluster:
+## Deploying the main Kustomize project in the cluster
+
+After validating the YAML output from your Kustomize project, deploy the Forgejo platform in your Kubernetes cluster:
+
+1. Apply with `kubectl` the Forgejo platform Kustomize project to your cluster:
 
     ~~~sh
     $ kubectl apply -k $HOME/k8sprjs/forgejo
     ~~~
 
-6. Just after applying the Kustomize project, monitor the deployment progress of your Forgejo platform:
+2. Just after applying the Kustomize project, monitor the deployment progress of your Forgejo platform:
 
     ~~~sh
     $ kubectl -n forgejo get pv,pvc,cm,secret,deployment,replicaset,statefulset,pod,svc -o wide
@@ -1275,7 +1285,7 @@ After deploying the whole Forgejo platform in your Kubernetes cluster, you still
     >
     > Also realize that it does not present you with all the configuration options Forgejo has, only a few selected ones. For instance, this installation form does not offer you the possibility of configuring the connection with the cache server.
 
-2. In the `Database Settings` block, ensure that the values presented there correpond with the ones you configured to connect Forgejo with its PostgreSQL instance:
+2. In the `Database Settings` block, ensure that the values set there correpond with the ones you configured to connect Forgejo with its PostgreSQL instance:
 
     ![Database Settings fields from Forgejo server Initial Configuration form](images/g034/forgejo_initial_configuration_db_settings.webp "Database Settings fields from Forgejo server Initial Configuration form")
 
@@ -1283,7 +1293,7 @@ After deploying the whole Forgejo platform in your Kubernetes cluster, you still
 
     ![General Settings fields from Forgejo server Initial Configuration form](images/g034/forgejo_initial_configuration_general_settings.webp "General Settings fields from Forgejo server Initial Configuration form")
 
-    In this section review the fields `Server domain` and `Base URL` to see if they have the domain you specified in [your configuration for the Forgejo server deployment](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%204%20-%20Forgejo%20server.md#non-secret-forgejo-configuration-parameters). All the other fields have default values or have been set the way they are in the rootless Forgejo container image.
+    Review in this section the fields `Server domain` and `Base URL`. Ensure they have the domain you specified in [your configuration for the Forgejo server deployment](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%204%20-%20Forgejo%20server.md#non-secret-forgejo-configuration-parameters). All the other fields have default values or have been set the way they are in the rootless Forgejo container image.
 
 4. The `Optional Settings` block is divided in three folded sections:
 
@@ -1325,9 +1335,9 @@ With your Forgejo platform running, there are a few particular things you might 
 
    - Never use this administrator user for everyday Forgejo usage (like for uploading Git repositories).
 
-2. Create a new normal user for regular usage of your Forgejo platform:
+2. Create a new regular user for regular usage of your Forgejo platform:
 
-   - Enable 2FA to this normal user.
+   - Enable 2FA to this regular user.
    - Assign its own SSH and GPG keys to this user, which are used for Git authentication and commit signing respectively.
 
 ## Forgejo platform's Kustomize project attached to this guide series

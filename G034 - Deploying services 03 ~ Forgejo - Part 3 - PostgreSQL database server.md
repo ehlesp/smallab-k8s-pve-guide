@@ -10,6 +10,7 @@
 - [PostgreSQL persistent storage claim](#postgresql-persistent-storage-claim)
 - [PostgreSQL StatefulSet](#postgresql-statefulset)
 - [PostgreSQL Service](#postgresql-service)
+  - [Valkey Service's FQDN](#valkey-services-fqdn)
 - [PostgreSQL Kustomize project](#postgresql-kustomize-project)
   - [Validating the Kustomize YAML output](#validating-the-kustomize-yaml-output)
 - [Do not deploy this PostgreSQL project on its own](#do-not-deploy-this-postgresql-project-on-its-own)
@@ -522,7 +523,15 @@ You need a `Service` named `db-postgresql` for the previous `StatefulSet`:
         name: metrics
     ~~~
 
-    This is just another `ClusterIP` service, like the one you have [declared previously for the Valkey server](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-service). And, like that Valkey service, you will have to invoke this PostgreSQL service by its cluster FQDN which will be `db-postgresql.forgejo`.
+    This is just another `ClusterIP` service, like the one you have [declared previously for the Valkey server](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-service).
+
+### Valkey Service's FQDN
+
+Like the Valkey service, this PostgreSQL service will be deployed in the `forgejo` namespace. Therefore, its absolute FQDN will be:
+
+~~~txt
+db-postgresql.forgejo.svc.homelab.cluster.
+~~~
 
 ## PostgreSQL Kustomize project
 

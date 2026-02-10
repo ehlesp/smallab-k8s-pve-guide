@@ -9,6 +9,7 @@
 - [Valkey persistent storage claim](#valkey-persistent-storage-claim)
 - [Valkey StatefulSet](#valkey-statefulset)
 - [Valkey Service](#valkey-service)
+  - [Valkey Service's FQDN](#valkey-services-fqdn)
 - [Valkey Kustomize project](#valkey-kustomize-project)
   - [Validating the Kustomize YAML output](#validating-the-kustomize-yaml-output)
 - [Do not deploy this Valkey project on its own](#do-not-deploy-this-valkey-project-on-its-own)
@@ -450,18 +451,36 @@ You have declared the pod that will execute the containers running the Valkey se
       By default, any `Service` resource is of type `ClusterIP`, meaning that the service is only reachable from within the cluster's internal network. You can omit this parameter altogether from the YAML when you are using this default type.
 
     - `spec.clusterIP`\
-      `StatefulSets` are limited to use [headless services](https://kubernetes.io/docs/concepts/services-networking/service/#headless-services), which are services with no **cluster** IP assigned (which explains the `None` value here). The Valkey service becomes reachable within the cluster through a predictable _Fully Qualified Domain Name_ (_FQDN_) or hostname granted by the DNS service (CoreDNS in your K3s cluster) already running in the Kubernetes cluster. This FQDN is constructed following this template:
-
-      ~~~txt
-      <service name>.<namespace>
-      ~~~
-
-      For the Valkey service, the FQDN would be `cache-valkey.ghost`. You will use it to make the Ghost platform connect with its Valkey instance.
+      `StatefulSets` are limited to use [headless services](https://kubernetes.io/docs/concepts/services-networking/service/#headless-services), which are services with no **cluster** IP assigned (which explains the `None` value here). These type of services are reachable by the FQDN they have assigned within the cluster. [Learn more about this FQDN in the next subsection](#valkey-services-fqdn).
 
     - `spec.ports`\
       Describe the ports open in this service. Notice how I made the `name` and `port` on each port of this `Service` to match the ones already defined for the containers in the [previous `StatefulSet` resource](#valkey-statefulset).
 
       Also see how the `targetPort` parameters invoke the ports in the containers by name, not by number. This technique allows you to change the port number in the containers without affecting this `Service` declaration.
+
+### Valkey Service's FQDN
+
+[Kubernetes assigns to each pod and service a DNS record or predictable _Fully Qualified Domain Name_ (_FQDN_)](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/). This is particularly important to reach headless services such as the one for your Valkey server instance. The predictable FQDN for services is constructed following this template:
+
+~~~txt
+<service name>.<namespace>.svc.<cluster domain name>
+~~~
+
+The placeholders between `<>` in the template are rather self-explanatory:
+
+- The `<service name>` refers to the string specified in the `metadata.name` attribute of the `Service` declaration. In the case of the Valkey service is `cache-valkey`.
+
+- The `<namespace>` for the whole Ghost setup will be `ghost`.
+
+- The `<cluster domain name>` in a Kubernetes cluster is `cluster.local` by default. But remember that this guide changed this value into `homelab.cluster` [by setting the `cluster-domain` parameter in the K3s server node's configuration](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#the-k3sserver01-nodes-configyaml-file).
+
+Therefore, the Valkey headless service will have the following absolute FQDN:
+
+~~~txt
+cache-valkey.ghost.svc.homelab.cluster.
+~~~
+
+An absolute FQDN is one with the final dot at its end, indicating that it is the complete DNS record and there is no need to initiate a DNS search. Using absolute FQDNs improves the cluster's performance by avoiding DNS searches when connecting with pods or services. You will use it to make the Ghost platform connect with its Valkey server.
 
 ## Valkey Kustomize project
 
@@ -819,6 +838,7 @@ This Valkey setup is missing one critical element, the persistent volume it need
 
 - [Services, Load Balancing, and Networking](https://kubernetes.io/docs/concepts/services-networking/)
   - [Service. Headless Services](https://kubernetes.io/docs/concepts/services-networking/service/#headless-services)
+  - [DNS for Services and Pods](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/)
 
 ### Other Kubernetes-related contents
 

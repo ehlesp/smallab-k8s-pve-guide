@@ -10,6 +10,7 @@
   - [Persistent storage claim for users' Git repositories and LFS contents](#persistent-storage-claim-for-users-git-repositories-and-lfs-contents)
 - [Forgejo server StatefulSet](#forgejo-server-statefulset)
 - [Forgejo server Service](#forgejo-server-service)
+  - [Forgejo Service's FQDN](#forgejo-services-fqdn)
 - [Forgejo Kustomize project](#forgejo-kustomize-project)
   - [Validating the Kustomize YAML output](#validating-the-kustomize-yaml-output)
 - [Do not deploy this Forgejo server project on its own](#do-not-deploy-this-forgejo-server-project-on-its-own)
@@ -59,7 +60,7 @@ See here how to configure as environment variables, and in a separated propertie
     FORGEJO__server__HTTP_ADDR=0.0.0.0
     FORGEJO__server__LFS_START_SERVER=true
     FORGEJO__metrics__ENABLED=true
-    FORGEJO__database__HOST=db-postgresql.forgejo:5432
+    FORGEJO__database__HOST=db-postgresql.forgejo.svc.homelab.cluster.:5432
     FORGEJO__database__DB_TYPE=postgres
     FORGEJO__database__SSL_MODE=disable
     FORGEJO__cache__ENABLED=true
@@ -86,7 +87,7 @@ See here how to configure as environment variables, and in a separated propertie
       For enabling the Prometheus metrics feature included in the Forgejo server.
 
     - `FORGEJO__database__HOST`\
-      The host address and port of the database server this Forgejo server has to connect to. The value in this case [corresponds to the hostname and `server` port of the PostgreSQL `Service` created in the previous part](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%203%20-%20PostgreSQL%20database%20server.md#postgresql-service).
+      The host address and port of the database server this Forgejo server has to connect to. Its value here [is the combination of the absolute FQDN with the `server` port number of the PostgreSQL `Service` created in the previous part](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%203%20-%20PostgreSQL%20database%20server.md#postgresql-service).
 
     - `FORGEJO__database__DB_TYPE`\
       Indicates the type of database Forgejo must use.
@@ -298,7 +299,7 @@ Since Forgejo is a server that stores data, it is better to deploy it with a `St
                 - name: X-Forwarded-Proto
                   value: https
                 - name: Host
-                  value: server-forgejo.forgejo
+                  value: forgejo.homelab.cloud
               initialDelaySeconds: 100
               timeoutSeconds: 5
               periodSeconds: 10
@@ -312,7 +313,7 @@ Since Forgejo is a server that stores data, it is better to deploy it with a `St
                 - name: X-Forwarded-Proto
                   value: https
                 - name: Host
-                  value: server-forgejo.forgejo
+                  value: forgejo.homelab.cloud
               initialDelaySeconds: 120
               timeoutSeconds: 5
               periodSeconds: 10
@@ -345,7 +346,7 @@ Since Forgejo is a server that stores data, it is better to deploy it with a `St
                   name: db-postgresql-config
                   key: forgejo-username
             - name: FORGEJO__cache__HOST
-              value: 'redis://$(FORGEJO_VALKEY_USERNAME):$(FORGEJO_VALKEY_PASSWORD)@cache-valkey.forgejo:6379/0?pool_size=100&idle_timeout=180s&prefix=forgejo%3A'
+              value: 'redis://$(FORGEJO_VALKEY_USERNAME):$(FORGEJO_VALKEY_PASSWORD)@cache-valkey.forgejo.svc.homelab.cluster.:6379/0?pool_size=100&idle_timeout=180s&prefix=forgejo%3A'
             - name: FORGEJO__session__PROVIDER_CONFIG
               value: $(FORGEJO__cache__HOST)
             - name: FORGEJO__queue__CONN_STR
@@ -439,7 +440,7 @@ Since Forgejo is a server that stores data, it is better to deploy it with a `St
             > **Remember to URL encode any special character you may have in these variables**\
             > Otherwise, you may end up being unable to connect your Forgejo server with your Valkey instance.
 
-          - `cache-valkey.forgejo:6379` indicates the hostname and port of the Valkey `Service` to connect to.
+          - `cache-valkey.forgejo.svc.homelab.cluster.:6379` specifies the absolute FQDN and the `server` port number of [the Valkey `Service`](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-service).
 
           - The `/0` specifies which logic database to use in the Valkey instance.
 
@@ -514,13 +515,21 @@ Your Forgejo server's `StatefulSet` needs a `Service` called `server-ghost` to w
         name: ssh
     ~~~
 
-    Like the services for the other components, this `Service` for the Forgejo server does not have an specific IP permanently assigned in the Kubernetes cluster. Since the namespace for the complete Forgejo deployment is going to be `forgejo`, the hostname to reach this service will be `server-forgejo.forgejo`. Also notice that:
+    Like the services for the other components, this `Service` for the Forgejo server does not have an specific IP permanently assigned in the Kubernetes cluster:
 
     - In the `metadata.annotations` section, there is a new `prometheus.io/path` entry you have not seen in the other Kubernetes services you have declared up till now. This parameter is the relative URL to the Prometheus metrics endpoint. By default this path is expected to be located at `/metrics`, as it is in this case. If the Prometheus metrics had been served by another endpoint, you would have been forced to specify its relative path in this annotation entry.
 
     - The port `3000` is used both for regular access into the Forgejo server and for scraping the server's Prometheus metrics endpoint.
 
     - The `ssh` port declared in this `Service` is the standard SSH `22` one, but it connects with the `ssh` `2222` port previously [declared in the Forgejo server `StatefulSet`](#forgejo-server-statefulset).
+
+### Forgejo Service's FQDN
+
+The absolute FQDN for the Forgejo headless service deployed in the `forgejo` namespace will be:
+
+~~~txt
+server-forgejo.forgejo.svc.homelab.cluster.
+~~~
 
 ## Forgejo Kustomize project
 
@@ -600,7 +609,7 @@ At this point, you have completed the Forgejo server Kustomize subproject. It is
       FORGEJO__cache__ADAPTER: redis
       FORGEJO__cache__ENABLED: "true"
       FORGEJO__database__DB_TYPE: postgres
-      FORGEJO__database__HOST: db-postgresql.forgejo:5432
+      FORGEJO__database__HOST: db-postgresql.forgejo.svc.homelab.cluster.:5432
       FORGEJO__database__SSL_MODE: disable
       FORGEJO__metrics__ENABLED: "true"
       FORGEJO__queue__QUEUE_NAME: _queue_forgejo
@@ -615,7 +624,7 @@ At this point, you have completed the Forgejo server Kustomize subproject. It is
     metadata:
       labels:
         app: server-forgejo
-      name: server-forgejo-env-vars-8bbhc794fb
+      name: server-forgejo-env-vars-bht2m829kt
     ---
     apiVersion: v1
     data:
@@ -724,14 +733,14 @@ At this point, you have completed the Forgejo server Kustomize subproject. It is
                   key: forgejo-username
                   name: db-postgresql-config
             - name: FORGEJO__cache__HOST
-              value: redis://$(FORGEJO_VALKEY_USERNAME):$(FORGEJO_VALKEY_PASSWORD)@cache-valkey.forgejo:6379/0?pool_size=100&idle_timeout=180s&prefix=forgejo%3A
+              value: redis://$(FORGEJO_VALKEY_USERNAME):$(FORGEJO_VALKEY_PASSWORD)@cache-valkey.forgejo.svc.homelab.cluster.:6379/0?pool_size=100&idle_timeout=180s&prefix=forgejo%3A
             - name: FORGEJO__session__PROVIDER_CONFIG
               value: $(FORGEJO__cache__HOST)
             - name: FORGEJO__queue__CONN_STR
               value: $(FORGEJO__cache__HOST)
             envFrom:
             - configMapRef:
-                name: server-forgejo-env-vars-8bbhc794fb
+                name: server-forgejo-env-vars-bht2m829kt
             - secretRef:
                 name: server-forgejo-valkey-user-5k8kmm9bk4
             image: codeberg.org/forgejo/forgejo:14.0-rootless
@@ -742,7 +751,7 @@ At this point, you have completed the Forgejo server Kustomize subproject. It is
                 - name: X-Forwarded-Proto
                   value: https
                 - name: Host
-                  value: server-forgejo.forgejo
+                  value: forgejo.homelab.cloud
                 path: /api/healthz
                 port: server
               initialDelaySeconds: 120
@@ -762,7 +771,7 @@ At this point, you have completed the Forgejo server Kustomize subproject. It is
                 - name: X-Forwarded-Proto
                   value: https
                 - name: Host
-                  value: server-forgejo.forgejo
+                  value: forgejo.homelab.cloud
                 path: /api/healthz
                 port: server
               initialDelaySeconds: 100

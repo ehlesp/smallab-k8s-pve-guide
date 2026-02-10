@@ -8,6 +8,7 @@
 - [Ghost server persistent storage claim](#ghost-server-persistent-storage-claim)
 - [Ghost server StatefulSet](#ghost-server-statefulset)
 - [Ghost server Service](#ghost-server-service)
+  - [Ghost Service's FQDN](#ghost-services-fqdn)
 - [Ghost server Kustomize project](#ghost-server-kustomize-project)
   - [Validating the Kustomize YAML output](#validating-the-kustomize-yaml-output)
 - [Do not deploy this Ghost server project on its own](#do-not-deploy-this-ghost-server-project-on-its-own)
@@ -97,7 +98,7 @@ The whole configuration of Ghost goes into a single JSON file. Among other param
       "adapters": {
         "cache": {
           "Redis": {
-            "host": "cache-valkey.ghost",
+            "host": "cache-valkey.ghost.svc.homelab.cluster.",
             "port": 6379,
             "username": "ghostcache",
             "password": "pAS2wORT_f0r_T#e_Gh05T_Us3R",
@@ -168,7 +169,7 @@ The whole configuration of Ghost goes into a single JSON file. Among other param
       "database": {
         "client": "mysql",
         "connection": {
-          "host": "db-mariadb.ghost",
+          "host": "db-mariadb.ghost.svc.homelab.cluster.",
           "user": "ghostdb",
           "password": "l0nG.Pl4in_T3xt_sEkRet_p4s5wORD-FoR_6h0sT_uZ3r!",
           "database": "ghost-db",
@@ -223,7 +224,7 @@ The whole configuration of Ghost goes into a single JSON file. Among other param
 
         Among all the parameters configuring the connection with the Valkey instance, pay attention to the `keyPrefix` entry. It has the same `ghost:` prefix that was configured [in the ACL rule for the `ghostcache` user in the Valkey setup](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-acl-user-list).
 
-        Also notice how the `host` value is the internal cluster hostname of the Valkey service that will be running in the setup.
+        Also notice how the `host` value is the absolute FQDN of the Valkey headless service that will be running in the setup.
 
       - `gscan`, `imageSizes`, `linkRedirectsPublic`, `postsPublic`, `stats`, `tagsPublic`\
         These blocks enable adapters for caching particular contents that Ghost can handle. Notice that all of them inherit the configuration from the `Redis` adapter, but have their own particular settings in some specific parameters like the `keyPrefix` (although while keeping the `ghost:` prefix).
@@ -239,7 +240,7 @@ The whole configuration of Ghost goes into a single JSON file. Among other param
       This is another configuration section not properly explained in the Ghost documentation. Here it is used only to enable certain cache features already configured in the previous `adapters.cache` block.
 
     - `database`\
-      This is the section where to configure the connection with your MariaDB instance. In particular, see how the host value points to the internal cluster hostname of the MariaDB service that will be running in this deployment.
+      This is the section where to configure the connection with your MariaDB instance. In particular, see how the host value points to the absolute FQDN of the MariaDB headless service that will be running in this deployment.
 
     - `process`\
       This parameter allows to pick which process manager to use for handling the Ghost server process, and supports only the `local` and `systemd` options. Beyond this, there is no further explanation about this parameter as you can see [in the _Service options_ section found here](https://docs.ghost.org/ghost-cli#options).
@@ -568,9 +569,19 @@ Your Ghost server's `StatefulSet` requires a `Service` called `server-ghost` to 
         name: server
     ~~~
 
-    This `Service`'s `type` is `ClusterIP` and has no `clusterIP` set. Therefore, this service should be reached only by its internal hostname in the Kubernetes cluster. Knowing that the namespace for the whole Ghost setup will be `ghost`, the hostname will be `server-ghost.ghost`.
+    This `Service`'s `type` is `ClusterIP` and has no `clusterIP` set. Therefore, this service should be reached only by its absolute FQDN within the Kubernetes cluster.
 
     Since there is no Prometheus metric exporter nor a port through which the Ghost server could provide such metrics, there is only one port declared in this `Service` resource that redirects all traffic to the Ghost server container's `server` port. Notice that the port number specified here is the same one set in the container, which is the default Ghost server's `2368`.
+
+### Ghost Service's FQDN
+
+The absolute FQDN for the Ghost headless service will be:
+
+~~~txt
+server-ghost.ghost.svc.homelab.cluster.
+~~~
+
+This guide will not use the Ghost service FQDN, but knowing it beforehand could be useful if one day you deploy an app in your K3s cluster that can connect to your Ghost server.
 
 ## Ghost server Kustomize project
 
@@ -627,7 +638,7 @@ With all the necessary elements for your Ghost server component declared in thei
 
 As with the other components, you should check the output generated by the Ghost server's Kustomize subproject:
 
-1. Generate the YAML with `kubectl kustomize` as usual:
+1. Obtain the YAML with `kubectl kustomize` as usual:
 
     ~~~sh
     $ kubectl kustomize $HOME/k8sprjs/ghost/components/server-ghost | less
@@ -660,50 +671,51 @@ As with the other components, you should check the output generated by the Ghost
         RoIjogewogICAgICAgICJ1c2VyIjogInlvdXJfZ2hvc3RfZW1haWxAZ21haWwuY29tIiwK
         ICAgICAgICAicGFzcyI6ICJZMHVyXzZoTzV0X2VNNDFsX1A0U3N2dm9SZCIKICAgICAgfQ
         ogICAgfQogIH0sCiAgImFkYXB0ZXJzIjogewogICAgImNhY2hlIjogewogICAgICAiUmVk
-        aXMiOiB7CiAgICAgICAgImhvc3QiOiAiY2FjaGUtdmFsa2V5Lmdob3N0IiwKICAgICAgIC
-        AicG9ydCI6IDYzNzksCiAgICAgICAgInVzZXJuYW1lIjogImdob3N0Y2FjaGUiLAogICAg
-        ICAgICJwYXNzd29yZCI6ICJwQVMyd09SVF9mMHJfVCNlX0doMDVUX1VzM1IiLAogICAgIC
-        AgICJrZXlQcmVmaXgiOiAiZ2hvc3Q6IiwKICAgICAgICAidHRsIjogMzYwMCwKICAgICAg
-        ICAicmV1c2VDb25uZWN0aW9uIjogdHJ1ZSwKICAgICAgICAicmVmcmVzaEFoZWFkRmFjdG
-        9yIjogMC44LAogICAgICAgICJnZXRUaW1lb3V0TWlsbGlzZWNvbmRzIjogNTAwMCwKICAg
-        ICAgICAic3RvcmVDb25maWciOiB7CiAgICAgICAgICAicmV0cnlDb25uZWN0U2Vjb25kcy
-        I6IDEwLAogICAgICAgICAgImxhenlDb25uZWN0IjogdHJ1ZSwKICAgICAgICAgICJlbmFi
-        bGVPZmZsaW5lUXVldWUiOiB0cnVlLAogICAgICAgICAgIm1heFJldHJpZXNQZXJSZXF1ZX
-        N0IjogMwogICAgICAgIH0KICAgICAgfSwKICAgICAgImdzY2FuIjogewogICAgICAgICJh
-        ZGFwdGVyIjogIlJlZGlzIiwKICAgICAgICAidHRsIjogNDMyMDAsCiAgICAgICAgInJlZn
-        Jlc2hBaGVhZEZhY3RvciI6IDAuOSwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0Omdz
-        Y2FuLiIKICAgICAgfSwKICAgICAgImltYWdlU2l6ZXMiOiB7CiAgICAgICAgImFkYXB0ZX
-        IiOiAiUmVkaXMiLAogICAgICAgICJ0dGwiOiA4NjQwMCwKICAgICAgICAicmVmcmVzaEFo
-        ZWFkRmFjdG9yIjogMC45NSwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0OmltYWdlU2
-        l6ZXMuIgogICAgICB9LAogICAgICAibGlua1JlZGlyZWN0c1B1YmxpYyI6IHsKICAgICAg
-        ICAiYWRhcHRlciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6IDcyMDAsCiAgICAgICAgIn
-        JlZnJlc2hBaGVhZEZhY3RvciI6IDAuOSwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0
-        OmxpbmtSZWRpcmVjdHNQdWJsaWMuIgogICAgICB9LAogICAgICAicG9zdHNQdWJsaWMiOi
-        B7CiAgICAgICAgImFkYXB0ZXIiOiAiUmVkaXMiLAogICAgICAgICJ0dGwiOiAxODAwLAog
-        ICAgICAgICJyZWZyZXNoQWhlYWRGYWN0b3IiOiAwLjcsCiAgICAgICAgImtleVByZWZpeC
-        I6ICJnaG9zdDpwb3N0c1B1YmxpYy4iCiAgICAgIH0sCiAgICAgICJzdGF0cyI6IHsKICAg
-        ICAgICAiYWRhcHRlciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6IDkwMCwKICAgICAgIC
-        AicmVmcmVzaEFoZWFkRmFjdG9yIjogMC44LAogICAgICAgICJrZXlQcmVmaXgiOiAiZ2hv
-        c3Q6c3RhdHMuIgogICAgICB9LAogICAgICAidGFnc1B1YmxpYyI6IHsKICAgICAgICAiYW
-        RhcHRlciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6IDM2MDAsCiAgICAgICAgInJlZnJl
-        c2hBaGVhZEZhY3RvciI6IDAuOCwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0OnRhZ3
-        NQdWJsaWMuIgogICAgICB9CiAgICB9CiAgfSwKICAiaG9zdFNldHRpbmdzIjogewogICAg
-        ImxpbmtSZWRpcmVjdHNQdWJsaWNDYWNoZSI6IHsKICAgICAgImVuYWJsZWQiOiB0cnVlCi
-        AgICB9LAogICAgInBvc3RzUHVibGljQ2FjaGUiOiB7CiAgICAgICJlbmFibGVkIjogdHJ1
-        ZQogICAgfSwKICAgICJzdGF0c0NhY2hlIjogewogICAgICAiZW5hYmxlZCI6IHRydWUKIC
-        AgIH0sCiAgICAidGFnc1B1YmxpY0NhY2hlIjogewogICAgICAiZW5hYmxlZCI6IHRydWUK
-        ICAgIH0KICB9LAogICJkYXRhYmFzZSI6IHsKICAgICJjbGllbnQiOiAibXlzcWwiLAogIC
-        AgImNvbm5lY3Rpb24iOiB7CiAgICAgICJob3N0IjogImRiLW1hcmlhZGIuZ2hvc3QiLAog
-        ICAgICAidXNlciI6ICJnaG9zdGRiIiwKICAgICAgInBhc3N3b3JkIjogImwwbkcuUGw0aW
-        5fVDN4dF9zRWtSZXRfcDRzNXdPUkQtRm9SXzZoMHNUX3VaM3IhIiwKICAgICAgImRhdGFi
-        YXNlIjogImdob3N0LWRiIiwKICAgICAgInBvcnQiOiAiMzMwNiIKICAgIH0KICB9LAogIC
-        Jwcm9jZXNzIjogImxvY2FsIiwKICAicGF0aHMiOiB7CiAgICAiY29udGVudFBhdGgiOiAi
-        L2hvbWUvbm9ucm9vdC9hcHAvZ2hvc3QvY29udGVudCIKICB9Cn0=
+        aXMiOiB7CiAgICAgICAgImhvc3QiOiAiY2FjaGUtdmFsa2V5Lmdob3N0LnN2Yy5ob21lbG
+        FiLmNsdXN0ZXIuIiwKICAgICAgICAicG9ydCI6IDYzNzksCiAgICAgICAgInVzZXJuYW1l
+        IjogImdob3N0Y2FjaGUiLAogICAgICAgICJwYXNzd29yZCI6ICJwQVMyd09SVF9mMHJfVC
+        NlX0doMDVUX1VzM1IiLAogICAgICAgICJrZXlQcmVmaXgiOiAiZ2hvc3Q6IiwKICAgICAg
+        ICAidHRsIjogMzYwMCwKICAgICAgICAicmV1c2VDb25uZWN0aW9uIjogdHJ1ZSwKICAgIC
+        AgICAicmVmcmVzaEFoZWFkRmFjdG9yIjogMC44LAogICAgICAgICJnZXRUaW1lb3V0TWls
+        bGlzZWNvbmRzIjogNTAwMCwKICAgICAgICAic3RvcmVDb25maWciOiB7CiAgICAgICAgIC
+        AicmV0cnlDb25uZWN0U2Vjb25kcyI6IDEwLAogICAgICAgICAgImxhenlDb25uZWN0Ijog
+        dHJ1ZSwKICAgICAgICAgICJlbmFibGVPZmZsaW5lUXVldWUiOiB0cnVlLAogICAgICAgIC
+        AgIm1heFJldHJpZXNQZXJSZXF1ZXN0IjogMwogICAgICAgIH0KICAgICAgfSwKICAgICAg
+        ImdzY2FuIjogewogICAgICAgICJhZGFwdGVyIjogIlJlZGlzIiwKICAgICAgICAidHRsIj
+        ogNDMyMDAsCiAgICAgICAgInJlZnJlc2hBaGVhZEZhY3RvciI6IDAuOSwKICAgICAgICAi
+        a2V5UHJlZml4IjogImdob3N0OmdzY2FuLiIKICAgICAgfSwKICAgICAgImltYWdlU2l6ZX
+        MiOiB7CiAgICAgICAgImFkYXB0ZXIiOiAiUmVkaXMiLAogICAgICAgICJ0dGwiOiA4NjQw
+        MCwKICAgICAgICAicmVmcmVzaEFoZWFkRmFjdG9yIjogMC45NSwKICAgICAgICAia2V5UH
+        JlZml4IjogImdob3N0OmltYWdlU2l6ZXMuIgogICAgICB9LAogICAgICAibGlua1JlZGly
+        ZWN0c1B1YmxpYyI6IHsKICAgICAgICAiYWRhcHRlciI6ICJSZWRpcyIsCiAgICAgICAgIn
+        R0bCI6IDcyMDAsCiAgICAgICAgInJlZnJlc2hBaGVhZEZhY3RvciI6IDAuOSwKICAgICAg
+        ICAia2V5UHJlZml4IjogImdob3N0OmxpbmtSZWRpcmVjdHNQdWJsaWMuIgogICAgICB9LA
+        ogICAgICAicG9zdHNQdWJsaWMiOiB7CiAgICAgICAgImFkYXB0ZXIiOiAiUmVkaXMiLAog
+        ICAgICAgICJ0dGwiOiAxODAwLAogICAgICAgICJyZWZyZXNoQWhlYWRGYWN0b3IiOiAwLj
+        csCiAgICAgICAgImtleVByZWZpeCI6ICJnaG9zdDpwb3N0c1B1YmxpYy4iCiAgICAgIH0s
+        CiAgICAgICJzdGF0cyI6IHsKICAgICAgICAiYWRhcHRlciI6ICJSZWRpcyIsCiAgICAgIC
+        AgInR0bCI6IDkwMCwKICAgICAgICAicmVmcmVzaEFoZWFkRmFjdG9yIjogMC44LAogICAg
+        ICAgICJrZXlQcmVmaXgiOiAiZ2hvc3Q6c3RhdHMuIgogICAgICB9LAogICAgICAidGFnc1
+        B1YmxpYyI6IHsKICAgICAgICAiYWRhcHRlciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6
+        IDM2MDAsCiAgICAgICAgInJlZnJlc2hBaGVhZEZhY3RvciI6IDAuOCwKICAgICAgICAia2
+        V5UHJlZml4IjogImdob3N0OnRhZ3NQdWJsaWMuIgogICAgICB9CiAgICB9CiAgfSwKICAi
+        aG9zdFNldHRpbmdzIjogewogICAgImxpbmtSZWRpcmVjdHNQdWJsaWNDYWNoZSI6IHsKIC
+        AgICAgImVuYWJsZWQiOiB0cnVlCiAgICB9LAogICAgInBvc3RzUHVibGljQ2FjaGUiOiB7
+        CiAgICAgICJlbmFibGVkIjogdHJ1ZQogICAgfSwKICAgICJzdGF0c0NhY2hlIjogewogIC
+        AgICAiZW5hYmxlZCI6IHRydWUKICAgIH0sCiAgICAidGFnc1B1YmxpY0NhY2hlIjogewog
+        ICAgICAiZW5hYmxlZCI6IHRydWUKICAgIH0KICB9LAogICJkYXRhYmFzZSI6IHsKICAgIC
+        JjbGllbnQiOiAibXlzcWwiLAogICAgImNvbm5lY3Rpb24iOiB7CiAgICAgICJob3N0Ijog
+        ImRiLW1hcmlhZGIuZ2hvc3Quc3ZjLmhvbWVsYWIuY2x1c3Rlci4iLAogICAgICAidXNlci
+        I6ICJnaG9zdGRiIiwKICAgICAgInBhc3N3b3JkIjogImwwbkcuUGw0aW5fVDN4dF9zRWtS
+        ZXRfcDRzNXdPUkQtRm9SXzZoMHNUX3VaM3IhIiwKICAgICAgImRhdGFiYXNlIjogImdob3
+        N0LWRiIiwKICAgICAgInBvcnQiOiAiMzMwNiIKICAgIH0KICB9LAogICJwcm9jZXNzIjog
+        ImxvY2FsIiwKICAicGF0aHMiOiB7CiAgICAiY29udGVudFBhdGgiOiAiL2hvbWUvbm9ucm
+        9vdC9hcHAvZ2hvc3QvY29udGVudCIKICB9Cn0=
     kind: Secret
     metadata:
       labels:
         app: server-ghost
-      name: server-ghost-config-526bm4m7t9
+      name: server-ghost-config-c4td5f9fb9
     type: Opaque
     ---
     apiVersion: v1
@@ -863,7 +875,7 @@ As with the other components, you should check the output generated by the Ghost
               items:
               - key: config.production.json
                 path: config.production.json
-              secretName: server-ghost-config-526bm4m7t9
+              secretName: server-ghost-config-c4td5f9fb9
           - emptyDir:
               sizeLimit: 64Mi
             name: tmp

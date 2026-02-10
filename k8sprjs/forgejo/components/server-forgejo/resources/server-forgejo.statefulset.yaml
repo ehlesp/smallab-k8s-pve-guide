@@ -72,7 +72,7 @@ spec:
             - name: X-Forwarded-Proto
               value: https
             - name: Host
-              value: server-forgejo.forgejo
+              value: forgejo.homelab.cloud
           initialDelaySeconds: 100
           timeoutSeconds: 5
           periodSeconds: 10
@@ -86,7 +86,7 @@ spec:
             - name: X-Forwarded-Proto
               value: https
             - name: Host
-              value: server-forgejo.forgejo
+              value: forgejo.homelab.cloud
           initialDelaySeconds: 120
           timeoutSeconds: 5
           periodSeconds: 10
@@ -119,7 +119,7 @@ spec:
               name: db-postgresql-config
               key: forgejo-username
         - name: FORGEJO__cache__HOST
-          value: 'redis://$(FORGEJO_VALKEY_USERNAME):$(FORGEJO_VALKEY_PASSWORD)@cache-valkey.forgejo:6379/0?pool_size=100&idle_timeout=180s&prefix=forgejo%3A'
+          value: 'redis://$(FORGEJO_VALKEY_USERNAME):$(FORGEJO_VALKEY_PASSWORD)@cache-valkey.forgejo.svc.homelab.cluster.:6379/0?pool_size=100&idle_timeout=180s&prefix=forgejo%3A'
         - name: FORGEJO__session__PROVIDER_CONFIG
           value: $(FORGEJO__cache__HOST)
         - name: FORGEJO__queue__CONN_STR

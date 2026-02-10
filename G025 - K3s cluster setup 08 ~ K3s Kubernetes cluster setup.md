@@ -113,7 +113,7 @@ This guide assumes the most simple scenario, which is a single local network beh
 > **I picked a big private network IP range to minimize conflicts**\
 > Nowadays, is a common hardening feature to make devices use randomized MACs to connect to networks. This makes those devices get a new random IP from the router every time they connect to a network. Depending on how well the router is able to handle the IP assignments, this could lead to IP conflicts with devices that have statically assigned IPs. These conflicts emerge when a device with a static IP happens to be temporarily unavailable in the network, then other device gets the same IP through dynamic assignment because the router has not been programmed to take this situation into account. When the device with a static IP, usually a server, comes back and tries to claim its IP it sees that it has been assigned already to other device and is forced to get a different one.
 >
-> To help minimize this problem, I considered better to use the widest valid network range available for private LANs in my own home network: `10.0.0.0/8`. This range provides up to 16.777.216 addresses, a big enough number to avoid having conflicts of IPs between devices.
+> To help minimize this problem, I considered better to use the widest valid network range available for private LANs in my own home network: `10.0.0.0/8`. This range provides up to 16.777.216 addresses, a big enough number to avoid having conflicts of IPs between devices in a small network like a home LAN.
 
 Do not forget that the VMs will have two network cards:
 

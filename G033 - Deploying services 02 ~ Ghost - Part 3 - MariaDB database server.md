@@ -10,6 +10,7 @@
 - [MariaDB persistent storage claim](#mariadb-persistent-storage-claim)
 - [MariaDB StatefulSet](#mariadb-statefulset)
 - [MariaDB Service](#mariadb-service)
+  - [MariaDB Service's FQDN](#mariadb-services-fqdn)
 - [MariaDB Kustomize project](#mariadb-kustomize-project)
   - [Checking the Kustomize YAML output](#checking-the-kustomize-yaml-output)
 - [Do not deploy this MariaDB project on its own](#do-not-deploy-this-mariadb-project-on-its-own)
@@ -431,9 +432,17 @@ The previous `StatefulSet` requires a `Service` named `db-mariadb` to run, so yo
         name: metrics
     ~~~
 
-    See that this `Service` is headless since the `spec.clusterIP` is `None`. Therefore, to connect with it you need to use the hostname it will have assigned in your K3s cluster, which will be `db-mariadb.ghost` in this case.
+    See that this `Service` is headless since the `spec.clusterIP` is `None`, implying that you will need to call it by its FQDN. Also, this service's `port` numbers correspond with the ones configured as `containerPorts` in the MariaDB's `StatefulSet`, although the `targetPort` parameters makes them independent from the configuration set in the pod's containers.
 
-    Also, this service's `port` numbers correspond with the ones configured as `containerPorts` in the MariaDB's `StatefulSet`, although the `targetPort` parameters makes them independent from the configuration set in the pod's containers.
+### MariaDB Service's FQDN
+
+According to what is explained [for the Valkey headless service's FQDN](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-services-fqdn), the absolute FQDN for this MariaDB headless service will be:
+
+~~~txt
+db-mariadb.ghost.svc.homelab.cluster.
+~~~
+
+Your Ghost platform will invoke its MariaDB service with this absolute FQDN for best performance.
 
 ## MariaDB Kustomize project
 
