@@ -473,51 +473,52 @@ With every required element declared or configured, now you need to put everythi
         RoIjogewogICAgICAgICJ1c2VyIjogInlvdXJfZ2hvc3RfZW1haWxAZ21haWwuY29tIiwK
         ICAgICAgICAicGFzcyI6ICJZMHVyXzZoTzV0X2VNNDFsX1A0U3N2dm9SZCIKICAgICAgfQ
         ogICAgfQogIH0sCiAgImFkYXB0ZXJzIjogewogICAgImNhY2hlIjogewogICAgICAiUmVk
-        aXMiOiB7CiAgICAgICAgImhvc3QiOiAiY2FjaGUtdmFsa2V5Lmdob3N0IiwKICAgICAgIC
-        AicG9ydCI6IDYzNzksCiAgICAgICAgInVzZXJuYW1lIjogImdob3N0Y2FjaGUiLAogICAg
-        ICAgICJwYXNzd29yZCI6ICJwQVMyd09SVF9mMHJfVCNlX0doMDVUX1VzM1IiLAogICAgIC
-        AgICJrZXlQcmVmaXgiOiAiZ2hvc3Q6IiwKICAgICAgICAidHRsIjogMzYwMCwKICAgICAg
-        ICAicmV1c2VDb25uZWN0aW9uIjogdHJ1ZSwKICAgICAgICAicmVmcmVzaEFoZWFkRmFjdG
-        9yIjogMC44LAogICAgICAgICJnZXRUaW1lb3V0TWlsbGlzZWNvbmRzIjogNTAwMCwKICAg
-        ICAgICAic3RvcmVDb25maWciOiB7CiAgICAgICAgICAicmV0cnlDb25uZWN0U2Vjb25kcy
-        I6IDEwLAogICAgICAgICAgImxhenlDb25uZWN0IjogdHJ1ZSwKICAgICAgICAgICJlbmFi
-        bGVPZmZsaW5lUXVldWUiOiB0cnVlLAogICAgICAgICAgIm1heFJldHJpZXNQZXJSZXF1ZX
-        N0IjogMwogICAgICAgIH0KICAgICAgfSwKICAgICAgImdzY2FuIjogewogICAgICAgICJh
-        ZGFwdGVyIjogIlJlZGlzIiwKICAgICAgICAidHRsIjogNDMyMDAsCiAgICAgICAgInJlZn
-        Jlc2hBaGVhZEZhY3RvciI6IDAuOSwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0Omdz
-        Y2FuLiIKICAgICAgfSwKICAgICAgImltYWdlU2l6ZXMiOiB7CiAgICAgICAgImFkYXB0ZX
-        IiOiAiUmVkaXMiLAogICAgICAgICJ0dGwiOiA4NjQwMCwKICAgICAgICAicmVmcmVzaEFo
-        ZWFkRmFjdG9yIjogMC45NSwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0OmltYWdlU2
-        l6ZXMuIgogICAgICB9LAogICAgICAibGlua1JlZGlyZWN0c1B1YmxpYyI6IHsKICAgICAg
-        ICAiYWRhcHRlciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6IDcyMDAsCiAgICAgICAgIn
-        JlZnJlc2hBaGVhZEZhY3RvciI6IDAuOSwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0
-        OmxpbmtSZWRpcmVjdHNQdWJsaWMuIgogICAgICB9LAogICAgICAicG9zdHNQdWJsaWMiOi
-        B7CiAgICAgICAgImFkYXB0ZXIiOiAiUmVkaXMiLAogICAgICAgICJ0dGwiOiAxODAwLAog
-        ICAgICAgICJyZWZyZXNoQWhlYWRGYWN0b3IiOiAwLjcsCiAgICAgICAgImtleVByZWZpeC
-        I6ICJnaG9zdDpwb3N0c1B1YmxpYy4iCiAgICAgIH0sCiAgICAgICJzdGF0cyI6IHsKICAg
-        ICAgICAiYWRhcHRlciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6IDkwMCwKICAgICAgIC
-        AicmVmcmVzaEFoZWFkRmFjdG9yIjogMC44LAogICAgICAgICJrZXlQcmVmaXgiOiAiZ2hv
-        c3Q6c3RhdHMuIgogICAgICB9LAogICAgICAidGFnc1B1YmxpYyI6IHsKICAgICAgICAiYW
-        RhcHRlciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6IDM2MDAsCiAgICAgICAgInJlZnJl
-        c2hBaGVhZEZhY3RvciI6IDAuOCwKICAgICAgICAia2V5UHJlZml4IjogImdob3N0OnRhZ3
-        NQdWJsaWMuIgogICAgICB9CiAgICB9CiAgfSwKICAiaG9zdFNldHRpbmdzIjogewogICAg
-        ImxpbmtSZWRpcmVjdHNQdWJsaWNDYWNoZSI6IHsKICAgICAgImVuYWJsZWQiOiB0cnVlCi
-        AgICB9LAogICAgInBvc3RzUHVibGljQ2FjaGUiOiB7CiAgICAgICJlbmFibGVkIjogdHJ1
-        ZQogICAgfSwKICAgICJzdGF0c0NhY2hlIjogewogICAgICAiZW5hYmxlZCI6IHRydWUKIC
-        AgIH0sCiAgICAidGFnc1B1YmxpY0NhY2hlIjogewogICAgICAiZW5hYmxlZCI6IHRydWUK
-        ICAgIH0KICB9LAogICJkYXRhYmFzZSI6IHsKICAgICJjbGllbnQiOiAibXlzcWwiLAogIC
-        AgImNvbm5lY3Rpb24iOiB7CiAgICAgICJob3N0IjogImRiLW1hcmlhZGIuZ2hvc3QiLAog
-        ICAgICAidXNlciI6ICJnaG9zdGRiIiwKICAgICAgInBhc3N3b3JkIjogImwwbkcuUGw0aW
-        5fVDN4dF9zRWtSZXRfcDRzNXdPUkQtRm9SXzZoMHNUX3VaM3IhIiwKICAgICAgImRhdGFi
-        YXNlIjogImdob3N0LWRiIiwKICAgICAgInBvcnQiOiAiMzMwNiIKICAgIH0KICB9LAogIC
-        Jwcm9jZXNzIjogImxvY2FsIiwKICAicGF0aHMiOiB7CiAgICAiY29udGVudFBhdGgiOiAi
-        L2hvbWUvbm9ucm9vdC9hcHAvZ2hvc3QvY29udGVudCIKICB9Cn0=
+        aXMiOiB7CiAgICAgICAgImhvc3QiOiAiY2FjaGUtdmFsa2V5Lmdob3N0LnN2Yy5ob21lbG
+        FiLmNsdXN0ZXIuIiwKICAgICAgICAicG9ydCI6IDYzNzksCiAgICAgICAgInVzZXJuYW1l
+        IjogImdob3N0Y2FjaGUiLAogICAgICAgICJwYXNzd29yZCI6ICJwQVMyd09SVF9mMHJfVC
+        NlX0doMDVUX1VzM1IiLAogICAgICAgICJrZXlQcmVmaXgiOiAiZ2hvc3Q6IiwKICAgICAg
+        ICAidHRsIjogMzYwMCwKICAgICAgICAicmV1c2VDb25uZWN0aW9uIjogdHJ1ZSwKICAgIC
+        AgICAicmVmcmVzaEFoZWFkRmFjdG9yIjogMC44LAogICAgICAgICJnZXRUaW1lb3V0TWls
+        bGlzZWNvbmRzIjogNTAwMCwKICAgICAgICAic3RvcmVDb25maWciOiB7CiAgICAgICAgIC
+        AicmV0cnlDb25uZWN0U2Vjb25kcyI6IDEwLAogICAgICAgICAgImxhenlDb25uZWN0Ijog
+        dHJ1ZSwKICAgICAgICAgICJlbmFibGVPZmZsaW5lUXVldWUiOiB0cnVlLAogICAgICAgIC
+        AgIm1heFJldHJpZXNQZXJSZXF1ZXN0IjogMwogICAgICAgIH0KICAgICAgfSwKICAgICAg
+        ImdzY2FuIjogewogICAgICAgICJhZGFwdGVyIjogIlJlZGlzIiwKICAgICAgICAidHRsIj
+        ogNDMyMDAsCiAgICAgICAgInJlZnJlc2hBaGVhZEZhY3RvciI6IDAuOSwKICAgICAgICAi
+        a2V5UHJlZml4IjogImdob3N0OmdzY2FuLiIKICAgICAgfSwKICAgICAgImltYWdlU2l6ZX
+        MiOiB7CiAgICAgICAgImFkYXB0ZXIiOiAiUmVkaXMiLAogICAgICAgICJ0dGwiOiA4NjQw
+        MCwKICAgICAgICAicmVmcmVzaEFoZWFkRmFjdG9yIjogMC45NSwKICAgICAgICAia2V5UH
+        JlZml4IjogImdob3N0OmltYWdlU2l6ZXMuIgogICAgICB9LAogICAgICAibGlua1JlZGly
+        ZWN0c1B1YmxpYyI6IHsKICAgICAgICAiYWRhcHRlciI6ICJSZWRpcyIsCiAgICAgICAgIn
+        R0bCI6IDcyMDAsCiAgICAgICAgInJlZnJlc2hBaGVhZEZhY3RvciI6IDAuOSwKICAgICAg
+        ICAia2V5UHJlZml4IjogImdob3N0OmxpbmtSZWRpcmVjdHNQdWJsaWMuIgogICAgICB9LA
+        ogICAgICAicG9zdHNQdWJsaWMiOiB7CiAgICAgICAgImFkYXB0ZXIiOiAiUmVkaXMiLAog
+        ICAgICAgICJ0dGwiOiAxODAwLAogICAgICAgICJyZWZyZXNoQWhlYWRGYWN0b3IiOiAwLj
+        csCiAgICAgICAgImtleVByZWZpeCI6ICJnaG9zdDpwb3N0c1B1YmxpYy4iCiAgICAgIH0s
+        CiAgICAgICJzdGF0cyI6IHsKICAgICAgICAiYWRhcHRlciI6ICJSZWRpcyIsCiAgICAgIC
+        AgInR0bCI6IDkwMCwKICAgICAgICAicmVmcmVzaEFoZWFkRmFjdG9yIjogMC44LAogICAg
+        ICAgICJrZXlQcmVmaXgiOiAiZ2hvc3Q6c3RhdHMuIgogICAgICB9LAogICAgICAidGFnc1
+        B1YmxpYyI6IHsKICAgICAgICAiYWRhcHRlciI6ICJSZWRpcyIsCiAgICAgICAgInR0bCI6
+        IDM2MDAsCiAgICAgICAgInJlZnJlc2hBaGVhZEZhY3RvciI6IDAuOCwKICAgICAgICAia2
+        V5UHJlZml4IjogImdob3N0OnRhZ3NQdWJsaWMuIgogICAgICB9CiAgICB9CiAgfSwKICAi
+        aG9zdFNldHRpbmdzIjogewogICAgImxpbmtSZWRpcmVjdHNQdWJsaWNDYWNoZSI6IHsKIC
+        AgICAgImVuYWJsZWQiOiB0cnVlCiAgICB9LAogICAgInBvc3RzUHVibGljQ2FjaGUiOiB7
+        CiAgICAgICJlbmFibGVkIjogdHJ1ZQogICAgfSwKICAgICJzdGF0c0NhY2hlIjogewogIC
+        AgICAiZW5hYmxlZCI6IHRydWUKICAgIH0sCiAgICAidGFnc1B1YmxpY0NhY2hlIjogewog
+        ICAgICAiZW5hYmxlZCI6IHRydWUKICAgIH0KICB9LAogICJkYXRhYmFzZSI6IHsKICAgIC
+        JjbGllbnQiOiAibXlzcWwiLAogICAgImNvbm5lY3Rpb24iOiB7CiAgICAgICJob3N0Ijog
+        ImRiLW1hcmlhZGIuZ2hvc3Quc3ZjLmhvbWVsYWIuY2x1c3Rlci4iLAogICAgICAidXNlci
+        I6ICJnaG9zdGRiIiwKICAgICAgInBhc3N3b3JkIjogImwwbkcuUGw0aW5fVDN4dF9zRWtS
+        ZXRfcDRzNXdPUkQtRm9SXzZoMHNUX3VaM3IhIiwKICAgICAgImRhdGFiYXNlIjogImdob3
+        N0LWRiIiwKICAgICAgInBvcnQiOiAiMzMwNiIKICAgIH0KICB9LAogICJwcm9jZXNzIjog
+        ImxvY2FsIiwKICAicGF0aHMiOiB7CiAgICAiY29udGVudFBhdGgiOiAiL2hvbWUvbm9ucm
+        9vdC9hcHAvZ2hvc3QvY29udGVudCIKICB9Cn0=
     kind: Secret
     metadata:
       labels:
         app: server-ghost
         platform: ghost
-      name: server-ghost-config-526bm4m7t9
+      name: server-ghost-config-c4td5f9fb9
       namespace: ghost
     type: Opaque
     ---
@@ -1063,7 +1064,7 @@ With every required element declared or configured, now you need to put everythi
               items:
               - key: config.production.json
                 path: config.production.json
-              secretName: server-ghost-config-526bm4m7t9
+              secretName: server-ghost-config-c4td5f9fb9
           - emptyDir:
               sizeLimit: 64Mi
             name: tmp
@@ -1219,13 +1220,13 @@ You still need to explicitly setup your site, and register your first staff user
 
 1. Browse into the `/ghost` subpath in your Ghost server. You will be redirected to a setup form where you can give a title to your site and configure your first staff user. In this guide, this setup page's full URL would be `https://ghost.homelab.cloud/ghost`:
 
-    ![Ghost site setup form](images/g033/ghost-welcome-setup-site-form.webp "Ghost site setup form")
+    ![Ghost site setup form](images/g033/ghost-site-setup-form.webp "Ghost site setup form")
 
-2. After pressing the "Create account & start publishing" button in the previous form, you will get directly signed in as that new staff user in the Analytics dashboard of the site's administration area:
+2. After pressing the "Create account & start publishing" button in the previous form, you will get directly signed in as that new staff user in your Ghost site's administration dashboard:
 
-    ![Ghost site administration area analytics dashboard](images/g033/ghost-site-admin-area-analytics-dashboard.webp "Ghost site administration area analytics dashboard")
+    ![Onboarding in Ghost site administration area](images/g033/ghost-site-admin-area-onboarding.webp "Onboarding in Ghost site administration area")
 
-    Here you have the CMS and newsletter features you can expect from Ghost to properly manage and serve your site's contents. Be aware that Ghost will automatically make your first staff user the owner of the site.
+    You will be welcomed by the onboarding `Let's get started!` page that will help you start working with your Ghost site. Be aware that Ghost will automatically make your first staff user the owner of the site.
 
     Also, you will receive a welcome email in the email address of your staff user:
 
