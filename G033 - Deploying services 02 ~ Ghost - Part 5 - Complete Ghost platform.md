@@ -7,6 +7,8 @@
 - [Traefik IngressRoute for enabling HTTPS access to the Ghost platform](#traefik-ingressroute-for-enabling-https-access-to-the-ghost-platform)
 - [Ghost Namespace](#ghost-namespace)
 - [Main Kustomize project for the Ghost platform](#main-kustomize-project-for-the-ghost-platform)
+  - [Validating the Kustomize YAML output](#validating-the-kustomize-yaml-output)
+- [Deploying the main Kustomize project in the cluster](#deploying-the-main-kustomize-project-in-the-cluster)
 - [Start using Ghost](#start-using-ghost)
 - [Security considerations in Ghost](#security-considerations-in-ghost)
 - [Ghost platform's Kustomize project attached to this guide series](#ghost-platforms-kustomize-project-attached-to-this-guide-series)
@@ -331,13 +333,17 @@ With every required element declared or configured, now you need to put everythi
       > **Kustomize projects can be added as resources**\
       > You can add directories as resources only if they have a `kustomization.yaml` inside that can be read by Kustomize. In other words, you can list Kustomize projects as resources for another Kustomize project.
 
-3. As usual, check the Kustomize YAML output for this project. Since this particular output is going to be rather long, it may be better to dump it into a file such as `ghost.k.output.yaml`:
+### Validating the Kustomize YAML output
+
+Before deploying your Ghost Kustomize project, review first its YAML output:
+
+1. Since this particular output is going to be rather long, you may find more convenient to dump the resulting YAML into a file such as `ghost.k.output.yaml`:
 
     ~~~sh
     $ kubectl kustomize $HOME/k8sprjs/ghost > ghost.k.output.yaml
     ~~~
 
-4. Open the `ghost.k.output.yaml` file and compare your resulting YAML output with this one:
+2. Open the `ghost.k.output.yaml` file and compare your resulting YAML output with this one:
 
     ~~~yaml
     apiVersion: v1
@@ -1124,13 +1130,17 @@ With every required element declared or configured, now you need to put everythi
 
     On the other hand, notice how Kustomize has grouped all the resources together according to their kind and ordered them alphabetically by `metadata.name`. Also see how the `ghost` namespace has been set in all resources except in the `PersistentVolume` ones because those in particular are not namespaced.
 
-5. If you are satisfied with the final YAML, apply the Ghost platform Kustomize project to your cluster:
+## Deploying the main Kustomize project in the cluster
+
+If you are satisfied with the YAML output of your Ghost Kustomize project, proceed to deploy Ghost in your Kubernetes cluster:
+
+1. Use the `kubectl` command to apply the Ghost platform Kustomize project in your cluster:
 
     ~~~sh
     $ kubectl apply -k $HOME/k8sprjs/ghost
     ~~~
 
-6. Right after applying the Kustomize project, check how the deployment is going for the components of your Ghost platform:
+2. Right after applying the Kustomize project, check how the deployment is going for the components of your Ghost platform:
 
     ~~~sh
     $ kubectl -n ghost get pv,pvc,cm,secret,deployment,replicaset,statefulset,pod,svc -o wide

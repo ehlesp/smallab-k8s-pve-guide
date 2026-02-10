@@ -9,6 +9,7 @@
 - [Valkey persistent storage claim](#valkey-persistent-storage-claim)
 - [Valkey StatefulSet](#valkey-statefulset)
 - [Valkey Service](#valkey-service)
+  - [Valkey Service's FQDN](#valkey-services-fqdn)
 - [Valkey Kustomize project](#valkey-kustomize-project)
   - [Validating the Kustomize YAML output](#validating-the-kustomize-yaml-output)
 - [Do not deploy this Valkey project on its own](#do-not-deploy-this-valkey-project-on-its-own)
@@ -266,7 +267,15 @@ Declare the `Service` object required for Forgejo's Valkey `StatefulSet` pod:
         name: metrics
     ~~~
 
-    Again, this `Service` object is exactly [like the one declared for the Ghost Valkey instance](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-service). Since this Valkey `Service` will be put under the `forgejo` namespace, its hostname will be `cache-valkey.forgejo`.
+    Again, this `Service` object is exactly [like the one declared for the Ghost Valkey instance](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-service).
+
+### Valkey Service's FQDN
+
+Since the whole Forgejo setup will be deployed in the `forgejo` namespace, the absolute FQDN of the Valkey service will be this:
+
+~~~txt
+cache-valkey.forgejo.svc.homelab.cluster.
+~~~
 
 ## Valkey Kustomize project
 

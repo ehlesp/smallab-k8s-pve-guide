@@ -25,7 +25,7 @@ Both platforms share the need for a database, a storage space for their data and
 
 ## Outlining Forgejo's setup
 
-As you did with Ghost, let's figure out first how to set up all Forgejo's main components.
+As you did with Ghost, you must figure out first how to set up all the components that will be part of your Forgejo setup:
 
 - **Database**\
   PostgreSQL with its data saved in a local SSD storage drive.
@@ -42,11 +42,11 @@ As you did with Ghost, let's figure out first how to set up all Forgejo's main c
 - **Forgejo's [Git Large File Storage (LFS)](https://git-lfs.com/)**\
   Forgejo is able to use the LFS extensión of Git to handle large files like audios or videos. In this Forgejo setup, those files will be stored in the same persistent volume reserved for the users' repositories.
 
-The whole Forgejo setup will run on the same K3s agent node, which will be also the one providing the persistent storage required by all Forgejo's components.
+The whole Forgejo setup will run on the same K3s agent node, which will be also the one providing the persistent storage needed for the Forgejo components.
 
 ### Choosing the K3s agent
 
-In the previous [Ghost **G033** guide](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#choosing-the-k3s-agent-node-for-running-ghost) I used the `k3sagent02` node, so here I will use the `k3sagent01` VM for Forgejo instead.
+The K3s agent chosen in the previous [Ghost **G033** guide](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#choosing-the-k3s-agent-node-for-running-ghost) was the `k3sagent02` VM. To balance the workload in the cluster, better deploy Forgejo in the `k3sagent01` VM instead.
 
 ## Setting up new storage drives in the K3s agent
 
