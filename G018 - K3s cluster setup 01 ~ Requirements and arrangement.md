@@ -65,7 +65,7 @@ For monitoring the K3s Kubernetes cluster, you will install a stack which includ
 
 #### Grafana
 
-[Grafana](https://grafana.com/) is an open source visualization and analytics platform that is commonly used to visualize Prometheus data. Grafana provides out-of-the-box support for Prometheus, so it only makes sense to use these two tools together. The [minimum hardware requirements for Grafana](https://grafana.com/docs/grafana/latest/setup-grafana/installation/#hardware-recommendations) are:
+[Grafana](https://grafana.com/) is an open source visualization and analytics platform commonly used to visualize Prometheus data. Grafana provides out-of-the-box support for Prometheus, so it only makes sense to use these two tools together. The [minimum hardware requirements for Grafana](https://grafana.com/docs/grafana/latest/setup-grafana/installation/#hardware-recommendations) are:
 
 - Database: SQLite 3, MySQL 8.0+, PostgreSQL 12+.
 - RAM: 512 MiB.
