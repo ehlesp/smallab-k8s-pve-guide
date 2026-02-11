@@ -1,102 +1,173 @@
 # G036 - Host and K3s cluster ~ Monitoring and diagnosis
 
-In this guide I'll give you some ideas and show you a couple of commands to help you monitoring and make diagnosis of your K3s Kubernetes cluster and the containers it runs.
+- [Monitor your homelab setup with its own tools](#monitor-your-homelab-setup-with-its-own-tools)
+- [Monitoring resources usage](#monitoring-resources-usage)
+- [Checking the logs](#checking-the-logs)
+  - [Proxmox VE logs](#proxmox-ve-logs)
+  - [Virtual machine logs](#virtual-machine-logs)
+  - [Container logs](#container-logs)
+- [Shell access into your containers](#shell-access-into-your-containers)
+  - [Accessing containers with kubectl](#accessing-containers-with-kubectl)
+  - [Accessing containers from Headlamp](#accessing-containers-from-headlamp)
+- [Metrics from the monitoring stack](#metrics-from-the-monitoring-stack)
+- [References](#references)
+  - [Kubernetes](#kubernetes)
+  - [Headlamp](#headlamp)
+  - [Grafana](#grafana)
+- [Navigation](#navigation)
+
+## Monitor your homelab setup with its own tools
+
+At this point of the guide, your homelab setup has a collection of tools enabling you to monitor and diagnose your K3s Kubernetes cluster and the workloads it runs at different levels. This chapter is a rundown of all those tools and their purposes.
 
 ## Monitoring resources usage
 
-I'll remind you here all the tools you have to monitor the usage of resources in your system.
+In a small or limited system such as the one used in this guide, the first thing you have to worry about is the usage of resources:
 
-- Proxmox VE has a `Summary` view on all its levels (datacenter, node and virtual machine) in which it shows how the usage of resources is going. On the other hand, the web console offers a page for each storage unit configured in the system.
+- Proxmox VE's web console has a `Summary` view on all its levels (datacenter, node and virtual machine) in which it shows how the usage of resources is going. On the other hand, the web console offers a page for each storage unit configured in the system. On the other hand, remember that Proxmox VE's web console cannot monitor the Kubernetes cluster running in your VMs.
 
-- Don't forget shell commands like `htop`, `df` or `free` that will give you a different point of view of the resources usages from a "closer" distance of your host or VMs. For instance, in the nodes of your K3s cluster, you'll see with `htop` many lines related to the K3s service running in them and also about the containerd service that executes your Kubernetes containers.
+- Do not forget shell commands like `htop`, `df` or `free`. They will give you a different point of view of the resources usages from within your Proxmox VE host or the VMs. For instance, in the VM nodes of your K3s cluster, you will see with `htop` many lines related to the K3s service running in them and also about the containerd service executing your Kubernetes containers.
 
-- To see how your Kubernetes nodes and pods fare about CPU and RAM usage, either you can:
-    - Use the `kubectl top` command from your `kubectl` client system. For instance, you could see the usages of your Nextcloud platform's pods.
+  Still, these commands are not good enough for monitoring your Kubernetes cluster. They show you the Kubernetes-related processes like any other process at the operative system level. In other words, their resolution is "too low" and lack context to help you make sense of what they can report about your Kubernetes cluster.
 
-        ~~~bash
-        $ kubectl top pod -n nextcloud 
-        NAME                                CPU(cores)   MEMORY(bytes)   
-        nxcd-cache-redis-68984788b7-xtzvl   3m           4Mi             
-        nxcd-db-mariadb-0                   1m           93Mi            
-        nxcd-server-apache-nextcloud-0      1m           51Mi
-        ~~~
+- To monitor the resources usage in your Kubernetes nodes and workloads, you can:
 
-        Notice that `top pod` requires specyfing the namespace, while `top node` doesn't (cluster nodes are not namespaced).
+  - Use the Headlamp dashboard you deployed and browsed into [back in the **G031** guide](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md). This is probably your best option for the everyday monitoring of your K3s cluster.
 
-    - Use the Headlamp dashboard you deployed and browsed into [back in the **G031** guide](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md).
+  - Use the `kubectl top` command from your `kubectl` client system. For instance, you could see the usages of your Ghost platform's pods.
+
+    ~~~sh
+    $ kubectl top pod -n ghost
+    NAME             CPU(cores)   MEMORY(bytes)   
+    cache-valkey-0   9m           29Mi            
+    db-mariadb-0     1m           182Mi           
+    server-ghost-0   2m           194Mi
+    ~~~
+
+    Notice that `top pod` requires specifying the namespace, while `top node` does not (cluster nodes are not namespaced).
 
 ## Checking the logs
 
-Logs are specially useful when you need to diagnose issues in a system. I'll highlight the most relevant logs you'll have in your setup at this point.
+Logs are particularly useful when you need to diagnose issues in a system. This section explains the most relevant logs you will have in your homelab setup and how to read them.
 
-- The Proxmox VE host is a Debian system, so its logs are all found in the `/var/log` directory. From all the files you can find there, pay particular attention to the following ones.
-    - `daemon.log`: usually you'll only see daemons or system services related lines in this file, but don't forget it when you have to deal with hard-to-determine issues.
-    - `kern.log`: here you'll see device-related logs, so if you happen to detect issues with the virtual devices of your VMs, you can start checking them out here.
-    - `pve-firewall.log`: here is where the Proxmox VE's firewall writes all of its logs, including the ones related to your virtual machines. Very important to revise it when you detect networking issues with your containers, like blocked traffic to certain ports. You can see this log also in the web console:
-        - At the `pve` node level, in the `Firewall > Log` view, you'll see all the lines written in the log.
-        - At each VM you also have a `Firewall > Log` view, but it will only show the lines related to the current VM.
-    - `syslog`: is a combination of the `daemon.log` and the `kern.log` files, and you can also see this file at the `pve` node level of your web console, at the `System > Syslog` page.
+### Proxmox VE logs
 
-- The VMs you've setup as K3s nodes they're all Debian systems, so their logs are under the `/var/log` path.
-    - `daemon.log`: as in the Proxmox VE host, here you'll see daemon or system services log lines and, among them, lines related to the K3s service such as logs informing about containers.
-    - `k3s.log`: where the K3s service dumps its logs. You already configured its automated rotation with logrotate back in the [**G025** guide](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#enabling-the-k3slog-files-rotation).
-    - `kern.log`: again, like in your Proxmox VE host, in this file you can find logs related to devices running in a VM. Be aware that the containers you run in your K3s nodes will have their own virtual network devices, and those will appear in this log.
-    - `containers`: in a node that runs workloads, like your K3s agent ones, this folder holds the logs of the containers currently running in the virtual machine. More precisely, they are symbolic links to the actual log files found under the path `/var/log/pods`, where they're grouped in folders.
-    - `pods`: folder where the logs of the Kubernetes containers are kept. The logs are in folders organized in the following manner.
-        - Each pod running in the node has its own folder named following the pattern `<namespace>_<pod's current name>_<cluster-generated UUID>`.
-        - Within each pod's folder you'll have one directory per container running in that pod. The containers' logs are inside their corresponding folders.
-        - For instance, the Nextcloud platform has three pods with two containers each. The `tree` command would present them like the output below.
+The Proxmox VE host is a Debian system, and its logs were usually all found in the `/var/log` directory but this has changed. Now a journaling system is where you can find all the system-related logs, including those about Proxmox VE processes, and you can access it with the `journalctl` command. You can also see the system's journal at the `pve` node level of your Proxmox VE web console, in the `System > System Log` page. Nevertheless, you can still find some relevant logs under the `/var/log` directory like:
 
-            ~~~bash
-            .
-            ├── nextcloud_nxcd-cache-redis-68984788b7-xtzvl_2de71564-058c-440b-a6ed-554c43d735b8/
-            │   ├── metrics/
-            │   │   ├── 3.log
-            │   │   └── 4.log
-            │   └── server/
-            │       ├── 3.log
-            │       └── 4.log
-            ├── nextcloud_nxcd-db-mariadb-0_3fb12838-3555-4247-9d67-7a857c871d31/
-            │   ├── metrics/
-            │   │   ├── 3.log
-            │   │   └── 4.log
-            │   └── server/
-            │       ├── 3.log
-            │       └── 4.log
-            └── nextcloud_nxcd-server-apache-nextcloud-0_4e3a16c7-f5e1-42bf-b852-ccaaccd5557d/
-                ├── metrics/
-                │   ├── 0.log
-                │   └── 1.log
-                └── server/
-                    ├── 0.log
-                    └── 1.log
-            ~~~
+- `fail2ban.log`\
+  Log file where the Fail2ban system registers its activity.
 
-            Notice how there are more than one log files in each container's folder, and that their filenames are just numbers. The higher the number, the more recent the log file is.
+- `pve-firewall.log`\
+  Where the Proxmox VE's firewall writes its logs, including the ones related to your virtual machines. Very important to check it out when you detect networking issues with your containers, like blocked traffic to certain ports. You can see this log also in the web console:
 
-    - `syslog`: the same thing as in the Proxmox VE host, although the ones in the VMs are not accessible through the PVE web console.
+  - At the `pve` node level, in the `Firewall > Log` view, you can see all the lines written in the log.
 
-- You can access a container's log with `kubectl`. For instance, to access the log of your Nextcloud Apache server container you would execute the command next.
+  - At each VM you also have a `Firewall > Log` view, but it will only show the lines related to the current VM.
 
-    ~~~bash
-    $ kubectl logs -n nextcloud nxcd-server-apache-nextcloud-0 server | less
+### Virtual machine logs
+
+The VMs you have setup as K3s nodes are all Debian-based, so their system logs are also stored in their corresponding journals. Logs about Kubernetes or K3s related processes will also appear in the journal but, on the other hand, there are other log files produced by your K3s cluster that are found in `/var/log/`:
+
+- `containers`\
+  In a Kubernetes node that runs workloads, like your K3s agent ones, this folder holds the logs of the containers currently running in the virtual machine. More precisely, they are symbolic links to the actual log files found under the path `/var/log/pods`, where they are also grouped in folders.
+
+- `pods`\
+  Folder keeping the logs of the containers running in your Kubernetes pods. The logs are in folders organized in the following manner.
+
+  - Each pod running in the node has its own folder named following the pattern `<namespace>_<pod's current name>_<cluster-generated UUID>`.
+
+  - Within each pod's folder you will have one directory per container running in that pod. The containers' logs are inside their corresponding folders.
+
+  - For instance, the Ghost platform has two pods with two containers each and one pod with an init container and a regular one. The `tree` command would present them like this:
+
+    ~~~sh
+    $ sudo tree -F /var/log/pods/ghost_cache-valkey-0_766099b7-bc03-4614-81c9-5a6a33cacb3d
+    /var/log/pods/ghost_cache-valkey-0_766099b7-bc03-4614-81c9-5a6a33cacb3d/
+    ├── metrics/
+    │   ├── 1.log
+    │   └── 2.log
+    └── server/
+        ├── 1.log
+        └── 2.log
+
+    3 directories, 4 files
     ~~~
 
-    See how after indicating the `nextcloud` namespace, I've specified the pod's name (`nxcd-server-apache-nextcloud-0`) and then the concrete container (`server`). I've also piped the output to `less` for getting the log paginated. This log is the same one stored in the corresponding `/var/log/pod` path which, at the moment of writing this, was `/var/log/pod/nextcloud_nxcd-server-apache-nextcloud-0_4e3a16c7-f5e1-42bf-b852-ccaaccd5557d/server/0.log`.
+    ~~~sh
+    $ sudo tree -F /var/log/pods/ghost_db-mariadb-0_8c5a171a-1ae7-411d-88cd-2dac30a1e6ca
+    /var/log/pods/ghost_db-mariadb-0_8c5a171a-1ae7-411d-88cd-2dac30a1e6ca/
+    ├── metrics/
+    │   ├── 1.log
+    │   └── 2.log
+    └── server/
+        ├── 2.log
+        └── 3.log
+
+    3 directories, 4 files
+    ~~~
+
+    ~~~sh
+    mgrsys@k3sagent02:~$ sudo tree -F /var/log/pods/ghost_server-ghost-0_43cc54ac-6304-4286-89f3-c7678a05f819
+    /var/log/pods/ghost_server-ghost-0_43cc54ac-6304-4286-89f3-c7678a05f819/
+    ├── permissions-fix/
+    │   └── 1.log
+    └── server/
+        ├── 0.log
+        └── 1.log
+
+    3 directories, 3 files
+    ~~~
+
+    Notice how there is more than one log file in each container's folder, and that their filenames are just numbers. The higher the number, the more recent the log file is.
+
+    Also see that I needed the `sudo` command to allow `tree` to list the contents of the `pods` folders.
+
+### Container logs
+
+You can access a container's log with `kubectl`. For instance, to access the log of your Forgejo `server` container you would execute this command:
+
+~~~sh
+$ kubectl logs -n forgejo server-forgejo-0 server | less
+~~~
+
+See how after indicating the `forgejo` namespace, I have specified the pod's name (`server-forgejo-0`) and then the concrete container (`server`). I have also piped the output to `less` for getting the log paginated. This log is the same one stored in the corresponding `/var/log/pods` path which, at the moment of writing this, was `/var/log/pods/forgejo_server-forgejo-0_3d717aab-d09c-4f4d-9fd6-83f421c70218/server/2.log`.
+
+Moreover, you can access any container logs through Headlamp. In the sidebar menu, click on `Workloads` and then on `Pods`:
+
+![All pods in cluster listed in Workloads Pods section of Headlamp](images/g036/headlamp_workloads_pods_all.webp "All pods in cluster listed in Workloads Pods section of Headlamp")
+
+Above you can see the Workloads Pods section of Headlamp listing all pods running in the Kubernetes cluster. If you want to see only the pods of the Ghost platform for instance, filter by their corresponding namespace `ghost`:
+
+![Only Ghost pods listed in Workloads Pods section of Headlamp](images/g036/headlamp_workloads_pods_ghost.webp "Only Ghost pods listed in Workloads Pods section of Headlamp")
+
+Clicking on any of the listed Ghost pods will load a view showing the chosen pod's details:
+
+![Detail view of the Ghost server pod shown in the Workloads Pods section of Headlamp](images/g036/headlamp_workloads_pods_chosen_ghost_server_pod.webp "Detail view of the Ghost server pod shown in the Workloads Pods section of Headlamp")
+
+In this view, click the `Show Logs` button highlighted in the snapshot above to see the pods logs:
+
+![Logs view of the Ghost server pod shown in the Workloads Pods section of Headlamp](images/g036/headlamp_workloads_pods_chosen_ghost_server_pod_logs.webp "Logs view of the Ghost server pod shown in the Workloads Pods section of Headlamp")
+
+In pods running more than one container, the `Container` list allows you to pick the container whose logs you want to see.
 
 ## Shell access into your containers
 
-You might face issues you won't be able to understand unless you get inside the containers. To do so, you can open a shell into them with `kubectl`. I'll illustrate you this by getting into the `server` container of the Nextcloud platform's MariaDB instance.
+There are issues you may not be able to understand unless you get inside the containers. To do so, you can open a shell terminal into them with `kubectl`  or from the Headlamp web console.
 
-~~~bash
-$ kubectl exec -it -n nextcloud nxcd-db-mariadb-0 -c server -- bash
-root@nxcd-db-mariadb-0:/#
+### Accessing containers with kubectl
+
+To illustrate how to open a shell in a container with `kubectl`, let's get into the `server` container running in the Forgejo PostgreSQL pod:
+
+~~~sh
+$ kubectl exec -it -n forgejo db-postgresql-0 -c server -- bash
+root@db-postgresql-0:/#
 ~~~
 
-> **BEWARE!**  
-> You'll log in as `root`, so be careful about what you do inside the container.
+> [!WARNING]
+> **You log as the `root` user in containers that are not rootless**\
+> Be careful when you get into containers that are not rootless since you will log into them as the `root` user.
 
-I'll explain the command below.
+Understand the previous `kubectl` command:
 
 - The `exec` option is for executing commands in containers.
 
@@ -104,100 +175,166 @@ I'll explain the command below.
 
 - With `-c` you specify to what container you want to connect to within the specified pod.
 
-- If you don't specify the container, `kubectl` will connect you to the first one listed in the `Deployment`, `ReplicaSet` or `StatefulSet` that deployed the pod.
+  - If you do not specify the container, `kubectl` will connect you to the first one listed in the `Deployment`, `ReplicaSet` or `StatefulSet` that deployed the pod.
 
-- Also, be aware that any command you invoke in a container has to be already present in the image the container is running. In the example above, the MariaDB image happens to have the `bash` shell available but other images may only have `sh`.
+- Also, be aware that any command you invoke in a container has to be already present in the image the container is running. In the example above, the PostgreSQL image happens to have the `bash` shell available but other images may only have `sh`.
 
-While inside your MariaDB server container, you can take a look at the files defined and mounted by the `StatefulSet` resource you configured [in the Part 3 of the Nextcloud platform's deployment guide](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%203%20-%20MariaDB%20database%20server.md). You'll find them exactly where their `mountPath`s said they should be. For instance, check the `my.cnf` file.
+While inside your PostgreSQL server container, you can take a look at the files defined and mounted by the `StatefulSet` resource you configured [in the Part 3 of the Forgejo platform's deployment guide](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%203%20-%20PostgreSQL%20database%20server.md). You will find them exactly where their corresponding `mountPath` say they should be. For instance, let's check the `postgresql.conf` file:
 
-~~~bash
-root@nxcd-db-mariadb-0:/# ls -al /etc/mysql/my.cnf 
-lrwxrwxrwx 1 root root 24 Nov 10 01:30 /etc/mysql/my.cnf -> /etc/alternatives/my.cnf
+~~~sh
+root@db-postgresql-0:/# ls -al /etc/postgresql/postgresql.conf 
+-rw-rwxr-- 1 root root 608 Feb 11 08:57 /etc/postgresql/postgresql.conf
 ~~~
 
-It's just a symlink to a `/etc/alternatives/my.cnf` file, but it's content should be the one in the file you set in the `ConfigMap` (the one set to be autogenerated by Kustomize).
+The `ls` command proofs that the file exists where it was expected to be. You could also read its content with the `cat` or `less` commands.
 
-On the other hand, you can also see how the Nextcloud's MariaDB server has put a bunch of files in the volume set up for it in the K3s agent node in which its container is running. So, open a shell on the node itself (in the guide was the `k3sagent02` one) and just `ls` the folder where the database's volume is mounted (`/mnt/nextcloud-ssd/db/k3smnt/`).
+> [!NOTE]
+> **Do not expect to find the same commands available on every container image**\
+> For security reasons or to save storage space, some container images may lack many commonly used commands. In other words, do not expect to have the same usual commands on every container you deal with.
 
-~~~bash
-$ ls -al /mnt/nextcloud-ssd/db/k3smnt/
-total 198612
-drwxr-xr-x 6 systemd-coredump root                  4096 Dec 13 15:59 .
-drwxr-xr-x 4 root             root                  4096 Dec  3 14:18 ..
--rw-rw---- 1 systemd-coredump systemd-coredump    417792 Dec 13 14:21 aria_log.00000001
--rw-rw---- 1 systemd-coredump systemd-coredump        52 Dec 13 14:21 aria_log_control
--rw-rw---- 1 systemd-coredump systemd-coredump         9 Dec 13 15:59 ddl_recovery.log
--rw-rw---- 1 systemd-coredump systemd-coredump      4333 Dec 13 14:20 ib_buffer_pool
--rw-rw---- 1 systemd-coredump systemd-coredump  79691776 Dec 13 14:21 ibdata1
--rw-rw---- 1 systemd-coredump systemd-coredump 100663296 Dec 13 15:59 ib_logfile0
--rw-rw---- 1 systemd-coredump systemd-coredump  12582912 Dec 13 15:59 ibtmp1
--rw-rw---- 1 systemd-coredump systemd-coredump         0 Dec 10 18:54 multi-master.info
-drwx------ 2 systemd-coredump systemd-coredump      4096 Dec 10 18:54 mysql
--rw-rw---- 1 systemd-coredump systemd-coredump     27640 Dec 10 18:54 mysql-bin.000001
--rw-rw---- 1 systemd-coredump systemd-coredump   8987681 Dec 10 18:54 mysql-bin.000002
--rw-rw---- 1 systemd-coredump systemd-coredump    815877 Dec 10 20:31 mysql-bin.000003
--rw-rw---- 1 systemd-coredump systemd-coredump     64089 Dec 11 14:18 mysql-bin.000004
--rw-rw---- 1 systemd-coredump systemd-coredump       365 Dec 11 20:24 mysql-bin.000005
--rw-rw---- 1 systemd-coredump systemd-coredump     33648 Dec 13 14:20 mysql-bin.000006
--rw-rw---- 1 systemd-coredump systemd-coredump       342 Dec 13 15:59 mysql-bin.000007
--rw-rw---- 1 systemd-coredump systemd-coredump       224 Dec 13 15:59 mysql-bin.index
-drwx------ 2 systemd-coredump systemd-coredump     12288 Dec 10 18:55 nextcloud@002ddb
-drwx------ 2 systemd-coredump systemd-coredump      4096 Dec 10 18:54 performance_schema
--rw-rw---- 1 systemd-coredump systemd-coredump      1696 Dec 13 15:59 slow.log
-drwx------ 2 systemd-coredump systemd-coredump     12288 Dec 10 18:54 sys
-~~~
+On the other hand, you can also see how the Forgejo's PostgreSQL `server` container has produced a bunch of files in the K3s agent node where is running. So, open a shell on the node itself (in the guide was the `k3sagent01` one) and just `ls` the folder where the database's volume is mounted on (`/mnt/forgejo-ssd/db/k3smnt/`):
 
-See how all the files are owned by a `systemd-coredump` user and group. But, if you checked them from within the MariaDB container itself, in the default data `/var/lib/mysql/` folder, you would see that they are owned by `mysql`.
-
-~~~bash
-root@nxcd-db-mariadb-0:/# ls -al /var/lib/mysql/
-total 198612
-drwxr-xr-x 6 mysql root       4096 Dec 13 14:59 .
-drwxr-xr-x 1 root  root       4096 Nov 10 01:30 ..
--rw-rw---- 1 mysql mysql    417792 Dec 13 13:21 aria_log.00000001
--rw-rw---- 1 mysql mysql        52 Dec 13 13:21 aria_log_control
--rw-rw---- 1 mysql mysql         9 Dec 13 14:59 ddl_recovery.log
--rw-rw---- 1 mysql mysql      4333 Dec 13 13:20 ib_buffer_pool
--rw-rw---- 1 mysql mysql 100663296 Dec 13 14:59 ib_logfile0
--rw-rw---- 1 mysql mysql  79691776 Dec 13 13:21 ibdata1
--rw-rw---- 1 mysql mysql  12582912 Dec 13 14:59 ibtmp1
--rw-rw---- 1 mysql mysql         0 Dec 10 17:54 multi-master.info
-drwx------ 2 mysql mysql      4096 Dec 10 17:54 mysql
--rw-rw---- 1 mysql mysql     27640 Dec 10 17:54 mysql-bin.000001
--rw-rw---- 1 mysql mysql   8987681 Dec 10 17:54 mysql-bin.000002
--rw-rw---- 1 mysql mysql    815877 Dec 10 19:31 mysql-bin.000003
--rw-rw---- 1 mysql mysql     64089 Dec 11 13:18 mysql-bin.000004
--rw-rw---- 1 mysql mysql       365 Dec 11 19:24 mysql-bin.000005
--rw-rw---- 1 mysql mysql     33648 Dec 13 13:20 mysql-bin.000006
--rw-rw---- 1 mysql mysql       342 Dec 13 14:59 mysql-bin.000007
--rw-rw---- 1 mysql mysql       224 Dec 13 14:59 mysql-bin.index
-drwx------ 2 mysql mysql     12288 Dec 10 17:55 nextcloud@002ddb
-drwx------ 2 mysql mysql      4096 Dec 10 17:54 performance_schema
--rw-rw---- 1 mysql mysql      1696 Dec 13 14:59 slow.log
-drwx------ 2 mysql mysql     12288 Dec 10 17:54 sys
-~~~
-
-This apparent mismatch is because the `mysql` user only exists within the container, but its "user id" number happens to correspond with the `systemd-coredump` that do exists within the K3s agent node system hosting the container.
-
-On the other hand, the permission mode of the files are the same as how you saw them directly in the agent node. Needless to say that you should be careful of not tinkering with these files unless strictly necessary.
-
-Back in the K3s agent node shell, if you now checked the folder where the MariaDB volume is mounted (`/mnt/nextcloud-ssd/db/k3smnt`), you'll see that its owner has changed.
-
-~~~bash
-$ ls -al /mnt/nextcloud-ssd/db/
+~~~sh
+$ ls -al /mnt/forgejo-ssd/db/k3smnt/
 total 12
-drwxr-xr-x 3 root             root 4096 Oct  4 18:11 .
-drwxr-xr-x 4 root             root 4096 Sep 28 21:24 ..
-drwxr-xr-x 6 systemd-coredump root 4096 Oct  5 14:10 k3smnt
+drwxr-xr-x 3 root root 4096 Feb 10 20:41 .
+drwxr-xr-x 4 root root 4096 Feb 10 14:10 ..
+drwxr-xr-x 3 root root 4096 Feb 10 20:41 18
 ~~~
 
-Remember that the `k3smnt` folder was originally completely owned by the `root` user, but the MariaDB container has switched it to `mysql`/`systemd-coredump`. This situation illustrates you the need to have a different folder for mounting the volumes used by the containers, at least when using local storage as its done in this guide series.
+There is one folder named `18`, which is the major version number of the PostgreSQL server deployed for Forgejo. Inside it there is a `docker` folder which you can only `ls` with `sudo`:
+
+~~~sh
+$ sudo ls -al /mnt/forgejo-ssd/db/k3smnt/18/docker/
+total 136
+drwx------ 19  999 root             4096 Feb 11 09:58 .
+drwxr-xr-x  3 root root             4096 Feb 10 20:41 ..
+drwx------  6  999 systemd-journal  4096 Feb 10 20:41 base
+drwx------  2  999 systemd-journal  4096 Feb 11 09:58 global
+drwx------  2  999 systemd-journal  4096 Feb 10 20:41 pg_commit_ts
+drwx------  2  999 systemd-journal  4096 Feb 10 20:41 pg_dynshmem
+-rw-------  1  999 systemd-journal  5753 Feb 10 20:41 pg_hba.conf
+-rw-------  1  999 systemd-journal  2681 Feb 10 20:41 pg_ident.conf
+drwx------  4  999 systemd-journal  4096 Feb 11 10:03 pg_logical
+drwx------  4  999 systemd-journal  4096 Feb 10 20:41 pg_multixact
+drwx------  2  999 systemd-journal  4096 Feb 10 20:41 pg_notify
+drwx------  2  999 systemd-journal  4096 Feb 10 20:41 pg_replslot
+drwx------  2  999 systemd-journal  4096 Feb 10 20:41 pg_serial
+drwx------  2  999 systemd-journal  4096 Feb 10 20:41 pg_snapshots
+drwx------  2  999 systemd-journal  4096 Feb 11 09:58 pg_stat
+drwx------  2  999 systemd-journal  4096 Feb 11 09:58 pg_stat_tmp
+drwx------  2  999 systemd-journal  4096 Feb 10 20:41 pg_subtrans
+drwx------  2  999 systemd-journal  4096 Feb 10 20:41 pg_tblspc
+drwx------  2  999 systemd-journal  4096 Feb 10 20:41 pg_twophase
+-rw-------  1  999 systemd-journal     3 Feb 10 20:41 PG_VERSION
+drwx------  4  999 systemd-journal  4096 Feb 10 20:52 pg_wal
+drwx------  2  999 systemd-journal  4096 Feb 10 20:41 pg_xact
+-rw-------  1  999 systemd-journal    88 Feb 10 20:41 postgresql.auto.conf
+-rw-------  1  999 systemd-journal 32319 Feb 10 20:41 postgresql.conf
+-rw-------  1  999 systemd-journal    87 Feb 11 09:58 postmaster.opts
+-rw-------  1  999 systemd-journal   105 Feb 11 09:58 postmaster.pid
+~~~
+
+See how all these PostgreSQL files are owned by a `999` user and the `systemd-journald` group. But, if you check them from within the PostgreSQL `server` container itself, in the default data `/var/lib/postgresql` folder, you would see that they are owned by the `postgres` user and group:
+
+~~~sh
+root@db-postgresql-0:/# ls -al /var/lib/postgresql/18/docker/
+total 136
+drwx------ 19 postgres root      4096 Feb 11 08:58 .
+drwxr-xr-x  3 root     root      4096 Feb 10 19:41 ..
+drwx------  6 postgres postgres  4096 Feb 10 19:41 base
+drwx------  2 postgres postgres  4096 Feb 11 08:58 global
+drwx------  2 postgres postgres  4096 Feb 10 19:41 pg_commit_ts
+drwx------  2 postgres postgres  4096 Feb 10 19:41 pg_dynshmem
+-rw-------  1 postgres postgres  5753 Feb 10 19:41 pg_hba.conf
+-rw-------  1 postgres postgres  2681 Feb 10 19:41 pg_ident.conf
+drwx------  4 postgres postgres  4096 Feb 11 09:03 pg_logical
+drwx------  4 postgres postgres  4096 Feb 10 19:41 pg_multixact
+drwx------  2 postgres postgres  4096 Feb 10 19:41 pg_notify
+drwx------  2 postgres postgres  4096 Feb 10 19:41 pg_replslot
+drwx------  2 postgres postgres  4096 Feb 10 19:41 pg_serial
+drwx------  2 postgres postgres  4096 Feb 10 19:41 pg_snapshots
+drwx------  2 postgres postgres  4096 Feb 11 08:58 pg_stat
+drwx------  2 postgres postgres  4096 Feb 11 08:58 pg_stat_tmp
+drwx------  2 postgres postgres  4096 Feb 10 19:41 pg_subtrans
+drwx------  2 postgres postgres  4096 Feb 10 19:41 pg_tblspc
+drwx------  2 postgres postgres  4096 Feb 10 19:41 pg_twophase
+-rw-------  1 postgres postgres     3 Feb 10 19:41 PG_VERSION
+drwx------  4 postgres postgres  4096 Feb 10 19:52 pg_wal
+drwx------  2 postgres postgres  4096 Feb 10 19:41 pg_xact
+-rw-------  1 postgres postgres    88 Feb 10 19:41 postgresql.auto.conf
+-rw-------  1 postgres postgres 32319 Feb 10 19:41 postgresql.conf
+-rw-------  1 postgres postgres    87 Feb 11 08:58 postmaster.opts
+-rw-------  1 postgres postgres   105 Feb 11 08:58 postmaster.pid
+~~~
+
+This seeming mismatch happens because the `postgres` user and group only exist within the PostgreSQL container. Since there is no user in the K3s agent node that corresponds to the `999` UID, the `ls` command only shows the UID as the owner user of the files. Meanwhile, there is a coincidence in the GID assigned to the `postgres` group in the container and the `systemd-journal` group that exists in the K3s agent node. This makes `ls` print `systemd-journal` as the owner group at the node level.
+
+On the other hand, the permission mode of the files is the same as how you saw them directly in the agent node. Needless to say that you should be careful of not tinkering with these files unless strictly necessary.
+
+Back in the K3s agent node shell, if you now checked the folder where the Forgejo users Git repositories volume is mounted (`/mnt/forgejo-hdd/git/k3smnt`), you will see that its owner has changed:
+
+~~~sh
+~$ ls -al /mnt/forgejo-hdd/git/
+total 28
+drwxr-xr-x 4 root   root    4096 Feb 10 14:09 .
+drwxr-xr-x 3 root   root    4096 Jan 20 20:27 ..
+drwx------ 5 mgrsys mgrsys  4096 Feb 10 20:41 k3smnt
+drwx------ 2 root   root   16384 Jan 20 20:27 lost+found
+~~~
+
+Remember that the `k3smnt` folder was originally owned by the `root` user and group, but the Forgejo `server` container has switched it to `git` (which corresponds to `mgrsys` from the agent node point of view). This situation illustrates you the need to have a different folder for mounting the volumes used by the containers, at least when using local storage as it is done in this guide series.
+
+### Accessing containers from Headlamp
+
+Headlamp also offers the capability of opening a shell in a pod's container. Pick a pod and open its detail view. There notice the `Terminal/Exec` button next to the `Show Logs` one:
+
+![Terminal/Exec button highlighted in detail view of Forgejo server at the Workloads Pods section of Headlamp](images/g036/headlamp_workloads_pods_chosen_forgejo_server_pod_term_button.webp "Terminal/Exec button highlighted in detail view of Forgejo server at the Workloads Pods section of Headlamp")
+
+After clicking on the `Terminal/Exec` button, you will see how Headlamp attempts to open a shell in the first container it finds in the selected pod:
+
+![Terminal opened on Forgejo server container in detail view of Forgejo server at the Workloads Pods section of Headlamp](images/g036/headlamp_workloads_pods_chosen_forgejo_server_pod_terminal_open.webp "Terminal opened on Forgejo server container in detail view of Forgejo server at the Workloads Pods section of Headlamp")
+
+What I mean with "attempts" is that Headlamp will try a number of known shells until one works with the container. This is because each container can come with a different terminal but Headlamp cannot know beforehand which one to use.
+
+## Metrics from the monitoring stack
+
+Do not forget that you also have a whole monitoring stack deployed in your Kubernetes cluster, with Prometheus gathering metrics and Grafana able to show them in their own dashboards. The main problem you have to face here is that you will need to setup yourself the dashboards to monitor the metrics scraped from the platforms or apps you deploy in your cluster.
+
+For instance, you may decide to have one dashboard for the metrics from each main component (cache server, database and Forgejo server) of the Forgejo platform. You may find in [Grafana's dashboard marketplace](https://grafana.com/grafana/dashboards/) already prepared dashboards you can use to show the metrics of those components. Another option for you would be to combine all the metrics from the Forgejo components in one single custom dashboard you prepare on your own.
+
+Also, do not forget that not all apps or services provide Prometheus-compatible metrics. This is the case of the Ghost server deployed in this guide, for instance.
+
+Finally, know that Headlamp comes with a plugin to connect with a Prometheus server. Click on the `Settings` button next to the `Search` bar:
+
+![Settings button at the header menu of Headlamp](images/g036/headlamp_header_menu_settings_button.webp "Settings button at the header menu of Headlamp")
+
+In `Settings`, go to `Plugins` to see which plugins you have loaded in your Headlamp instance:
+
+![Plugins list in the Headlamp settings](images/g036/headlamp_settings_plugins_list.webp  "Plugins list in the Headlamp settings")
+
+In this guide's setup, there is just [one plugin for connecting with Prometheus](https://github.com/headlamp-k8s/plugins/tree/main/prometheus). If you click in its name, you will get a form for configuring the connection with a Prometheus instance:
+
+![Prometheus plugin empty configuration for connecting with Prometheus](images/g036/headlamp_settings_plugins_prometheus_config.webp "Prometheus plugin empty configuration for connecting with Prometheus")
+
+See in this last snapshot how the plugin has enabled by default an `Auto detect` feature that cannot work as it is: the Prometheus server in the cluster has basic authentication enabled. Given that the plugin configuration does not offer explicit fields to set a user and password, and I have not found any official documentation clearly stating if the plugin supports basic authentication in some way, it may be that this plugin (at least in the version shown in the snapshot above, `0.8.2`) can only work with Prometheus instances that do not require authentication.
 
 ## References
 
-### _Kubernetes_
+### [Kubernetes](https://kubernetes.io/docs/)
 
-- [Official Doc - Get a Shell to a Running Container](https://kubernetes.io/docs/tasks/debug-application-cluster/get-shell-running-container/)
+- [Kubernetes Documentation. Tasks. Monitoring, Logging, and Debugging](https://kubernetes.io/docs/tasks/debug/)
+  - [Troubleshooting Applications Tasks. Get a Shell to a Running Container](https://kubernetes.io/docs/tasks/debug-application-cluster/get-shell-running-container/)
+
+### [Headlamp](https://headlamp.dev/)
+
+- [GitHub. Headlamp](https://github.com/headlamp-k8s)
+  - [Official plugins of the Headlamp project](https://github.com/headlamp-k8s/plugins)
+    - [Prometheus](https://github.com/headlamp-k8s/plugins/tree/main/prometheus)
+
+### [Grafana](https://grafana.com/oss/)
+
+- [Grafana dashboards](https://grafana.com/grafana/dashboards/)
 
 ## Navigation
 
