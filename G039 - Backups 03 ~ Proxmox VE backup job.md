@@ -1,30 +1,51 @@
 # G039 - Backups 03 ~ Proxmox VE backup job
 
-Back in the [**G023** guide](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md#vm-templates-backup), I already showed you how to do a manual backup of a VM template in Proxmox VE, which is the same manual process available to do a VM backup. With that experience in mind, here I'll show you how to program in Proxmox VE an automated job that backups periodically the virtual machines used as nodes of your K3s cluster.
+- [Backup your VMs in Proxmox VE](#backup-your-vms-in-proxmox-ve)
+- [What gets covered with the backup job](#what-gets-covered-with-the-backup-job)
+- [Why scheduling a backup job](#why-scheduling-a-backup-job)
+- [How it affects the K3s Kubernetes cluster](#how-it-affects-the-k3s-kubernetes-cluster)
+- [When to do the backup job](#when-to-do-the-backup-job)
+- [Scheduling the backup job in Proxmox VE](#scheduling-the-backup-job-in-proxmox-ve)
+  - [Testing the backup job](#testing-the-backup-job)
+- [Restoring a backup in Proxmox VE](#restoring-a-backup-in-proxmox-ve)
+  - [Generating new VMs from backups](#generating-new-vms-from-backups)
+  - [You cannot restore a live VM](#you-cannot-restore-a-live-vm)
+- [Location of the backup files in the Proxmox VE system](#location-of-the-backup-files-in-the-proxmox-ve-system)
+- [Relevant system paths](#relevant-system-paths)
+  - [Directories on Proxmox VE](#directories-on-proxmox-ve)
+- [References](#references)
+  - [Proxmox VE](#proxmox-ve)
+- [Navigation](#navigation)
+
+## Backup your VMs in Proxmox VE
+
+Back in the [chapter **G023**](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md#vm-templates-backup), you learned how to do a manual backup of a VM template in Proxmox VE, which is the same manual process available to do a VM backup. With that experience in mind, this chapter covers how to schedule in Proxmox VE an automated job that backups periodically the virtual machines used as nodes of your K3s cluster.
 
 ## What gets covered with the backup job
 
-The backup job that I'll explain here will cover the three virtual machines acting as nodes of the K3s Kubernetes cluster deployed in previous guides. This means that each VM will be completely copied in its own backup, including all the virtual storage drives they may have attached at the moment the backup is executed.
+The backup job explained here will cover the three virtual machines acting as nodes of the K3s Kubernetes cluster deployed in previous guides. This means that each VM will be completely copied in its own backup, including all the virtual storage drives they may have attached at the moment the backup is executed.
 
-Therefore, you're treating these VMs like you did with your Proxmox VE system in the previous [**G038** Clonezilla guide](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md), because that's what they are: the VMs are the hosts of your Kubernetes cluster and all the applications deployed in it, together with their data. The difference is that you control the backup procedure in a more friendly way thanks to the capabilities of Proxmox VE in this regard.
+Therefore, you are treating these VMs like you did with your Proxmox VE system in the previous [chapter **G038** Clonezilla](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md), because that is what they are: the VMs are the hosts of your Kubernetes cluster and all the applications deployed in it, together with their data. The difference is that you control the backup procedure in a more friendly way thanks to the capabilities Proxmox VE offers in this regard.
 
 ## Why scheduling a backup job
 
-You might think, I already do Clonezilla backups regularly, so why doing these?
+You might think, if I already do Clonezilla backups regularly, why doing these?
 
-1. These backups are only about the VMs, not the whole Proxmox VE setup. By having these VM backups, you can restore each VM independently when required, not your whole Proxmox VE system.
+1. **These backups are only about the VMs, not the whole Proxmox VE setup**\
+   By having these VM backups, you can restore each VM independently when required, not your whole Proxmox VE system.
 
-2. The Proxmox backup jobs are really easy to program and leave on their own. Once you've programmed them, you don't have to remember to do them: Proxmox does that for you.
+2. **The Proxmox backup jobs are really easy to schedule and leave on their own**\
+   Once you have scheduled them, you do not have to remember to execute them: Proxmox does that for you.
 
 ## How it affects the K3s Kubernetes cluster
 
-Since a VM backup copies the entire virtual machine, the VM must be stopped so the backup process can be executed on it. Of course, this implies that your K3s Kubernetes cluster won't be available for as long as the backup takes to finish. Bear in mind that this unavailability is not symmetric (so to speak):
+Since a VM backup copies the entire virtual machine, the VM must be stopped so the backup process can be executed on it. Of course, this implies that your K3s Kubernetes cluster will not be available for as long as the backup takes to finish. Bear in mind that this unavailability is not symmetric (so to speak):
 
-- When the backup job starts executing the backup of the K3s master/server node of your Kubernetes cluster, the entire K3s cluster will be down (you won't be able to reach it with `kubectl`). The other two nodes, the agent ones will keep running but waiting for their server to come back.
+- When the backup job starts executing the backup of the K3s server node of your Kubernetes cluster, the entire K3s cluster will be down. In particular, you will not be able to reach it with `kubectl`. The agent nodes will keep on running but waiting for their server to come back.
 
-- When the backup executed is on one of the K3s agent nodes, the K3s cluster will be available to your `kubectl` commands, but anything running in the stopped agent node will be down until the backup finishes.
+- When the backup executed is on one of the K3s agent nodes, the K3s cluster will be available to your `kubectl` commands, but anything running in the stopped agent node will be down until the backup finishes and the VM boots up again.
 
-The Proxmox automated backup system is able to stop and start the affected VMs on its own, so you don't have to worry about manually restart them after the backup job is done.
+The Proxmox VE automated backup system is able to stop and start the affected VMs on its own. You do not have to worry about manually restart them after the backup job is done.
 
 ## When to do the backup job
 
@@ -34,129 +55,183 @@ Taking into account those two perspectives, I'd say that at least a weekly backu
 
 ## Scheduling the backup job in Proxmox VE
 
-Scheduling backup jobs is a rather simple matter on Proxmox VE. Just log in the Proxmox VE web console with the `mgrsys` user and follow the procedure described next.
+Scheduling backup jobs is rather easy on Proxmox VE. Just log in the Proxmox VE web console with the `mgrsys` user and follow the procedure described next:
 
-1. After login in the PVE web console, go to the `Datacenter > Backup` page.
+1. After login in the PVE web console, go to the `Datacenter > Backup` page:
 
-    ![PVE Datacenter Backup page](images/g039/pve_dc_backup_page.png "PVE Datacenter Backup page")
+    ![PVE Datacenter Backup page](images/g039/pve_dc_backup_page.webp "PVE Datacenter Backup page")
 
-    This is the page where you can schedule backups for a Proxmox VE cluster. Of course, in your case, you'll only prepare backups for the VMs in your standalone PVE node.
+    Here you can schedule backups for a Proxmox VE cluster. Of course, in your case, you will only prepare backups for the VMs in your standalone PVE node.
 
-2. Notice the warning message next to the action buttons available in this page.
+2. Notice the warning message next to the action buttons available in this page:
 
-    ![Warning guests not covered by backup job](images/g039/pve_dc_backup_warning_guests_not_covered.png "Warning guests not covered by backup job")
+    ![Warning guests not covered by backup job](images/g039/pve_dc_backup_warning_guests_not_covered.webp "Warning guests not covered by backup job")
 
-    It's telling you that there are VMs (the "_guests_" for Proxmox VE) not covered by any backup job. Press on the `Show` button, next to the message, to see which ones are considered not covered.
+    It warns about VMs (the "_guests_" for Proxmox VE) not being covered by any backup job. The warning itself is a button, so press it to see which guests are considered not covered:
 
-    ![Guests without backup job window](images/g039/pve_dc_backup_guests_no_bkp_job_window.png "Guests without backup job window")
+    ![Guests without backup job window](images/g039/pve_dc_backup_guests_no_bkp_job_window.webp "Guests without backup job window")
 
-    Notice that lists all the VMs in the system, but also the VM templates. Remember that VM templates are just forever frozen-in-time VMs, so them appearing in this listing is not wrong technically speaking.
+    Notice that lists all the existing VMs in the system, but also the VM templates. Remember that VM templates are just forever frozen-in-time VMs, so them appearing in this listing is not wrong technically speaking.
 
-3. Return to the main Backup page and click on the `Add` button.
+3. Return to the main `Backup` page and click on the `Add` button:
 
-    ![Add button on Backup page](images/g039/pve_dc_backup_add_button.png "Add button on Backup page")
+    ![Add button on Backup page](images/g039/pve_dc_backup_add_button.webp "Add button on Backup page")
 
-4. You'll get to a new window where you can program a backup job.
+4. You will get a new window where you can schedule a backup job:
 
-    ![Add backup job window in general tab](images/g039/pve_dc_backup_add_bkp_job_gen_tab_clean.png "Add backup job window in general tab")
+    ![General tab in Create backup job window](images/g039/pve_dc_backup_add_bkp_job_gen_tab_clean.webp "General tab in Create backup job window")
 
-    This window has two tabs, and you get in the `General` one first by default. This tab gives you the parameters to configure how the backup job's is executed.
+    This window has several tabs, and you start in the `General` one by default. This tab gives you the parameters to configure how the backup job's is executed:
 
-    - `Node`: default is `All`. In a Proxmox VE cluster environment, with several nodes available, you would be able to choose on which node to run the backup job. Although I haven't seen this explained in the official Proxmox VE documentation, probably, when you choose a node, the list of VMs (and containers if you're also using those) shown in this window will change to show only those running in that PVE node. Also, the documentation doesn't tell if its possible to choose more than one node at the same time.
+    - `Node`: default is `All`.\
+      In a Proxmox VE cluster environment, with several nodes available, you would be able to choose on which node to run the backup job. Although I haven't seen this explained in the official Proxmox VE documentation, probably, when you choose a node, the list of VMs (and containers if you're also using those) shown in this window will change to show only those running in that PVE node. Also, the documentation doesn't tell if its possible to choose more than one node at the same time.
 
-    - `Storage`: default is the first one available in the PVE system. Specifies where to store the backups generated by the job. In this guide series you only configured one, the `hddusb_bkpvzdumps`, so that's the one being offered by default.
+    - `Storage`: default is the first backup storage available in the PVE system.\
+      Specifies where to store the backups generated by the job. In this guide there is only one backup storage enabled, the `hddusb_bkpvzdumps`, so that is the one being offered by default.
 
-    - `Day of week`: default is `Saturday`. Here you can choose in which days of the week you want to execute the backup job. In the list you can mark several days, or even all of them.
+    - `Schedule`: empty by default.
+      In this field you specify the schedule you want for the backup. You can enter a predefined schedule from the list offered by the field:
 
-    - `Start Time`: default is `00:00`. Indicates at which hour and minute you want to start the backup job. You can either type the hour and minute you want, or choose it from the list.
-        > **BEWARE!**  
-        > The time in in 24H format!
+      ![Schedule list at General tab in Create backup job window](images/g039/pve_dc_backup_add_bkp_job_gen_tab_schedule_list.webp "Schedule list at General tab in Create backup job window")
 
-    - `Selection mode`: default is `Include selected VMs`. It allows to choose the mode in which you use the list of VMs (or containers) below. You can only apply one of the four modes available:
-        - `Include selected VMs`: only the VMs selected will have their backup done in this job.
-        - `All`: all the VMs in the list will have the backup done.
-        - `Exclude selected VMs`: only the VMs NOT selected in the list will have their backup done.
-        - `Pool based`: if you've organized your VMs in pools, you can just indicate which pool to backup and only those VMs within that pool will be affected by the backup job.
+      The option you choose fills the `Schedule` field as a string you can edit later:
 
-    - `Send email to`: default is empty string. If you want to receive an email warning you about the backup job being executed or failed, put an email address here.
+      ![Schedule filled at General tab in Create backup job window](images/g039/pve_dc_backup_add_bkp_job_gen_tab_schedule_filled.webp "Schedule filled at General tab in Create backup job window")
 
-    - `Email notification`: default is `Always`. This option determines when Proxmox VE sends the email warning about the backup job execution, either "always" (the official documentation doesn't explain what `Always` really means) or just on failures.
+      The schedule set above is a daily one that is executed at 21:00, but you can change it to suit your needs.
 
-    - `Compression`: default is `ZSTD (fast and good)`. Offers you the possibility of compressing or not the backup of your VM or container. In a scenario with very limited storage like the one used in this guide series, its mandatory to compress the dumps as much as possible. The default `ZSTD` option is the best option since is not only the fastest algorithm of the three offered, but also is multi-threaded.
+      > [!IMPORTANT]
+      > **Careful with the time format**\
+      > The time is always set in 24H format.
 
-    - `Mode`: default is `Snapshot`. Indicates how you want to execute the backup on each VM. There are three modes available.
-        - `Snapshot`: allows you to make backups of VMs that are running. This mode is the riskiest regarding data inconsistency, but this issue is reduced thanks to the use of the Qemu guest agent (installed in your VMs by default by their underlying Debian 11 OS) that allows Proxmox VE to suspend the VM while doing the backup.
-        - `Suspend`: does essentially the same as `Snapshot`, but the official documentation recommends using `Snapshot` mode rather than this one.
-        - `Stop`: executes an orderly shutdown of the VM, then makes the backup. After finishing the backup, it restarts the affected VM. This mode provides the highest data consistency in the resulting backup.
-        > **BEWARE!**  
+    - `Selection mode`: default is `Include selected VMs`.\
+      Allows to choose in which mode the list of VMs (or containers) below is processed. You can only apply one of these four modes:
+
+      - `Include selected VMs`\
+        Only the VMs selected will have their backup done in this job.
+
+      - `All`\
+        All the VMs in the list will have the backup done.
+
+      - `Exclude selected VMs`\
+        Only the VMs NOT selected in the list will have their backup done.
+
+      - `Pool based`\
+        If you have organized your VMs in pools, you can just indicate which pool to backup and the job will only backup those VMs within that pool.
+
+    - `Compression`: default is `ZSTD (fast and good)`.\
+      Offers the possibility of compressing or not the backup of your VM or container. In a scenario with very limited storage like the one used in this guide, it is mandatory to compress the dumps as much as possible. The default `ZSTD` option is not only the fastest algorithm of the three offered, but it is also multi-threaded.
+
+    - `Mode`: default is `Snapshot`.\
+      Indicates how you want to execute the backup on each VM. There are three modes available.
+
+      - `Snapshot`:\
+        Allows you to make backups of VMs that are running. This mode is the riskiest regarding data inconsistency, but this issue is reduced thanks to the use of the Qemu guest agent (installed in your VMs by default by their underlying Debian 11 OS) that allows Proxmox VE to suspend the VM while doing the backup.
+
+      - `Suspend`:\
+        Does essentially the same as `Snapshot`, but the official documentation recommends using `Snapshot` mode rather than this one.
+
+      - `Stop`:\
+        Executes an orderly shutdown of the VM, then makes the backup. After finishing the backup, it restarts the affected VM. This mode provides the highest data consistency in the resulting backup.
+
+        > [!IMPORTANT]
+        > **The backup modes do not work exactly the same for containers**\
         > The behavior of these backup modes for containers is very similar but not totally equivalent to how they work for VMs. Check the Proxmox VE help to see the differences.
 
-    - `Enable`: default is checked. Enables or disables the backup job.
+    - `Enable`: default is checked.\
+      Enables or disables the backup job.
 
-    - List of VMs and containers: default is **none** selected. The list where you choose which VMs (or containers) you want to backup with this job. Remember that this list changes depending on what `Node` or `Selection mode` are selected.
+    - `Job Comment`: default is empty.\
+      Just a comment string.  
 
-5. Now that you know about the `General` tab, you'll understand the configuration shown in the following snapshot.
+    - List of VMs and containers: default is **none selected**.\
+      The list where you choose which VMs (or containers) you want to backup with this job. Remember that this list changes depending on what `Node` or `Selection mode` are selected.
 
-    ![Add backup job General tab set](images/g039/pve_dc_backup_add_bkp_job_gen_tab_filled.png "Add backup job General tab set")
+5. After learning about the `General` tab, you will understand the configuration shown in this snapshot:
 
-    Notice that I've changed the following parameters.
+    ![General tab set in Create backup job window](images/g039/pve_dc_backup_add_bkp_job_gen_tab_filled.webp "General tab set in Create backup job window")
 
-    - `Node` set to the only node available, the `pve` node. I made this on purpose, just to show how it would look.
+    Notice that I have changed the following fields:
 
-    - `Day of week` has all days selected.
+    - `Node` set to the only node available, the `pve` node.
 
-    - `Start time` is set to `14:20`, a value **not** available in this parameter's unfoldable list.
+    - `Schedule` configures this job to execute daily at `14:20`.
 
-    - `Send email to`: some **fake** email to show on this guide.
+    - `Job Comment` has a short line as a reminder of what is being backed up by this job.
 
-    - At the VMs list I've chosen only the VMs of the K3s Kubernetes cluster. The VM templates already have their own backup made manually, and doesn't make sense either to run a backup job on them since VM templates cannot be modified (well, except their Proxmox VE configuration which you usually shouldn't touch again).
+    - At the VMs list, I have chosen only the VMs of the K3s Kubernetes cluster. The VM templates already have their own backup made manually, and does not make sense either to run a backup job on them since VM templates cannot be modified (well, except their Proxmox VE configuration which you usually should not touch again).
 
-    > **BEWARE!**  
-    > Don't click on `Create` just yet! There's something else to configure yet in this backup job.
+    > [!WARNING]  
+    > **Do not click on `Create` just yet!**\
+    > There are more tabs to review in this backup job configuration window.
 
-6. With the `General` configuration set, now you have to check out the `Retention` tab, so click on it to meet the window below.
+6. Click on the `Notifications` tab to open the window below:
 
-    ![Add backup job Retention tab](images/g039/pve_dc_backup_add_bkp_job_ret_tab_clean.png "Add backup job Retention tab")
+    ![Notifications tab in Create backup job window](images/g039/pve_dc_backup_add_bkp_job_notif.webp "Notifications tab in Create backup job window")
 
-    The purpose of this tab if to define the retention policy applied on the backups generated by this backup job. In other words, is the policy that cleans up old backups following the criteria you specify here. The parameters available in this form all come blank or disabled by default.
+    As you can see, this tab exists only to maintain the legacy option of sending email notifications regarding the backup job through a sendmail server. Just leave the default option and proceed to the next tab.
 
-    - `Keep all backups`: keeps all the backups generated from this backup job, so enabling it disables or nullifies all the other parameters.
+7. In the `Retention` tab you have a scheduling grid:
 
-    - `Keep Last`: keeps the last "N" of backups, with "N" being an integer number. So, if you tell it to keep the 10 most recent backups, the oldest 11th will be removed automatically.
+    ![Retention tab in Create backup job window](images/g039/pve_dc_backup_add_bkp_job_ret_tab_clean.webp "Retention tab in Create backup job window")
 
-    - `Keep Hourly/Daily/Weekly/Monthly/Yearly`: keeps **only one** backup for each of the last "N" hours/days/etc. If in an hour/day/etc happened to be more than one backup present, just the most recent is kept.
+    This tab is where you define the retention policy applied to the backups generated by this backup job. In other words, is the policy that cleans up old backups following the scheduling criteria you specify here. The parameters available in this form all come blank or disabled by default.
 
-    > **BEWARE!**  
-    > A backup job processes these retention options in a certain order. First goes the `Keep Last` option, then `Hourly`, `Daily`, etc. In other words, each option is a level of restriction that supersedes the previous one.  
-    For example, if you set the job to keep the `Last` 30 backups, but also to keep only the ones from the last 5 hours, the `Hourly` restriction will apply to the 30 backups left by the `Last` rule.
+    - `Keep all backups`\
+      Keeps all the backups generated from this backup job, so enabling it disables or nullifies all the other parameters.
 
-    Also notice also the warning found almost at the window's bottom. It tells you that, if you don't specify anything in this tab, the retention policy applied in this backup job will be the one specified in the backup storage, or the one set in some `vzdump.conf` configuration file supposedly found in "the node" (which one if you've chosen the option `All` and you have a Proxmox VE cluster with several of them?).
+    - `Keep Last`\
+      Keeps the last "N" of backups, with "N" being an integer number. So, if you tell it to keep the 10 most recent backups, the oldest 11th will be removed automatically.
 
-7. After learning what the `Retention` tab is, let's set a retention policy for this backup job.
+    - `Keep Hourly/Daily/Weekly/Monthly/Yearly`\
+      Keeps **only one backup** for each of the last "N" hours/days/etc. If in an hour/day/etc happened to be more than one backup present, just the most recent is kept.
 
-    ![Add backup job Retention tab set](images/g039/pve_dc_backup_add_bkp_job_ret_tab_set.png "Add backup job Retention tab set")
+    > [!IMPORTANT]
+    > **Backup jobs process these retention options in a certain order**\
+    > First goes the `Keep Last` option, then `Hourly`, `Daily`, etc. In other words, each option is a level of restriction that supersedes the previous one.
+    >
+    > For example, if you set the job to keep the `Last` 30 backups, but also to keep only the ones from the last 5 hours, the `Hourly` restriction will apply to the 30 backups left by the `Last` rule.
+
+    Also notice the warning found almost at the window's bottom. It tells you that, if you do not specify anything in this tab, the retention policy applied in this backup job will be the one specified in the backup storage, or the one set in some `vzdump.conf` configuration file supposedly found in "the node" (it is not clear which one if you have chosen the option `All` and you have a Proxmox VE cluster with several of them).
+
+8. After learning what the `Retention` tab is, you can set a retention policy for this backup job:
+
+    ![Retention set in Create backup job window](images/g039/pve_dc_backup_add_bkp_job_ret_tab_set.webp "Retention set in Create backup job window")
 
     The configuration above means the following:
 
     - Only one backup shall be kept from each day.
     - From all the dailies, only the last one from each week will be kept.
     - From all the weeklies, only the last one from each month will be preserved.
-    - When a year is over, only the most recent monthly one will remain as a representative of the whole year.
+    - When a year is over, only the most recent monthly one will remain.
 
-8. If you are content with this backup job's configuration, click on the `Create` button found at the window's bottom.
+9. Click on the next tab, `Note Template`:
 
-    ![Add backup job Create button](images/g039/pve_dc_backup_add_bkp_job_create_button.png "Add backup job Create button")
+    ![Note Template tab in Create backup job window](images/g039/pve_dc_backup_add_bkp_job_note_temp_tab_clean.webp "Note Template tab in Create backup job window")
 
-    After clicking on the `Create` button, the `Add` backup job window will close itself and you'll see almost immediately the new task in the `Backup` page.
+    This tab allows you to customize the notes that go with each backup. For instance, you could set custom notes as a reminder of these backups being for the K3s nodes of your Kubernetes cluster:
 
-    ![Backup job listed on Backup page](images/g039/pve_dc_backup_new_job_listed.png "Backup job listed on Backup page")
+    ![Note Template customized in Create backup job window](images/g039/pve_dc_backup_add_bkp_job_note_temp_customized.webp "Note Template customized in Create backup job window")
 
-    See how some of the details of the new backup job appear in the list, such as its programming time, storage location and VMs selected (listed just by their IDs). Also see how the warning message about "_guests not covered_" is still present due to the VM templates being left out of the backup job.
+    Notice how the customized note uses most of the template variables indicated at the window's bottom to make it more informative.
 
-    > **BEWARE!**  
-    > Remember that you've only created the backup job task, not launched the backup process itself!
+10. Press on the remaining `Advanced` tab:
 
-### _Testing the backup job_
+    ![Advanced tab in Create backup job window](images/g039/pve_dc_backup_add_bkp_job_advanced_tab.webp "Advanced tab in Create backup job window")
+
+    This tab offers you some advanced options to better tune the performance of your backups and how they affect your system. For this guide's homelab setup, the default configuration of these advanced options is good enough.
+
+11. If you are content with this backup job's configuration, click on the `Create` button found at the window's bottom.
+
+    ![Create button in Create backup job window](images/g039/pve_dc_backup_add_bkp_job_create_button.webp "Create button in Create backup job window")
+
+    After clicking on the `Create` button, the `Create: backup job` window will close itself and you will see almost immediately the new scheduled job in the main `Backup` page:
+
+    ![Backup job listed on Backup page](images/g039/pve_dc_backup_new_job_listed.webp "Backup job listed on Backup page")
+
+    See how some of the details of the new backup job appear in the list, such as its schedule, storage location, and VMs selected (listed just by their IDs). Also see how the warning message about "_guests not covered_" is still present due to the VM templates being left out of the backup job.
+
+### Testing the backup job
 
 Now that you got your first backup job ready, know that you don't have to wait for its set `Start Time` to see how it goes. Also there are other actions related to the management of backup jobs that you should get familiar with.
 
@@ -281,7 +356,7 @@ Now that you've validated the backup job's execution, the remaining things to ve
 
 You've already seen a detailed explanation about how to restore a backup [in the **G023** guide](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md#restoring-the-vm-templates-backup). So, what else is to say about this process? A couple of things more in fact.
 
-### _Generating new VMs from backups_
+### Generating new VMs from backups
 
 You can generate new VMs (or containers) from backups, if you execute the restoration process from the `Backup` tab of the storage that keeps them. So, in your system you would do the following.
 
@@ -360,7 +435,7 @@ You can generate new VMs (or containers) from backups, if you execute the restor
 
     ![VM removal task done OK](images/g039/pve_restore_bkp_vm_gen_remove_task_done.png "VM removal task done OK")
 
-### _You cannot restore a live VM_
+### You cannot restore a live VM
 
 Let's say that, for some reason, you want or need to restore the `k3sagent02` VM, and you somehow forget that's still running. What will happen? Find out following the steps next.
 
@@ -454,7 +529,7 @@ So, if you wanted, you could connect through SSH with a tool like WinSCP and cop
 
 ## Relevant system paths
 
-### _Directories on Proxmox VE_
+### Directories on Proxmox VE
 
 - `/mnt`
 - `/mnt/hddusb_bkpvzdumps`
@@ -462,7 +537,7 @@ So, if you wanted, you could connect through SSH with a tool like WinSCP and cop
 
 ## References
 
-### _Proxmox VE_
+### Proxmox VE
 
 - [Wiki. Backup and Restore](https://pve.proxmox.com/wiki/Backup_and_Restore)
 - [Administrator Guide. Backup and Restore](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_vzdump)

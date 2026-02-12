@@ -570,7 +570,7 @@
 - [Metrics from the monitoring stack](G036%20-%20Host%20and%20K3s%20cluster%20~%20Monitoring%20and%20diagnosis.md#metrics-from-the-monitoring-stack)
 - [References](G036%20-%20Host%20and%20K3s%20cluster%20~%20Monitoring%20and%20diagnosis.md#references)
 
-### [G037 - Backups 01 ~ Considerations](G037%20-%20Backups%2001%20~%20Considerations.md#g037-backups-01-considerations)
+### [G037 - Backups 01 ~ Considerations](G037%20-%20Backups%2001%20~%20Considerations.md)
 
 - [What to backup. Identifying your data concerns](G037%20-%20Backups%2001%20~%20Considerations.md#what-to-backup-identifying-your-data-concerns)
 - [How to backup. Backup tools](G037%20-%20Backups%2001%20~%20Considerations.md#how-to-backup-backup-tools)
@@ -578,7 +578,7 @@
 - [When to do the backups. Backup scheduling](G037%20-%20Backups%2001%20~%20Considerations.md#when-to-do-the-backups-backup-scheduling)
 - [References](G037%20-%20Backups%2001%20~%20Considerations.md#references)
 
-### [G038 - Backups 02 ~ Host platform backup with Clonezilla](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md#g038-backups-02-host-platform-backup-with-clonezilla)
+### [G038 - Backups 02 ~ Host platform backup with Clonezilla](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md)
 
 - [Host backups are filesystem images](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md#host-backups-are-filesystem-images)
 - [What gets inside a host backup](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md#what-gets-inside-a-host-backup)
@@ -590,8 +590,9 @@
 - [Final considerations](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md#final-considerations)
 - [References](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md#references)
 
-### [G039 - Backups 03 ~ Proxmox VE backup job](G039%20-%20Backups%2003%20~%20Proxmox%20VE%20backup%20job.md#g039-backups-03-proxmox-ve-backup-job)
+### [G039 - Backups 03 ~ Proxmox VE backup job](G039%20-%20Backups%2003%20~%20Proxmox%20VE%20backup%20job.md)
 
+- [Backup your VMs in Proxmox VE](G039%20-%20Backups%2003%20~%20Proxmox%20VE%20backup%20job.md#backup-your-vms-in-proxmox-ve)
 - [What gets covered with the backup job](G039%20-%20Backups%2003%20~%20Proxmox%20VE%20backup%20job.md#what-gets-covered-with-the-backup-job)
 - [Why scheduling a backup job](G039%20-%20Backups%2003%20~%20Proxmox%20VE%20backup%20job.md#why-scheduling-a-backup-job)
 - [How it affects the K3s Kubernetes cluster](G039%20-%20Backups%2003%20~%20Proxmox%20VE%20backup%20job.md#how-it-affects-the-k3s-kubernetes-cluster)
