@@ -1,4 +1,4 @@
-# G907 - Appendix 07 ~ Resizing a root LVM volume
+# G906 - Appendix 06 ~ Resizing a root LVM volume
 
 Let's say you happen to have a Debian-based VM with a small single storage drive (_hard disk_ in Proxmox VE) of about 5 GiB, and you need to make it bigger, up to 10 GiB for instance. To do so you'll have to resize the hard disk first, then you'll need to extend the root LVM filesystem inside of it over the new space. The procedure is not hard but, since it manipulates the `root` filesystem while it's active, you must be careful when going through it.
 
@@ -262,4 +262,4 @@ This procedure is, as it is, also valid to extend any non-root LVM volumes.
 
 ## Navigation
 
-[<< Previous (**G906. Appendix 06**)](G906%20-%20Appendix%2006%20~%20Handling%20VM%20or%20VM%20template%20volumes.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G908. Appendix 08**) >>](G908%20-%20Appendix%2008%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md)
+[<< Previous (**G905. Appendix 05**)](G905%20-%20Appendix%2005%20~%20Handling%20VM%20or%20VM%20template%20volumes.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G907. Appendix 07**) >>](G907%20-%20Appendix%2007%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md)

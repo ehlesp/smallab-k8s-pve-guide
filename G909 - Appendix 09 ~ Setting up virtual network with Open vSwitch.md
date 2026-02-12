@@ -1,4 +1,4 @@
-# G910 - Appendix 10 ~ Setting up virtual network with Open vSwitch
+# G909 - Appendix 09 ~ Setting up virtual network with Open vSwitch
 
 Proxmox VE uses Linux bridge technology by default to set up the virtual network, but it also supports **Open vSwitch** (also known as **OVS**). Here I'll show you how to install OVS and replace the default bridge with an OVS one.
 
@@ -129,4 +129,4 @@ Go back to the web console and, again, in the `System > Network` screen of your 
 
 ## Navigation
 
-[<< Previous (**G909. Appendix 09**)](G909%20-%20Appendix%2009%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G911. Appendix 11**) >>](G911%20-%20Appendix%2011%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md)
+[<< Previous (**G908. Appendix 08**)](G908%20-%20Appendix%2008%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G910. Appendix 10**) >>](G910%20-%20Appendix%2010%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md)

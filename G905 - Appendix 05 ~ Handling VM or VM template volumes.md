@@ -1,4 +1,4 @@
-# G906 - Appendix 06 ~ Handling VM or VM template volumes
+# G905 - Appendix 05 ~ Handling VM or VM template volumes
 
 The hard disks attached to a VM or a VM template are, in fact, VM disk images. In the case of the Debian VM created in the [**G020** guide](G020%20-%20K3s%20cluster%20setup%2003%20~%20Debian%20VM%20creation.md#building-a-debian-virtual-machine), its hard disk is an image that has been created as a LVM light volume within a thinpool. This way, the disk image is not just a file, but a virtual storage device that contains the VM's entire filesystem. How to locate and, when necessary, handle such an image? Read the following subsections to have a glimpse about this.
 
@@ -193,4 +193,4 @@ You've seen the LVM side of the story, but you can get more information about th
 
 ## Navigation
 
-[<< Previous (**G905. Appendix 05**)](G905%20-%20Appendix%2005%20~%20Cloning%20storage%20drives%20with%20Clonezilla.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G907. Appendix 07**) >>](G907%20-%20Appendix%2007%20~%20Resizing%20a%20root%20LVM%20volume.md)
+[<< Previous (**G904. Appendix 04**)](G904%20-%20Appendix%2004%20~%20Object%20by%20object%20Kubernetes%20deployments.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G906. Appendix 06**) >>](G906%20-%20Appendix%2006%20~%20Resizing%20a%20root%20LVM%20volume.md)

@@ -1,4 +1,4 @@
-# G908 - Appendix 08 ~ K3s cluster with two or more server nodes
+# G907 - Appendix 07 ~ K3s cluster with two or more server nodes
 
 In the [**G025** guide](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md) you have seen how to create a K3s Kubernetes cluster with just one server node. This works fine and suits the constrained scenario set in this guide series. But if you want a more complete Kubernetes experience, you'll need to know how to set up two or more server nodes in your cluster.
 
@@ -210,4 +210,4 @@ The agent nodes are installed with exactly the same `config.yaml` file and comma
 
 ## Navigation
 
-[<< Previous (**G907. Appendix 07**)](G907%20-%20Appendix%2007%20~%20Resizing%20a%20root%20LVM%20volume.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G909. Appendix 09**) >>](G909%20-%20Appendix%2009%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md)
+[<< Previous (**G906. Appendix 06**)](G906%20-%20Appendix%2006%20~%20Resizing%20a%20root%20LVM%20volume.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G908. Appendix 08**) >>](G908%20-%20Appendix%2008%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md)
