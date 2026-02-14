@@ -347,6 +347,7 @@ $ google-authenticator -t -d -f -r 3 -R 30 -w 3 -Q UTF8 -i k3sagentxx.homelab.cl
 ~~~
 
 > [!IMPORTANT]
+> **Save your TOTP codes**\
 > Export and save all the codes and even the `.google_authenticator` file in a password manager or by any other secure method.
 
 ### Changing the SSH key-pair
@@ -376,9 +377,10 @@ As with the TOTP code, the SSH key-pair files are the same ones you created for 
     $ cat .ssh/id_ed25519.pub >> .ssh/authorized_keys ; chmod 600 .ssh/authorized_keys
     ~~~
 
-Careful now, you have to export the new private key (the `id_rsa` file) so you can remotely connect through your ssh client. Do not close your current connection so you can use it to export the private key.
+Careful now, you have to export the new private key (the `id_ed25519` file) so you can remotely connect through your ssh client. Do not close your current connection so you can use it to export the private key.
 
 > [!IMPORTANT]
+> **Save your ssh key-pairs**\
 > Do not forget to export and save the new ssh key-pairs in a password manager or by any other secure method.
 
 ### Changing the administrative user's password

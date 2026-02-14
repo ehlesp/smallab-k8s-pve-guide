@@ -66,7 +66,7 @@ To do this conversion, browse into your Proxmox VE web console and follow the st
 
       ~~~markdown
       # Debian VM TEMPLATE
-      Template created: 2025-09-06\
+      VM created: 2025-09-06\
       OS: Debian 13 "trixie"\
       Root login disabled: yes\
       Sysctl configuration: yes\

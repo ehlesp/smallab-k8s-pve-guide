@@ -88,15 +88,15 @@ Since in this new VM you're going to modify its filesystem structure, let's full
     - `Mode`\
       This option offers two ways of cloning the new VM:
 
-        - `Linked Clone`\
-          This creates a clone that still refers to the original VM, therefore is _linked_ to it. This option can only be used with read-only VMs, or templates, since the linked clone uses the original VM's volume to run, saving in its own image only the differences. Also, linked clones must be stored in the same `Target Storage` where the original VM's storage is.
+      - `Linked Clone`\
+        This creates a clone that still refers to the original VM, therefore is _linked_ to it. This option can only be used with read-only VMs, or templates, since the linked clone uses the original VM's volume to run, saving in its own image only the differences. Also, linked clones must be stored in the same `Target Storage` where the original VM's storage is.
 
-          > [!WARNING]
-          > **VM templates with attached linked clones are not removable**\
-          > Templates cannot be removed as long as they have linked clones attached to them.
+        > [!WARNING]
+        > **VM templates with attached linked clones are not removable**\
+        > Templates cannot be removed as long as they have linked clones attached to them.
 
-        - `Full Clone`\
-          Is a full copy of the original VM, so it is not linked to it at all. Also, this type allows to be put in a different `Target Storage` if required.
+      - `Full Clone`\
+        Is a full copy of the original VM, so it is not linked to it at all. Also, this type allows to be put in a different `Target Storage` if required.
 
     - `Target Storage`\
       Here you can choose where you want to put the new VM, although you can only choose when making a **full clone**. There are storage types that do not appear in this list, like directories.
@@ -314,7 +314,7 @@ The VG you have in your VM's LVM structure is the same one defined in your Debia
     > **Careful of NOT reducing the double dash ('`--`') to just one (`-`)**\
     > Only replace the `debiantpl` part with the new `k3snode` string.
 
-3. Next, you must find and change all the `debiantpl` strings present in the `/boot/grub/grub.cfg` file. Although first don't forget to make a backup:
+3. Next, you must find and change all the `debiantpl` strings present in the `/boot/grub/grub.cfg` file. But before that, do not forget to make a backup of `grub.cfg`:
 
     ~~~sh
     $ sudo cp /boot/grub/grub.cfg /boot/grub/grub.cfg.orig
@@ -324,27 +324,27 @@ The VG you have in your VM's LVM structure is the same one defined in your Debia
 
     - Check first that `debiantpl--vg-root` ONLY brings up the lines with `root=/dev/mapper/debiantpl--vg-root`:
 
-        ~~~sh
-        $ sudo cat /boot/grub/grub.cfg | grep debiantpl--vg-root
-        ~~~
+      ~~~sh
+      $ sudo cat /boot/grub/grub.cfg | grep debiantpl--vg-root
+      ~~~
 
-        Run it in another shell or dump the output in a temporal file, but keep the lines for later reference.
+      Run it in another shell or dump the output in a temporal file, but keep the lines for later reference.
 
     - Apply the required modifications with `sed`:
 
-        ~~~sh
-        $ sudo sed -i 's/debiantpl--vg-root/k3snode--vg-root/g' /boot/grub/grub.cfg
-        ~~~
+      ~~~sh
+      $ sudo sed -i 's/debiantpl--vg-root/k3snode--vg-root/g' /boot/grub/grub.cfg
+      ~~~
 
-        If `sed` executes alright, it won't return any output.
+      If `sed` executes alright, it will not return any output.
 
     - Verify if all the lines that had the `debiantpl--vg-root` string have it now replaced with the `k3snode--vg-root` one:
 
-        ~~~sh
-        $ sudo cat /boot/grub/grub.cfg | grep k3snode--vg-root
-        ~~~
+      ~~~sh
+      $ sudo cat /boot/grub/grub.cfg | grep k3snode--vg-root
+      ~~~
 
-        Compare this command's output with the one you got first. You should see the **same** lines as before, but with the string changed.
+      Compare this command's output with the one you got first. You should see the **same** lines as before, but with the string changed.
 
 5. Update the initramfs with the `update-initramfs` command:
 
