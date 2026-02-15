@@ -603,7 +603,7 @@
 - [Relevant system paths](G039%20-%20Backups%2003%20~%20Proxmox%20VE%20backup%20job.md#relevant-system-paths)
 - [References](G039%20-%20Backups%2003%20~%20Proxmox%20VE%20backup%20job.md#references)
 
-### [G040 - Backups 04 ~ UrBackup 01 - Server setup](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#g040-backups-04-urbackup-01-server-setup)
+### [G040 - Backups 04 ~ UrBackup 01 - Server setup](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md)
 
 - [Use UrBackup to preserve specific directories](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#g040-backups-04-urbackup-01-server-setup#use-urbackup-to-preserve-specific-directories)
 - [Setting up a new VM for the UrBackup server](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#setting-up-a-new-vm-for-the-urbackup-server)
@@ -615,8 +615,9 @@
 - [Relevant system paths](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#relevant-system-paths)
 - [References](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#references)
 
-### [G041 - Backups 05 ~ UrBackup 02 - Clients setup and configuring file backups](G041%20-%20Backups%2005%20~%20UrBackup%2002%20-%20Clients%20setup%20and%20configuring%20file%20backups.md#g041-backups-05-urbackup-02-clients-setup-and-configuring-file-backups)
+### [G041 - Backups 05 ~ UrBackup 02 - Clients setup and configuring file backups](G041%20-%20Backups%2005%20~%20UrBackup%2002%20-%20Clients%20setup%20and%20configuring%20file%20backups.md)
 
+- [Install UrBackup clients in your K3s node VMs](G041%20-%20Backups%2005%20~%20UrBackup%2002%20-%20Clients%20setup%20and%20configuring%20file%20backups.md#install-urbackup-clients-in-your-k3s-node-vms)
 - [Deploying the UrBackup client program](G041%20-%20Backups%2005%20~%20UrBackup%2002%20-%20Clients%20setup%20and%20configuring%20file%20backups.md#deploying-the-urbackup-client-program)
 - [UrBackup client log file](G041%20-%20Backups%2005%20~%20UrBackup%2002%20-%20Clients%20setup%20and%20configuring%20file%20backups.md#urbackup-client-log-file)
 - [UrBackup client uninstaller](G041%20-%20Backups%2005%20~%20UrBackup%2002%20-%20Clients%20setup%20and%20configuring%20file%20backups.md#urbackup-client-uninstaller)
