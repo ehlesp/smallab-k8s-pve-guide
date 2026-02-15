@@ -570,7 +570,7 @@
 - [Metrics from the monitoring stack](G036%20-%20Host%20and%20K3s%20cluster%20~%20Monitoring%20and%20diagnosis.md#metrics-from-the-monitoring-stack)
 - [References](G036%20-%20Host%20and%20K3s%20cluster%20~%20Monitoring%20and%20diagnosis.md#references)
 
-### [G037 - Backups 01 ~ Considerations](G037%20-%20Backups%2001%20~%20Considerations.md#g037-backups-01-considerations)
+### [G037 - Backups 01 ~ Considerations](G037%20-%20Backups%2001%20~%20Considerations.md)
 
 - [What to backup. Identifying your data concerns](G037%20-%20Backups%2001%20~%20Considerations.md#what-to-backup-identifying-your-data-concerns)
 - [How to backup. Backup tools](G037%20-%20Backups%2001%20~%20Considerations.md#how-to-backup-backup-tools)
@@ -578,9 +578,10 @@
 - [When to do the backups. Backup scheduling](G037%20-%20Backups%2001%20~%20Considerations.md#when-to-do-the-backups-backup-scheduling)
 - [References](G037%20-%20Backups%2001%20~%20Considerations.md#references)
 
-### [G038 - Backups 02 ~ Host platform backup with Clonezilla](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md#g038-backups-02-host-platform-backup-with-clonezilla)
+### [G038 - Backups 02 ~ Host platform backup with Clonezilla](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md)
 
-- [What gets inside this backup](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md#what-gets-inside-this-backup)
+- [Host backups are filesystem images](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md#host-backups-are-filesystem-images)
+- [What gets inside a host backup](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md#what-gets-inside-a-host-backup)
 - [Why doing this backup](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md#why-doing-this-backup)
 - [How it affects the host platform](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md#how-it-affects-the-host-platform)
 - [When to do the backup](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md#when-to-do-the-backup)
@@ -589,8 +590,9 @@
 - [Final considerations](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md#final-considerations)
 - [References](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md#references)
 
-### [G039 - Backups 03 ~ Proxmox VE backup job](G039%20-%20Backups%2003%20~%20Proxmox%20VE%20backup%20job.md#g039-backups-03-proxmox-ve-backup-job)
+### [G039 - Backups 03 ~ Proxmox VE backup job](G039%20-%20Backups%2003%20~%20Proxmox%20VE%20backup%20job.md)
 
+- [Backup your VMs in Proxmox VE](G039%20-%20Backups%2003%20~%20Proxmox%20VE%20backup%20job.md#backup-your-vms-in-proxmox-ve)
 - [What gets covered with the backup job](G039%20-%20Backups%2003%20~%20Proxmox%20VE%20backup%20job.md#what-gets-covered-with-the-backup-job)
 - [Why scheduling a backup job](G039%20-%20Backups%2003%20~%20Proxmox%20VE%20backup%20job.md#why-scheduling-a-backup-job)
 - [How it affects the K3s Kubernetes cluster](G039%20-%20Backups%2003%20~%20Proxmox%20VE%20backup%20job.md#how-it-affects-the-k3s-kubernetes-cluster)
@@ -601,8 +603,9 @@
 - [Relevant system paths](G039%20-%20Backups%2003%20~%20Proxmox%20VE%20backup%20job.md#relevant-system-paths)
 - [References](G039%20-%20Backups%2003%20~%20Proxmox%20VE%20backup%20job.md#references)
 
-### [G040 - Backups 04 ~ UrBackup 01 - Server setup](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#g040-backups-04-urbackup-01-server-setup)
+### [G040 - Backups 04 ~ UrBackup 01 - Server setup](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md)
 
+- [Use UrBackup to preserve specific directories](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#g040-backups-04-urbackup-01-server-setup#use-urbackup-to-preserve-specific-directories)
 - [Setting up a new VM for the UrBackup server](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#setting-up-a-new-vm-for-the-urbackup-server)
 - [Deploying UrBackup](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#deploying-urbackup)
 - [Firewall configuration on Proxmox VE](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#firewall-configuration-on-proxmox-ve)
@@ -612,8 +615,9 @@
 - [Relevant system paths](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#relevant-system-paths)
 - [References](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#references)
 
-### [G041 - Backups 05 ~ UrBackup 02 - Clients setup and configuring file backups](G041%20-%20Backups%2005%20~%20UrBackup%2002%20-%20Clients%20setup%20and%20configuring%20file%20backups.md#g041-backups-05-urbackup-02-clients-setup-and-configuring-file-backups)
+### [G041 - Backups 05 ~ UrBackup 02 - Clients setup and configuring file backups](G041%20-%20Backups%2005%20~%20UrBackup%2002%20-%20Clients%20setup%20and%20configuring%20file%20backups.md)
 
+- [Install UrBackup clients in your K3s node VMs](G041%20-%20Backups%2005%20~%20UrBackup%2002%20-%20Clients%20setup%20and%20configuring%20file%20backups.md#install-urbackup-clients-in-your-k3s-node-vms)
 - [Deploying the UrBackup client program](G041%20-%20Backups%2005%20~%20UrBackup%2002%20-%20Clients%20setup%20and%20configuring%20file%20backups.md#deploying-the-urbackup-client-program)
 - [UrBackup client log file](G041%20-%20Backups%2005%20~%20UrBackup%2002%20-%20Clients%20setup%20and%20configuring%20file%20backups.md#urbackup-client-log-file)
 - [UrBackup client uninstaller](G041%20-%20Backups%2005%20~%20UrBackup%2002%20-%20Clients%20setup%20and%20configuring%20file%20backups.md#urbackup-client-uninstaller)
@@ -658,87 +662,78 @@
 
 ## Appendixes
 
-### [G901 - Appendix 01 ~ Connecting through SSH with PuTTY](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md#g901-appendix-01-connecting-through-ssh-with-putty)
+### [G901 - Appendix 01 ~ Connecting through SSH with PuTTY](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md)
 
 - [Generating `.ppk` file from private key](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md#generating-ppk-file-from-private-key)
 - [Configuring the connection to the PVE node](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md#configuring-the-connection-to-the-pve-node)
 - [References](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md#references)
 
-### [G902 - Appendix 02 ~ Vim vimrc configuration](G902%20-%20Appendix%2002%20~%20Vim%20vimrc%20configuration.md#g902-appendix-02-vim-vimrc-configuration)
+### [G902 - Appendix 02 ~ Vim vimrc configuration](G902%20-%20Appendix%2002%20~%20Vim%20vimrc%20configuration.md)
 
 - [References](G902%20-%20Appendix%2002%20~%20Vim%20vimrc%20configuration.md#references)
 
-### [G903 - Appendix 03 ~ Customization of the motd file](G903%20-%20Appendix%2003%20~%20Customization%20of%20the%20motd%20file.md#g903-appendix-03-customization-of-the-motd-file)
+### [G903 - Appendix 03 ~ Customization of the motd file](G903%20-%20Appendix%2003%20~%20Customization%20of%20the%20motd%20file.md)
 
 - [References](G903%20-%20Appendiz%2003%20~%20Customization%20of%20the%20motd%20file.md#references)
 
-### [G904 - Appendix 04 ~ Object by object Kubernetes deployments](G904%20-%20Appendix%2004%20~%20Object%20by%20object%20Kubernetes%20deployments.md#g904-appendix-04-object-by-object-kubernetes-deployments)
+### [G904 - Appendix 04 ~ Object by object Kubernetes deployments](G904%20-%20Appendix%2004%20~%20Object%20by%20object%20Kubernetes%20deployments.md)
 
 - [Example scenario: cert-manager deployment](G904%20-%20Appendix%2004%20~%20Object%20by%20object%20Kubernetes%20deployments.md#example-scenario-cert-manager-deployment)
 - [Relevant system paths](G904%20-%20Appendix%2004%20~%20Object%20by%20object%20Kubernetes%20deployments.md#relevant-system-paths)
 - [References](G904%20-%20Appendix%2004%20~%20Object%20by%20object%20Kubernetes%20deployments.md#references)
 
-### [G905 - Appendix 05 ~ Cloning storage drives with Clonezilla](G905%20-%20Appendix%2005%20~%20Cloning%20storage%20drives%20with%20Clonezilla.md#g905-appendix-05-cloning-storage-drives-with-clonezilla)
+### [G905 - Appendix 05 ~ Handling VM or VM template volumes](G905%20-%20Appendix%2005%20~%20Handling%20VM%20or%20VM%20template%20volumes.md)
 
-- [Preparing the Clonezilla Live USB](G905%20-%20Appendix%2005%20~%20Cloning%20storage%20drives%20with%20Clonezilla.md#preparing-the-clonezilla-live-usb)
-- [Cloning a storage drive with Clonezilla](G905%20-%20Appendix%2005%20~%20Cloning%20storage%20drives%20with%20Clonezilla.md#cloning-a-storage-drive-with-clonezilla)
-- [Restoring a Clonezilla image](G905%20-%20Appendix%2005%20~%20Cloning%20storage%20drives%20with%20Clonezilla.md#restoring-a-clonezilla-image)
-- [Considerations about Clonezilla](G905%20-%20Appendix%2005%20~%20Cloning%20storage%20drives%20with%20Clonezilla.md#considerations-about-clonezilla)
-- [Alternative to Clonezilla:_ Rescuezilla](G905%20-%20Appendix%2005%20~%20Cloning%20storage%20drives%20with%20Clonezilla.md#alternative-to-clonezilla-rescuezilla)
-- [References](G905%20-%20Appendix%2005%20~%20Cloning%20storage%20drives%20with%20Clonezilla.md#references)
+- [Installing the `libguestfs-tools` package](G905%20-%20Appendix%2005%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#installing-the-libguestfs-tools-package)
+- [Locating and checking a VM or VM template's hard disk volume](G905%20-%20Appendix%2005%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#locating-and-checking-a-vm-or-vm-templates-hard-disk-volume)
+- [Relevant system paths](G905%20-%20Appendix%2005%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#relevant-system-paths)
+- [References](G905%20-%20Appendix%2005%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#references)
 
-### [G906 - Appendix 06 ~ Handling VM or VM template volumes](G906%20-%20Appendix%2006%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#g906-appendix-06-handling-vm-or-vm-template-volumes)
+### [G906 - Appendix 06 ~ Resizing a root LVM volume](G906%20-%20Appendix%2006%20~%20Resizing%20a%20root%20LVM%20volume.md)
 
-- [Installing the `libguestfs-tools` package](G906%20-%20Appendix%2006%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#installing-the-libguestfs-tools-package)
-- [Locating and checking a VM or VM template's hard disk volume](G906%20-%20Appendix%2006%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#locating-and-checking-a-vm-or-vm-templates-hard-disk-volume)
-- [Relevant system paths](G906%20-%20Appendix%2006%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#relevant-system-paths)
-- [References](G906%20-%20Appendix%2006%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#references)
+- [Resizing the storage drive on Proxmox VE](G906%20-%20Appendix%2006%20~%20Resizing%20a%20root%20LVM%20volume.md#resizing-the-storage-drive-on-proxmox-ve)
+- [Extending the root LVM filesystem on a live VM](G906%20-%20Appendix%2006%20~%20Resizing%20a%20root%20LVM%20volume.md#extending-the-root-lvm-filesystem-on-a-live-vm)
+- [Final note](G906%20-%20Appendix%2006%20~%20Resizing%20a%20root%20LVM%20volume.md#final-note)
+- [References](G906%20-%20Appendix%2006%20~%20Resizing%20a%20root%20LVM%20volume.md#references)
 
-### [G907 - Appendix 07 ~ Resizing a root LVM volume](G907%20-%20Appendix%2007%20~%20Resizing%20a%20root%20LVM%20volume.md#g907-appendix-07-resizing-a-root-lvm-volume)
+### [G907 - Appendix 07 ~ K3s cluster with two or more server nodes](G907%20-%20Appendix%2007%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md)
 
-- [Resizing the storage drive on Proxmox VE](G907%20-%20Appendix%2007%20~%20Resizing%20a%20root%20LVM%20volume.md#resizing-the-storage-drive-on-proxmox-ve)
-- [Extending the root LVM filesystem on a live VM](G907%20-%20Appendix%2007%20~%20Resizing%20a%20root%20LVM%20volume.md#extending-the-root-lvm-filesystem-on-a-live-vm)
-- [Final note](G907%20-%20Appendix%2007%20~%20Resizing%20a%20root%20LVM%20volume.md#final-note)
-- [References](G907%20-%20Appendix%2007%20~%20Resizing%20a%20root%20LVM%20volume.md#references)
+- [Add a new VM to act as the second server node](G907%20-%20Appendix%2007%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#add-a-new-vm-to-act-as-the-second-server-node)
+- [Adapt the Proxmox VE firewall setup](G907%20-%20Appendix%2007%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#adapt-the-proxmox-ve-firewall-setup)
+- [Setup of the FIRST K3s server node](G907%20-%20Appendix%2007%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#setup-of-the-first-k3s-server-node)
+- [Setup of the SECOND K3s server node](G907%20-%20Appendix%2007%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#setup-of-the-second-k3s-server-node)
+- [Regarding the K3s agent nodes](G907%20-%20Appendix%2007%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#regarding-the-k3s-agent-nodes)
 
-### [G908 - Appendix 08 ~ K3s cluster with two or more server nodes](G908%20-%20Appendix%2008%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#g908-appendix-08-k3s-cluster-with-two-or-more-server-nodes)
+### [G908 - Appendix 08 ~ Kubernetes object stuck in Terminating state](G908%20-%20Appendix%2008%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md)
 
-- [Add a new VM to act as the second server node](G908%20-%20Appendix%2008%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#add-a-new-vm-to-act-as-the-second-server-node)
-- [Adapt the Proxmox VE firewall setup](G908%20-%20Appendix%2008%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#adapt-the-proxmox-ve-firewall-setup)
-- [Setup of the FIRST K3s server node](G908%20-%20Appendix%2008%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#setup-of-the-first-k3s-server-node)
-- [Setup of the SECOND K3s server node](G908%20-%20Appendix%2008%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#setup-of-the-second-k3s-server-node)
-- [Regarding the K3s agent nodes](G908%20-%20Appendix%2008%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#regarding-the-k3s-agent-nodes)
+- [Scenario](G908%20-%20Appendix%2008%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md#scenario)
+- [Solution](G908%20-%20Appendix%2008%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md#solution)
+- [References](G908%20-%20Appendix%2008%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md#references)
 
-### [G909 - Appendix 09 ~ Kubernetes object stuck in Terminating state](G909%20-%20Appendix%2009%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md#g909-appendix-09-kubernetes-object-stuck-in-terminating-state)
+### [G909 - Appendix 09 ~ Setting up virtual network with Open vSwitch](G909%20-%20Appendix%2009%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md)
 
-- [Scenario](G909%20-%20Appendix%2009%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md#scenario)
-- [Solution](G909%20-%20Appendix%2009%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md#solution)
-- [References](G909%20-%20Appendix%2009%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md#references)
+- [Installation](G909%20-%20Appendix%2009%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md#installation)
+- [Replacing the Linux bridge with the OVS one](G909%20-%20Appendix%2009%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md#replacing-the-linux-bridge-with-the-ovs-one)
+- [Relevant system paths](G909%20-%20Appendix%2009%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md#relevant-system-paths)
+- [References](G909%20-%20Appendix%2009%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md#references)
 
-### [G910 - Appendix 10 ~ Setting up virtual network with Open vSwitch](G910%20-%20Appendix%2010%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md#g910-appendix-10-setting-up-virtual-network-with-open-vswitch)
+### [G910 - Appendix 10 ~ Checking the K8s API endpoints' status](G910%20-%20Appendix%2010%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md)
 
-- [Installation](G910%20-%20Appendix%2010%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md#installation)
-- [Replacing the Linux bridge with the OVS one](G910%20-%20Appendix%2010%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md#replacing-the-linux-bridge-with-the-ovs-one)
-- [Relevant system paths](G910%20-%20Appendix%2010%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md#relevant-system-paths)
-- [References](G910%20-%20Appendix%2010%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md#references)
+- [References](G910%20-%20Appendix%2010%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md#references)
 
-### [G911 - Appendix 11 ~ Checking the K8s API endpoints' status](G911%20-%20Appendix%2011%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md)
+### [G911 - Appendix 11 ~ Updating MariaDB to a newer major version](G911%20-%20Appendix%2011%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md)
 
-- [References](G911%20-%20Appendix%2011%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md#references)
+- [Concerns](G911%20-%20Appendix%2011%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#concerns)
+- [Enabling the update procedure](G911%20-%20Appendix%2011%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#enabling-the-update-procedure)
+- [References](G911%20-%20Appendix%2011%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#references)
 
-### [G912 - Appendix 12 ~ Updating MariaDB to a newer major version](G912%20-%20Appendix%2012%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md)
+### [G912 - Appendix 12 ~ Updating PostgreSQL to a newer major version](G912%20-%20Appendix%2012%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md)
 
-- [Concerns](G912%20-%20Appendix%2012%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#concerns)
-- [Enabling the update procedure](G912%20-%20Appendix%2012%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#enabling-the-update-procedure)
-- [References](G912%20-%20Appendix%2012%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#references)
-
-### [G913 - Appendix 13 ~ Updating PostgreSQL to a newer major version](G913%20-%20Appendix%2013%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md)
-
-- [Concerns](G913%20-%20Appendix%2013%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#concerns)
-- [Upgrade procedure (for Gitea's PostgreSQL instance)](G913%20-%20Appendix%2013%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#upgrade-procedure-for-gitea-s-postgresql-instance)
-- [Kustomize project only for updating PostgreSQL included in this guide series](G913%20-%20Appendix%2013%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#kustomize-project-only-for-updating-postgresql-included-in-this-guide-series)
-- [Relevant system paths](G913%20-%20Appendix%2013%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#relevant-system-paths)
-- [References](G913%20-%20Appendix%2013%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#references)
+- [Concerns](G912%20-%20Appendix%2012%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#concerns)
+- [Upgrade procedure (for Gitea's PostgreSQL instance)](G912%20-%20Appendix%2012%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#upgrade-procedure-for-giteas-postgresql-instance)
+- [Kustomize project only for updating PostgreSQL included in this guide series](G912%20-%20Appendix%2012%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#kustomize-project-only-for-updating-postgresql-included-in-this-guide-series)
+- [Relevant system paths](G912%20-%20Appendix%2012%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#relevant-system-paths)
+- [References](G912%20-%20Appendix%2012%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#references)
 
 ## Navigation
 
