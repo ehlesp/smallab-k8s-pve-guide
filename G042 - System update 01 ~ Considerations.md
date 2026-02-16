@@ -1,48 +1,62 @@
 # G042 - System update 01 ~ Considerations
 
-Another important concept you need to know about is the update of the system's software components. As usual, the system I'm referring to is the whole setup you've been building up through all the previous guides. Updating this system is not technically difficult, in particular when using the most straightforward (and many times the only proper) method. Yet you need to be careful when doing it, something which demands knowing your system well.
+- [Updating this guide's homelab setup is not a straightforward task](#updating-this-guides-homelab-setup-is-not-a-straightforward-task)
+- [What to update. Identifying your system's software layers](#what-to-update-identifying-your-systems-software-layers)
+- [How to update. Update procedures](#how-to-update-update-procedures)
+- [When to apply the updates](#when-to-apply-the-updates)
+- [Update order](#update-order)
+- [Navigation](#navigation)
+
+## Updating this guide's homelab setup is not a straightforward task
+
+The homelab setup resulting from this guide is a system built on many software components that depend on each other at different levels. These dependencies are the main thing to be aware of when attempting to update any part of the system, while the update procedures to apply are usually not that technically difficult. In other words, updating any software element of your homelab may not be particularly hard, but before you do you must think first about the consequences of performing that update in your system.
 
 ## What to update. Identifying your system's software layers
 
-The setup you've built in this guide series has five software layers, so to speak, each with their own particularities.
+The setup built in this guide has five software layers, so to speak, each with their own particularities:
 
-- **Proxmox VE**: the lowest level, which executes your VMs and is run by a custom Debian 11 system on your physical host.
+1. **Proxmox VE**\
+   The lowest level, which executes your VMs and is run by a custom Debian system on your physical host.
 
-- **Qemu VMs**: virtual machines run by the Proxmox VE Qemu engine that, inside them, have a Debian 11 system environment.
+2. **Qemu VMs**\
+   Virtual machines run by the Proxmox VE Qemu engine that, inside them, have a Debian system environment.
 
-- **K3s Kubernetes cluster**: three nodes that are Debian 11 VMs running the K3s software making the Kubernetes cluster possible. The K3s software has no direct dependencies with the underlying Debian 11 system of the VMs.
+3. **K3s Kubernetes cluster**\
+   Three nodes that are Debian VMs running the K3s software that makes the Kubernetes cluster possible. The K3s software does not have dependencies with the underlying Debian system of the VMs.
 
-- **Apps deployed in the K3s Kubernetes cluster**: in the K3s Kubernetes cluster you have several apps and software tools deployed. Some of them have direct dependencies with the Kubernetes API, which makes updating K3s and those apps something not trivial at all.
+4. **Apps deployed in the K3s Kubernetes cluster**\
+   In the K3s Kubernetes cluster you have several apps and software tools deployed. Some of them have direct dependencies with the Kubernetes API, a sensible detail that can make updating K3s and those apps a bit more complicated.
 
-- **UrBackup**: one Debian 11 VM dedicated as the UrBackup server, and the UrBackup client software which is installed on the K3s node VMs. The server does have some dependencies with libraries installed in the Debian 11 system, while the client can also have them depending on how it's configured in the installation.
+5. **UrBackup**\
+   One Debian VM dedicated as the UrBackup server, and the UrBackup client software which is installed on the K3s node VMs. The server does have some dependencies with libraries installed in the Debian system, while the client can also have them depending on how it is configured in the installation.
 
 The first three layers are, from the software point of view, independent from each other. The apps deployed in the K3s Kubernetes cluster are only dependant on the cluster itself, but some of them are only compatible with concrete versions of the Kubernetes engine. Those particular cases makes the update of the K3s software more tricky than with the rest of layers identified in the system.
 
-Something else is the UrBackup software, since both the server and the client software have (or can have) dependencies installed in the VMs where they run. Therefore, it'll be better to handle the update of the UrBackup software together with the update of the Debian system in the VMs.
+Something else is the UrBackup software, since both the server and the client software have (or can have) dependencies installed in the VMs where they run. Therefore, it will be better to handle the update of the UrBackup software together with the update of the Debian system in the VMs.
 
 ## How to update. Update procedures
 
-For updating the Proxmox VE main system and all the Debian 11 environments running in all your VMs, there's only the `apt` command which you already know. On the other hand, the K3s software has two ways to update itself: one is essentially the same procedure used for installing it, the other is by creating a specific Kubernetes task that would take care of it.
+For updating the Proxmox VE main system and all the Debian environments running in all your VMs, there is only the `apt` command which you already know. On the other hand, the K3s software has two ways to update itself: one is essentially the same procedure used for installing it, the other is by creating a specific Kubernetes task that would take care of it.
 
-The update of the apps running in the K3s cluster can be easily handled by reusing the same kustomize projects used for their deployment. Essentially, its just changing the image used in the deployment, although not before checking that the new version is still compatible with the current configuration of the app being updated.
+The update of the apps running in the K3s cluster can be easily handled by reusing the same Kustomize projects used for their deployment. Essentially, it is just changing the image used in the deployment, although not before checking that the new version is still compatible with the current configuration of the app being updated.
 
-Finally, updating the UrBackup software is kind of a hybrid approach: the server can be upgraded the same way it was installed if `apt` doesn't find its newest version, and the client has its own `sh` update program similar to the installer one.
+Finally, updating the UrBackup software is kind of a hybrid approach: the server can be upgraded the same way it was installed if `apt` does not find its newest version, and the client has its own `sh` update program similar to the installer one.
 
 ## When to apply the updates
 
-Ideally, you want to update as soon as possible, specially when dealing with security patches or version upgrades. You may think that this procedure could be automated (scheduled with a `cron` script, for instance), but that's a dangerous proposition.
+Ideally, you want to update as soon as possible, specially when dealing with security patches or version upgrades. You may think that this procedure could be automated (scheduled with a `cron` script, for instance), but that is a dangerous proposition.
 
-Before applying any update, you need to evaluate what it does. It's just a library update?, or maybe it changes the software's behavior, or it could be a major version change. Also, you need to be aware of the indirect implications of updating a system. For instance, you'll need to stop all your VMs before you can apply the updates to the Proxmox VE system that runs them.
+Before applying any update, you need to evaluate what it does. Is it just a library update? Does it change the software's behavior? Or it could be a major version change. Also, you need to consider other implications of updating a system. For instance, you will need to stop all your VMs before you can apply the updates to the Proxmox VE system running them.
 
-Therefore, you'll need to plan the updates of the different software layers running in your system. You'll have to take into account what services you're running, when and for how long you can afford your system to be down, and also how recent your backups are in case you need them.
+Therefore, you need to plan the updates of the different software layers running in your system. You have to think about the services you are running, when and for how long you can afford your system to be down, and also how recent your backups are in case you need them.
 
-Broadly speaking, for a small personal homelab system as the one used in this guide series, I'd say that doing a regular update in a biweekly or just monthly basis should be enough. Don't wait more than that, or you'll end up having a lot of updates to apply, and, potentially, who knows how many adjustments to do in your system.
+Broadly speaking, for a small personal homelab system as the one built in this guide, doing a regular update in a biweekly or just monthly basis should be enough. Do not wait more than that, or you may end up having a lot of updates to apply, and, potentially, who knows how many adjustments to do in your system at once.
 
-### _Update order_
+## Update order
 
-Related to the "when" question is the matter of in what order you should deal with the updates of all the layers of your system. Thanks to the relative independence existing among the Proxmox VE, the Debian 11 systems within the VMs and the K3s software, in theory you can update these layers on whichever order you prefer. Still, is always better to keep the same order, that way you'll find easier to repeat the procedure every time and detect issues when going through it.
+Related to the "when" question is the matter of in what order you should deal with the updates of all the layers identified in your homelab. Thanks to the relative independence between the Proxmox VE, the Debian systems within the VMs and the K3s software, in theory you can update these layers on whichever order you need or prefer to follow. Still, it is always better to keep the same order. That way you will find easier to repeat the procedure every time and detect issues when going through it.
 
-For me, a good order is going always from the bottom up:
+In general, you will prefer to start from the bottom:
 
 1. Proxmox VE, since it supports all the system.
 2. The Debian system in the VMs.
@@ -50,7 +64,7 @@ For me, a good order is going always from the bottom up:
 3. The K3s software.
    1. The apps deployed in the K3s cluster.
 
-And what if one layer doesn't have any updates pending? Easy, you just skip it in that particular update cycle.
+What if one layer does not have any updates pending? Easy. After making sure that it does not have any updates to apply in that cycle, you just skip it in that particular update cycle.
 
 ## Navigation
 

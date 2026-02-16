@@ -627,11 +627,13 @@
 - [Relevant system paths](G041%20-%20Backups%2005%20~%20UrBackup%2002%20-%20Clients%20setup%20and%20configuring%20file%20backups.md#relevant-system-paths)
 - [References](G041%20-%20Backups%2005%20~%20UrBackup%2002%20-%20Clients%20setup%20and%20configuring%20file%20backups.md#references)
 
-### [G042 - System update 01 ~ Considerations](G042%20-%20System%20update%2001%20~%20Considerations.md#g042-system-update-01-considerations)
+### [G042 - System update 01 ~ Considerations](G042%20-%20System%20update%2001%20~%20Considerations.md)
 
+- [Updating this guide's homelab setup is not a straightforward task](G042%20-%20System%20update%2001%20~%20Considerations.md#updating-this-guides-homelab-setup-is-not-a-straightforward-task)
 - [What to update. Identifying your system's software layers](G042%20-%20System%20update%2001%20~%20Considerations.md#what-to-update-identifying-your-systems-software-layers)
 - [How to update. Update procedures](G042%20-%20System%20update%2001%20~%20Considerations.md#how-to-update-update-procedures)
 - [When to apply the updates](G042%20-%20System%20update%2001%20~%20Considerations.md#when-to-apply-the-updates)
+- [Update order](G042%20-%20System%20update%2001%20~%20Considerations.md#update-order)
 
 ### [G043 - System update 02 ~ Updating Proxmox VE](G043%20-%20System%20update%2002%20~%20Updating%20Proxmox%20VE.md#g043-system-update-02-updating-proxmox-ve)
 
