@@ -635,8 +635,9 @@
 - [When to apply the updates](G042%20-%20System%20update%2001%20~%20Considerations.md#when-to-apply-the-updates)
 - [Update order](G042%20-%20System%20update%2001%20~%20Considerations.md#update-order)
 
-### [G043 - System update 02 ~ Updating Proxmox VE](G043%20-%20System%20update%2002%20~%20Updating%20Proxmox%20VE.md#g043-system-update-02-updating-proxmox-ve)
+### [G043 - System update 02 ~ Updating Proxmox VE](G043%20-%20System%20update%2002%20~%20Updating%20Proxmox%20VE.md)
 
+- [Start by updating Proxmox VE](G043%20-%20System%20update%2002%20~%20Updating%20Proxmox%20VE.md#start-by-updating-proxmox-ve)
 - [Examining your Proxmox VE system](G043%20-%20System%20update%2002%20~%20Updating%20Proxmox%20VE.md#examining-your-proxmox-ve-system)
 - [Updating Proxmox VE](G043%20-%20System%20update%2002%20~%20Updating%20Proxmox%20VE.md#updating-proxmox-ve)
 - [References](G043%20-%20System%20update%2002%20~%20Updating%20Proxmox%20VE.md#references)
