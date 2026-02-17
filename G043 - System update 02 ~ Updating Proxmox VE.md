@@ -145,7 +145,7 @@ Since in this case there are a lot of packages to update, it will take some minu
 
 ![PVE node Summary page versions updated](images/g043/pve_summary_versions_updated.webp "PVE node Summary page versions updated")
 
-Notice that now the version is `9.1.5` both in the name at the top bar and in the `Manager Version` field, and that also the `Kernel Version` is newer. Also, check if there are more updates pending and apply them. Remember that you can see this directly in the web console, in the `Updates` page of your `pve` node.
+Notice that now the version is `9.1.5` both in the name at the top bar and in the `Manager Version` field, and that also the `Kernel Version` is newer. Still, check if there are more updates pending and apply them. Remember that you can see this directly in the web console, in the `Updates` page of your `pve` node.
 
 > [!NOTE]
 > **Some updates cannot be applied immediately**\

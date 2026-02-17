@@ -1,5 +1,7 @@
 # G045 - System update 04 ~ Updating K3s and deployed apps
 
+## 
+
 This guide covers the procedures for updating the K3s software that runs your Kubernetes cluster, and also how to update the apps deployed in it. To do all this, you'll need to use the `kubectl` client system you used to deploy the apps on your K3s Kubernetes cluster, so have it at hand.
 
 ## Examining your K3s Kubernetes cluster
