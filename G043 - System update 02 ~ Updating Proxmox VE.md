@@ -39,25 +39,7 @@ In this case, the version reported is `9.0.5`. But you must remember that Proxmo
 Notice the two highlighted fields:
 
 - `Kernel version`\
-  Informs you of the Linux Kernel version you are running. Do not confuse this Kernel version with the Linux _distribution_ release version, which in this case is Debian 13 "trixie".
-
-  > [!NOTE]
-  > **Use a remote terminal to get the Linux distribution release version of your Proxmox VE server**\
-  > In a remote terminal opened with the `mgrsys` user in the Proxmox VE server, execute `cat /etc/os-release` to get the release version of the Linux OS running the system:
-  >
-  > ~~~sh
-  > $ cat /etc/os-release
-  > PRETTY_NAME="Debian GNU/Linux 13 (trixie)"
-  > NAME="Debian GNU/Linux"
-  > VERSION_ID="13"
-  > VERSION="13 (trixie)"
-  > VERSION_CODENAME=trixie
-  > DEBIAN_VERSION_FULL=13.0
-  > ID=debian
-  > HOME_URL="https://www.debian.org/"
-  > SUPPORT_URL="https://www.debian.org/support"
-  > BUG_REPORT_URL="https://bugs.debian.org/"
-  > ~~~
+  Informs you of the Linux Kernel version you are running. Do not confuse this Kernel version with the release version of the Linux distribution used in the system, which in this case is Debian 13 "trixie".
 
 - `PVE Manager Version`\
   This value indicates the exact Proxmox VE version running in this node. In this case it not only indicates the same version you read in the top bar, but also some extra code (a git repository hexadecimal identifier) that you should not really worry about.
@@ -148,7 +130,7 @@ $ sudo systemctl start spiceproxy.service
 
 ### Applying the updates
 
-With all the previous steps covered, now you can start the update. First be aware that, although it a full fledged administrative account, the `mgrsys` user has the `upgrade` button greyed out for some unknown reason in the web console of Proxmox VE 9.0. This means that you have to use the `root` user to perform the update as is explained in the [chapter **G003**](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md#update-your-system). You can follow those instructions with the `root` user, or just use `apt` in a remote terminal opened with `mgrsys` as you would do with any Debian-based system:
+With all the previous steps covered, now you can start the update. First be aware that, although it a fully fledged administrative account, the `mgrsys` user has the `upgrade` button greyed out for some unknown reason in the web console of Proxmox VE 9.0. This forces you to use the `root` user to perform the update as is explained in the [chapter **G003**](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources,%20updates%20and%20extra%20tools.md#update-your-system). You can follow those instructions with the `root` user, or just use `apt` in a remote terminal opened with `mgrsys` as you would do with any Debian-based system:
 
 ~~~sh
 $ sudo apt update
@@ -159,7 +141,7 @@ Since in this case there are a lot of packages to update, it will take some minu
 
 ![PVE node remote terminal view of apt upgrade progress](images/g043/pve_shell_apt_upgrade_progress.webp "PVE node remote terminal view of apt upgrade progress")
 
-When the update process has finished, reboot the host. After the system is fully started, browse back into the web console and go straight to the `Summary` page of your `pve` node:
+**When the update process has finished, reboot the host**. After restarting the system, browse back into the web console and go straight to the `Summary` page of your `pve` node:
 
 ![PVE node Summary page versions updated](images/g043/pve_summary_versions_updated.webp "PVE node Summary page versions updated")
 

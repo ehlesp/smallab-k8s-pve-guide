@@ -642,8 +642,9 @@
 - [Updating Proxmox VE](G043%20-%20System%20update%2002%20~%20Updating%20Proxmox%20VE.md#updating-proxmox-ve)
 - [References](G043%20-%20System%20update%2002%20~%20Updating%20Proxmox%20VE.md#references)
 
-### [G044 - System update 03 ~ Updating VMs and UrBackup](G044%20-%20System%20update%2003%20~%20Updating%20VMs%20and%20UrBackup.md#g044-system-update-03-updating-vms-and-urbackup)
+### [G044 - System update 03 ~ Updating VMs and UrBackup](G044%20-%20System%20update%2003%20~%20Updating%20VMs%20and%20UrBackup.md)
 
+- [Updating the VMs means updating their OS](G044%20-%20System%20update%2003%20~%20Updating%20VMs%20and%20UrBackup.md#updating-the-vms-means-updating-their-os)
 - [Examining your VMs](G044%20-%20System%20update%2003%20~%20Updating%20VMs%20and%20UrBackup.md#examining-your-vms)
 - [Updating Debian on your VMs](G044%20-%20System%20update%2003%20~%20Updating%20VMs%20and%20UrBackup.md#updating-debian-on-your-vms)
 - [Updating the UrBackup software](G044%20-%20System%20update%2003%20~%20Updating%20VMs%20and%20UrBackup.md#updating-the-urbackup-software)
