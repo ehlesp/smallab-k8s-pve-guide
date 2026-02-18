@@ -657,13 +657,14 @@
 - [Updating apps and K3s](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md#updating-apps-and-k3s)
 - [References](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md#references)
 
-### [G046 - Cleaning the system](G046%20-%20Cleaning%20the%20system.md#g046-cleaning-the-system)
+### [G046 - Cleaning up your homelab system](G046%20-%20Cleaning%20up%20your%20homelab%20system.md)
 
-- [Checking your storage status](G046%20-%20Cleaning%20the%20system.md#checking-your-storage-status)
-- [Cleaning procedures](G046%20-%20Cleaning%20the%20system.md#cleaning-procedures)
-- [Reminder about the `apt` updates](G046%20-%20Cleaning%20the%20system.md#reminder-about-the-apt-updates)
-- [Relevant system paths](G046%20-%20Cleaning%20the%20system.md#relevant-system-paths)
-- [References](G046%20-%20Cleaning%20the%20system.md#references)
+- [Save storage space by cleaning your system up](G046%20-%20Cleaning%20up%20your%20homelab%20system.md#save-storage-space-by-cleaning-your-system-up)
+- [Checking your storage status](G046%20-%20Cleaning%20up%20your%20homelab%20system.md#checking-your-storage-status)
+- [Cleaning procedures](G046%20-%20Cleaning%20up%20your%20homelab%20system.md#cleaning-procedures)
+- [Reminder about the `apt` updates](G046%20-%20Cleaning%20up%20your%20homelab%20system.md#reminder-about-the-apt-updates)
+- [Relevant system paths](G046%20-%20Cleaning%20up%20your%20homelab%20system.md#relevant-system-paths)
+- [References](G046%20-%20Cleaning%20up%20your%20homelab%20system.md#references)
 
 ## Appendixes
 
