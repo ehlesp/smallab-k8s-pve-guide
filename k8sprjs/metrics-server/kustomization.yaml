@@ -3,7 +3,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.8.0/components.yaml
+- https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.8.1/components.yaml
 
 patches:
 - path: patches/metrics-server.deployment.patch.yaml

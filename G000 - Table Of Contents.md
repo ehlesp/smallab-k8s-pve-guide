@@ -650,8 +650,9 @@
 - [Updating the UrBackup software](G044%20-%20System%20update%2003%20~%20Updating%20VMs%20and%20UrBackup.md#updating-the-urbackup-software)
 - [References](G044%20-%20System%20update%2003%20~%20Updating%20VMs%20and%20UrBackup.md#references)
 
-### [G045 - System update 04 ~ Updating K3s and deployed apps](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md#g045-system-update-04-updating-k3s-and-deployed-apps)
+### [G045 - System update 04 ~ Updating K3s and deployed apps](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md)
 
+- [Use `kubectl` to help you when updating your K3s cluster](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md#use-kubectl-to-help-you-when-updating-your-k3s-cluster)
 - [Examining your K3s Kubernetes cluster](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md#examining-your-k3s-kubernetes-cluster)
 - [Updating apps and K3s](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md#updating-apps-and-k3s)
 - [References](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md#references)
