@@ -627,27 +627,32 @@
 - [Relevant system paths](G041%20-%20Backups%2005%20~%20UrBackup%2002%20-%20Clients%20setup%20and%20configuring%20file%20backups.md#relevant-system-paths)
 - [References](G041%20-%20Backups%2005%20~%20UrBackup%2002%20-%20Clients%20setup%20and%20configuring%20file%20backups.md#references)
 
-### [G042 - System update 01 ~ Considerations](G042%20-%20System%20update%2001%20~%20Considerations.md#g042-system-update-01-considerations)
+### [G042 - System update 01 ~ Considerations](G042%20-%20System%20update%2001%20~%20Considerations.md)
 
+- [Updating this guide's homelab setup is not a straightforward task](G042%20-%20System%20update%2001%20~%20Considerations.md#updating-this-guides-homelab-setup-is-not-a-straightforward-task)
 - [What to update. Identifying your system's software layers](G042%20-%20System%20update%2001%20~%20Considerations.md#what-to-update-identifying-your-systems-software-layers)
 - [How to update. Update procedures](G042%20-%20System%20update%2001%20~%20Considerations.md#how-to-update-update-procedures)
 - [When to apply the updates](G042%20-%20System%20update%2001%20~%20Considerations.md#when-to-apply-the-updates)
+- [Update order](G042%20-%20System%20update%2001%20~%20Considerations.md#update-order)
 
-### [G043 - System update 02 ~ Updating Proxmox VE](G043%20-%20System%20update%2002%20~%20Updating%20Proxmox%20VE.md#g043-system-update-02-updating-proxmox-ve)
+### [G043 - System update 02 ~ Updating Proxmox VE](G043%20-%20System%20update%2002%20~%20Updating%20Proxmox%20VE.md)
 
+- [Start by updating Proxmox VE](G043%20-%20System%20update%2002%20~%20Updating%20Proxmox%20VE.md#start-by-updating-proxmox-ve)
 - [Examining your Proxmox VE system](G043%20-%20System%20update%2002%20~%20Updating%20Proxmox%20VE.md#examining-your-proxmox-ve-system)
 - [Updating Proxmox VE](G043%20-%20System%20update%2002%20~%20Updating%20Proxmox%20VE.md#updating-proxmox-ve)
 - [References](G043%20-%20System%20update%2002%20~%20Updating%20Proxmox%20VE.md#references)
 
-### [G044 - System update 03 ~ Updating VMs and UrBackup](G044%20-%20System%20update%2003%20~%20Updating%20VMs%20and%20UrBackup.md#g044-system-update-03-updating-vms-and-urbackup)
+### [G044 - System update 03 ~ Updating VMs and UrBackup](G044%20-%20System%20update%2003%20~%20Updating%20VMs%20and%20UrBackup.md)
 
+- [Updating the VMs means updating their OS](G044%20-%20System%20update%2003%20~%20Updating%20VMs%20and%20UrBackup.md#updating-the-vms-means-updating-their-os)
 - [Examining your VMs](G044%20-%20System%20update%2003%20~%20Updating%20VMs%20and%20UrBackup.md#examining-your-vms)
 - [Updating Debian on your VMs](G044%20-%20System%20update%2003%20~%20Updating%20VMs%20and%20UrBackup.md#updating-debian-on-your-vms)
 - [Updating the UrBackup software](G044%20-%20System%20update%2003%20~%20Updating%20VMs%20and%20UrBackup.md#updating-the-urbackup-software)
 - [References](G044%20-%20System%20update%2003%20~%20Updating%20VMs%20and%20UrBackup.md#references)
 
-### [G045 - System update 04 ~ Updating K3s and deployed apps](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md#g045-system-update-04-updating-k3s-and-deployed-apps)
+### [G045 - System update 04 ~ Updating K3s and deployed apps](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md)
 
+- [Use `kubectl` to help you when updating your K3s cluster](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md#use-kubectl-to-help-you-when-updating-your-k3s-cluster)
 - [Examining your K3s Kubernetes cluster](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md#examining-your-k3s-kubernetes-cluster)
 - [Updating apps and K3s](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md#updating-apps-and-k3s)
 - [References](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md#references)

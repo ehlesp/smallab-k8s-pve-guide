@@ -5,6 +5,6 @@ kind: Kustomization
 namespace: metallb-system
 
 resources:
-- github.com/metallb/metallb/config/native?ref=v0.15.2
+- https://raw.githubusercontent.com/metallb/metallb/v0.15.3/config/manifests/metallb-native.yaml
 - resources/l2-ip.l2advertisement.metallb.yaml
 - resources/default-pool.ipaddresspool.metallb.yaml

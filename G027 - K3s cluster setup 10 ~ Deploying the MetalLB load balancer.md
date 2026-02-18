@@ -206,7 +206,7 @@ To put together the resources declared earlier with the official manifest descri
     namespace: metallb-system
 
     resources:
-    - github.com/metallb/metallb/config/native?ref=v0.15.2
+    - https://raw.githubusercontent.com/metallb/metallb/v0.15.2/config/manifests/metallb-native.yaml
     - resources/l2-ip.l2advertisement.metallb.yaml
     - resources/default-pool.ipaddresspool.metallb.yaml
     ~~~
@@ -215,13 +215,7 @@ To put together the resources declared earlier with the official manifest descri
 
     - Kustomize manifests are identified in Kubernetes with the `Kustomization` kind.
 
-    - This declaration is based on the one offered [in the official MetalLB documentation](https://metallb.org/installation/#installation-with-kustomize).
-
-      > [!IMPORTANT]
-      > **GitHub may give you trouble with the MetalLB manifest URL**\
-      > If you happen to have issues like timeouts when `kubectl` tries to download the MetalLB manifest, try changing its URL to the one indicated in the [Installation by manifest section of the MetalLB documentation](https://metallb.io/installation/#installation-by-manifest). That URL will look like this:
-      >
-      > `https://raw.githubusercontent.com/metallb/metallb/v0.15.2/config/manifests/metallb-native.yaml`
+    - This declaration is based on the one offered [in the official MetalLB documentation](https://metallb.org/installation/#installation-with-kustomize). Since the manifest URL indicated there does not work, here it has been replaced with the one indicated in the [Installation by manifest section of the MetalLB documentation](https://metallb.io/installation/#installation-by-manifest) which does work.
 
     - The `namespace` for all the MetalLB resources deployed in your K3s cluster is going to be `metallb-system`. The resources in this project that already have a `namespace` specified will get it changed to this one, and those who do not have one will be set to `metallb-system` too.
 

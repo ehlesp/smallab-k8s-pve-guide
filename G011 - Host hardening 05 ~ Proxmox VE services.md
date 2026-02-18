@@ -508,7 +508,7 @@ These are a couple of things to be aware of regarding Proxmox VE services.
 
 Disabling or masking PVE related services may provoke errors during the `apt upgrade` process of Proxmox VE packages, as it can happen with the `pve-manager` when `apt` does not find the `spiceproxy` daemon available. The update process for some of those PVE packages may expect a certain service to be present or running in the system, and they may try to restart them as part of the update process.
 
-You should expect these error happening anytime you run an update of your system, although your Proxmox VE standalone node should keep on running just fine. Any time you end an upgrade process with errors, try the command `sudo apt autoremove` to make `apt` or `dpkg` treat them somehow.
+You should expect these error happening anytime you run an update of your system, although your Proxmox VE standalone node should keep on running just fine. Any time you end an upgrade process with errors, you can try first the command `sudo apt autoremove` to make `apt` or `dpkg` deal with them somehow.
 
 ### View of services running in the Proxmox VE node
 
