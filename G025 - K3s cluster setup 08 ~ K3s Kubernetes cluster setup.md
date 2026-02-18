@@ -1322,7 +1322,7 @@ Try this in the server node first, which is where you will see many log entries.
 
 ## Rotating the `containerd.log` file
 
-There is a log in the K3s setup for which you need to configure its rotation with `logrotate`: the file `/var/lib/rancher/k3s/agent/containerd/containerd.log`. Since it is an agent node log file, you have to do the following in all your nodes:
+There is a log in the K3s setup for which you need to configure its rotation with `logrotate`: the file `/var/lib/rancher/k3s/agent/containerd/containerd.log`. Apply the following steps in all your K3s nodes:
 
 1. Create the file `/etc/logrotate.d/k3s-containerd`.
 
