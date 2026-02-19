@@ -670,7 +670,8 @@
 
 ### [G901 - Appendix 01 ~ Connecting through SSH with PuTTY](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md)
 
-- [Generating `.ppk` file from private key](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md#generating-ppk-file-from-private-key)
+- [These instructions could be valid for other remote terminal clients](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md#these-instructions-could-be-valid-for-other-remote-terminal-clients)
+- [Generating a `.ppk` file from a private key](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md#generating-a-ppk-file-from-a-private-key)
 - [Configuring the connection to the PVE node](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md#configuring-the-connection-to-the-pve-node)
 - [References](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md#references)
 
