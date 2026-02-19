@@ -683,7 +683,9 @@
 
 ### [G903 - Appendix 03 ~ Customization of the motd file](G903%20-%20Appendix%2003%20~%20Customization%20of%20the%20motd%20file.md)
 
-- [References](G903%20-%20Appendiz%2003%20~%20Customization%20of%20the%20motd%20file.md#references)
+- [What is the motd](G903%20-%20Appendix%2003%20~%20Customization%20of%20the%20motd%20file.md#what-is-the-motd)
+- [How to modify the motd](G903%20-%20Appendix%2003%20~%20Customization%20of%20the%20motd%20file.md#how-to-modify-the-motd)
+- [References](G903%20-%20Appendix%2003%20~%20Customization%20of%20the%20motd%20file.md#references)
 
 ### [G904 - Appendix 04 ~ Object by object Kubernetes deployments](G904%20-%20Appendix%2004%20~%20Object%20by%20object%20Kubernetes%20deployments.md)
 
