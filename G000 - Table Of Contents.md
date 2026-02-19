@@ -697,6 +697,7 @@
 
 ### [G905 - Appendix 05 ~ Resizing a root LVM volume](G905%20-%20Appendix%2005%20~%20Resizing%20a%20root%20LVM%20volume.md)
 
+- [Resize a VM's root LVM volume if you find it too small](G905%20-%20Appendix%2005%20~%20Resizing%20a%20root%20LVM%20volume.md#resize-a-vms-root-lvm-volume-if-you-find-it-too-small)
 - [Resizing the storage drive on Proxmox VE](G905%20-%20Appendix%2005%20~%20Resizing%20a%20root%20LVM%20volume.md#resizing-the-storage-drive-on-proxmox-ve)
 - [Extending the root LVM filesystem on a live VM](G905%20-%20Appendix%2005%20~%20Resizing%20a%20root%20LVM%20volume.md#extending-the-root-lvm-filesystem-on-a-live-vm)
 - [Final note](G905%20-%20Appendix%2005%20~%20Resizing%20a%20root%20LVM%20volume.md#final-note)
