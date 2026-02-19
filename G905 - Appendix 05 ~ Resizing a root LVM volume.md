@@ -1,4 +1,4 @@
-# G906 - Appendix 06 ~ Resizing a root LVM volume
+# G905 - Appendix 05 ~ Resizing a root LVM volume
 
 Let's say you happen to have a Debian-based VM with a small single storage drive (_hard disk_ in Proxmox VE) of about 5 GiB, and you need to make it bigger, up to 10 GiB for instance. To do so you'll have to resize the hard disk first, then you'll need to extend the root LVM filesystem inside of it over the new space. The procedure is not hard but, since it manipulates the `root` filesystem while it's active, you must be careful when going through it.
 
@@ -40,7 +40,7 @@ The hard disk is bigger now, but the VM's filesystem is not using that extra spa
 > **BEWARE!**  
 > The following procedure, if not applied with care, could make your VM's filesystem (and the VM itself) unusable!
 
-### _Resizing the related partitions_
+### Resizing the related partitions
 
 Before you can extend the `root` LVM volume, you need to resize the partition in which it's found.
 
@@ -171,7 +171,7 @@ Before you can extend the `root` LVM volume, you need to resize the partition in
 
     Notice that, when exiting, `parted` will warn you about updating the `/etc/fstab` file. In this case it won't be necessary.
 
-### _Extending the `root` LVM volume_
+### Extending the `root` LVM volume
 
 With the real partitions updated, now you can extend the LVM filesystem in the newly available space.
 
@@ -249,7 +249,7 @@ This procedure is, as it is, also valid to extend any non-root LVM volumes.
 
 ## References
 
-### _About resizing LVM storage_
+### About resizing LVM storage
 
 - [How to resize LVM disk in Debian 8.6 without losing data](https://unix.stackexchange.com/questions/336979/how-to-resize-lvm-disk-in-debian-8-6-without-losing-data)
 - [Expanding LVM Partitions in VMware, on the fly](https://theducks.org/2009/11/expanding-lvm-partitions-in-vmware-on-the-fly/)
@@ -262,4 +262,4 @@ This procedure is, as it is, also valid to extend any non-root LVM volumes.
 
 ## Navigation
 
-[<< Previous (**G905. Appendix 05**)](G905%20-%20Appendix%2005%20~%20Handling%20VM%20or%20VM%20template%20volumes.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G907. Appendix 07**) >>](G907%20-%20Appendix%2007%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md)
+[<< Previous (**G904. Appendix 04**)](G904%20-%20Appendix%2004%20~%20Handling%20VM%20or%20VM%20template%20volumes.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G906. Appendix 06**) >>](G906%20-%20Appendix%2006%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md)

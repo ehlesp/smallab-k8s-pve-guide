@@ -687,64 +687,51 @@
 - [How to modify the motd](G903%20-%20Appendix%2003%20~%20Customization%20of%20the%20motd%20file.md#how-to-modify-the-motd)
 - [References](G903%20-%20Appendix%2003%20~%20Customization%20of%20the%20motd%20file.md#references)
 
-### [G904 - Appendix 04 ~ Object by object Kubernetes deployments](G904%20-%20Appendix%2004%20~%20Object%20by%20object%20Kubernetes%20deployments.md)
+### [G904 - Appendix 04 ~ Handling VM or VM template volumes](G904%20-%20Appendix%2004%20~%20Handling%20VM%20or%20VM%20template%20volumes.md)
 
-- [Example scenario: cert-manager deployment](G904%20-%20Appendix%2004%20~%20Object%20by%20object%20Kubernetes%20deployments.md#example-scenario-cert-manager-deployment)
-- [Relevant system paths](G904%20-%20Appendix%2004%20~%20Object%20by%20object%20Kubernetes%20deployments.md#relevant-system-paths)
-- [References](G904%20-%20Appendix%2004%20~%20Object%20by%20object%20Kubernetes%20deployments.md#references)
+- [Installing the `libguestfs-tools` package](G904%20-%20Appendix%2004%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#installing-the-libguestfs-tools-package)
+- [Locating and checking a VM or VM template's hard disk volume](G904%20-%20Appendix%2004%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#locating-and-checking-a-vm-or-vm-templates-hard-disk-volume)
+- [Relevant system paths](G904%20-%20Appendix%2004%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#relevant-system-paths)
+- [References](G904%20-%20Appendix%2004%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#references)
 
-### [G905 - Appendix 05 ~ Handling VM or VM template volumes](G905%20-%20Appendix%2005%20~%20Handling%20VM%20or%20VM%20template%20volumes.md)
+### [G905 - Appendix 05 ~ Resizing a root LVM volume](G905%20-%20Appendix%2005%20~%20Resizing%20a%20root%20LVM%20volume.md)
 
-- [Installing the `libguestfs-tools` package](G905%20-%20Appendix%2005%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#installing-the-libguestfs-tools-package)
-- [Locating and checking a VM or VM template's hard disk volume](G905%20-%20Appendix%2005%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#locating-and-checking-a-vm-or-vm-templates-hard-disk-volume)
-- [Relevant system paths](G905%20-%20Appendix%2005%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#relevant-system-paths)
-- [References](G905%20-%20Appendix%2005%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#references)
+- [Resizing the storage drive on Proxmox VE](G905%20-%20Appendix%2005%20~%20Resizing%20a%20root%20LVM%20volume.md#resizing-the-storage-drive-on-proxmox-ve)
+- [Extending the root LVM filesystem on a live VM](G905%20-%20Appendix%2005%20~%20Resizing%20a%20root%20LVM%20volume.md#extending-the-root-lvm-filesystem-on-a-live-vm)
+- [Final note](G905%20-%20Appendix%2005%20~%20Resizing%20a%20root%20LVM%20volume.md#final-note)
+- [References](G905%20-%20Appendix%2005%20~%20Resizing%20a%20root%20LVM%20volume.md#references)
 
-### [G906 - Appendix 06 ~ Resizing a root LVM volume](G906%20-%20Appendix%2006%20~%20Resizing%20a%20root%20LVM%20volume.md)
+### [G906 - Appendix 06 ~ K3s cluster with two or more server nodes](G906%20-%20Appendix%2006%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md)
 
-- [Resizing the storage drive on Proxmox VE](G906%20-%20Appendix%2006%20~%20Resizing%20a%20root%20LVM%20volume.md#resizing-the-storage-drive-on-proxmox-ve)
-- [Extending the root LVM filesystem on a live VM](G906%20-%20Appendix%2006%20~%20Resizing%20a%20root%20LVM%20volume.md#extending-the-root-lvm-filesystem-on-a-live-vm)
-- [Final note](G906%20-%20Appendix%2006%20~%20Resizing%20a%20root%20LVM%20volume.md#final-note)
-- [References](G906%20-%20Appendix%2006%20~%20Resizing%20a%20root%20LVM%20volume.md#references)
+- [Add a new VM to act as the second server node](G906%20-%20Appendix%2006%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#add-a-new-vm-to-act-as-the-second-server-node)
+- [Adapt the Proxmox VE firewall setup](G906%20-%20Appendix%2006%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#adapt-the-proxmox-ve-firewall-setup)
+- [Setup of the FIRST K3s server node](G906%20-%20Appendix%2006%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#setup-of-the-first-k3s-server-node)
+- [Setup of the SECOND K3s server node](G906%20-%20Appendix%2006%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#setup-of-the-second-k3s-server-node)
+- [Regarding the K3s agent nodes](G906%20-%20Appendix%2006%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#regarding-the-k3s-agent-nodes)
 
-### [G907 - Appendix 07 ~ K3s cluster with two or more server nodes](G907%20-%20Appendix%2007%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md)
+### [G907 - Appendix 07 ~ Kubernetes object stuck in Terminating state](G907%20-%20Appendix%2007%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md)
 
-- [Add a new VM to act as the second server node](G907%20-%20Appendix%2007%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#add-a-new-vm-to-act-as-the-second-server-node)
-- [Adapt the Proxmox VE firewall setup](G907%20-%20Appendix%2007%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#adapt-the-proxmox-ve-firewall-setup)
-- [Setup of the FIRST K3s server node](G907%20-%20Appendix%2007%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#setup-of-the-first-k3s-server-node)
-- [Setup of the SECOND K3s server node](G907%20-%20Appendix%2007%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#setup-of-the-second-k3s-server-node)
-- [Regarding the K3s agent nodes](G907%20-%20Appendix%2007%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md#regarding-the-k3s-agent-nodes)
+- [Scenario](G907%20-%20Appendix%2007%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md#scenario)
+- [Solution](G907%20-%20Appendix%2007%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md#solution)
+- [References](G907%20-%20Appendix%2007%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md#references)
 
-### [G908 - Appendix 08 ~ Kubernetes object stuck in Terminating state](G908%20-%20Appendix%2008%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md)
+### [G908 - Appendix 08 ~ Checking the K8s API endpoints' status](G908%20-%20Appendix%2008%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md)
 
-- [Scenario](G908%20-%20Appendix%2008%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md#scenario)
-- [Solution](G908%20-%20Appendix%2008%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md#solution)
-- [References](G908%20-%20Appendix%2008%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md#references)
+- [References](G908%20-%20Appendix%2008%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md#references)
 
-### [G909 - Appendix 09 ~ Setting up virtual network with Open vSwitch](G909%20-%20Appendix%2009%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md)
+### [G909 - Appendix 09 ~ Updating MariaDB to a newer major version](G909%20-%20Appendix%2009%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md)
 
-- [Installation](G909%20-%20Appendix%2009%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md#installation)
-- [Replacing the Linux bridge with the OVS one](G909%20-%20Appendix%2009%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md#replacing-the-linux-bridge-with-the-ovs-one)
-- [Relevant system paths](G909%20-%20Appendix%2009%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md#relevant-system-paths)
-- [References](G909%20-%20Appendix%2009%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md#references)
+- [Concerns](G909%20-%20Appendix%2009%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#concerns)
+- [Enabling the update procedure](G909%20-%20Appendix%2009%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#enabling-the-update-procedure)
+- [References](G909%20-%20Appendix%2009%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#references)
 
-### [G910 - Appendix 10 ~ Checking the K8s API endpoints' status](G910%20-%20Appendix%2010%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md)
+### [G910 - Appendix 10 ~ Updating PostgreSQL to a newer major version](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md)
 
-- [References](G910%20-%20Appendix%2010%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md#references)
-
-### [G911 - Appendix 11 ~ Updating MariaDB to a newer major version](G911%20-%20Appendix%2011%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md)
-
-- [Concerns](G911%20-%20Appendix%2011%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#concerns)
-- [Enabling the update procedure](G911%20-%20Appendix%2011%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#enabling-the-update-procedure)
-- [References](G911%20-%20Appendix%2011%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#references)
-
-### [G912 - Appendix 12 ~ Updating PostgreSQL to a newer major version](G912%20-%20Appendix%2012%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md)
-
-- [Concerns](G912%20-%20Appendix%2012%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#concerns)
-- [Upgrade procedure (for Gitea's PostgreSQL instance)](G912%20-%20Appendix%2012%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#upgrade-procedure-for-giteas-postgresql-instance)
-- [Kustomize project only for updating PostgreSQL included in this guide series](G912%20-%20Appendix%2012%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#kustomize-project-only-for-updating-postgresql-included-in-this-guide-series)
-- [Relevant system paths](G912%20-%20Appendix%2012%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#relevant-system-paths)
-- [References](G912%20-%20Appendix%2012%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#references)
+- [Concerns](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#concerns)
+- [Upgrade procedure (for Gitea's PostgreSQL instance)](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#upgrade-procedure-for-giteas-postgresql-instance)
+- [Kustomize project only for updating PostgreSQL included in this guide series](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#kustomize-project-only-for-updating-postgresql-included-in-this-guide-series)
+- [Relevant system paths](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#relevant-system-paths)
+- [References](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#references)
 
 ## Navigation
 

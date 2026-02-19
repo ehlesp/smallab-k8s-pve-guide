@@ -1,4 +1,4 @@
-# G908 - Appendix 08 ~ Kubernetes object stuck in Terminating state
+# G907 - Appendix 07 ~ Kubernetes object stuck in Terminating state
 
 It may happen that you need to undeploy a service or app from your cluster for some reason, but an object from that service or app gets stuck in a `Terminating` state. This happened to me in my tests with cert-manager (which you saw how to deploy in the [**G029** guide](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager.md)), so I'll use it to exemplify this issue and give you a possible solution for it.
 
@@ -98,4 +98,4 @@ This procedure will effectively unstick the namespace and allow to the `kubectl 
 
 ## Navigation
 
-[<< Previous (**G907. Appendix 07**)](G907%20-%20Appendix%2007%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G909. Appendix 09**) >>](G909%20-%20Appendix%2009%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md)
+[<< Previous (**G906. Appendix 06**)](G906%20-%20Appendix%2006%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G908. Appendix 08**) >>](G908%20-%20Appendix%2008%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md)

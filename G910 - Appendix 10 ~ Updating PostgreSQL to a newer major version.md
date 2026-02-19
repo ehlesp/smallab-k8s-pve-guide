@@ -1,4 +1,4 @@
-# G912 - Appendix 12 ~ Updating PostgreSQL to a newer major version
+# G910 - Appendix 10 ~ Updating PostgreSQL to a newer major version
 
 PostgreSQL runs well as a containerized instance and can be upgraded easily to new minor or debug versions. However, updating it to a new _MAJOR_ version is not a straightforward affair. Still, there's a way that simplifies this process a bit, and I'll show it to you in this guide.
 
@@ -1031,4 +1031,4 @@ You can find the Kustomize project meant **only for updating PostgreSQL database
 
 ## Navigation
 
-[<< Previous (**G911. Appendix 11**)](G911%20-%20Appendix%2011%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**README**)](README.md) >>]
+[<< Previous (**G909. Appendix 09**)](G909%20-%20Appendix%2009%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**README**)](README.md) >>]

@@ -1,4 +1,4 @@
-# G907 - Appendix 07 ~ K3s cluster with two or more server nodes
+# G906 - Appendix 06 ~ K3s cluster with two or more server nodes
 
 In the [**G025** guide](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md) you have seen how to create a K3s Kubernetes cluster with just one server node. This works fine and suits the constrained scenario set in this guide series. But if you want a more complete Kubernetes experience, you'll need to know how to set up two or more server nodes in your cluster.
 
@@ -116,7 +116,7 @@ $ wget -qO - https://get.k3s.io | INSTALL_K3S_VERSION="v1.21.4+k3s1" sh -s - ser
 
 ## Setup of the SECOND K3s server node
 
-### _The `k3sserver02` node's `config.yaml` file_
+### The `k3sserver02` node's `config.yaml` file
 
 The `/etc/rancher/k3s.config.d/config.yaml` file for the second server has few, but important, differences.
 
@@ -155,7 +155,7 @@ There's no `cluster-init` option, the `agent-token` is also present here, and tw
 
 - `token`: code for authenticating this server node in an already running cluster. The token is generated and saved within the **first** server node that starts said cluster, in the `/var/lib/rancher/k3s/server/token` file.
 
-#### **Getting the server token from the FIRST server node `k3sserver01`**
+#### Getting the server token from the FIRST server node `k3sserver01`
 
 With the first server node up and running, let's get the server token you'll need to authorize the joining of any other **server** nodes into the cluster. Use the `cat` command for getting it from `/var/lib/rancher/k3s/server/token` file.
 
@@ -170,7 +170,7 @@ As it happens with agent tokens, you can distinguish three parts in a server tok
 - The `server` string is the username.
 - The remaining string after the `:` is the password for other server nodes.
 
-### _K3s installation of the SECOND server node `k3sserver02`_
+### K3s installation of the SECOND server node `k3sserver02`
 
 The procedure for your second K3s server node will be as follows.
 
@@ -210,4 +210,4 @@ The agent nodes are installed with exactly the same `config.yaml` file and comma
 
 ## Navigation
 
-[<< Previous (**G906. Appendix 06**)](G906%20-%20Appendix%2006%20~%20Resizing%20a%20root%20LVM%20volume.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G908. Appendix 08**) >>](G908%20-%20Appendix%2008%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md)
+[<< Previous (**G905. Appendix 05**)](G905%20-%20Appendix%2005%20~%20Resizing%20a%20root%20LVM%20volume.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G907. Appendix 07**) >>](G907%20-%20Appendix%2007%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md)

@@ -1,4 +1,4 @@
-# G911 - Appendix 11 ~ Updating MariaDB to a newer major version
+# G909 - Appendix 09 ~ Updating MariaDB to a newer major version
 
 MariaDB has been designed to be easily upgraded, something helpful specially when it has been containerized. The standard procedure is explained in [this official documentation page](https://mariadb.com/kb/en/upgrading-between-major-mariadb-versions/), but you won't need to do any of it since there's a much easier way available for containerized MariaDB instances such as the one you deployed in your [Nextcloud setup](G033%20-%20Deploying%20services%2002%20~%20Nextcloud%20-%20Part%203%20-%20MariaDB%20database%20server.md).
 
@@ -65,4 +65,4 @@ Rather than executing the update (or upgrade) process yourself, you'll just enab
 
 ## Navigation
 
-[<< Previous (**G910. Appendix 10**)](G910%20-%20Appendix%2010%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G912. Appendix 12**) >>](G912%20-%20Appendix%2012%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md)
+[<< Previous (**G908. Appendix 08**)](G908%20-%20Appendix%2008%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G910. Appendix 10**) >>](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md)
