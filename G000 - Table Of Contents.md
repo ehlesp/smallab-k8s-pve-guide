@@ -689,6 +689,7 @@
 
 ### [G904 - Appendix 04 ~ Handling VM or VM template volumes](G904%20-%20Appendix%2004%20~%20Handling%20VM%20or%20VM%20template%20volumes.md)
 
+- [VM hard disks are disk images](G904%20-%20Appendix%2004%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#vm-hard-disks-are-disk-images)
 - [Installing the `libguestfs-tools` package](G904%20-%20Appendix%2004%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#installing-the-libguestfs-tools-package)
 - [Locating and checking a VM or VM template's hard disk volume](G904%20-%20Appendix%2004%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#locating-and-checking-a-vm-or-vm-templates-hard-disk-volume)
 - [Relevant system paths](G904%20-%20Appendix%2004%20~%20Handling%20VM%20or%20VM%20template%20volumes.md#relevant-system-paths)
