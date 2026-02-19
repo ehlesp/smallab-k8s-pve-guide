@@ -133,7 +133,8 @@ The PuTTY interface is "old school", which makes setting up a remote SSH connect
 
 - [Bitvise](https://www.bitvise.com/)
 - [mRemoteNG](https://mremoteng.org/)
-- [PuTTY](https://www.putty.org/)
+- [Putty](https://putty.software/)
+  - [PuTTY: a free SSH and Telnet client](https://www.chiark.greenend.org.uk/~sgtatham/putty/)
 - [WinSCP](https://winscp.net)
 
 ### About the newline
