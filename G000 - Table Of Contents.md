@@ -677,6 +677,8 @@
 
 ### [G902 - Appendix 02 ~ Vim vimrc configuration](G902%20-%20Appendix%2002%20~%20Vim%20vimrc%20configuration.md)
 
+- [The default Vim configuration can feel insufficient](G902%20-%20Appendix%2002%20~%20Vim%20vimrc%20configuration.md#the-default-vim-configuration-can-feel-insufficient)
+- [Practical Vim configuration](G902%20-%20Appendix%2002%20~%20Vim%20vimrc%20configuration.md#practical-vim-configuration)
 - [References](G902%20-%20Appendix%2002%20~%20Vim%20vimrc%20configuration.md#references)
 
 ### [G903 - Appendix 03 ~ Customization of the motd file](G903%20-%20Appendix%2003%20~%20Customization%20of%20the%20motd%20file.md)
