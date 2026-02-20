@@ -1,20 +1,34 @@
 # G907 - Appendix 07 ~ Kubernetes object stuck in Terminating state
 
-It may happen that you need to undeploy a service or app from your cluster for some reason, but an object from that service or app gets stuck in a `Terminating` state. This happened to me in my tests with cert-manager (which you saw how to deploy in the [**G029** guide](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager.md)), so I'll use it to exemplify this issue and give you a possible solution for it.
+- [Kubernetes objects can get stuck as `Terminating` when undeployed](#kubernetes-objects-can-get-stuck-as-terminating-when-undeployed)
+- [Scenario](#scenario)
+- [Solution](#solution)
+- [References](#references)
+- [Navigation](#navigation)
+
+## Kubernetes objects can get stuck as `Terminating` when undeployed
+
+While undeploying a service or app from your Kubernetes cluster, it may happen that an object from that service or app gets stuck in a `Terminating` state. It is possible to unstuck such a `Terminating` object by tinkering a bit with its effective configuration deployed in the cluster.This chapter uses an older cert-manager installation to exemplify this issue and it possible solution.
+
+> [!NOTE]
+> **This solution has not been tested for the current version of this guide**\
+> Since this issue was detected when working with an older version of K3s (`v1.22.3+k3s1`), it might be possible that this is issue no longer happens in modern K3s or Kubernetes clusters.
 
 ## Scenario
 
-1. Let's suppose you deployed cert-manager `v1.5.3` in your cluster applying, with `kubectl`, the default official `cert-manager.yaml` file. To undeploy it then, you would just `delete` the same yaml.
+Suppose you have deployed cert-manager `v1.5.3` in your cluster applying, with `kubectl`, the default official `cert-manager.yaml` file:
 
-    ~~~bash
+1. To undeploy cert-manager you would just `delete` the same YAML manifest used in the deployment:
+
+    ~~~sh
     $ kubectl delete -f https://github.com/jetstack/cert-manager/releases/download/v1.5.3/cert-manager.yaml
     ~~~
 
-    This command will output a bunch of lines but won't return control to the shell. That's because there's one object that cannot delete and cannot finish till that object is properly terminated.
+    This command will output a bunch of lines but will not return control to the shell. That is because there is one object that cannot delete and cannot finish untill that object is properly terminated.
 
-2. Open another shell and use `kubectl` to locate the problematic object. In the case of cert-manager it usually is the namespace it created for itself.
+2. Open another shell and use `kubectl` to locate the problematic object. In this example with cert-manager, it happened to be the namespace cert-manager created for itself:
 
-    ~~~bash
+    ~~~sh
     $ kubectl get namespaces 
     NAME              STATUS        AGE
     default           Active        43h
@@ -25,19 +39,19 @@ It may happen that you need to undeploy a service or app from your cluster for s
     cert-manager      Terminating   144m
     ~~~
 
-    No matter what you do, even rebooting the entire cluster, will get rid of that `cert-manager` namespace.
+    No matter what you do, not even rebooting the entire cluster, will get rid of that `cert-manager` namespace.
 
 ## Solution
 
-The procedure you'll see explained next has been taken [from this page](https://craignewtondev.medium.com/how-to-fix-kubernetes-namespace-deleting-stuck-in-terminating-state-5ed75792647e). I'll sum it up here for the cert-manager example.
+The procedure explained next has been taken [from this article by Craig Newton](https://craignewtondev.medium.com/how-to-fix-kubernetes-namespace-deleting-stuck-in-terminating-state-5ed75792647e) and adapted for this example with cert-manager:
 
-1. Dump the `cert-manager` namespace's descriptor as a json file.
+1. Dump the `cert-manager` namespace's declaration as a JSON file:
 
-    ~~~bash
+    ~~~sh
     $ kubectl get namespaces cert-manager -o json > cert-manager_namespace.json
     ~~~
 
-2. Edit the `cert-manager_namespace.json` file, it should look like below.
+2. Open with a text editor the `cert-manager_namespace.json` file. It should look like below:
 
     ~~~json
     {
@@ -66,7 +80,7 @@ The procedure you'll see explained next has been taken [from this page](https://
     }
     ~~~
 
-3. Remove **only** the `"kubernetes"` string within `spec.finalizers`, effectively leaving **empty** the array defined by the `finalizers` parameter.
+3. Only remove the `"kubernetes"` string within `spec.finalizers`, ensuring to leave empty the array declared in the `finalizers` parameter:
 
     ~~~json
     {
@@ -79,22 +93,23 @@ The procedure you'll see explained next has been taken [from this page](https://
     }
     ~~~
 
-4. Finally, you'll have to execute a `replace` command with `kubectl`.
+4. Finally, you have to execute a `replace` command with `kubectl`:
 
-    ~~~bash
+    ~~~sh
     $ kubectl replace --raw "/api/v1/namespaces/cert-manager/finalize" -f cert-manager_namespace.json
     ~~~
 
-    Notice that Kubernetes `/api/v1` URL specified, in this case, for the `cert-manager` namespace. If the resource or object to modify were anything else, you would have to specify the correct api URL for it.
+    Notice that Kubernetes `/api/v1` path specified, in this case, for the `cert-manager` namespace. If the resource or object to modify were anything else, you would have to specify the correct API path for it.
 
-This procedure will effectively unstick the namespace and allow to the `kubectl delete` process to end, returning after a few seconds the control to the prompt.
+This procedure will effectively unstick the namespace and allow the `kubectl delete` process to end, returning the control to the prompt after a few seconds.
 
-> **BEWARE!**  
-> This procedure is valid for **all kind** of Kubernetes objects or resources, not just namespaces. Just be aware that you'll need to find the correct api URL for the Kubernetes object or resource you're trying to fix with the procedure.
+> [!NOTE]
+> **This procedure is valid for **all kind** of Kubernetes objects or resources, not just namespaces**\
+> Just be aware that you will need to find the correct API path for the Kubernetes (or non-Kubernetes) object or resource you are trying to fix with this solution.
 
 ## References
 
-- [How to fix — Kubernetes namespace deleting stuck in Terminating state](https://craignewtondev.medium.com/how-to-fix-kubernetes-namespace-deleting-stuck-in-terminating-state-5ed75792647e)
+- [Medium. Craig Newton. How to fix — Kubernetes namespace deleting stuck in Terminating state](https://craignewtondev.medium.com/how-to-fix-kubernetes-namespace-deleting-stuck-in-terminating-state-5ed75792647e)
 
 ## Navigation
 

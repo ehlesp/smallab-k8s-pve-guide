@@ -715,12 +715,19 @@
 
 ### [G907 - Appendix 07 ~ Kubernetes object stuck in Terminating state](G907%20-%20Appendix%2007%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md)
 
+- [Kubernetes objects can get stuck as `Terminating` when undeployed](G907%20-%20Appendix%2007%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md#kubernetes-objects-can-get-stuck-as-terminating-when-undeployed)
 - [Scenario](G907%20-%20Appendix%2007%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md#scenario)
 - [Solution](G907%20-%20Appendix%2007%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md#solution)
 - [References](G907%20-%20Appendix%2007%20~%20Kubernetes%20object%20stuck%20in%20Terminating%20state.md#references)
 
 ### [G908 - Appendix 08 ~ Checking the K8s API endpoints' status](G908%20-%20Appendix%2008%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md)
 
+- [Review the status of your K3s cluster's Kubernetes API endpoints with `kubectl`](G908%20-%20Appendix%2008%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md#review-the-status-of-your-k3s-clusters-kubernetes-api-endpoints-with-kubectl)
+- [Check out your K8s cluster API endpoints readiness](G908%20-%20Appendix%2008%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md#check-out-your-k8s-cluster-api-endpoints-readiness)
+- [See if your K8s cluster's API endpoints are healthy](G908%20-%20Appendix%2008%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md#see-if-your-k8s-clusters-api-endpoints-are-healthy)
+- [Verify if the K8s cluster's API endpoints are live](G908%20-%20Appendix%2008%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md#verify-if-the-k8s-clusters-api-endpoints-are-live)
+- [Details to notice from the `kubectl` commands](G908%20-%20Appendix%2008%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md#details-to-notice-from-the-kubectl-commands)
+- [Deprecated component status command](G908%20-%20Appendix%2008%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md#deprecated-component-status-command)
 - [References](G908%20-%20Appendix%2008%20~%20Checking%20the%20K8s%20API%20endpoints%20status.md#references)
 
 ### [G909 - Appendix 09 ~ Updating MariaDB to a newer major version](G909%20-%20Appendix%2009%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md)
