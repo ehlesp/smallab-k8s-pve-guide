@@ -732,6 +732,7 @@
 
 ### [G909 - Appendix 09 ~ Updating MariaDB to a newer major version](G909%20-%20Appendix%2009%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md)
 
+- [Upgrading a containerized MariaDB to a new major version is easy](G909%20-%20Appendix%2009%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#upgrading-a-containerized-mariadb-to-a-new-major-version-is-easy)
 - [Concerns](G909%20-%20Appendix%2009%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#concerns)
 - [Enabling the update procedure](G909%20-%20Appendix%2009%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#enabling-the-update-procedure)
 - [References](G909%20-%20Appendix%2009%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md#references)
