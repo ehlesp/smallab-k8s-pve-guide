@@ -75,6 +75,13 @@ spec:
         - name: metrics
           containerPort: 9187
         env:
+        - name: DATA_SOURCE_DB
+          valueFrom:
+            configMapKeyRef:
+              name: db-postgresql-config
+              key: postgresql-db-name
+        - name: DATA_SOURCE_URI
+          value: localhost:5432/$(DATA_SOURCE_DB)?sslmode=disable
         - name: DATA_SOURCE_USER
           valueFrom:
             configMapKeyRef:
@@ -85,8 +92,6 @@ spec:
             secretKeyRef:
               name: db-postgresql-secrets
               key: prometheus-exporter-password
-        - name: DATA_SOURCE_URI
-          value: "localhost:5432/?sslmode=disable"
         resources:
           requests:
             cpu: "0.25"

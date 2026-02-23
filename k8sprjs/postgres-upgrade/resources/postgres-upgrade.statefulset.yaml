@@ -1,3 +1,4 @@
+# StatefulSet for the postgres-upgrade project
 apiVersion: apps/v1
 kind: StatefulSet
 
@@ -8,35 +9,49 @@ spec:
   serviceName: postgres-upgrade
   template:
     spec:
+      initContainers:
+      - name: pg-checksums
+        image: tianon/postgres-upgrade:17-to-18
+        command: ["/bin/sh", "-c"]
+        args:
+          - "/usr/lib/postgresql/17/bin/pg_checksums --pgdata /var/lib/postgresql/data/17/ --enable --progress"
+#          - "/usr/lib/postgresql/17/bin/pg_checksums --disable --pgdata /var/lib/postgresql/data/17/"
+        volumeMounts:
+        - name: postgresql-storage
+          mountPath: /var/lib/postgresql/data
       containers:
-      - name: server
-        image: tianon/postgres-upgrade:14-to-15
+      - name: pg-upgrade
+        image: tianon/postgres-upgrade:17-to-18
         ports:
-        - containerPort: 50432
-        resources:
-          limits:
-            memory: 320Mi
+        - name: pg-upgrade
+          containerPort: 50432
         env:
         - name: PGDATAOLD
           valueFrom:
             configMapKeyRef:
-              name: postgres-upgrade
+              name: postgres-upgrade-config
               key: postgresql-db-data-old-path
         - name: PGDATANEW
           valueFrom:
             configMapKeyRef:
-              name: postgres-upgrade
+              name: postgres-upgrade-config
               key: postgresql-db-data-new-path
+        resources:
+          requests:
+            cpu: "0.75"
+            memory: 256Mi
         volumeMounts:
         - name: postgresql-storage
           mountPath: /var/lib/postgresql/data
         - name: postgresql-config
+          readOnly: true
           subPath: postgresql.conf
           mountPath: /etc/postgresql/postgresql.conf
       volumes:
       - name: postgresql-config
         configMap:
-          name: postgres-upgrade
+          name: postgres-upgrade-config
+          defaultMode: 444
           items:
           - key: postgresql.conf
             path: postgresql.conf

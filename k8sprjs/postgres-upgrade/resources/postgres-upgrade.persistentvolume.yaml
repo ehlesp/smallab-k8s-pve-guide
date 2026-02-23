@@ -1,3 +1,4 @@
+# Persistent storage volume for the postgres-upgrade project
 apiVersion: v1
 kind: PersistentVolume
 
@@ -5,14 +6,14 @@ metadata:
   name: postgres-upgrade
 spec:
   capacity:
-    storage: 3.5G
+    storage: 4.5G
   volumeMode: Filesystem
   accessModes:
   - ReadWriteOnce
   storageClassName: local-path
   persistentVolumeReclaimPolicy: Retain
   local:
-    path: /mnt/gitea-ssd/db/k3smnt
+    path: /mnt/forgejo-ssd/db/k3smnt
   nodeAffinity:
     required:
       nodeSelectorTerms:

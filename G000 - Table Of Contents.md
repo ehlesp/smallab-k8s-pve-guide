@@ -739,8 +739,9 @@
 
 ### [G910 - Appendix 10 ~ Updating PostgreSQL to a newer major version](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md)
 
+- [Upgrading a containerized PostgreSQL server is not straightforward](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#upgrading-a-containerized-postgresql-server-is-not-straightforward)
 - [Concerns](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#concerns)
-- [Upgrade procedure (for Gitea's PostgreSQL instance)](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#upgrade-procedure-for-giteas-postgresql-instance)
+- [Upgrade procedure (for Forgejo's PostgreSQL instance)](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#upgrade-procedure-for-forgejos-postgresql-instance)
 - [Kustomize project only for updating PostgreSQL included in this guide series](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#kustomize-project-only-for-updating-postgresql-included-in-this-guide-series)
 - [Relevant system paths](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#relevant-system-paths)
 - [References](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#references)

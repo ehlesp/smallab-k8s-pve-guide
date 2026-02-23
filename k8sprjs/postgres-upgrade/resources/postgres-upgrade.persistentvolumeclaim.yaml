@@ -1,3 +1,4 @@
+# Claim of persistent storage for the postgres-upgrade project
 apiVersion: v1
 kind: PersistentVolumeClaim
 
@@ -10,4 +11,4 @@ spec:
   volumeName: postgres-upgrade
   resources:
     requests:
-      storage: 3.5G
+      storage: 4.5G
