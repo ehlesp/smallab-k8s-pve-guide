@@ -1,11 +1,14 @@
-# PostgreSQL upgrade setup
+# Setup for the postgres-upgrade project
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 namespace: postgres-upgrade
 
-commonLabels:
-  app: postgres-upgrade
+labels:
+  - pairs:
+      app: postgres-upgrade
+    includeSelectors: true
+    includeTemplates: true
 
 resources:
 - resources/postgres-upgrade.namespace.yaml
@@ -19,10 +22,10 @@ replicas:
 
 images:
 - name: tianon/postgres-upgrade
-  newTag: 14-to-15
+  newTag: 17-to-18
 
 configMapGenerator:
-- name: postgres-upgrade
+- name: postgres-upgrade-config
   envs:
   - configs/dbdatapaths.properties
   files:

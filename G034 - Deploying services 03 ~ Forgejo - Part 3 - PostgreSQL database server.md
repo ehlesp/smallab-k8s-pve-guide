@@ -158,16 +158,16 @@ You need to load in your PostgreSQL container some names as variables. Better ke
 2. Copy the following parameter lines into `configs/dbnames.properties`:
 
     ~~~properties
-    postgresql-db-name=forgejo-db
+    postgresql-db-name=forgejo_db
     postgresql-superuser-name=postgres
     forgejo-username=forgejodb
     prometheus-exporter-username=prom_metrics
     ~~~
 
-    The key-value pairs above mean the following.
+    The key-value pairs above mean the following:
 
     - `postgresql-db-name`\
-      A PostgreSQL server always initializes with an empty database named `postgres`, but you can make the server generate another one if you give it a different name such as `forgejo-db`.
+      A PostgreSQL server always initializes with an empty database named `postgres`, but you can make the server generate another one if you give it a different name such as `forgejo_db`.
 
     - `postgresql-superuser-name`\
       The default superuser in a PostgreSQL server is named `postgres`, but you could change it for any other.
@@ -177,6 +177,10 @@ You need to load in your PostgreSQL container some names as variables. Better ke
 
     - `prometheus-exporter-username`\
       Name for the Prometheus metrics exporter user.
+
+    > [!IMPORTANT]
+    > **Careful with the characters you use in these names**\
+    > Stick to lowercase alphanumeric characters plus the underscore (`_`)  to avoid issues, [in particular with the `initdb.sh` shell script explained next](#initializer-shell-script-initdbsh).
 
 ### Initializer shell script `initdb.sh`
 
@@ -188,7 +192,7 @@ You need to initialize your PostgreSQL server with the following:
 
 - A regular user and a special schema in the Forgejo database for the Prometheus metrics exporter.
 
-Let's do it all in one initializer shell script:
+You can do it all in one initializer shell script:
 
 1. Create an `initdb.sh` file in the `configs` directory:
 
@@ -231,7 +235,7 @@ Let's do it all in one initializer shell script:
     > [!NOTE]
     > **This custom `initdb.sh` script is based on a few others**\
     > These are the scripts used as references to build the `initdb.sh` script shown above:
-    > 
+    >
     > - The one shown at the [Initialization scripts section](https://github.com/docker-library/docs/blob/master/postgres/README.md#initialization-scripts) of the PostgreSQL Docker image README.
     >
     > - [The SQL scripts about "running as non-superuser" shown in the Postgres exporter Docker image's readme](https://github.com/prometheus-community/postgres_exporter#running-as-non-superuser).
@@ -405,6 +409,13 @@ Since you already know that databases are better deployed as `StatefulSet` objec
             - name: metrics
               containerPort: 9187
             env:
+            - name: DATA_SOURCE_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: db-postgresql-config
+                  key: postgresql-db-name
+            - name: DATA_SOURCE_URI
+              value: "localhost:5432/$(DATA_SOURCE_DB)?sslmode=disable"
             - name: DATA_SOURCE_USER
               valueFrom:
                 configMapKeyRef:
@@ -415,8 +426,6 @@ Since you already know that databases are better deployed as `StatefulSet` objec
                 secretKeyRef:
                   name: db-postgresql-secrets
                   key: prometheus-exporter-password
-            - name: DATA_SOURCE_URI
-              value: "localhost:5432/?sslmode=disable"
             resources:
               requests:
                 cpu: "0.25"
@@ -485,7 +494,17 @@ Since you already know that databases are better deployed as `StatefulSet` objec
 
         - The `image` of this exporter does not indicate [on what Linux Distribution runs](https://hub.docker.com/r/prometheuscommunity/postgres-exporter).
 
-        - The `env` block has three environment variables that this `metrics` container directly uses. The `DATA_SOURCE_USER` and `DATA_SOURCE_PASS` specify the user and password in the PostgreSQL server for this exporter, and `DATA_SOURCE_URI` indicates the URI to connect to the database server.
+        - The `env` block has four environment variables that inject values this `metrics` container requires to connect with the PostgreSQL server:
+
+          - `DATA_SOURCE_DB` contains the name of the database to connect to. **Prometheus metrics exporter does not read nor know this environment variable**. It is just for injecting the database name in the connection URL set in the `DATA_SOURCE_URI`.
+
+          - `DATA_SOURCE_URI` defines the URI to connect to the database identified by the `DATA_SOURCE_DB` present in the PostgreSQL server.
+
+            > [!NOTE]
+            > **Notice how the URI in this setup points to a localhost address**\
+            > This is appropriate because the `metrics` container is running in the same PostgreSQL pod as the `server` container.
+
+          - `DATA_SOURCE_USER` and `DATA_SOURCE_PASS` specify the user and password in the PostgreSQL server for this exporter.
 
 ## PostgreSQL Service
 
@@ -631,7 +650,7 @@ As usual, check the output of the declared Kustomize project and see that the va
             GRANT CONNECT ON DATABASE ${POSTGRES_DB} TO ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME};
             GRANT pg_monitor to ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME};
         EOSQL
-      postgresql-db-name: forgejo-db
+      postgresql-db-name: forgejo_db
       postgresql-superuser-name: postgres
       postgresql.conf: |-
         # Extension libraries loading
@@ -798,6 +817,13 @@ As usual, check the output of the declared Kustomize project and see that the va
               readOnly: true
               subPath: initdb.sh
           - env:
+            - name: DATA_SOURCE_DB
+              valueFrom:
+                configMapKeyRef:
+                  key: postgresql-db-name
+                  name: db-postgresql-config-58kdgmtt5g
+            - name: DATA_SOURCE_URI
+              value: "localhost:5432/$(DATA_SOURCE_DB)?sslmode=disable"
             - name: DATA_SOURCE_USER
               valueFrom:
                 configMapKeyRef:
@@ -808,8 +834,6 @@ As usual, check the output of the declared Kustomize project and see that the va
                 secretKeyRef:
                   key: prometheus-exporter-password
                   name: db-postgresql-secrets-7m2t9f4d49
-            - name: DATA_SOURCE_URI
-              value: localhost:5432/?sslmode=disable
             image: prometheuscommunity/postgres-exporter:v0.18.1
             name: metrics
             ports:

@@ -1,3 +1,4 @@
+# Namespace for the postgres-upgrade project
 apiVersion: v1
 kind: Namespace
 

@@ -403,7 +403,7 @@ Do not forget to review the Kustomize YAML output for this Forgejo project:
             GRANT CONNECT ON DATABASE ${POSTGRES_DB} TO ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME};
             GRANT pg_monitor to ${POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME};
         EOSQL
-      postgresql-db-name: forgejo-db
+      postgresql-db-name: forgejo_db
       postgresql-superuser-name: postgres
       postgresql.conf: |-
         # Extension libraries loading
@@ -930,6 +930,13 @@ Do not forget to review the Kustomize YAML output for this Forgejo project:
               readOnly: true
               subPath: initdb.sh
           - env:
+            - name: DATA_SOURCE_DB
+              valueFrom:
+                configMapKeyRef:
+                  key: postgresql-db-name
+                  name: db-postgresql-config-58kdgmtt5g
+            - name: DATA_SOURCE_URI
+              value: localhost:5432/$(DATA_SOURCE_DB)?sslmode=disable
             - name: DATA_SOURCE_USER
               valueFrom:
                 configMapKeyRef:
@@ -940,8 +947,6 @@ Do not forget to review the Kustomize YAML output for this Forgejo project:
                 secretKeyRef:
                   key: prometheus-exporter-password
                   name: db-postgresql-secrets-7m2t9f4d49
-            - name: DATA_SOURCE_URI
-              value: localhost:5432/?sslmode=disable
             image: prometheuscommunity/postgres-exporter:v0.18.1
             name: metrics
             ports:
