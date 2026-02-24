@@ -12,17 +12,13 @@
 
 ## A complete guide for building a virtualized Kubernetes homelab
 
-Would you like to practice with Kubernetes? Do you happen to have one spare computer at hand? Then this guide may be right for you! It explains how to configure a virtualization server able to run a small Kubernetes cluster with a few virtual machines.
+Welcome to the revised version of this guide for building your own small Kubernetes homelab with a low-end consumer-grade computer. In its chapters you will find a complete procedure to setup a virtualization platform where to run a compact Kubernetes cluster using virtual machines as nodes. Not only that, here you will find concrete examples of app deployments showing how to make real use of your Kubernetes cluster. Furthermore, this guide also contains instructions covering other details such as hardening, backups, or updates planning.
 
-The title says "_small homelab_", meaning that I've written the guide having in mind the sole low-end consumer-grade computer I have available for it. Don't get me wrong, by the way. The hardware contemplated is limited but affordable and capable for the proposed task. You'll see what I mean in the very first [**G001** chapter](G001%20-%20Hardware%20setup.md), in which I explain my hardware setup in detail.
+This guide avoids using tools such as K3sup, Terraform or Helm to handle Kubernetes-related tasks. For the most part, it only uses the official `kubectl` command and Kustomize-based declarations. On the hardware side, the real computer this guide is based on might surprise you with its somewhat limited specifications. The first [chapter **G001**](G001%20-%20Hardware%20setup.md) explains its specifications in detail, and may help you budget your own homelab setup better.
 
-You might be wondering, aren't already out there guides explaining how to build such a server? Well, not exactly. Back when I researched this matter, most of the guides I found expected from you to have a number of computers (Raspberry PIs usually) available to use as nodes of your K3s-based Kubernetes cluster. What I have is one basic computer, nothing more, but I can surmount my lack of extra computers with virtual machines.
+On the other hand, although this guide explains a lot of the stuff done in it, it is not designed to teach about Linux, virtualization, or Kubernetes. It only explains stuff to make clear why certain technical decisions were made on each of its chapters, or to warn about particular issues that can happen in the setup. It is better to think about this guide as a cookbook where each chapter is a recipe to solve a specific concern from the same scenario.
 
-On the other hand, most of the guides you'll find on internet use alternative tools (**k3sup**, **terraform**, or **helm** come to mind) to handle the installation and configuration of those nodes. I wanted to go down the hard path first, building a Kubernetes cluster from scratch as close to the "`kubectl` way" as possible. Hence, using those tools was out of the question. Still, some of those guides served me as reference in some cases, and you will find them linked here.
-
-Beyond those two previous considerations, there is also the fact that the information of the things I wanted, or needed, to do in my homelab is quite scattered on the internet. I knew that it would be very convenient for me to put in one place all the things I've done and the references I've followed. I also realized that, since my build is rather generic, I could go the extra mile and format the guide so it could be useful for anyone with a spare computer like mine (or a better one even).
-
-In short, this guide offers you, **in one place**, a complete set of procedures to build and run a small Kubernetes cluster with virtual machines in a single consumer-grade computer.
+It is also important to highlight that this guide is complete. Its core goal is fully covered by its main chapters, and even provides some extra information in the form of appendixes. In other words, this guide offers you, in one place, a complete set of instructions to build and run a small Kubernetes cluster with virtual machines on a single consumer-grade computer.
 
 ## Main concepts
 
@@ -32,9 +28,9 @@ The procedures explained in this guide deal mainly with three concepts:
 - How to setup a small Kubernetes cluster with VMs.
 - How to deploy applications on the Kubernetes cluster.
 
-Within those main concepts, I've also covered (up to a point) things like hardening, firewalling, optimizations, backups and a few other things that came up while I was working on my homelab's setup.
+Within those main concepts, this guide also covers (up to a point) things like hardening, firewalling, optimizations, backups and a few other things that came up in the building of the  homelab set up by this guide.
 
-Each chapter in the guide is detailed and explanatory, only omitting things when they've been done in a previous step or guide, or is understood that the reader should know about them already. Also, each chapter is usually about one main concept or procedure, and the guide's setup serves as the example scenario illustrating how to implement it.
+Each chapter in the guide is detailed and explanatory, only omitting things when they have been already done in a previous step or chapter, or is understood that the reader should know about them already. Also, each chapter is usually about one main concern or procedure, and the guide's setup serves as the example scenario illustrating how to implement it.
 
 > [!NOTE]
 > **This guide has been written in Markdown GitHub format**\
@@ -46,7 +42,7 @@ Anyone with some background in Linux and virtual machines having an interest in 
 
 ## Goal of this guide
 
-The main goal, for the build explained in this guide, is to turn a rather low-end consumer-grade computer into a small Kubernetes homelab.
+The main goal, for the build explained in this guide, is to turn a rather low-end consumer-grade computer into a small Kubernetes homelab able to run some practical workloads.
 
 ## Software used
 
@@ -59,14 +55,14 @@ The core software used in this guide to build the homelab is:
 After setting up the Kubernetes cluster, the idea is to deploy in it the following software:
 
 - Publishing platform: [Ghost](https://ghost.org/).
-- Lightweight git server: [Gitea](https://gitea.io/).
-- Kubernetes cluster monitoring stack: set of monitoring modules including [Prometheus](https://prometheus.io/), [Grafana](https://grafana.com/grafana/) and a couple of other related services.
+- Lightweight git server: [Forgejo](https://forgejo.org/).
+- Monitoring stack: set of monitoring modules including [Prometheus](https://prometheus.io/), [Grafana](https://grafana.com/grafana/) and a couple of other related services.
 
 Also, the whole system will have some backup procedures applied to it.
 
 ## Table of contents
 
-All the chapters and their main sections are easily accessible through the [Table Of Contents](G000%20-%20Table%20Of%20Contents.md) of this guide.
+All the chapters and their main sections are easily accessible through this guide's [Table Of Contents](G000%20-%20Table%20Of%20Contents.md).
 
 ## References
 
@@ -75,8 +71,8 @@ All the chapters and their main sections are easily accessible through the [Tabl
 - [Proxmox Virtual Environment](https://www.proxmox.com/en/)
 - [Rancher K3s](https://k3s.io/)
 - [Kubernetes](https://kubernetes.io/)
+- [Forgejo](https://forgejo.org/)
 - [Ghost](https://ghost.org/)
-- [Gitea](https://gitea.io/)
 - [Prometheus](https://prometheus.io/)
 - [Grafana](https://grafana.com/grafana/)
 
