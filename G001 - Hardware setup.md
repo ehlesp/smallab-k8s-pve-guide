@@ -59,19 +59,19 @@ Let me explain why you should consider a hardware configuration like this as you
   >
   > On the other hand, if you are considering installing Proxmox VE in a virtual machine, do not forget to give that virtual machine access to the virtualization technology of your host's CPU. For instance, in VirtualBox there is an option named `Enable Nested VT-x/AMD-V` that allows you just that (although its activation is not straightforward).
 
-- Having less than 8 GiB of RAM will not cut it, the virtual machines you will use as Kubernetes nodes will use 2 GiB each. So, starting from 8 GiB, the more RAM you can put in your computer the better.
+- Having less than 8 GiB of RAM does not cut it. The homelab setup explained in this guide deploys several software components, each with their own RAM requirements to take into account. So, starting from 8 GiB, the more RAM you can put in your computer the better.
 
-- Regarding storage, you will need at least one big enough internal storage drive and another big external one.
+- Regarding storage, you need at least one big enough internal storage drive and another big external one.
 
-  - The internal one should be SSD, enabling you to get the best performance possible out of your system. Is in this drive where you should install the Proxmox VE platform and where you must put the root filesystems of your VMs.
+  - The internal one should be SSD, enabling you to get the best performance possible out of your system. Is in this SSD drive where you must install the Proxmox VE platform and where you must put the root filesystems of your VMs.
 
-  - The external one could be a 7200 RPM HDD, pluggable through the fastest USB port available. This drive would serve you as the backup storage.
+  - The external one could be a 7200 RPM HDD, pluggable through the fastest USB port available. This drive can serve you as the backup storage.
 
-  - If you happen to have another big storage drive that you can put inside your computer, like in this guide's computer, you could use it as data storage.
+  - If you happen to have another big storage drive that you can put inside your computer, like in [this guide's reference hardware](#the-reference-hardware-setup), you can use it as data storage.
 
 - If you do not have it already, get an UPS. Running a server without one is risking damage or, at least, data losses in case of outages or electric spikes.
 
-A hardware setup like this will not allow you to use features usually found in professional environments such as RAID storage or high availability. Still, it will be enough to build a decent personal homelab.
+A hardware setup like this does not allow you to use features usually found in professional environments such as RAID storage or high availability. Still, it is enough to build a decent personal homelab.
 
 ## References
 
