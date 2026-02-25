@@ -273,7 +273,8 @@ You can connect already to your standalone PVE node through any SSH client of yo
 - [Downloads](https://www.proxmox.com/en/downloads)
   - [Proxmox Virtual Environment](https://www.proxmox.com/en/downloads/proxmox-virtual-environment)
 
-- [Wiki. Installation](https://pve.proxmox.com/wiki/Installation)
+- [Proxmox VE Wiki](https://pve.proxmox.com/wiki/Main_Page)
+  - [Installation](https://pve.proxmox.com/wiki/Installation)
 
 - [Proxmox VE Administration Guide](https://pve.proxmox.com/pve-docs/pve-admin-guide.html)
   - [2. Installing Proxmox VE](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_installation)

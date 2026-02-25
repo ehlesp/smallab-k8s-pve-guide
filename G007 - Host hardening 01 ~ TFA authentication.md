@@ -461,7 +461,7 @@ This is probably just a problem of limiting the TFA restriction to the users and
 
 ### [Proxmox](https://www.proxmox.com/en/)
 
-- [Wiki](https://pve.proxmox.com/wiki/Main_Page)
+- [Proxmox VE Wiki](https://pve.proxmox.com/wiki/Main_Page)
   - [User Management. Two-Factor Authentication](https://pve.proxmox.com/wiki/User_Management#pveum_tfa_auth)
 
 ### About TFA and Google Authenticator
