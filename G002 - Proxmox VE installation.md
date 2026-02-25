@@ -277,9 +277,9 @@ You can connect already to your standalone PVE node through any SSH client of yo
   - [Installation](https://pve.proxmox.com/wiki/Installation)
 
 - [Proxmox VE Administration Guide](https://pve.proxmox.com/pve-docs/pve-admin-guide.html)
-  - [2. Installing Proxmox VE](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_installation)
-    - [2.1. System Requirements](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_system_requirements)
-    - [2.2. Prepare Installation Media](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#installation_prepare_media)
+  - [Installing Proxmox VE](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_installation)
+    - [System Requirements](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_system_requirements)
+    - [Prepare Installation Media](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#installation_prepare_media)
 
 ### EFI issue with Proxmox VE installer
 

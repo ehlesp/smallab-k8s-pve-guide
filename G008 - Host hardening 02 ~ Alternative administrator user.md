@@ -14,7 +14,7 @@
   - [Files](#files)
 - [References](#references)
   - [Proxmox](#proxmox)
-  - [PAM](#pam)
+  - [Pluggable Authentication Module (PAM)](#pluggable-authentication-module-pam)
 - [Navigation](#navigation)
 
 ## Avoid using the root user
@@ -246,7 +246,7 @@ The `mgrsys` user you created earlier exists within the Debian OS, but not in th
     - [Command-line Tool](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_command_line_tool)
     - [Real World Examples](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_real_world_examples)
 
-### PAM
+### Pluggable Authentication Module (PAM)
 
 - [Wikipedia. Pluggable Authentication Module (PAM)](https://en.wikipedia.org/wiki/Pluggable_authentication_module)
 
