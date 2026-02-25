@@ -10,7 +10,7 @@
   - [Adjusting the `sshd` daemon configuration](#adjusting-the-sshd-daemon-configuration)
     - [Disabling IPv6 protocol](#disabling-ipv6-protocol)
     - [Reducing the login grace period](#reducing-the-login-grace-period)
-    - [Disabling the `root` user on ssh](#disabling-the-root-user-on-ssh)
+    - [Disabling the `root` user on SSH](#disabling-the-root-user-on-ssh)
     - [Reducing the number of authentication attempts](#reducing-the-number-of-authentication-attempts)
     - [Disabling password-based logins](#disabling-password-based-logins)
     - [Disabling X11 forwarding](#disabling-x11-forwarding)
@@ -25,10 +25,10 @@
   - [About SSH key pairs](#about-ssh-key-pairs)
   - [User specific authentication methods in SSH](#user-specific-authentication-methods-in-ssh)
   - [Particular sshd parameters](#particular-sshd-parameters)
-  - [About the `authorized_keys` file](#about-the-authorized_keys-file)
+  - [About the `authorized_keys` file in Proxmox VE](#about-the-authorized_keys-file-in-proxmox-ve)
   - [About disabling the `root` user](#about-disabling-the-root-user)
   - [About SSH key generation and cryptosystems](#about-ssh-key-generation-and-cryptosystems)
-  - [Proxmox VE](#proxmox-ve)
+  - [Proxmox](#proxmox)
 - [Navigation](#navigation)
 
 ## Harden your SSH connections with key pairs
@@ -43,7 +43,7 @@ To harden the SSH remote connections to your standalone PVE node, there are two 
 
 ## Generating SSH key pairs
 
-Here you will see how to generate strong SSH key pairs for your administrative users already existing in your Proxmox VE server.
+Learn here about generating strong SSH key pairs for the administrative users already existing in your Proxmox VE server.
 
 ### Stronger key pair for the `root` user
 
@@ -67,7 +67,7 @@ $ ssh-keygen -lf .ssh/id_rsa
 4096 SHA256:+c40qYIXrTV+b0KHWenrgHaD4a8AEPeIHFMwZVAUk5U root@pve (RSA)
 ~~~
 
-As you can see in the output above, the key pair's length is `4096` bits, which is enough (at the time I wrote this) for an RSA-encrypted key pair. But if you want a key pair encrypted with the newer [_Ed25519_ signature scheme](https://en.wikipedia.org/wiki/EdDSA#Ed25519), you can use the `ssh-keygen` command as follows:
+As you can see in the output above, the key pair's length is `4096` bits, which is enough (at the time this was written) for an RSA-encrypted key pair. But if you want a key pair encrypted with the newer [_Ed25519_ signature scheme](https://en.wikipedia.org/wiki/EdDSA#Ed25519), you can use the `ssh-keygen` command as follows:
 
 1. Make a backup of the current `root`'s key pair:
 
@@ -100,7 +100,7 @@ As you can see in the output above, the key pair's length is `4096` bits, which 
     - `-C "root@pve"`\
       To set a comment associated with the generated key pair, most commonly used to put a string following the schema `[username]@[hostname]`.
 
-4. The ssh-keygen command will ask you two things:
+4. The ssh-keygen command asks you two things:
 
     - `Enter file in which to save the key (/root/.ssh/id_ed25519):`\
       Leave this question empty, the default path is the good one.
@@ -108,7 +108,7 @@ As you can see in the output above, the key pair's length is `4096` bits, which 
     - `Enter passphrase for "/root/.ssh/id_ed25519" (empty for no passphrase):`\
       In general, you want to enter a good passphrase here (specially in a professional environment). However, for a homelab setting with no sensitive data involved, you might consider this unnecessary and leave this question empty.
 
-    After answering the questions, the whole command's output will look like this:
+    After answering the questions, the whole command output will look like this:
 
     ~~~sh
     Generating public/private ed25519 key pair.
@@ -140,7 +140,7 @@ As you can see in the output above, the key pair's length is `4096` bits, which 
     256 SHA256:F6Vq9wL1wjAMTtaJRcnTxCtElnV5bz51BpbBc9guWVg root@pve (ED25519)
     ~~~
 
-    It should return the same key fingerprint you saw right after generating the new key pair. Also, notice how the bit length informed is 256. Do not worry about this detail, since the Ed25519 signature scheme is different from the RSA cryptosystem.
+    It should return the same key fingerprint you saw right after generating the new key pair. Also, notice how the bit length informed is 256. Do not worry about this detail, since the Ed25519 signature scheme works differently than the RSA cryptosystem.
 
 6. The last important bit to do is to authorize the public key part in the `authorized_keys` file, while also removing the original public key from it:
 
@@ -150,21 +150,22 @@ As you can see in the output above, the key pair's length is `4096` bits, which 
     ~~~
 
     > [!WARNING]
-    > In a Proxmox VE system, the `root`'s `authorized_keys` is a symlink to `/etc/pve/priv/authorized_keys`, which is used by Proxmox VE to allow nodes in a cluster to communicate with each other through ssh. So, in case of a clustered PVE environment, is expected to see the public keys of other nodes' `root` users authorized in this file.
+    > **Proxmox VE shares the public keys of the `root` users present in a PVE cluster among the nodes of that cluster**\
+    > In a Proxmox VE system, the `root`'s `authorized_keys` is a symlink to `/etc/pve/priv/authorized_keys`, which is used by Proxmox VE to allow nodes in a cluster to communicate with each other through SSH. So, in case of a clustered PVE environment, is expected to see the public keys of other nodes' `root` users authorized in this file.
 
-7. As a final consideration, you could also remove (with `rm`) the `.orig` backup of the original RSA-based SSH key pair since you won't need it anymore.
+7. As a final consideration, you could also remove (with `rm`) the `.orig` backup of the original RSA-based SSH key pair since you do not need it anymore:
 
 > [!WARNING]
-> **You won't be able to login as `root` with its new SSH key pair yet!**\
-> Since the `publickey` method is still not enabled in the `sshd` service's configuration, the SSH server in your Proxmox VE node will reject your key pair if you attempt to login with it.
+> **You cannot login as `root` with its new SSH key pair yet!**\
+> Since the `publickey` method is still not enabled in the `sshd` service configuration, the SSH server in your Proxmox VE node will reject your key pair if you attempt to login with it.
 >
 > Just use the password and the TOTP code for now at this point. In the section [Hardening the `sshd` service](#hardening-the-sshd-service) you will finally enable the `publickey` method, allowing you login remotely with your key pair.
 
 ### New key pair for non-`root` users
 
-At this point, you just have another user apart from the `root` one: your administrative or `sudo` user, created as `mgrsys` in the previous [**G008** chapter](G008%20-%20Host%20hardening%2002%20~%20Alternative%20administrator%20user.md). This one does not even have a `.ssh` directory, but that will also be taken care of by the `ssh-keygen` command.
+At this point, you just have another user apart from the `root` one: your administrative or `sudo` user, created as `mgrsys` in the previous [chapter **G008**](G008%20-%20Host%20hardening%2002%20~%20Alternative%20administrator%20user.md). This one does not even have a `.ssh` directory, but that will also be taken care of by the `ssh-keygen` command:
 
-1. Open a shell as `mgrsys`, and verify that there is no `.ssh` folder in its `/home/mgrsys` directory:
+1. Open a remote shell as `mgrsys` on your Proxmox VE server, then verify that there is no `.ssh` folder in its `/home/mgrsys` directory:
 
     ~~~sh
     $ ls -al
@@ -181,7 +182,7 @@ At this point, you just have another user apart from the `root` one: your admini
     -rw-r--r-- 1 mgrsys mgrsys  293 Aug 20  2021 .vimrc
     ~~~
 
-    There shouldn't be one since new Debian Linux users are not created with such `.ssh` folder.
+    There should not be one since new Debian Linux users are not created with such `.ssh` folder.
 
 2. Execute the `ssh-keygen` command to generate a SSH key pair and, as with `root`, just press enter on the questions:
 
@@ -218,45 +219,49 @@ At this point, you just have another user apart from the `root` one: your admini
     id_ed25519  id_ed25519.pub
     ~~~
 
-4. Create the `authorized_keys` file.
+4. Create the `authorized_keys` file:
 
     ~~~sh
     $ touch authorized_keys ; chmod 600 authorized_keys
     ~~~
 
-5. Append the content of `id_ed25519.pub` into `authorized_keys`.
+5. Append the content of `id_ed25519.pub` into `authorized_keys`:
 
     ~~~sh
     $ cat id_ed25519.pub >> authorized_keys
     ~~~
 
-6. Copy the `config` file from the `root` user, and change it's ownership.
+6. Copy the `config` file from the `root` user, and change its ownership:
 
     ~~~sh
     $ sudo cp /root/.ssh/config config
     $ sudo chown mgrsys:mgrsys config
     ~~~
 
-    This `config` file was generated for `root` by the Proxmox VE installer with a predefined set of admitted ciphers for OpenSSH. Copying it to any other user it's just an extra hardening measure.
+    This `config` file was generated for `root` by the Proxmox VE installer with a predefined set of admitted ciphers for OpenSSH. Copying it to any other user it is just an extra hardening measure.
 
 > [!WARNING]
-> **You won't be able to login as `mgrsys` with its new SSH key pair yet!**\
+> **You will not be able to login as `mgrsys` with its new SSH key pair yet!**\
 > Since the `publickey` method is still not enabled in the `sshd` service's configuration, the SSH server in your Proxmox VE node will reject your key pair if you attempt to login with it.
 >
 > Just use the password and the TOTP code for now at this point. In the section [Hardening the `sshd` service](#hardening-the-sshd-service) you will finally enable the `publickey` method, allowing you login remotely with your key pair.
 
 ### Export your key pairs
 
-Don't forget to export those new key pairs so you can use them to connect to your standalone PVE node. Also remember that you'll need to generate the `.ppk` file from each private key to connect from Windows clients. Check out the [**G901** appendix chapter](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md) to see how to connect through SSH with PuTTY.
+Do not forget to export those new key pairs so you can use them to connect to your standalone PVE node. Also remember that you need to generate the `.ppk` file from each private key to connect from Windows clients.
+
+> [!NOTE]
+> **Use PuTTY to generate the `.ppk` file**\
+> Check out the [appendix chapter **G901** to see how to generate a `.ppk` file with the tool provided by PuTTY](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md#generating-a-ppk-file-from-a-private-key).
 
 ## Hardening the `sshd` service
 
-To do this hardening, you'll need to modify two files that you've already changed before when you enabled the TFA authentication.
+To harden the `sshd` service, you need to modify two files you have already changed before when you enabled the TFA authentication:
 
 - `/etc/pam.d/sshd`
 - `/etc/ssh/sshd_config`
 
-So, open a terminal as your administrative `sudo` user `mgrsys` and make a backup of your current `sshd` configuration.
+Open a remote terminal as your administrative `sudo` user `mgrsys` and make a backup of your current `sshd` configuration:
 
 ~~~sh
 $ cd /etc/pam.d
@@ -267,7 +272,7 @@ $ sudo cp sshd_config sshd_config.bkp
 
 ### Disabling common pam authentication in SSH logins
 
-To disable the common `pam` authentication when login through ssh, edit the `/etc/pam.d/sshd` file by commenting out the `@include common-auth` line found at at its top:
+To disable the common `pam` authentication when login through SSH, edit the `/etc/pam.d/sshd` file by commenting out the `@include common-auth` line found at at its top:
 
 ~~~sh
 # Standard Un*x authentication.
@@ -280,7 +285,7 @@ The next `sshd` service hardening changes are all done in the `/etc/ssh/sshd_con
 
 #### Disabling IPv6 protocol
 
-Although the use of IPv6 seems to be growing, you will not really need it in a internal private networks like the one your system is in. Then, you can safely disable the protocol on the `sshd` service.
+Although the use of IPv6 seems to be growing, you will not really need it in a internal private network like the one your homelab setup is in. Thus, you can safely disable the protocol on the `sshd` service:
 
 1. Edit the current `/etc/ssh/sshd_config` file, enabling the `AddressFamily` parameter with the value `inet`:
 
@@ -291,7 +296,7 @@ Although the use of IPv6 seems to be growing, you will not really need it in a i
     #ListenAddress ::
     ~~~
 
-    Notice that I have also specified a concrete IP in the `ListenAddress` parameter, making the SSH daemon (called `sshd`) to listen only on the interface that corresponds to that IP. In this case, the IP corresponds with the physical Ethernet network card in use in the Proxmox VE host. By default, the `sshd` process listens in all available interfaces in the host, when set with the default `ListenAddress 0.0.0.0` setting.
+    Notice that there is a concrete IP specified in the `ListenAddress` parameter, making the SSH daemon (called `sshd`) to listen only on the interface that corresponds to that IP. In this case, the IP corresponds with the physical Ethernet network card in use in the Proxmox VE host. By default, the `sshd` process listens in all available interfaces in the host, when set with the default `ListenAddress 0.0.0.0` setting.
 
 2. Save the the change and restart the `sshd` service:
 
@@ -306,11 +311,11 @@ Although the use of IPv6 seems to be growing, you will not really need it in a i
     tcp   LISTEN 0      128         10.1.0.1:22        0.0.0.0:*    users:(("sshd",pid=39495,fd=6))
     ~~~
 
-    With the `ss` command above, you get a list of all the ports opened in your system and on which address, among other details. With `grep` you filter out the lines returned by `ss` to get only the ones which, in this case, have the port `22` opened. In the output above you can see that there's only one line, which corresponds to the IPv4 address where `sshd` is listening, `10.1.0.1` in this case.
+    With the `ss` command above, you get a list of all the ports opened in your system and on which address, among other details. With `grep` you filter out the lines returned by `ss` to get only the ones which, in this case, have the port `22` opened. In the output above you can see that there is only one line, which corresponds to the IPv4 address where `sshd` is listening, `10.1.0.1` in this case.
 
 #### Reducing the login grace period
 
-By default, the sshd daemon gives any user two full minutes to authenticate. With modern SSH clients and SSH key pair authentication there's no need to have so much time to authenticate, so you can reduce it to a shorter time period like **45 seconds**.
+By default, the sshd daemon gives any user two full minutes to authenticate. With modern SSH clients and SSH key pair authentication there is no need to have so much time to authenticate, so you can reduce it to a much shorter time period like **45 seconds**:
 
 1. Edit the current `/etc/ssh/sshd_config` file, uncomment the `LoginGraceTime` parameter and set it to `45`:
 
@@ -331,9 +336,9 @@ By default, the sshd daemon gives any user two full minutes to authenticate. Wit
 > **Do not set this timer with a too low value in your system**\
 > Be aware that, when your server receives several concurrent unauthenticated requests, it will need some time to process them. Also, a human user will need some time to get and enter their **TOTP code**.
 
-#### Disabling the `root` user on ssh
+#### Disabling the `root` user on SSH
 
-It is a common security measure in Linux servers to **disable** (_never deleting_, mind you) the `root` superuser after creating an administrative substitute `sudo`-enabled user (like `mgrsys`). This is fine for regular Linux servers (virtualized ones included) but not exactly peachy for Proxmox VE.
+It is a common security measure in Linux servers to disable (_never deleting_, mind you) the `root` superuser after creating an administrative substitute `sudo`-enabled user (like `mgrsys`). This is fine for regular Linux servers (virtualized ones included) but not exactly peachy for Proxmox VE.
 
 Proxmox VE uses the `root` user for certain tasks like [its clustering functionality](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#pvecm_cluster_requirements). Therefore, if you decide to disable the `root` superuser, be aware that you may face unexpected problems in your Proxmox VE system.
 
@@ -355,7 +360,7 @@ Still, given that your Proxmox VE server is just a standalone node, you can assu
     $ sudo systemctl restart sshd.service
     ~~~
 
-3. Try to log in remotely as `root` through an SSH client. You should get an error message or warning indicating that the server has rejected the connection. In PuTTY you'll see something like the following output:
+3. Try to log in remotely as `root` through an SSH client. You should get an error message or warning indicating that the server has rejected the connection. In PuTTY you can see something like the following output:
 
     ~~~sh
     Using username "root".
@@ -367,7 +372,7 @@ Still, given that your Proxmox VE server is just a standalone node, you can assu
     | Verification code:
     ~~~
 
-    Notice the **Access denied** line between the two `Keyboard-interactive authentication prompts`. No matter that you input the correct TOTP verification code every time, the server will reject your request. On the other hand, if you try to connect authenticating with a SSH key pair, you'll see a different message.
+    Notice the `Access denied` line between the two `Keyboard-interactive authentication prompts`. No matter that you input the correct TOTP verification code every time, the server will reject your request. On the other hand, if you try to connect authenticating with a SSH key pair, you will see a different message:
 
     ~~~sh
     Using username "root".
@@ -376,11 +381,12 @@ Still, given that your Proxmox VE server is just a standalone node, you can assu
     ~~~
 
 > [NOTE]
-> Revert this change when you detect a problem related to a Proxmox VE functionality requiring `root` to connect through ssh.
+> **Restore the SSH access to `root` when strictly necessary**\
+> Revert this change when you detect a problem related to a Proxmox VE functionality requiring `root` to connect through SSH.
 
 #### Reducing the number of authentication attempts
 
-By default, the sshd daemon gives users up to six attempts to make the authentication correctly. But those are too many tries for your ssh-key and TOTP based setup.
+By default, the sshd daemon gives users up to six attempts to make the authentication correctly. But those are too many tries for your SSH-key and TOTP based setup:
 
 1. Edit the current `/etc/ssh/sshd_config` file, uncomment the `MaxAuthTries` parameter and set it to `3`:
 
@@ -399,7 +405,7 @@ By default, the sshd daemon gives users up to six attempts to make the authentic
 
 #### Disabling password-based logins
 
-You already have disabled the password prompts in SSH logins when you changed the `/etc/pam.d/sshd` file before. Still, the sshd daemon has also an option in the `/etc/ssh/sshd_config` file to allow password-based authentication that is convenient to disable.
+You already have disabled the password prompts in SSH logins when you changed the `/etc/pam.d/sshd` file before. Still, the sshd daemon has also an option in the `/etc/ssh/sshd_config` file to allow password-based authentication that is convenient to disable:
 
 1. In the `/etc/ssh/sshd_config`, uncomment the `PasswordAuthentication` parameter and set it to `no`.
 
@@ -417,9 +423,9 @@ You already have disabled the password prompts in SSH logins when you changed th
 
 #### Disabling X11 forwarding
 
-Proxmox VE does not come with a graphic (X11) environment, so you can disable the forwarding of the X11 system through SSH connections.
+Proxmox VE does not come with a graphic (X11) environment, so you can disable the forwarding of the X11 system through SSH connections:
 
-1. Edit the current `/etc/ssh/sshd_config` file, setting the value of the `X11Forwarding` parameter to `no`.
+1. Edit the current `/etc/ssh/sshd_config` file, setting the value of the `X11Forwarding` parameter to `no`:
 
     ~~~sh
     #GatewayPorts no
@@ -428,7 +434,7 @@ Proxmox VE does not come with a graphic (X11) environment, so you can disable th
     #X11UseLocalhost yes
     ~~~
 
-2. Save the the change and restart the `ssh` service.
+2. Save the the change and restart the `ssh` service:
 
     ~~~sh
     $ sudo systemctl restart sshd.service
@@ -436,11 +442,11 @@ Proxmox VE does not come with a graphic (X11) environment, so you can disable th
 
 #### Setting up user specific authentication methods
 
-It is possible to particularize the authentication methods per user, something that will solve us a problem with the `root` superuser. In our standalone node scenario, we have disabled the SSH access to the `root` user but, for more advanced (clustered) scenarios, you may need to enable the `root` remote access through `ssh`. In such scenarios, the TOTP token is problematic since Proxmox VE uses the `root` superuser for launching certain automated tasks (backups, clustering actions, etc), and automations cannot input TOTP codes.
+It is possible to particularize the authentication methods per user, something that will solve us a problem with the `root` superuser. In this guide's standalone node scenario, the SSH access for the `root` user has been disabled but, for more advanced (clustered) scenarios, you may need to enable the `root` remote access through SSH. In such scenarios, the TOTP token is problematic since Proxmox VE uses the `root` superuser for launching certain automated tasks (backups, clustering actions, etc), and automations cannot input TOTP codes.
 
-So, it is better to do the following:
+Hence, it is better to do the following:
 
-- Generate a particular pam group for users authorized to connect through ssh, but not including `root`.
+- Generate a particular pam group for users authorized to connect through SSH, but not including `root`.
 
 - Add your `mgrsys` user to this group.
 
@@ -496,34 +502,35 @@ So, it is better to do the following:
     $ sudo systemctl restart sshd.service
     ~~~
 
-You cannot log as `root` through ssh, because you have disabled that possibility but, if that were still possible, you would see how the server does not ask you the TFA verification code anymore. On the other hand, you can try to open a new non-shared SSH connection with `mgrsys` and check out that it is still asking you for the TFA code.
+You cannot log as `root` through SSH, because you have disabled that possibility but, if that were still possible, you would see how the server does not ask you the TFA verification code anymore. On the other hand, you can try to open a new non-shared SSH connection with `mgrsys` and check out that it is still asking you for the TFA code.
 
 > [!IMPORTANT]
+> **Use `pam` groups when managing many SSH users**\
 > Managing SSH access with `Match` rules using `pam` groups is a more practical approach when handling many users.
 
 #### Other possible changes in SSH configuration
 
-There are many other possible adjustments that can be done in the `sshd` service configuration, but some of them can conflict with how Proxmox VE runs. So, beware of the following changes.
+There are many other possible adjustments that can be done in the `sshd` service configuration, but some of them can conflict with how Proxmox VE runs:
 
 - **Adjusting the `MaxStartups` value**\
     When some user tries to connect to your server, that establishes a new unauthenticated or _startup_ connection. Those users trying to connect can be automated processes running in your server, so be mindful of making this value just big enough for your needs.
 
 - **Adjusting the `MaxSessions` value**\
-    This parameter indicates how many sessions can be opened from a shared SSH connection. It could happen that some procedure requires to open two or more extra sessions branched out from its original SSH connection, so be careful of not making this value too small or unnecessarily big.
+    This parameter indicates how many sessions can be opened from a shared SSH connection. It could happen that some procedure requires to open two or more extra sessions branched out from its original SSH connection. Be careful of not making this value too small or unnecessarily big.
 
 - **IP restrictions**\
-    You can specify which IPs can connect to your server through ssh, but this management is better left to the firewall embedded in your standalone PVE node.
+    You can specify which IPs can connect to your server through SSH, but this management is better left to the firewall embedded in your standalone PVE node.
 
 - **Changing the port number**\
-    This is a common hardening-wise change, but not without it's own share of potential problems. Changing the port means that you'll also have to change the configuration of other systems and clients that may communicate with your Proxmox VE server through ssh.
+    This is a common hardening-wise change, but not without its own share of potential problems. Changing the port means that you also have to change the configuration of other systems and clients that may communicate with your Proxmox VE server through SSH.
 
     > [!NOTE]
-    > **My rule of thumb regarding the SSH port change**\
-    > Change the SSH port only if you're going to expose it directly to the public internet and you won't (_although you **absolutely** should_) put a firewall, reverse proxy or any other security solution between your SSH port and the wild.
+    > **Rule of thumb regarding the SSH port change**\
+    > Change the SSH port only if you are going to expose it directly to the public internet and you will not (_although you **absolutely** should_) put a firewall, reverse proxy or any other security solution between your SSH port and the wild.
 
 #### Consideration about hardening the `sshd` service
 
-Overall, be aware of the services or tasks in your server that require SSH connections to work, like it happens with Proxmox VE, and study the viability of any change to the `sshd` configuration in a **case-by-case** basis.
+Be aware of the services or tasks in your server that require SSH connections to work, like it happens with Proxmox VE, and study the viability of any change to the `sshd` configuration in a **case-by-case** basis.
 
 ## Relevant system paths
 
@@ -555,66 +562,71 @@ Overall, be aware of the services or tasks in your server that require SSH conne
 
 ### General SSH configuration
 
-- [SSH Essentials: Working with SSH Servers, Clients, and Keys](https://www.digitalocean.com/community/tutorials/ssh-essentials-working-with-ssh-servers-clients-and-keys)
-- [How to Secure SSH Connections: 5 Best Practices](https://phoenixnap.com/kb/linux-ssh-security)
-- [6 ssh authentication methods to secure connection (sshd_config)](https://www.golinuxcloud.com/openssh-authentication-methods-sshd-config/)
-- [How to Enable/Disable SSH access for a particular user or user group in Linux](https://www.2daygeek.com/allow-deny-enable-disable-ssh-access-user-group-in-linux/)
-- [Asegurando SSH (haciendo ssh más seguro)](https://www.linuxtotal.com.mx/index.php?cont=info_seyre_004) (in Spanish)
-- [Proxmox VE Cluster when SSH Port is Non-standard and Root Login is Disabled](http://jaroker.com/technotes/operations/proxmox/proxmox_cluster/proxmox-ve-cluster-when-ssl-port-is-non-standard-root-login-is-disabled/)
+- [DigitalOcean. SSH Essentials: Working with SSH Servers, Clients, and Keys](https://www.digitalocean.com/community/tutorials/ssh-essentials-working-with-ssh-servers-clients-and-keys)
+- [PhoenixNAP. KB. SysAdmin. How to Secure SSH Connections: 5 Best Practices](https://phoenixnap.com/kb/linux-ssh-security)
+- [GoLinuxCloud. 6 ssh authentication methods to secure connection (sshd_config)](https://www.golinuxcloud.com/openssh-authentication-methods-sshd-config/)
+- [2DayGeek. How to Enable/Disable SSH access for a particular user or user group in Linux](https://www.2daygeek.com/allow-deny-enable-disable-ssh-access-user-group-in-linux/)
+- [LinuxTotal. Asegurando SSH (haciendo ssh más seguro)](https://www.linuxtotal.com.mx/index.php?cont=info_seyre_004) (in Spanish)
+- [Jon Jaroker. Proxmox VE Cluster when SSH Port is Non-standard and Root Login is Disabled](http://jaroker.com/technotes/operations/proxmox/proxmox_cluster/proxmox-ve-cluster-when-ssl-port-is-non-standard-root-login-is-disabled/)
 
 ### About SSH key pairs
 
-- [How to Use ssh-keygen to Generate a New SSH Key?](https://www.ssh.com/academy/ssh/keygen)
-- [How to Generate & Set Up SSH Keys on Debian](https://phoenixnap.com/kb/generate-ssh-key-debian-10)
-- [How to know the SSH key's length?](https://stackoverflow.com/questions/56827341/how-to-know-the-ssh-keys-length)
+- [SSH.com. How to Use ssh-keygen to Generate a New SSH Key?](https://www.ssh.com/academy/ssh/keygen)
+- [PhoenixNAP. KB. SysAdmin. How to Generate & Set Up SSH Keys on Debian](https://phoenixnap.com/kb/generate-ssh-key-debian-10)
+- [StackOverflow. How to know the SSH key's length?](https://stackoverflow.com/questions/56827341/how-to-know-the-ssh-keys-length)
 
 ### User specific authentication methods in SSH
 
-- [Creating user specific authentication methods in SSH](https://security.stackexchange.com/questions/18036/creating-user-specific-authentication-methods-in-ssh)
-- [How can I setup OpenSSH per-user authentication methods?](https://serverfault.com/questions/150153/how-can-i-setup-openssh-per-user-authentication-methods)
+- [Information Security. Creating user specific authentication methods in SSH](https://security.stackexchange.com/questions/18036/creating-user-specific-authentication-methods-in-ssh)
+- [ServerFault. How can I setup OpenSSH per-user authentication methods?](https://serverfault.com/questions/150153/how-can-i-setup-openssh-per-user-authentication-methods)
 
 ### Particular sshd parameters
 
-- [Ensure SSH `LoginGraceTime` is set to one minute or less (Scored)](https://secscan.acron.pl/centos7/5/2/14)
-- [In sshd_config 'MaxAuthTries' limits the number of auth failures per connection. What is a connection?](https://unix.stackexchange.com/questions/418582/in-sshd-config-maxauthtries-limits-the-number-of-auth-failures-per-connection)
-- [Ensure SSH `MaxAuthTries` is set to 4 or less (Scored)](https://secscan.acron.pl/centos7/5/2/5)
-- [Difference between maxstartups and maxsessions in sshd_config](https://stackoverflow.com/questions/31114690/difference-between-maxstartups-and-maxsessions-in-sshd-config)
-- [Systems Administrator’s Lab: OpenSSH MaxStartups](https://crunchtools.com/systems-administrators-lab-openssh-maxstartups/)
-- [sshd_config MaxSessions parameter](https://unix.stackexchange.com/questions/26170/sshd-config-maxsessions-parameter)
+- [SecScan. Ensure SSH `LoginGraceTime` is set to one minute or less (Scored)](https://secscan.acron.pl/centos7/5/2/14)
+- [SecScan. Ensure SSH `MaxAuthTries` is set to 4 or less (Scored)](https://secscan.acron.pl/centos7/5/2/5)
+- [Unix & Linux. In sshd_config 'MaxAuthTries' limits the number of auth failures per connection. What is a connection?](https://unix.stackexchange.com/questions/418582/in-sshd-config-maxauthtries-limits-the-number-of-auth-failures-per-connection)
+- [Unix & Linux. sshd_config MaxSessions parameter](https://unix.stackexchange.com/questions/26170/sshd-config-maxsessions-parameter)
+- [StackOverflow. Difference between maxstartups and maxsessions in sshd_config](https://stackoverflow.com/questions/31114690/difference-between-maxstartups-and-maxsessions-in-sshd-config)
+- [Crunchtools. Systems Administrator’s Lab: OpenSSH MaxStartups](https://crunchtools.com/systems-administrators-lab-openssh-maxstartups/)
 
-### About the `authorized_keys` file
+### About the `authorized_keys` file in Proxmox VE
 
-- [Proxmox v6 default ssh key in authorized_keys file](https://forum.proxmox.com/threads/proxmox-v6-default-ssh-key-in-authorized_keys-file.57898/#post-266842)
+- [Proxmox. Forums. Proxmox Virtual Environment](https://forum.proxmox.com/#proxmox-virtual-environment.11)
+  - [Proxmox VE: Installation and configuration](https://forum.proxmox.com/forums/proxmox-ve-installation-and-configuration.16/)
+    - [Proxmox v6 default ssh key in authorized_keys file](https://forum.proxmox.com/threads/proxmox-v6-default-ssh-key-in-authorized_keys-file.57898/#post-266842)
 
-    > [!NOTE]
-    > **Regarding ssh in Proxmox VE clusters**\
-    > In a cluster of several nodes, PVE relies on ssh to perform certain tasks, a working communication in-between the nodes is therefore essential. This is why we share `/etc/pve/priv/known_hosts` as well as the keys via the `pmxcfs [0]` between the hosts.
-    >
-    > The `/etc/ssh/ssh_known_hosts` is setup to symlink to `/etc/pve/priv/known_hosts`.
-    >
-    > For a standalone node this does not really matter, but is setup anyway. You can check the fingerprint by `running ssh-keyscan -t rsa <hostname>` and compare it if not sure.
+      > [!NOTE]
+      > **Regarding ssh in Proxmox VE clusters**\
+      > In a cluster of several nodes, PVE relies on ssh to perform certain tasks, a working communication in-between the nodes is therefore essential. This is why we share `/etc/pve/priv/known_hosts` as well as the keys via the `pmxcfs [0]` between the hosts.
+      >
+      > The `/etc/ssh/ssh_known_hosts` is setup to symlink to `/etc/pve/priv/known_hosts`.
+      >
+      > For a standalone node this does not really matter, but is setup anyway. You can check the fingerprint by `running ssh-keyscan -t rsa <hostname>` and compare it if not sure.
 
-- [adding own keys to authorized_keys](https://forum.proxmox.com/threads/adding-own-keys-to-authorized_keys.41812/)
-- [/etc/pve/priv/authorized_keys](https://forum.proxmox.com/threads/etc-pve-priv-authorized_keys.18561/)
-- [/etc/pve/priv/authorized_keys question](https://forum.proxmox.com/threads/etc-pve-priv-authorized_keys-question.7671/)
+    - [adding own keys to authorized_keys](https://forum.proxmox.com/threads/adding-own-keys-to-authorized_keys.41812/)
+    - [/etc/pve/priv/authorized_keys](https://forum.proxmox.com/threads/etc-pve-priv-authorized_keys.18561/)
+    - [/etc/pve/priv/authorized_keys question](https://forum.proxmox.com/threads/etc-pve-priv-authorized_keys-question.7671/)
 
 ### About disabling the `root` user
 
-- [Don't disable root ssh login to PVE as I did, you'll get locked out of containers](https://www.reddit.com/r/Proxmox/comments/dkozht/dont_disable_root_ssh_login_to_pve_as_i_did_youll/)
-- [Disable root login](https://forum.proxmox.com/threads/disable-root-login.10512/)
+- [Reddit. Proxmox. Don't disable root ssh login to PVE as I did, you'll get locked out of containers](https://www.reddit.com/r/Proxmox/comments/dkozht/dont_disable_root_ssh_login_to_pve_as_i_did_youll/)
+
+- [Proxmox. Forums. Proxmox Virtual Environment](https://forum.proxmox.com/#proxmox-virtual-environment.11)
+  - [Proxmox VE: Installation and configuration](https://forum.proxmox.com/forums/proxmox-ve-installation-and-configuration.16/)
+    - [Disable root login](https://forum.proxmox.com/threads/disable-root-login.10512/)
 
 ### About SSH key generation and cryptosystems
 
-- [What are ssh-keygen best practices?](https://security.stackexchange.com/questions/143442/what-are-ssh-keygen-best-practices)
-- [Secure Secure Shell](https://blog.stribik.technology/2015/01/04/secure-secure-shell.html)
-- [EdDSA. Ed25519](https://en.wikipedia.org/wiki/EdDSA#Ed25519)
+- [stribik.technology. Secure Secure Shell](https://blog.stribik.technology/2015/01/04/secure-secure-shell.html)
+- [Information Security. What are ssh-keygen best practices?](https://security.stackexchange.com/questions/143442/what-are-ssh-keygen-best-practices)
+- [Information Security. What is the -sk ending for ssh key types?](https://security.stackexchange.com/questions/240991/what-is-the-sk-ending-for-ssh-key-types)
+- [Wikipedia. RSA cryptosystem](https://en.wikipedia.org/wiki/RSA_cryptosystem)
+- [Wikipedia. EdDSA. Ed25519](https://en.wikipedia.org/wiki/EdDSA#Ed25519)
 - [IANIX. Things that use Ed25519](https://ianix.com/pub/ed25519-deployment.html)
-- [RSA cryptosystem](https://en.wikipedia.org/wiki/RSA_cryptosystem)
-- [What is the -sk ending for ssh key types?](https://security.stackexchange.com/questions/240991/what-is-the-sk-ending-for-ssh-key-types)
 
-### [Proxmox VE](https://pve.proxmox.com/)
+### [Proxmox](https://www.proxmox.com/en/)
 
-- [Administration Guide](https://pve.proxmox.com/pve-docs/pve-admin-guide.html)
+- [Proxmox VE Administration Guide](https://pve.proxmox.com/pve-docs/pve-admin-guide.html)
   - [Cluster Manager. Requirements](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#pvecm_cluster_requirements)
 
 ## Navigation
