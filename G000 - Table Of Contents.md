@@ -72,7 +72,7 @@
 - [Enable Two Factor Authentication in your PVE system](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#enable-two-factor-authentication-in-your-pve-system)
 - [Enabling TFA for SSH access](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#enabling-tfa-for-ssh-access)
 - [Enforcing TFA TOTP for accessing the Proxmox VE web console](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#enforcing-tfa-totp-for-accessing-the-proxmox-ve-web-console)
-- [Enforcing TFA TOTP as a default requirement for `pam` realm](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#enforcing-tfa-totp-as-a-default-requirement-for-pam-realm)
+- [Enforcing TFA TOTP as a default requirement for the `pam` realm](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#enforcing-tfa-totp-as-a-default-requirement-for-the-pam-realm)
 - [Incompatibility of PVE web console login with TFA enforced local shell access](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#incompatibility-of-pve-web-console-login-with-tfa-enforced-local-shell-access)
 - [Relevant system paths](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#relevant-system-paths)
 - [References](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#references)
