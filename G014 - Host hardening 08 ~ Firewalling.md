@@ -19,7 +19,8 @@
   - [Directories](#directories)
   - [Files](#files)
 - [References](#references)
-  - [Proxmox VE](#proxmox-ve)
+  - [Proxmox](#proxmox)
+  - [Contents related to the Proxmox VE firewall](#contents-related-to-the-proxmox-ve-firewall)
   - [Ethernet Bridge firewall ebtables](#ethernet-bridge-firewall-ebtables)
   - [Network auditing on Linux](#network-auditing-on-linux)
   - [Network security concepts](#network-security-concepts)
@@ -46,7 +47,7 @@ iptables v1.8.11 (legacy)
 
 > [!NOTE]
 > **You can enable in your Proxmox VE system a nftables-based version of its firewall**\
-> At the time of writing this, [the new nftables-based `proxmox-firewall` service it is still in the _tech-preview_ stage](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#pve_firewall_nft). Therefore, this guide sticks to the legacy iptables-based firewall, which is the one that comes enabled by default in a Proxmox VE 8.4 server.
+> At the time of writing this, [the new nftables-based `proxmox-firewall` service it is still in the _tech-preview_ stage](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#pve_firewall_nft). Therefore, this guide sticks to the legacy iptables-based firewall, which is the one that comes enabled by default in a Proxmox VE 9.0 server.
 >
 > If you want to try using the nftables firewall, know that the configuration explained here is compatible with the new firewall since it uses the same files and configuration format.
 
@@ -73,13 +74,13 @@ The [Proxmox VE documentation](https://pve.proxmox.com/pve-docs/pve-admin-guide.
 
 But the same documentation also mentions three distinct tiers, or levels, that are contemplated by the PVE firewall: datacenter (the cluster), hosts (the cluster nodes) and guests (the virtual machines or containers).
 
-Be always aware that these tiers or zones are kind of independent from each other. Essentially, the firewall has to be enabled on each level individually, and the rules applied at the datacenter level won't be applied automatically in cascade to the lower tiers. You will have to enable each firewall option specifically for each level, and for each virtual NIC on each guest in the case of VMs and containers.
+Be always aware that these tiers or zones are kind of independent from each other. Essentially, the firewall has to be enabled on each level individually, and the rules applied at the datacenter level are not be applied automatically in cascade to the lower tiers. You have to enable each firewall option specifically for each level, and for each virtual NIC on each guest in the case of VMs and containers.
 
 Also, know that the PVE firewall offers different options for each tier.
 
 ## Situation at this point
 
-You will find the Proxmox VE firewall feature already enabled by default at the node level of your setup. You can verify this in the web console at the `pve` node level, by going to the `Firewall > Options` of your standalone node:
+You can find the Proxmox VE firewall feature already enabled by default at the node level of your setup. You can verify this in the web console at the `pve` node level, by going to the `Firewall > Options` of your standalone node:
 
 ![Firewall enabled at the node level](images/g014/pve_firewall_enabled_node_level.webp "Firewall enabled at the node level")
 
@@ -87,9 +88,9 @@ However, the PVE firewall **is NOT running at the `Datacenter` tier**:
 
 ![Firewall disabled at the datacenter tier](images/g014/pve_firewall_disabled_datacenter_tier.webp "Firewall disabled at the datacenter tier")
 
-The Proxmox VE documentation indicates that the firewall comes disabled "cluster-wide" after the installation. That's why you find the `Firewall` disabled at the `Datacenter` level.
+The Proxmox VE documentation indicates that the firewall comes disabled "cluster-wide" after the installation. That is why you find the `Firewall` disabled at the `Datacenter` level.
 
-Furthermoe, from the PVE web console's point of view, the firewall does not seem to have rules whatsoever. You can see this in the `Firewall` page of either the `Datacenter` or the node tier.
+Furthermore, from the PVE web console's point of view, the firewall does not seem to have any rules whatsoever. You can see this in the `Firewall` page of either the `Datacenter` or the node tier.
 
 ![No rules present in firewall at the node level](images/g014/pve_firewall_no_rules_node_level.webp "No rules present in firewall at the node level")
 
@@ -107,9 +108,9 @@ Chain OUTPUT (policy ACCEPT)
 target     prot opt source               destination
 ~~~
 
-There are no rules per se, just empty _chains of rules_. Still, you can see how each `Chain` has a policy already established: all chains are **accepting everything** with the `ACCEPT` policy. Your firewall is completely open, something you do not want at all.
+There are no rules per se, just empty _chains of rules_. Still, you can see how each `Chain` has a policy already established: **all chains are accepting everything** with the `ACCEPT` policy. Your firewall is completely open, something you do not want at all.
 
-Next, let's revise which are the ports currently open in your PVE system:
+Next, revise which are the ports currently open in your PVE system:
 
 ~~~sh
 $ sudo ss -atlnup
@@ -122,7 +123,7 @@ tcp              LISTEN            0                 128                        
 tcp              LISTEN            0                 16                               127.0.0.1:3493                            0.0.0.0:*               users:(("upsd",pid=1109,fd=4))
 ~~~
 
-If you've followed this guide closely up to this chapter, you should get a list of listening sockets like the output above (although not necessarily in the same order):
+If you have followed this guide closely up to this chapter, you should get a list of listening sockets like the output above (although not necessarily in the same order):
 
 - **Service `chronyd` listening on localhost (`127.0.0.1`) interface at port `323`**\
   Daemon for synchronizing the system's clock with an external time server (already seen back in the [**G012** chapter](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md#disabling-chronys-ipv6-socket)).
@@ -144,27 +145,27 @@ If you've followed this guide closely up to this chapter, you should get a list 
 
 ## Enabling the firewall at the Datacenter tier
 
-Just by enabling the PVE firewall at the `Datacenter` tier you'll get a much stronger set of rules enforced in your firewall. But, before you do this...
+Just by enabling the PVE firewall at the `Datacenter` tier you get a much stronger set of rules enforced in your firewall. But, before you do this...
 
 > [!WARNING]
 > **Read this warning before enabling the firewall at the `Datacenter` tier**\
 > After enabling the firewall at the `Datacenter` tier, your Proxmox VE platform will block incoming traffic from all hosts towards your datacenter, except the traffic coming from your LAN towards the 8006 (web console) and 22 (ssh) ports.
 >
-> If you plan to access your PVE platform **from IPs outside your LAN**, you'll need to **add first** the rules in the PVE firewall to allow such access. But I won't cover this here, since I'm just assuming a "pure" LAN scenario (meaning a Proxmox VE server **not accessible** from internet), in this guide.
+> If you plan to access your PVE platform **from IPs outside your LAN**, you need to **add first** the rules in the PVE firewall to allow such access. But this guide does not cover that scenario, it just assumes a "pure" LAN scenario (meaning a Proxmox VE server **not accessible** from internet).
 
-Assuming you are accessing your PVE system from another computer in the same LAN, go to the `Datacenter > Firewall > Options` screen in the web console and select the `Firewall` parameter.
+Assuming you are accessing your PVE system from another computer in the same LAN, go to the `Datacenter > Firewall > Options` screen in the web console and select the `Firewall` parameter:
 
 ![Selecting Firewall parameter at Datacenter level](images/g014/pve_firewall_enabling_datacenter_tier.webp "Selecting Firewall parameter at Datacenter level")
 
-Click on `Edit` and mark the `Firewall` checkbox presented to enable the firewall at the `Datacenter` tier.
+Click on `Edit` and mark the `Firewall` checkbox presented to enable the firewall at the `Datacenter` tier:
 
 ![Enabling firewall option at datacenter tier](images/g014/pve_firewall_enabling_datacenter_tier_checking_option.webp "Enabling firewall option at Datacenter tier")
 
-Hit `OK` and you'll see how the `Firewall` parameter has changed to a `Yes` value.
+Hit `OK` and you'll see how the `Firewall` parameter has changed to a `Yes` value:
 
 ![Firewall enabled at Datacenter tier](images/g014/pve_firewall_enabled_datacenter_tier.webp "Firewall enabled at Datacenter tier")
 
-The change will be applied immediately, but you won't see any rules at all in your Proxmox VE server's `Firewall` pages, neither at the `Datacenter` nor at the `pve` node level. What will change a lot is the iptables ruleset, something you can verify with the `iptables` command:
+The change will be applied immediately, but you will not see any rules at all in your Proxmox VE server's `Firewall` pages, neither at the `Datacenter` nor at the `pve` node level. What changes a lot is the iptables ruleset, something you can verify with the `iptables` command:
 
 ~~~sh
 $ sudo iptables -L -n
@@ -337,17 +338,17 @@ These files will only appear in your system when you change the configuration th
 
 ### Netfilter conntrack sysctl parameters
 
-I hinted you back in the [**G012** chapter](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md#some-sysctl-values-are-managed-by-the-proxmox-ve-firewall) how, by enabling the firewall, new `sysctl` parameters would become available in your Proxmox VE host. Those new parameters are all the files put in the `/proc/sys/net/netfilter` folder, except the `nf_log` ones which were already present initially. All of them are related to the netfilter conntrack system used to track network connections on the system. A new `/proc/sys/net/nf_conntrack_max` file is also created as a duplicate of the `/proc/sys/net/netfilter/nf_conntrack_max` file, maybe as a management convenience for Proxmox VE.
+It was hinted back in the [chapter **G012**](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md#some-sysctl-values-are-managed-by-the-proxmox-ve-firewall) how, by enabling the firewall, new `sysctl` parameters would become available in your Proxmox VE host. Those new parameters are all the files put in the `/proc/sys/net/netfilter` folder, except the `nf_log` ones which were already present initially. All of them are related to the netfilter conntrack system used to track network connections on the system. A new `/proc/sys/net/nf_conntrack_max` file is also created as a duplicate of the `/proc/sys/net/netfilter/nf_conntrack_max` file, maybe as a management convenience for Proxmox VE.
 
 But not only new parameters are enabled, some already existing ones get changed. In particular the `net.bridge.bridge-nf-call-ip6tables` and `net.bridge.bridge-nf-call-iptables` are set to `1`, enabling filtering on the bridges existing on the host. In fact, at this point your system already has one Linux bridge enabled, which you can find in the `pve` node level at the `System > Network` view:
 
 ![Linux bridge at pve node network](images/g014/pve_node_system_network_bridge.webp "Linux bridge at pve node network")
 
-In the capture above, you can see how this Linux bridge uses the host's Ethernet network card `enp3s0` as port to have access to the network. This bridge is necessary for later being able to provide network connectivity to the VMs you'll create in later chapters. But keep on reading this chapter to see how to apply firewalling at the bridge level with **ebtables**.
+In the capture above, you can see how this Linux bridge uses the host's Ethernet network card `enp3s0` as port to have access to the network. This bridge is necessary for later being able to provide network connectivity to the VMs you will create in later chapters. But keep on reading this chapter to see how to apply firewalling at the bridge level with ebtables.
 
 ## Firewalling with ebtables
 
-When you enabled the firewall at the datacenter level, you may have noticed the `ebtables` option which was already enabled:
+When you enabled the firewall at the datacenter level, you may have noticed the `ebtables` option which was already active:
 
 ![ebtables option at Datacenter firewall](images/g014/pve_firewall_ebtables_option.webp "ebtables option at Datacenter firewall")
 
@@ -359,7 +360,7 @@ This option refers to the ebtables program that works as a firewall for bridges,
 
 ### Setting up ebtables
 
-The `ebtables` command handles rules but is unable to make them persist, meaning that any rules you may add to the ebtables won't survive a reboot. But there is a way to persist these rules in your system:
+The `ebtables` command handles rules but is unable to make them persist, meaning that any rules you may add to the ebtables will not survive a reboot. But there is a way to persist these rules in your system:
 
 > [!WARNING]
 > **This configuration may not work with the nftables version of ebtables**\
@@ -493,7 +494,7 @@ The `ebtables` command handles rules but is unable to make them persist, meaning
     $ sudo /usr/share/netfilter-persistent/plugins.d/35-ebtables save
     ~~~
 
-    Then list the contents of `/etc/ebtables` and see if the `rules` files are there.
+    Then list the contents of `/etc/ebtables` and see if the `rules` files are there:
 
     ~~~sh
     $ ls /etc/ebtables/
@@ -510,13 +511,13 @@ The `ebtables` command handles rules but is unable to make them persist, meaning
 
 ### Example of ebtables usage
 
-Next, I'll give you an example about when and how to use ebtables based on my own experience.
+Next, see an example about when and how to use ebtables.
 
 > [!NOTE]
-> **The example shown here is based on the original hardware setup I used for the first version of this guide**\
-> Therefore you will notice small differences with the virtualized hardware I'm using in this newer version of the guide. Still, the commands used in this example are still valid.
+> **The example shown here is based on the original hardware setup used for the first version of this guide**\
+> Therefore you will notice small differences with the hardware used in this newer version of the guide. Still, the commands used in this example are still valid.
 
-While I was working in the first version of this guide, I detected that incoming (`RX`) packets were being dropped only by the `vmbr0` bridge for some unknown reason. I noticed this in the output of the following `ip` command.
+While working in the first version of this guide, it was detected that incoming (`RX`) packets were being dropped only by the `vmbr0` bridge for some unknown reason. This was noticed in the output of the following `ip` command:
 
 ~~~sh
 $ ip -s link show
@@ -541,7 +542,7 @@ $ ip -s link show
        3220459    5283      0       0       0       0
 ~~~
 
-In the output above, you can see that only the `vmbr0` interface is reporting many `dropped` `RX` packets. As you can imagine, this was kind of bothersome, so I tracked them down. To do that there is a command called `tcpdump` that comes handy to see the packets themselves. The command captures the traffic going on in your system's network and prints a description of each packet it sees. I executed `tcpdump` as follows.
+In the output above, you can see that only the `vmbr0` interface is reporting many `dropped` `RX` packets. Since they looked odd, they have to be tracked down. To do that there is a command called `tcpdump` that comes handy to see the packets themselves. The command captures the traffic going on in your system's network and prints a description of each packet it sees. The `tcpdump` command was executed as follows:
 
 ~~~sh
 $ sudo tcpdump -vvv -leni vmbr0 > captured-packets.txt
@@ -554,7 +555,7 @@ Notice the following in the `tcpdump` command:
 - `vmbr0`: the interface where I want to get the traffic from.
 - `> captured-packets.txt`: instead of dumping the output on screen, I redirected it to a file.
 
-This command will run in the foreground for as long as you allow it till you stop it (with `Ctrl+C`). I gave `tcpdump` about a minute to be sure that it would have enough time to catch those misteriously dropped packets, then stopped it. Next, I opened the `captured-packets.txt` file and saw something like the following.
+This command will run in the foreground for as long as you allow it till you stop it (with `Ctrl+C`). The `tcpdump` command had about a minute to ensure it would have enough time to catch those misteriously dropped packets, then it was stopped. The resulting `captured-packets.txt` file looked like this:
 
 ~~~log
 21:53:15.420381 a8:ae:ed:27:c1:7d > 63:6d:87:4a:1b:cd, ethertype IPv4 (0x0800), length 166: (tos 0x10, ttl 64, id 27256, offset 0, flags [DF], proto TCP (6), length 152)
@@ -599,7 +600,7 @@ This command will run in the foreground for as long as you allow it till you sto
 ...
 ~~~
 
-From all the traffic I saw there, the thing that stood out were the packets with the `ethertype Unknown (0xfe68)` string on them. I investigated further, but the best guess I could find was that the routers or modems installed by internet service providers (ISPs) send packets like those for some reason every second or so. Knowing that much, those packets were just noise to me in my system's network, and I wanted to drop them silently before they ever reached my `vmbr0` bridge. To do this I just needed to add the proper rule in ebtables.
+From all the traffic printed there, the thing that stood out were the packets with the `ethertype Unknown (0xfe68)` string on them. Further investigation was fruitless, and the best guess was that the routers or modems installed by internet service providers (ISPs) send packets like those for some reason every second or so. Knowing that much, those packets were just noise in the system's network. It was considered necessary to drop them silently before they ever reached the `vmbr0` bridge. To do this it was needed to add the proper rule in ebtables:
 
 ~~~sh
 $ sudo ebtables -A INPUT -p fe68 -j DROP
@@ -615,7 +616,7 @@ The command above means the following:
 
 - `-j DROP`: target of this rule, `DROP` in this case.
 
-With the rule added, I checked how it looked in the `filter` table of ebtables:
+With the rule added, it was checked how it looked in the `filter` table of ebtables:
 
 ~~~sh
 $ sudo ebtables -L
@@ -641,7 +642,7 @@ See in this output that:
 
 - The `ebtables -L` command only shows the `filter` table. To specify which table to see, you have to use the `-t` option as in `ebtables -t filter -L`.
 
-- My new rule appears in the bridge chain `INPUT`.
+- The new rule appears in the bridge chain `INPUT`.
 
 - Proxmox VE also has its own rules in ebtables, see the `PVEFW-FORWARD` and `PVEFW-FWBR-OUT` rule chains.
 
@@ -652,9 +653,9 @@ $ sudo netfilter-persistent save
 run-parts: executing /usr/share/netfilter-persistent/plugins.d/35-ebtables save
 ~~~
 
-Notice how, in the command's output, how it calls the `35-ebtables` shell script. Now, if you rebooted your Proxmox VE host, the `netfilter-persistent` command would restore the ebtables rules you've just persisted, also invoking the `35-ebtables` script for that. Look for this loading in the Journal logging system (`journalctl` command), by searching the `netfilter-persistent` string.
+Notice how, in the command's output, how it calls the `35-ebtables` shell script. Now, if you rebooted your Proxmox VE host, the `netfilter-persistent` command would restore the ebtables rules you have just persisted, also invoking the `35-ebtables` script for that. Look for this loading in the Journal logging system (`journalctl` command), by searching the `netfilter-persistent` string.
 
-Thanks to this configuration, I don't have any more `dropped` packets of that unknown ethertype showing up on my `vmbr0` bridge.
+Thanks to this configuration, there were no more `dropped` packets of that unknown ethertype showing up on the `vmbr0` bridge:
 
 ~~~sh
 $ ip -s link show vmbr0
@@ -668,11 +669,11 @@ $ ip -s link show vmbr0
 
 ## Firewall fine tuning
 
-Now you have your Proxmox VE's firewall up and running with default settings, but you can adjust it further. In particular, there are a number of options at the node level you should have a look to. Browse to the `Firewall > Options` view at your `pve` node level.
+Now you have your Proxmox VE's firewall up and running with default settings, but you can adjust it further. In particular, there are a number of options at the node level you should have a look to. Browse to the `Firewall > Options` view at your `pve` node level:
 
 ![Firewall options at pve node level](images/g014/pve_firewall_node_level_options.webp "Firewall options at pve node level")
 
-Since the official documentation is not very detailed about them, let me tell you a bit about these options:
+Since the official documentation is not very detailed about them, here is a bit better explanation of them:
 
 - `Firewall`\
   Enabled by default. Enables the firewall at the `pve` node/host level.
@@ -684,20 +685,20 @@ Since the official documentation is not very detailed about them, let me tell yo
   Disabled by default. Blocks illegal TCP flag combinations that could be found in packets.
 
 - `NDP`\
-  Enabled by default. NDP stands for _Neighbor Discovery Protocol_, and it's the IPv6 version of IPv4's ARP (_Address Resolution Protocol_). Since IPv6 is disabled in this guide series' setup, you could disable this option.
+  Enabled by default. NDP stands for _Neighbor Discovery Protocol_, and it is the IPv6 version of IPv4's ARP (_Address Resolution Protocol_). Since IPv6 is disabled in this guide's setup, you can disable this option.
 
 - `nf_conntrack_max`\
-  `262144` by default. This value corresponds to both the `sysctl` parameters `net.netfilter.nf_conntrack_max` and `net.nf_conntrack_max`, meaning that by changing this value you'll change the two of them at the same time.
+  `262144` by default. This value corresponds to both the `sysctl` parameters `net.netfilter.nf_conntrack_max` and `net.nf_conntrack_max`, meaning that by changing this value you also changes the two of them at the same time.
 
   These two values limit how many simultaneous connections can be established with your host and be tracked in the corresponding connections table maintained by netfilter. When the maximum value is reached, your host will stop accepting new TCP connections silently. If you detect connectivity issues in your setup, one of the things you can try is making this value bigger.
 
-  This is one of the `sysctl` parameters enabled by the firewall when it got fully active, as I mentioned in the [chapter **G012**](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md).
+  This is one of the `sysctl` parameters enabled by the firewall when it got fully active, as it was mentioned in the [chapter **G012**](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md).
 
 - `nf_conntrack_tcp_timeout_established`\
-  `432000` by default (in seconds). This value says for how long established connections can be considered to be in such state, before being discarded as too old. The default value is equivalent to 5 days, which may or may not be excessive for your needs or requirements. If you want to reduce this value, know that the Proxmox VE web console won't allow you to put a value lower than `7875` seconds, which is equivalent to roughly 2 hours and 11 minutes.
+  `432000` by default (in seconds). This value says for how long established connections can be considered to be in such state, before being discarded as too old. The default value is equivalent to 5 days, which may or may not be excessive for your needs or requirements. If you want to reduce this value, know that the Proxmox VE web console does not allow you to put a value lower than `7875` seconds, which is equivalent to roughly 2 hours and 11 minutes.
 
 - `log_level_in`\
-  `nolog` value by default. To enable the logging of the firewall activity with traffic INCOMING into your host, edit this value and choose `info`. This way, you'll manage to see things like dropped packets. There are other logging levels you can choose from, as shown in the capture below.
+  `nolog` value by default. To enable the logging of the firewall activity with traffic INCOMING into your host, edit this value and choose `info`. This way, you can see things like dropped packets. There are other logging levels you can choose from, as shown in the capture below:
 
   ![Firewall log levels](images/g014/pve_firewall_log_level_values.webp "Firewall log levels")
 
@@ -714,24 +715,24 @@ Since the official documentation is not very detailed about them, let me tell yo
   `nolog` value by default. To get logs of firewall action regarding SMURFS attacks protection.
 
 - `nftables (tech preview)`\
-  Disabled by default. Enable this if you want to try the newer, **but still in tech preview state**, nftables-based firewall of Proxmox VE.
+  Disabled by default. Enable this if you want to try the newer, **but still in tech preview state in Proxmox 9.0**, nftables-based firewall of Proxmox VE.
 
 ### Enabling TCP SYN flood protection
 
-There are three extra options related to SYN flood protection that are mentioned only in the Proxmox VE firewall documentation, [in the Host Specific Configuration subsection](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#pve_firewall_host_specific_configuration).
+There are three extra options related to SYN flood protection that are mentioned only in the Proxmox VE firewall documentation, [in the Host Specific Configuration subsection](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#pve_firewall_host_specific_configuration):
 
 - `protection_synflood`\
-  Disabled (value `0`) by default. Enables the protection against TCP syn flood attacks, which is another kind of DDoS that essentially can saturate your host's with new connection requests. This protection essentially controls how many connections can be requested by other IPs at once and per second.
+  Disabled (value `0`) by default. Enables the protection against TCP syn flood attacks, which is another kind of DDoS that essentially can saturate your host with new connection requests. This protection essentially controls how many connections can be requested by other IPs at once and per second.
 
 - `protection_synflood_burst`\
   `1000` by default. Puts a limit on how many new connections can be requested from other IPs to this host.
 
 - `protection_synflood_rate`\
-  `200` by default. Its the maximum number of new connections that can be requested **per second** to this host from other IPs.
+  `200` by default. It is the maximum number of new connections that can be requested **per second** to this host from other IPs.
 
-These three parameters haven't been made directly available from the PVE web console. If you want to enable and configure this synflood protection, you need to enter the parameters directly in the corresponding `host.fw` file of your PVE node.
+These three parameters have not been made directly available from the PVE web console. If you want to enable and configure this synflood protection, you need to enter the parameters directly in the corresponding `host.fw` file of your PVE node. Since in this guide the Proxmox VE node is called `pve`, the full path of that file is `/etc/pve/nodes/pve/host.fw`:
 
-1. Since in this guide the Proxmox VE node is called `pve`, the full path of that file is `/etc/pve/nodes/pve/host.fw`. Open a shell with your `mgrsys` user, then edit the file:
+1. Open a remote shell with your `mgrsys` user, then edit the `/etc/pve/nodes/pve/host.fw` file:
 
     > [!NOTE]
     > **Remember, this file only appears if you change the node's firewall configuration**\
@@ -750,7 +751,7 @@ These three parameters haven't been made directly available from the PVE web con
     log_level_forward: info
     ~~~
 
-    Above you can see the configuration I set up in my host, which may differ from what you have chosen to configure in your setup.
+    Above you can see the configuration set up in this guide's PVE host, which may differ from what you have chosen to configure in your setup.
 
 2. Below the last parameter you see in the `[OPTIONS]` section, append the synflood parameters:
 
@@ -762,13 +763,13 @@ These three parameters haven't been made directly available from the PVE web con
     protection_synflood_rate: 200
     ~~~
 
-    See that, in my case, I chose to stick with the default values for `protection_synflood_burst` and `protection_synflood_rate`.
+    See that, in this guide's case, it sticks with the default values for `protection_synflood_burst` and `protection_synflood_rate`.
 
 3. The Proxmox VE documentation does not say if the changes in the `host.fw` file are automatically applied after saving them. Just reboot your PVE node to be sure.
 
 ## Firewall logging
 
-If you've configured your firewall as I've showed you before, now you have its log enabled at the node level. You can see it in the PVE web console, at the `Firewall > Log` view of your `pve` node:
+If you have configured your firewall as shown before, now you have its log enabled at the node level. You can see it in the PVE web console, at the `Firewall > Log` view of your `pve` node:
 
 ![PVE node firewall log view](images/g014/pve_node_firewall_log_view.webp "PVE node firewall log view")
 
@@ -776,7 +777,7 @@ This log is a text file that you can find in your PVE host at the path `/var/log
 
 ### Understanding the firewall log
 
-Let's imagine you just booted up your Proxmox VE system and then you try to ping your PVE host form another computer within the same LAN. With the configuration explained in this guide, you will see lines in your firewall log like the following ones:
+Imagine you just booted up your Proxmox VE system and then you try to ping your PVE host from another computer within the same LAN. With the configuration explained in this guide, you will see lines in your firewall log like the following ones:
 
 ~~~log
 0 5 - 30/Aug/2025:20:22:39 +0200 starting pvefw logger
@@ -813,7 +814,7 @@ This schema is translated as follows:
 - `PACKET_DETAILS`\
   Details from the affected packet, like source and destination IPs, protocol used, etc.
 
-Knowing all that above, let's translate the previous logging example:
+Knowing all that above, you can translate the previous logging example:
 
 - All the lines are relative to the Proxmox VE host, since all of them start with the `VMID` set as `0`.
 
@@ -877,11 +878,11 @@ Knowing all that above, let's translate the previous logging example:
     - `SEQ`\
       A sequence identifier set up too by the ICMP protocol.
 
-The conclusion you can get from the example log lines is that this Proxmox VE setup is dropping incoming ping packets, something common as a network hardening method. Be aware that, in the `PACKET_DETAILS` section, you should expect seeing very different parameters depending on the protocol used on each logged packet. In the example above you've seen ICMP ping packets, but other times you might see other types of ICMP messages or, more commonly, TCP or UDP packets.
+The conclusion you can get from the example log lines is that this Proxmox VE setup is dropping incoming ping packets, something common as a network hardening method. Be aware that, in the `PACKET_DETAILS` section, you should expect seeing very different parameters depending on the protocol used on each logged packet. In the example above you have seen ICMP ping packets, but other times you might see other types of ICMP messages or TCP or UDP packets.
 
 ## Connection tracking tool
 
-In this chapter and in the [previous **G012** one](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md) I've mentioned a few times the connection tracking system enabled by the firewall. This is popularly known as _conntrack_ and, adding to its own particular `sysctl` parameters (identified by the `nf_conntrack_` prefix), there is also a command enabling system administrators to manage the in-kernel connection tracking state tables:
+In this chapter and in the [previous **G012** one](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md) it has been mentioned a few times the connection tracking system enabled by the firewall. This is popularly known as _conntrack_ and, adding to its own particular `sysctl` parameters (identified by the `nf_conntrack_` prefix), there is also a command enabling system administrators to manage the in-kernel connection tracking state tables:
 
 1. The `conntrack` command is already installed in Proxmox VE 9.0, as `apt` warns:
 
@@ -1167,56 +1168,65 @@ Know that the connection tracking subsystem uses four different internal tables:
 
 ## References
 
-### [Proxmox VE](https://pve.proxmox.com/)
+### [Proxmox](https://www.proxmox.com/en/)
 
-- [Proxmox VE admin guide. Firewall](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_pve_firewall)
-  - [Directions & Zones. Zones](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_directions_amp_zones)
-  - [nftables](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#pve_firewall_nft)
-- [Proxmox VE wiki. Firewall](https://pve.proxmox.com/wiki/Firewall)
-- [nftables HOWTO documentation](https://wiki.nftables.org/wiki-nftables/index.php/Main_Page)
-- [Why Configure the Firewall on Proxmox?. Defaults. Node level](https://homelab.casaursus.net/new_install-firewall/#node-level)
-- [Postinstall Configuration of Proxmox VE 6.2](https://lowendspirit.com/postinstall-configuration-of-proxmox-ve-6-2)
-- [Secure Proxmox Install – Sudo, Firewall with IPv6, and more – How to Configure from Start to Finish](https://www.kiloroot.com/secure-proxmox-install-sudo-firewall-with-ipv6-and-more-how-to-configure-from-start-to-finish/)
-- [Hardening Proxmox VE management interface with 2FA, reverse proxy and Let's Encrypt](https://loicpefferkorn.net/2020/11/hardening-proxmox-ve-management-interface-with-2fa-reverse-proxy-and-lets-encrypt/)
-- [Proxmox Port Forwarding To VM | An Easy Way](https://bobcares.com/blog/proxmox-port-forwarding-to-vm/)
+- [Proxmox VE Administration Guide](https://pve.proxmox.com/pve-docs/pve-admin-guide.html)
+  - [Proxmox VE Firewall](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_pve_firewall)
+    - [Directions & Zones. Zones](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_directions_amp_zones)
+    - [nftables](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#pve_firewall_nft)
+
+- [Proxmox VE Wiki](https://pve.proxmox.com/wiki/Main_Page)
+  - [Firewall](https://pve.proxmox.com/wiki/Firewall)
+
+### Contents related to the Proxmox VE firewall
+
+- [Proxmox New Install – Firewall](https://homelab.casaursus.net/new_install-firewall/)
+  - [Why Configure the Firewall on Proxmox?. Defaults. Node level](https://homelab.casaursus.net/new_install-firewall/#node-level)
+
+- [Lowend Spirit. Postinstall Configuration of Proxmox VE 6.2](https://lowendspirit.com/postinstall-configuration-of-proxmox-ve-6-2)
+- [Kiloroot.com. Secure Proxmox Install – Sudo, Firewall with IPv6, and more – How to Configure from Start to Finish](https://www.kiloroot.com/secure-proxmox-install-sudo-firewall-with-ipv6-and-more-how-to-configure-from-start-to-finish/)
+- [Loïc Pefferkorn. Hardening Proxmox VE management interface with 2FA, reverse proxy and Let's Encrypt](https://loicpefferkorn.net/2020/11/hardening-proxmox-ve-management-interface-with-2fa-reverse-proxy-and-lets-encrypt/)
+- [Bobcares. Proxmox Port Forwarding To VM | An Easy Way](https://bobcares.com/blog/proxmox-port-forwarding-to-vm/)
 
 ### Ethernet Bridge firewall ebtables
 
 - [ebtables netfilter](https://ebtables.netfilter.org/)
-- [Proxmox dropping packets](https://www.reddit.com/r/homelab/comments/inqncm/proxmox_dropping_packets/)
-- [Tracking down dropped packets](https://blog.hambier.lu/post/tracking-dropped-packets)
-- [iptables-persistent: also persist ebtables and arptables?](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=697088)
+- [Reddit. Homelab. Proxmox dropping packets](https://www.reddit.com/r/homelab/comments/inqncm/proxmox_dropping_packets/)
+- [Hambier. Tracking down dropped packets](https://blog.hambier.lu/post/tracking-dropped-packets)
+- [Debian Bug report logs - #697088. iptables-persistent: also persist ebtables and arptables?](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=697088)
 
 ### Network auditing on Linux
 
-- [How to show dropped packets per interface on Linux](https://www.cyberciti.biz/faq/linux-show-dropped-packets-per-interface-command/)
-- [How to capture "dropped packets" in tcpdump](https://superuser.com/questions/1208783/how-to-capture-dropped-packets-in-tcpdump)
-- [Dropped packets in all Linux and Unix](https://serverfault.com/questions/780195/dropped-packets-in-all-linux-and-unix)
-- [Lots of dropped packages when tcpdumping on busy interface](https://serverfault.com/questions/421789/lots-of-dropped-packages-when-tcpdumping-on-busy-interface)
+- [nixCraft. Howto. Linux. How to show dropped packets per interface on Linux](https://www.cyberciti.biz/faq/linux-show-dropped-packets-per-interface-command/)
+- [SuperUser. How to capture "dropped packets" in tcpdump](https://superuser.com/questions/1208783/how-to-capture-dropped-packets-in-tcpdump)
+- [ServerFault. Dropped packets in all Linux and Unix](https://serverfault.com/questions/780195/dropped-packets-in-all-linux-and-unix)
+- [ServerFault. Lots of dropped packages when tcpdumping on busy interface](https://serverfault.com/questions/421789/lots-of-dropped-packages-when-tcpdumping-on-busy-interface)
 
 ### Network security concepts
 
-- [What Is a Smurf Attack?](https://www.fortinet.com/resources/cyberglossary/smurf-attack)
-- [Smurf attack](https://en.wikipedia.org/wiki/Smurf_attack)
-- [Tcpdump: Filter Packets with Tcp Flags](https://www.howtouselinux.com/post/tcpdump-capture-packets-with-tcp-flags)
-- [Filtering on TCP Flags](https://flylib.com/books/en/2.77.1.30/1/)
-- [Neighbor Discovery Protocol (NDP)](https://www.oreilly.com/library/view/mastering-proxmox/9781788397605/78dcf187-f5b7-4239-89af-b4880f929b76.xhtml)
-- [Address Resolution Protocol (ARP)](https://en.wikipedia.org/wiki/Address_Resolution_Protocol)
-- [Netfilter Conntrack Sysfs variables](https://www.kernel.org/doc/html/latest/networking/nf_conntrack-sysctl.html)
-- [TCP SYN Flood](https://www.imperva.com/learn/ddos/syn-flood/)
+- [Fortinet. CyberGlossary. Cyber Threats. What Is a Smurf Attack?](https://www.fortinet.com/resources/cyberglossary/smurf-attack)
+- [Wikipedia. Smurf attack](https://en.wikipedia.org/wiki/Smurf_attack)
+- [Wikipedia. Address Resolution Protocol (ARP)](https://en.wikipedia.org/wiki/Address_Resolution_Protocol)
+- [howtouselinux. Tcpdump: Filter Packets with Tcp Flags](https://www.howtouselinux.com/post/tcpdump-capture-packets-with-tcp-flags)
+- [Flylib.com. Filtering on TCP Flags](https://flylib.com/books/en/2.77.1.30/1/)
+- [O'Reilly. Mastering Proxmox - Third Edition. Neighbor Discovery Protocol (NDP)](https://www.oreilly.com/library/view/mastering-proxmox/9781788397605/78dcf187-f5b7-4239-89af-b4880f929b76.xhtml)
+- [The Linux Kernel Archives. Netfilter Conntrack Sysfs variables](https://www.kernel.org/doc/html/latest/networking/nf_conntrack-sysctl.html)
+- [Imperva. Learning Center. TCP SYN Flood](https://www.imperva.com/learn/ddos/syn-flood/)
 
 ### Networking concepts
 
-- [Internet Control Message Protocol](https://en.wikipedia.org/wiki/Internet_Control_Message_Protocol)
-- [What is the Internet Control Message Protocol (ICMP)?](https://www.cloudflare.com/learning/ddos/glossary/internet-control-message-protocol-icmp/)
-- [TCP/IP packets – Introduction](https://inc0x0.com/tcp-ip-packets-introduction/)
-- [Type of Service (ToS) and DSCP Values](https://linuxreviews.org/Type_of_Service_(ToS)_and_DSCP_Values)
+- [Wikipedia. Internet Control Message Protocol](https://en.wikipedia.org/wiki/Internet_Control_Message_Protocol)
+- [Cloudflare. Learning Center. Glossary. What is the Internet Control Message Protocol (ICMP)?](https://www.cloudflare.com/learning/ddos/glossary/internet-control-message-protocol-icmp/)
+- [inc 0x0. Networks. TCP/IP packets – Introduction](https://inc0x0.com/tcp-ip-packets-introduction/)
+- [LinuxReviews. Type of Service (ToS) and DSCP Values](https://linuxreviews.org/Type_of_Service_(ToS)_and_DSCP_Values)
 
 ### conntrack command
 
-- [CONNTRACK(8)](https://manpages.debian.org/trixie/conntrack/conntrack.8.en.html)
-- [Package: conntrack (1:1.4.8-2 and others)](https://packages.debian.org/trixie/conntrack)
-- [Matching connection tracking stateful metainformation](https://wiki.nftables.org/wiki-nftables/index.php/Matching_connection_tracking_stateful_metainformation)
+- [Debian. MANPAGES. CONNTRACK(8)](https://manpages.debian.org/trixie/conntrack/conntrack.8.en.html)
+- [Debian. PACKAGES. Package: conntrack (1:1.4.8-2 and others)](https://packages.debian.org/trixie/conntrack)
+
+- [nftables HOWTO documentation](https://wiki.nftables.org/wiki-nftables/index.php/Main_Page)
+  - [Matching connection tracking stateful metainformation](https://wiki.nftables.org/wiki-nftables/index.php/Matching_connection_tracking_stateful_metainformation)
 
 ## Navigation
 
