@@ -51,8 +51,8 @@
 ### [G005 - Host configuration 03 ~ LVM storage](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md)
 
 - [Your Proxmox VE server's storage needs to be reorganized](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#your-proxmox-ve-servers-storage-needs-to-be-reorganized)
-- [Initial filesystem configuration (**PVE web console**)](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#initial-filesystem-configuration-pve-web-console)
-- [Initial filesystem configuration (**shell as root**)](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#initial-filesystem-configuration-shell-as-root)
+- [Initial filesystem configuration (PVE web console)](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#initial-filesystem-configuration-pve-web-console)
+- [Initial filesystem configuration (shell as root)](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#initial-filesystem-configuration-shell-as-root)
 - [Configuring the unused storage drives](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#configuring-the-unused-storage-drives)
 - [LVM rearrangement in the main storage drive](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#lvm-rearrangement-in-the-main-storage-drive)
 - [References](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#references)

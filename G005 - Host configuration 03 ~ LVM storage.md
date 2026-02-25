@@ -1,15 +1,15 @@
 # G005 - Host configuration 03 ~ LVM storage
 
 - [Your Proxmox VE server's storage needs to be reorganized](#your-proxmox-ve-servers-storage-needs-to-be-reorganized)
-- [Initial filesystem configuration (**PVE web console**)](#initial-filesystem-configuration-pve-web-console)
-- [Initial filesystem configuration (**shell as root**)](#initial-filesystem-configuration-shell-as-root)
+- [Initial filesystem configuration (PVE web console)](#initial-filesystem-configuration-pve-web-console)
+- [Initial filesystem configuration (shell as root)](#initial-filesystem-configuration-shell-as-root)
   - [Checking the filesystem with `fdisk`](#checking-the-filesystem-with-fdisk)
   - [Visualizing the filesystem structure with `lsblk`](#visualizing-the-filesystem-structure-with-lsblk)
   - [Investigating the LVM system with its own set of commands](#investigating-the-lvm-system-with-its-own-set-of-commands)
 - [Configuring the unused storage drives](#configuring-the-unused-storage-drives)
   - [Seeing the new storage volumes in Proxmox VE's web console](#seeing-the-new-storage-volumes-in-proxmox-ves-web-console)
 - [LVM rearrangement in the main storage drive](#lvm-rearrangement-in-the-main-storage-drive)
-  - [Removing the `data` LVM thin pool](#removing-the-data-lvm-thin-pool)
+  - [Removing the `data` LVM thin-pool](#removing-the-data-lvm-thin-pool)
   - [Extending the `root` logical volume](#extending-the-root-logical-volume)
   - [Creating a new partition and a new VG in the unallocated space on the `sda` drive](#creating-a-new-partition-and-a-new-vg-in-the-unallocated-space-on-the-sda-drive)
 - [References](#references)
@@ -26,38 +26,38 @@ After installing Proxmox VE with (almost) default settings, the storage is still
 
 Also, keep in mind that:
 
-- The Proxmox VE system is installed in the SSD drive, but only using 63 GiB of its available storage space.
-- The filesystem is `ext4`.
+- The Proxmox VE system is installed in the SSD drive, but it is only using 63 GiB of its available storage space.
+- The Proxmox VE filesystem is `ext4`.
 
-## Initial filesystem configuration (**PVE web console**)
+## Initial filesystem configuration (PVE web console)
 
-Log in the **web console** as `root`. In a recently installed Proxmox VE node, you'll see that, at the `Datacenter` level, the `Storage` already has an initial configuration:
+Log in your Proxmox VE's web console as `root`. In a recently installed Proxmox VE node, you can see that, at the `Datacenter` level, the `Storage` already has an initial configuration:
 
 ![Datacenter storage's initial configuration](images/g005/datacenter_storage_initial_configuration.webp "Datacenter storage's initial configuration")
 
-Meanwhile, at the `pve` **node** level you can see which storage drives you have available in your physical system. Remember, **one node represents one physical server**:
+Meanwhile, at the `pve` **node level** you can see which storage drives you have available in your physical system. Remember, **one node represents one physical server**:
 
 ![pve node disks screen](images/g005/pve_node_disks_screen.webp "pve node disks screen")
 
 Proxmox shows some technical details from each disk, and also about the partitions present on each of them. At this point, only the `/dev/sda` ssd drive has partitions, the ones corresponding to the Proxmox VE installation.
 
-On the other hand, be aware that Proxmox VE has installed itself within a LVM structure, but the web console won't show you much information about it. Go to the `Disks > LVM` option at your **node** level:
+On the other hand, be aware that Proxmox VE has installed itself within a LVM structure, but the web console does not show much information about it. Go to the `Disks > LVM` option at your **node level**:
 
 ![pve node LVM screen](images/g005/pve_node_disks_lvm_screen.webp "pve node LVM screen")
 
-There is a volume group in your `sda` device which fills most of the space in the SSD drive. But this screen **does not show you the complete underlying LVM structure**.
+There is a volume group in your `sda` device which fills most of the space in the SSD drive. But this screen **does not show the complete underlying LVM structure**.
 
 In the `Disks > LVM-Thin` screen you can see a bit more information regarding the **LVM-Thin pools** enabled in the system:
 
 ![pve node LVM-Thin screen](images/g005/pve_node_disks_lvm-thin_screen.webp "pve node LVM-Thin screen")
 
-The LVM thinpool created by the Proxmox VE installation it's called `data` and appears unused. In Proxmox VE, a LVM thinpool is were the disk images for the virtual machines and containers can be stored and grow dynamically.
+The LVM thinpool created by the Proxmox VE installation is called `data` and appears unused. In Proxmox VE, a LVM thinpool is were the disk images for the virtual machines and containers can be stored and grow dynamically.
 
 When you unfold the `pve` node under the `Datacenter` tree on the left, you can see three leafs. Two of those leafs are the storages shown at the `Datacenter` level. Clicking on the `local (pve)` one will show you a screen like the following:
 
 ![pve node local storage screen](images/g005/pve_node_storage_local_initial_screen.webp "pve node local storage screen")
 
-This page offers several tabs like `Summary`, which is the one shown above. The tabs shown will change depending on the type of storage, and they also depend on what Proxmox VE content types have been enabled on the storage. Notice how the `Usage` statistic of the `Storage 'local' on the node 'pve'` indicates a total capacity of 25.71 GiB. This is the main system partition, but it's just a portion of the `pve` LVM volume group's total capacity.
+This page offers several tabs like `Summary`, which is the one shown above. The tabs shown will change depending on the type of storage, and they also depend on what Proxmox VE content types have been enabled on the storage. Notice how the `Usage` statistic of the `Storage 'local' on the node 'pve'` indicates a total capacity of 25.71 GiB. This is the main system partition, but it is just a portion of the `pve` LVM volume group's total capacity.
 
 The rest of the space is assigned to the LVM-Thin pool, which can be seen by browsing into the `local-lvm (pve)` leaf:
 
@@ -65,9 +65,9 @@ The rest of the space is assigned to the LVM-Thin pool, which can be seen by bro
 
 The `Storage 'local-lvm' on node 'pve'` shows in `Usage` that this thinpool has a capacity of 17.04 GiB, which is the rest of storage space available in the `pve` volume group (63 GiB minus the 12 GiB of swap space), and is still empty.
 
-Finally, notice that the web console doesn't show the 12 GiB swap volume also existing within the LVM structure.
+Finally, notice that the web console does not show the 12 GiB swap volume also existing within the LVM structure.
 
-## Initial filesystem configuration (**shell as root**)
+## Initial filesystem configuration (shell as root)
 
 To have a more complete idea of how the storage is organized in your recently installed Proxmox VE server, get into the shell as `root` (either remotely through a client like **PuTTY** or by using one of the shells provided by the Proxmox web console).
 
@@ -121,17 +121,17 @@ Disklabel type: gpt
 Disk identifier: 8E9192A6-1F3F-412A-9B0C-0B1D6CE8B414
 ~~~
 
-The `sda` device is the 1TiB SSD drive in which Proxmox VE is installed. In it's block, below its list of technical capabilities, you can also see the list of the **real partitions** (the `/dev/sda#` lines under **Device**) created in it by the Proxmox VE installation. The `sda1` and `sda2` are partitions used essentially for booting the system up, and the `sda3` is the one that contains the whole `pve` LVM volume group for Proxmox VE.
+The `sda` device is the 1TiB SSD drive in which Proxmox VE is installed. In its block, below its list of technical capabilities, you can also see the list of the **real partitions** (the `/dev/sda#` lines under **Device**) created in it by the Proxmox VE installation. The `sda1` and `sda2` are partitions used essentially for booting the system up, and the `sda3` is the one that contains the whole `pve` LVM volume group for Proxmox VE.
 
-Below the `sda` information block, you can see the details of the `sdb` and `sdc` storage devices. In this case, both of them are not partitioned at all and, therefore, completely empty. That's why they don't have a listing of devices like the `sda` unit.
+Below the `sda` information block, you can see the details of the `sdb` and `sdc` storage devices. In this case, both of them are not partitioned at all and, therefore, completely empty. That is why they do not have a listing of devices like the `sda` unit.
 
-And let's not forget the two remaining devices seen by `fdisk`, one per each LVM **logical volumes** (kind of virtual partitions) present in the system. From the point of view of the `fdisk` command, they are just like any other storage device, although the command gives a bit less information about them. Still, you can notice how these volumes are mounted on a `/dev/mapper` route instead of hanging directly from `/dev`, this is something related to their _logical_ nature. Also, notice the following regarding the LVM volumes shown in the previous listing:
+And do not forget the two remaining devices seen by `fdisk`, one per each LVM **logical volumes** (kind of virtual partitions) present in the system. From the point of view of the `fdisk` command, they are just like any other storage device, although the command gives a bit less information about them. Still, you can notice how these volumes are mounted on a `/dev/mapper` route instead of hanging directly from `/dev`, this is something related to their _logical_ nature. Also, notice the following regarding the LVM volumes shown in the previous listing:
 
 - The one called `pve-swap` is the swapping partition, as it names implies.
 - The one called `pve-root` is the one in which the whole Debian system is installed, the so called `/` filesystem.
-- There's no mention at all of the **LVM-Thin pool** called `data` you saw in your PVE web console.
+- There is no mention at all of the **LVM-Thin pool** called `data` you saw in your PVE web console.
 
-Thanks to the `fdisk` command, now you really have a good picture of what's going on inside your storage drives, but it is still a bit lacking. There are other commands that will help you visualize better the innards of your server's filesystem.
+Thanks to the `fdisk` command, now you really have a good picture of what is going on inside your storage drives, but it is still a bit lacking. There are other commands that will help you visualize better the innards of your server's filesystem.
 
 ### Visualizing the filesystem structure with `lsblk`
 
@@ -156,11 +156,11 @@ sdc                  8:32   0   1.8T  0 disk
 
 This command not only sees all the physical storage drives available (`TYPE disk`) in the system and their partitions (`TYPE part` that, at this point, are only inside the `sda` device), it also gives information about the LVM filesystem itself (`TYPE lvm`).
 
-It correctly shows the `pve-swap`, the `pve-root` and their mount points, but also lists the two elements that compose an LVM-Thin pool: its metadata (`pve-data_tmeta`) and the reserved space itself (`pve-data`). Know that, although the default branch format is really helpful to see where is what, the `lsblk` command supports a few other output formats as well.
+It correctly shows the `pve-swap`, the `pve-root` and their mount points, but also lists the two elements that compose an LVM-Thin pool: its metadata (`pve-data_tmeta`) and the reserved space itself (`pve-data`). Although the default branch format is really helpful to see where is what, know that the `lsblk` command supports a few other output formats as well.
 
 ### Investigating the LVM system with its own set of commands
 
-With the two previous commands you get the Linux's point of view, but you also need to know how the LVM system sees itself. For this, LVM has its own set of commands, and one of them is `vgs`:
+With the two previous commands you get the Linux point of view, but you also need to know how the LVM system sees itself. For this, LVM has its own set of commands, and one of them is `vgs`:
 
 ~~~sh
 $ vgs
@@ -168,7 +168,7 @@ $ vgs
   pve   1   3   0 wz--n- <62.00g <7.63g
 ~~~
 
-This commands informs about the LVM _volume groups_ present on the system. In the snippet there's only one called `pve` (also prefix for the light volumes names as in `pve-root`).
+This commands informs about the LVM _volume groups_ present on the system. In the snippet there is only one called `pve` (also prefix for the light volumes names as in `pve-root`).
 
 Another interesting command is `lvs`:
 
@@ -180,9 +180,9 @@ $ lvs
   swap pve -wi-ao----  12.00g
 ~~~
 
-In the output above, the command lists the logical volumes and also the thin pool. Notice how the names (`LV` column) have changed: instead of being listed as `pve-something`, the list shows them indicating their volume group (`pve`) in a different column (`VG`). Also, notice how the real available space in the thin `data` pool is shown properly (15.87 GiB, under the `LSize` column).
+In the output above, the command lists the logical volumes and also the thin-pool. Notice how the names (`LV` column) have changed: instead of being listed as `pve-lv_name`, the list shows them indicating their volume group (`pve`) in a different column (`VG`). Also, notice how the real available space in the thin `data` pool is shown properly (15.87 GiB, under the `LSize` column).
 
-The last command I'll show you here is `vgdisplay`:
+The last command to know about is `vgdisplay`:
 
 ~~~sh
 $ vgdisplay
@@ -210,13 +210,13 @@ $ vgdisplay
 
 This command outputs details from the volume groups present in the system. In this case, it only shows information from the sole volume group present at this point in the reference setup, the `pve` group.
 
-See the different parameters shown in the output, and notice how the commands gives you the count of logical (`LV`) and **physical** (`PV`) volumes present in the group. Bear in mind that a LVM physical volume can be either a **whole** storage drive or just a partition of the drive.
+See the different parameters shown in the output, and notice how the commands gives you the count of logical (`LV`) and physical (`PV`) volumes present in the group. Bear in mind that a LVM physical volume can be either a whole storage drive or just a partition of the drive.
 
 ## Configuring the unused storage drives
 
-Now that you have the whole picture of how the storage setup is organized in a newly installed Proxmox VE server, let's rearrange it to a more convenient one. Let's begin by making the two empty HDDs' storage available for the LVM system.
+Now that you have the whole picture of how the storage setup is organized in a newly installed Proxmox VE server, you have to rearrange it to a more convenient one. Begin by making the two empty HDDs' storage available for the LVM system:
 
-1. First, make a partition on each empty storage device that takes the **whole space** available. You'll do this with `sgdisk`:
+1. Make a partition on each empty storage device that takes the **whole space** available. You can do this with `sgdisk`:
 
     ~~~sh
     $ sgdisk -N 1 /dev/sdb
@@ -246,7 +246,7 @@ Now that you have the whole picture of how the storage setup is organized in a n
 
     Usually, you should expect seeing only the last line but, depending on what has been done to the storage drives previously, you may also see some warning about any possible issue detected by `sgdisk`.
 
-2. Then, you can check the new partitions with `fdisk -l`:
+2. Check the new partitions with `fdisk -l`:
 
     ~~~sh
     $ fdisk -l /dev/sdb /dev/sdc
@@ -274,9 +274,9 @@ Now that you have the whole picture of how the storage setup is organized in a n
     /dev/sdc1   2048 3907029134 3907027087  1.8T Linux filesystem
     ~~~
 
-    Remember how the `sdb` and `sdc` devices didn't had a listing under their technical details? Now you see that they have one partition each.
+    Remember how the `sdb` and `sdc` devices did not had a listing under their technical details before? Now you see that they have one partition each.
 
-3. Next, lets create a _physical volume_ (or PV) with each of those new partitions. For this operation, you'll need to use the `pvcreate` command:
+3. Create a _physical volume_ (or PV) with each of those new partitions. Use the `pvcreate` command for this operation:
 
     > [!WARNING]
     > **The `pvcreate` command will fail if it finds references to a previous LVM structure in the storage drive it is trying to turn into a physical volume**\
@@ -292,7 +292,7 @@ Now that you have the whole picture of how the storage setup is organized in a n
     ~~~
 
     > [!NOTE]
-    > **Don't worry about any `Wiping` lines returned by `pvcreate`**\
+    > **Do not worry about any `Wiping` lines returned by `pvcreate`**\
     > The `Wiping` lines mean that the command is removing any references, or signatures, of previous filesystems that were used in the storage devices. These lines may look like this:
     >
     > ~~~sh
@@ -300,7 +300,7 @@ Now that you have the whole picture of how the storage setup is organized in a n
     > Wiping zfs_member signature on /dev/sdc1.
     > ~~~
 
-    See that, in the commands above, and following the rule of thumb of 1 MiB per 1 GiB, I've assigned 1 GiB on the `sdb1` PV and 2 GiB on the `sdc1` PV as the size for their LVM metadata space. If more is required in the future, this can be reconfigured later.
+    See that, in the commands above, and following the rule of thumb of 1 MiB per 1 GiB, it has been assigned 1 GiB on the `sdb1` PV and 2 GiB on the `sdc1` PV as the size for their LVM metadata space. If more is required in the future, this can be reconfigured later.
 
 4. Check your new physical volumes executing `pvs`:
 
@@ -323,7 +323,7 @@ Now that you have the whole picture of how the storage setup is organized in a n
       Volume group "hddusb" successfully created
     ~~~
 
-6. To check the new VGs you can use `vgdisplay`:
+6. Use `vgdisplay` To check the new VGs:
 
     ~~~sh
     $ vgdisplay
@@ -403,7 +403,7 @@ Now that you have the whole picture of how the storage setup is organized in a n
 
 ### Seeing the new storage volumes in Proxmox VE's web console
 
-If you're wondering if any of this changes appear in the Proxmox web console, just open it and browse to the `pve` node level. There, open the `Disks` view:
+If you are wondering if any of this changes appear in the Proxmox web console, just open it and browse to the `pve` node level. There, open the `Disks` view:
 
 ![pve node devices usage updated to LVM](images/g005/pve_node_disks_devices_lvm_updated_screen.webp "pve node devices usage updated to LVM")
 
@@ -411,33 +411,33 @@ You can see how the `sdb` and `sdc` devices now show their new LVM partitions. M
 
 ![pve node LVM screen updated with new volume groups](images/g005/pve_node_disks_lvm_screen_new_vgs.webp "pve node LVM screen updated with new volume groups")
 
-The new volume groups `hddint` and `hddusb` appear above the system's `pve` one (by default, they appear alphabetically ordered by the Volume Group _Name_ column).
+The new volume groups `hddint` and `hddusb` appear above the system's `pve` one. By default, they appear alphabetically ordered by the Volume Group _Name_ column.
 
-At this point, you have an initial arrangement for your unused storage devices. It's just a basic configuration over which _logical volumes_ and _thin pools_ can be created as needed.
+At this point, you have an initial arrangement for your unused storage devices. It is just a basic configuration over which _logical volumes_ and _thin-pools_ can be created later as needed.
 
 ## LVM rearrangement in the main storage drive
 
-The main storage drive, the SSD unit, has an LVM arrangement that is not optimal for the small server you want to build. Let's create a new differentiated storage unit in the SSD drive, one that is not the `pve` volume group used by the Proxmox VE system itself. This way, you'll keep thing separated and reduce the chance of messing anything directly related to your Proxmox VE installation.
+The main storage drive, the SSD unit, has an LVM arrangement that is not optimal for the small server you want to build. Better create a new differentiated storage unit in the SSD drive, one that is not the `pve` volume group used by the Proxmox VE system itself. This way, you can keep thing separated and reduce the chance of messing anything directly related to your Proxmox VE installation.
 
-### Removing the `data` LVM thin pool
+### Removing the `data` LVM thin-pool
 
-The installation process of Proxmox VE created a LVM-thin pool called `data`, which is part of the `pve` volume group. You need to reclaim this space, so let's remove this `data`:
+The installation process of Proxmox VE created a LVM thin-pool called `data`, which is part of the `pve` volume group. You need to reclaim this space, so remove this `data` thin-pool:
 
-1. On the Proxmox VE web console, go to the `Datacenter > Storage` option and take our the `local-lvm` volume from the list by selecting it and pressing on the `Remove` button:
+1. On the Proxmox VE web console, go to the `Datacenter > Storage` option and remove the `local-lvm` volume from the list by selecting it and pressing on the `Remove` button:
 
-    ![Selected local-lvm thin pool for removal](images/g005/datacenter_storage_local_lvm_thin_remove_button.webp "Selected local-lvm thin pool for removal")
+    ![Selected local-lvm thin-pool for removal](images/g005/datacenter_storage_local_lvm_thin_remove_button.webp "Selected local-lvm thin-pool for removal")
 
     A dialog will ask for your confirmation:
 
-    ![Removal confirmation of the local-lvm thin pool](images/g005/datacenter_storage_local_lvm_thin_remove_confirmation.webp "Removal confirmation of the local-lvm thin pool")
+    ![Removal confirmation of the local-lvm thin-pool](images/g005/datacenter_storage_local_lvm_thin_remove_confirmation.webp "Removal confirmation of the local-lvm thin-pool")
 
     The volume will be immediately taken out from the storage list:
 
-    ![local-lvm thin pool removed](images/g005/datacenter_storage_local_lvm_thin_removed.webp "local-lvm thin pool removed")
+    ![local-lvm thin-pool removed](images/g005/datacenter_storage_local_lvm_thin_removed.webp "local-lvm thin-pool removed")
 
-    This action hasn't erased the LVM thinpool volume itself, only has made it unavailable for Proxmox VE.
+    This action has not erased the LVM thinpool volume itself, it only has made the thin-pool unavailable for Proxmox VE.
 
-2. To remove the `data` thinpool volume, get into the shell as `root` and execute the following.
+2. To remove the `data` thinpool volume, get into the shell as `root` and do this:
 
     ~~~sh
     $ lvs
@@ -460,7 +460,7 @@ The installation process of Proxmox VE created a LVM-thin pool called `data`, wh
       Logical volume "data" successfully removed.
     ~~~
 
-3. To verify that the `data` volume doesn't exist anymore, you can check it with the `lvs` command.
+3. To verify that the `data` volume does not exist anymore, you can check it with the `lvs` command:
 
     ~~~sh
     $ lvs
@@ -469,7 +469,7 @@ The installation process of Proxmox VE created a LVM-thin pool called `data`, wh
       swap pve -wi-ao----  12.00g
     ~~~
 
-    Only two logical volumes are listed now, and with the `pvs` command you can see how much space you have available in the physical volume where the `data` thin pool was present. In this case it was in the `sda3` unit.
+    Only two logical volumes are listed now, and with the `pvs` command you can see how much space you have available in the physical volume where the `data` thin-pool was present. In this case it was in the `sda3` unit:
 
     ~~~sh
     $ pvs
@@ -478,15 +478,15 @@ The installation process of Proxmox VE created a LVM-thin pool called `data`, wh
       /dev/sdc1  hddusb lvm2 a--    <1.82t   <1.82t
     ~~~
 
-    Also, if you go back to the Proxmox VE web console, you'll see there how the thin pool is not present anymore as a leaf under your `pve` node nor in the `Disks > LVM-Thin` screen.
+    Also, if you go back to the Proxmox VE web console, you can see there how the thin-pool is not present anymore as a leaf under your `pve` node nor in the `Disks > LVM-Thin` screen.
 
-    ![PVE node thinpool list empty](images/g005/pve_node_disks_lvm-thin_screen_empty.webp "PVE node thinpool list empty")
+    ![PVE node thin-pool list empty](images/g005/pve_node_disks_lvm-thin_screen_empty.webp "PVE node thin-pool list empty")
 
 ### Extending the `root` logical volume
 
-Now that you have a lot of free space in the /dev/sda3, let's give more room to your system's `root` volume.
+Now that you have a lot of free space in the /dev/sda3, give more room to your system's `root` volume:
 
-1. First locate with `lvs` where in your system's LVM structure the `root` LV is:
+1. First locate with `lvs` where is the `root` LV in your system's LVM structure:
 
     ~~~sh
     $ lvs
@@ -523,7 +523,7 @@ Now that you have a lot of free space in the /dev/sda3, let's give more room to 
       VG UUID               QLLDZO-5nRt-ye9r-1xtq-KBl9-drYB-iTHKRw
     ~~~
 
-    The line you must pay attention to is the `Free PE / Size`. **PE** stands for _Physical Extend_ size, and is the number of extends you have available in the volume group. The previous `Alloc PE` line gives you the _allocated_ extends or storage already in use.
+    Pay attention to the `Free PE / Size` line. **PE** stands for _Physical Extend_ size, and is the number of extends you have available in the volume group. The previous `Alloc PE` line gives you the _allocated_ extends or storage already in use.
 
 3. You need to use the `lvextend` command to expand the `root` LV in the free space you have in the `pve` group:
 
@@ -543,10 +543,10 @@ Now that you have a lot of free space in the /dev/sda3, let's give more room to 
       Logical volume pve/root successfully resized.
     ~~~
 
-    Two options are specified to the `lvextend` command.
+    Two options are specified to the `lvextend` command:
 
     - `-l +6528`\
-      Specifies the number of extents (`+6528`) you want to give to the logical volume.
+      Specifies the number of extents (`+6528`) you want to assign to the logical volume.
 
     - `-r`\
       Orders the `lvextend` command to call the `resizefs` procedure, after extending the volume, to expand the filesystem within the volume over the newly assigned storage space.
@@ -592,11 +592,16 @@ Now that you have a lot of free space in the /dev/sda3, let's give more room to 
     tmpfs                 783M  4.0K  783M   1% /run/user/0
     ~~~
 
-    You'll see that the `root` volume has grown from 24.50 GiB to 50.00 GiB, the `pve` VG does not have any empty space (`VFree`) available, the `/dev/sda3` physical volume also does not have any space (`PFree`) free either, and that the `/dev/mapper/pve-root` `Size` corresponds to what the `root` LV has free.
+    The snippets above show that:
+
+    - The `root` volume has grown from 24.50 GiB to 50.00 GiB.
+    - The `pve` VG does not have any empty space (`VFree`) available.
+    - The `/dev/sda3` physical volume also does not have any space (`PFree`) free either
+    - The `/dev/mapper/pve-root` `Size` corresponds to what the `root` LV has free.
 
 ### Creating a new partition and a new VG in the unallocated space on the `sda` drive
 
-What remains to do is to make usable all the still unallocated space within the `sda` drive. So, let's make a new partition in it.
+What remains to do is to make usable all the still unallocated space within the `sda` drive. You have to create a new partition in it:
 
 1. In a `root` shell, use the following `fdisk` command:
 
@@ -623,7 +628,7 @@ What remains to do is to make usable all the still unallocated space within the 
     >
     > **Never do this in a real production environment!**
 
-2. You're in the `fdisk` partition editor now. Be careful what you do here or you might mess your PVE node's root filesystem up! Input the command `F` to check the empty space available in the `sda` drive:
+2. Now you are in the `fdisk` partition editor. Be careful what you do here or you might mess your PVE node's root filesystem up! Input the command `F` to check the empty space available in the `sda` drive:
 
     ~~~sh
     Command (m for help): F
@@ -636,7 +641,7 @@ What remains to do is to make usable all the still unallocated space within the 
     132122624 1953525134 1821402511 868.5G
     ~~~
 
-3. With the previous information you're sure now of where the free space begins and ends, and also its size (868.5 GiB in my case). Now you can create a new partition, type `n` as the command:
+3. With the previous information now you are sure of where the free space begins and ends, and also its size (868.5 GiB in this guide's case). Knowing this you can create a new partition by typing `n` as the command to do so:
 
     ~~~sh
     Command (m for help): n
@@ -645,7 +650,7 @@ What remains to do is to make usable all the still unallocated space within the 
 
     The first thing `fdisk` asks you is the number you want for the new partition. Since there are already three other partitions in `sda`, it has to be any number between 4 and 128 (both included). The default value (4) is fine, so **just press enter** on this question.
 
-4. The next question `fdisk` asks you is about which `sector` the new `sda4` partition should **start** in your `sda` drive:
+4. The next question `fdisk` asks you is about on which `sector` the new `sda4` partition should start in your `sda` drive:
 
     ~~~sh
     First sector (132120577-1953525134, default 132122624):
@@ -653,7 +658,7 @@ What remains to do is to make usable all the still unallocated space within the 
 
     Notice how the first sector chosen by default is the same one you saw before with the `F` command as the `Start` of the free space. Again, the default value (`132122624`) is good, since you want the `sda4` partition to start at the very beginning of the available unallocated space. Therefore, **press enter** to accept the default value.
 
-5. The last question is about on which sector the new `sda4` partition has to **end**:
+5. The last question is about on which sector the new `sda4` partition has to end:
 
     ~~~sh
     Last sector, +/-sectors or +/-size{K,M,G,T,P} (132122624-1953525134, default 1953523711):
@@ -673,7 +678,7 @@ What remains to do is to make usable all the still unallocated space within the 
     > **Although `fdisk` says it has created the partition, be aware that, in fact, the new partition table is only in memory**\
     > The change still has to be saved in the real `sda`'s partition table.
 
-7. To verify that the partition has been registered, use the command `p` to see the current partition table in `fdisk`'s memory.
+7. To verify that the partition has been registered, use the command `p` to see the current partition table in `fdisk`'s memory:
 
     ~~~sh
     Command (m for help): p
@@ -694,16 +699,16 @@ What remains to do is to make usable all the still unallocated space within the 
 
     See how the new `sda4` partition is named correlatively to the other three `sda` already existing ones, and takes up the previously unassigned free space (868.5 GiB). Also notice how `fdisk` indicates that the partition is of the `Type Linux filesystem`, not `Linux LVM`.
 
-8. To turn the partition into a Linux LVM type, use the `t` command.
+8. To turn the partition into a Linux LVM type, use the `t` command:
 
     ~~~sh
     Command (m for help): t
     Partition number (1-4, default 4):
     ~~~
 
-    Notice how the command asks you first which partition you want to change, and it also offers by default the newest one (number `4`). In this case, the default value 4 is the correct one, so press enter here.
+    The command asks you first which partition you want to change, and it also offers by default the newest one (number `4`). In this case, the default value 4 is the correct one, so press enter here.
 
-9. The next question is about what type you want to change the partition into. If you don't know the numeric code of the type you want, type `L` on this question and you'll get a long list with all the types available. To exit the types listing press `q` and you'll return to the question:
+9. The next question is about what type you want to change the partition into. If you do not know the numeric code of the type you want, type `L` on this question to get a long list with all the types available. Press `q` to exit the types listing and return to the question prompt:
 
     > [!WARNING]
     > **The number identifying the type can change between `fdisk` versions!**\
@@ -761,13 +766,13 @@ What remains to do is to make usable all the still unallocated space within the 
     ...
     ~~~
 
-    When you've have located the type you want, in this case `Linux LVM`, return to the question by pressing `q` and type the type's index number. For the `Linux LVM` is `44`:
+    When you have located the type you want, in this case `Linux LVM`, return to the question by pressing `q` and type the type index number. For the `Linux LVM` is `44` in this case:
 
     ~~~sh
     Partition type or alias (type L to list all): 44
     ~~~
 
-10. After indicating the type and pressing enter, `fdisk` will indicate you if the change has been done properly and will exit the command:
+10. After indicating the type and pressing enter, `fdisk` indicates you if the change has been done properly and will exit the command:
 
     ~~~sh
     Changed type of partition 'Linux filesystem' to 'Linux LVM'.
@@ -794,7 +799,7 @@ What remains to do is to make usable all the still unallocated space within the 
     /dev/sda4  132122624 1953523711 1821401088 868.5G Linux LVM
     ~~~
 
-12. Now that you have the new `sda4` partition ready, exit the `fdisk` program with the `w` command. **This will write the changes to the `sda` drive's partition table**:
+12. Now that you have the new `sda4` partition ready, exit the `fdisk` program with the `w` command. **This will write the changes to the `sda` drive partition table**:
 
     ~~~sh
     Command (m for help): w
@@ -804,7 +809,7 @@ What remains to do is to make usable all the still unallocated space within the 
 
     See how `fdisk` gives you some final output about the update before returning you to the shell.
 
-13. With the `lsblk` command you can see that the `sda4` now appears as another branch of the `sda` tree, right below the `sda3`'s structure:
+13. Use the `lsblk` command to see the new `sda4` partition appearing as another branch of the `sda` tree, right below the `sda3`'s structure:
 
     ~~~sh
     $ lsblk
@@ -824,14 +829,14 @@ What remains to do is to make usable all the still unallocated space within the 
 
     Notice how the `sda4` TYPE is simply indicated as `part`.
 
-14. Now that the `sda4` partition is ready, let's create a new **physical LVM volume** with it. Use the `pvcreate` command:
+14. With the `sda4` partition ready, create a new **physical LVM volume** with it. Use the `pvcreate` command:
 
     ~~~sh
     $ pvcreate /dev/sda4
       Physical volume "/dev/sda4" successfully created.
     ~~~
 
-15. To verify that `sda4` is now also a PV, you can use the `lvmdiskscan` command:
+15. Use `lvmdiskscan` to verify that `sda4` is now also a PV:
 
     ~~~sh
     $ lvmdiskscan
@@ -846,7 +851,7 @@ What remains to do is to make usable all the still unallocated space within the 
       4 LVM physical volumes
     ~~~
 
-    Also, you can execute the `pvs` command to see if the `sda4` PV is there:
+    Also, you can execute the `pvs` command to see if the `sda4` PV shows up there:
 
     ~~~sh
     $ pvs
@@ -857,7 +862,7 @@ What remains to do is to make usable all the still unallocated space within the 
       /dev/sdc1  hddusb lvm2 a--    <1.82t   <1.82t
     ~~~
 
-16. What's left to do is to create a **volume group** over the `sda4` PV. For this, execute a `vgcreate` command:
+16. What is left to do is to create a volume group over the `sda4` PV. For this, execute a `vgcreate` command:
 
     ~~~sh
     $ vgcreate ssdint /dev/sda4
@@ -875,22 +880,25 @@ What remains to do is to make usable all the still unallocated space within the 
       ssdint   1   0   0 wz--n- <868.51g <868.51g
     ~~~
 
-With all these steps you've got an independent space in your SSD storage unit, meant to separate the storage used for virtual machines and containers, services and other non-Proxmox VE system related files (like ISO images or container templates) from what is the Proxmox VE system itself.
+With all these steps you have got an independent space in your SSD storage unit, meant to separate the storage used for virtual machines and containers, services and other non-Proxmox VE related files (like ISO images or container templates) from what is the Proxmox VE filesystem.
 
 ## References
 
 ### Logical Volume Management (LVM)
 
-- [Logical Volume Management Explained on Linux](https://devconnected.com/logical-volume-management-explained-on-linux/)
-- [Understanding LVM In Linux (Create Logical Volume) RHEL/CentOS 7&8](https://tekneed.com/understanding-lvm-with-examples-advantages-of-lvm/)
-- [RED HAT ENTERPRISE LINUX **8** - CONFIGURING AND MANAGING LOGICAL VOLUMES](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_and_managing_logical_volumes/index)
-- [How to Create Disk Storage with Logical Volume Management (LVM) in Linux – PART 1](https://www.tecmint.com/create-lvm-storage-in-linux/)
-- [How to Extend/Reduce LVM’s (Logical Volume Management) in Linux – Part II](https://www.tecmint.com/extend-and-reduce-lvms-in-linux/)
-- [How to Take ‘Snapshot of Logical Volume and Restore’ in LVM – Part III](https://www.tecmint.com/take-snapshot-of-logical-volume-and-restore-in-lvm/)
-- [Setup Thin Provisioning Volumes in Logical Volume Management (LVM) – Part IV](https://www.tecmint.com/setup-thin-provisioning-volumes-in-lvm/)
-- [Logical Volume Management in Linux](https://www.techtutsonline.com/logical-volume-management-in-linux/)
-- [How to Manage and Use LVM (Logical Volume Management) in Ubuntu](https://www.howtogeek.com/40702/how-to-manage-and-use-lvm-logical-volume-management-in-ubuntu/)
-- [pvcreate error : Can’t open /dev/sdx exclusively. Mounted filesystem?](https://www.ucartz.com/clients/knowledgebase/1376/pvcreate-error--Cant-open-ordevorsdx-exclusively.-Mounted-filesystem.html)
+- [devconnected. Logical Volume Management Explained on Linux](https://devconnected.com/logical-volume-management-explained-on-linux/)
+- [Tekneed. Understanding LVM In Linux (Create Logical Volume) RHEL/CentOS 7&8](https://tekneed.com/understanding-lvm-with-examples-advantages-of-lvm/)
+- [Red Hat Documentation. Products. Red Hat Enterprise Linux. 8. Configuring and managing logical volumes](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/html/configuring_and_managing_logical_volumes/index)
+
+- [TecMint](https://www.tecmint.com/)
+  - [How to Create Disk Storage with Logical Volume Management (LVM) in Linux – PART 1](https://www.tecmint.com/create-lvm-storage-in-linux/)
+  - [How to Extend/Reduce LVM’s (Logical Volume Management) in Linux – Part II](https://www.tecmint.com/extend-and-reduce-lvms-in-linux/)
+  - [How to Take ‘Snapshot of Logical Volume and Restore’ in LVM – Part III](https://www.tecmint.com/take-snapshot-of-logical-volume-and-restore-in-lvm/)
+  - [Setup Thin Provisioning Volumes in Logical Volume Management (LVM) – Part IV](https://www.tecmint.com/setup-thin-provisioning-volumes-in-lvm/)
+
+- [TechTutsOnline. Logical Volume Management in Linux](https://www.techtutsonline.com/logical-volume-management-in-linux/)
+- [HowToGeek. How to Manage and Use LVM (Logical Volume Management) in Ubuntu](https://www.howtogeek.com/40702/how-to-manage-and-use-lvm-logical-volume-management-in-ubuntu/)
+- [Ucartz. Knowledgebase. CentOS. pvcreate error : Can’t open /dev/sdx exclusively. Mounted filesystem?](https://www.ucartz.com/clients/knowledgebase/1376/pvcreate-error--Cant-open-ordevorsdx-exclusively.-Mounted-filesystem.html)
 
 ## Navigation
 
