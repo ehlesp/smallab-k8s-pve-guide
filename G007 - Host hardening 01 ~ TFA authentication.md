@@ -475,7 +475,7 @@ This is probably just a problem of limiting the TFA restriction to the users and
 
 ### Configuring ssh login with password + TOTP
 
-- [Unix & Linux. SSHD Denies access with password + google-authenticator combo](https://unix.stackexchange.com/questions/513011/sshd-denies-access-with-password-google-authenticator-combo)
+- [StackExchange. Unix & Linux. SSHD Denies access with password + google-authenticator combo](https://unix.stackexchange.com/questions/513011/sshd-denies-access-with-password-google-authenticator-combo)
 
 ### About Linux PAM
 

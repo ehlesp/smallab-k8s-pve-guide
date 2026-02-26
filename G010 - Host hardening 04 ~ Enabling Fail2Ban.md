@@ -399,10 +399,12 @@ Notice how the `fail2ban-regex` command reports a total of eight matches in the 
 
 ### [Fail2Ban](https://github.com/fail2ban/fail2ban)
 
-- [Proxmox VE wiki. Protecting the web interface with fail2ban](https://pve.proxmox.com/wiki/Fail2ban)
+- [Proxmox VE Wiki](https://pve.proxmox.com/wiki/Main_Page)
+  - [Protecting the web interface with fail2ban](https://pve.proxmox.com/wiki/Fail2ban)
+
 - [DigitalOcean. How Fail2Ban Works to Protect Services on a Linux Server](https://www.digitalocean.com/community/tutorials/how-fail2ban-works-to-protect-services-on-a-linux-server)
-- [Unix & Linux. How to configure fail2ban with systemd journal?](https://unix.stackexchange.com/questions/268357/how-to-configure-fail2ban-with-systemd-journal)
-- [Unix & Linux. fail2ban conf file](https://unix.stackexchange.com/questions/456756/fail2ban-conf-file)
+- [StackExchange. Unix & Linux. How to configure fail2ban with systemd journal?](https://unix.stackexchange.com/questions/268357/how-to-configure-fail2ban-with-systemd-journal)
+- [StackExchange. Unix & Linux. fail2ban conf file](https://unix.stackexchange.com/questions/456756/fail2ban-conf-file)
 - [ServerFault. Fail2ban on Debian Buster - the right way to configure?](https://serverfault.com/questions/997099/fail2ban-on-debian-buster-the-right-way-to-configure)
 - [UpCloud. How to install Fail2ban on Debian](https://upcloud.com/resources/tutorials/install-fail2ban-debian/)
 

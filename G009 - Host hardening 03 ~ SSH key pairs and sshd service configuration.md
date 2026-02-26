@@ -598,15 +598,15 @@ Be aware of the services or tasks in your server that require SSH connections to
 
 ### User specific authentication methods in SSH
 
-- [Information Security. Creating user specific authentication methods in SSH](https://security.stackexchange.com/questions/18036/creating-user-specific-authentication-methods-in-ssh)
+- [StackExchange. Information Security. Creating user specific authentication methods in SSH](https://security.stackexchange.com/questions/18036/creating-user-specific-authentication-methods-in-ssh)
 - [ServerFault. How can I setup OpenSSH per-user authentication methods?](https://serverfault.com/questions/150153/how-can-i-setup-openssh-per-user-authentication-methods)
 
 ### Particular sshd parameters
 
 - [SecScan. Ensure SSH `LoginGraceTime` is set to one minute or less (Scored)](https://secscan.acron.pl/centos7/5/2/14)
 - [SecScan. Ensure SSH `MaxAuthTries` is set to 4 or less (Scored)](https://secscan.acron.pl/centos7/5/2/5)
-- [Unix & Linux. In sshd_config 'MaxAuthTries' limits the number of auth failures per connection. What is a connection?](https://unix.stackexchange.com/questions/418582/in-sshd-config-maxauthtries-limits-the-number-of-auth-failures-per-connection)
-- [Unix & Linux. sshd_config MaxSessions parameter](https://unix.stackexchange.com/questions/26170/sshd-config-maxsessions-parameter)
+- [StackExchange. Unix & Linux. In sshd_config 'MaxAuthTries' limits the number of auth failures per connection. What is a connection?](https://unix.stackexchange.com/questions/418582/in-sshd-config-maxauthtries-limits-the-number-of-auth-failures-per-connection)
+- [StackExchange. Unix & Linux. sshd_config MaxSessions parameter](https://unix.stackexchange.com/questions/26170/sshd-config-maxsessions-parameter)
 - [StackOverflow. Difference between maxstartups and maxsessions in sshd_config](https://stackoverflow.com/questions/31114690/difference-between-maxstartups-and-maxsessions-in-sshd-config)
 - [Crunchtools. Systems Administrator’s Lab: OpenSSH MaxStartups](https://crunchtools.com/systems-administrators-lab-openssh-maxstartups/)
 
@@ -617,8 +617,8 @@ Be aware of the services or tasks in your server that require SSH connections to
 ### About SSH key generation and cryptosystems
 
 - [stribik.technology. Secure Secure Shell](https://blog.stribik.technology/2015/01/04/secure-secure-shell.html)
-- [Information Security. What are ssh-keygen best practices?](https://security.stackexchange.com/questions/143442/what-are-ssh-keygen-best-practices)
-- [Information Security. What is the -sk ending for ssh key types?](https://security.stackexchange.com/questions/240991/what-is-the-sk-ending-for-ssh-key-types)
+- [StackExchange. Information Security. What are ssh-keygen best practices?](https://security.stackexchange.com/questions/143442/what-are-ssh-keygen-best-practices)
+- [StackExchange. Information Security. What is the -sk ending for ssh key types?](https://security.stackexchange.com/questions/240991/what-is-the-sk-ending-for-ssh-key-types)
 - [Wikipedia. RSA cryptosystem](https://en.wikipedia.org/wiki/RSA_cryptosystem)
 - [Wikipedia. EdDSA. Ed25519](https://en.wikipedia.org/wiki/EdDSA#Ed25519)
 - [IANIX. Things that use Ed25519](https://ianix.com/pub/ed25519-deployment.html)
