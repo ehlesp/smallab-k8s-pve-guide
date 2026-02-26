@@ -19,14 +19,14 @@
 > **Do not confuse transparent hugepages with explicit hugepages**\
 > While transparent hugepages are dynamically reassigned by the kernel to be reused by any compatible application, explicit hugepages are reserved for specific services and render inaccessible to other workloads in the system.
 
-In this chapter I'll show you how to disable the transparent hugepages since, as far as I've read:
+This chapter shows you how to disable the transparent hugepages because:
 
 - There is no recommended setup for Proxmox VE about this feature.
 - It may not be worth having it enabled in a small server setup (specially on the RAM side) like the one used in this guide.
 - Can provoke serious latency issues in a system when it kicks in to compact fragmented RAM.
 
 > [!IMPORTANT]
-> **Do not dismiss using transparent hugepages forever!**\
+> **Do not completely dismiss using transparent hugepages!**\
 > Remember that some applications may benefit from this feature, although they have to be built for it specifically.
 >
 > Therefore, research the [references found at the end of this chapter](#references) and carefully evaluate if your system's workload can benefit from having transparent hugepages enabled.
@@ -53,7 +53,7 @@ At this point, no application has made use of transparent hugepages, so the valu
 
 ## Disabling the transparent hugepages
 
-To switch the status of the transparent hugepages from `madvise` to `never`, you must modify the configuration of your Debian's Grub boot system.
+To switch the status of the transparent hugepages from `madvise` to `never`, you must modify the configuration of your Debian's Grub boot system:
 
 1. Open a shell as `mgrsys`, `cd` to `/etc/default/` and make a backup of the original `grub` file:
 
@@ -101,10 +101,13 @@ To switch the status of the transparent hugepages from `madvise` to `never`, you
 
 ### About transparent hugepages
 
+- [Proxmox. Forums. Proxmox Virtual Environment](https://forum.proxmox.com/#proxmox-virtual-environment.11)
+  - [Proxmox VE: Installation and configuration](https://forum.proxmox.com/forums/proxmox-ve-installation-and-configuration.16/)
+    - [How should Transparent Hugepages be configured?](https://forum.proxmox.com/threads/how-should-transparent-hugepages-be-configured.132611/)
+
 - [The Linux Kernel Archives. Transparent Hugepage Support](https://www.kernel.org/doc/html/latest/admin-guide/mm/transhuge.html)
 - [Google Groups. mechanical-sympathy. failing to understand the issues with transparent huge paging](https://groups.google.com/g/mechanical-sympathy/c/sljzehnCNZU)
 - [The mole is digging. Transparent Hugepages: measuring the performance impact](https://alexandrnikitin.github.io/blog/transparent-hugepages-measuring-the-performance-impact/)
-- [Proxmox. Forums. How should Transparent Hugepages be configured?](https://forum.proxmox.com/threads/how-should-transparent-hugepages-be-configured.132611/)
 - [GoLinuxHub. How to enable or disable transparent (THP) and explicit (nr_hugepages) hugepage and check the status in Linux with examples (explained in detail)](https://www.golinuxhub.com/2018/08/enable-or-disable-transparent-anon-hugepage-thp-check-status-examples-linux/)
 - [Blog for Database and System Administrators. Debian 10: How to disable transparent hugepages](https://dbsysupgrade.com/debian-10-how-to-disable-transparent-hugepages/)
 - [StackExchange. Unix & Linux. Which distributions enable transparent huge pages “for all applications”?](https://unix.stackexchange.com/questions/495816/which-distributions-enable-transparent-huge-pages-for-all-applications)
