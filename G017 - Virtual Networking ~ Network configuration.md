@@ -33,7 +33,7 @@ In the capture above you can see the setup on this guide's Proxmox VE host, whic
 
 Your system should have, at least, one `en*` device and the `vmbr0` Linux bridge.
 
-Any changes you make in this page will be saved in the `/etc/network/interfaces` file of your PVE host. Open a remote shell as `mgrsys`, then make a backup of that file before you start changing your PVE network:
+Any changes you make in this `Network` page are saved in the `/etc/network/interfaces` file of your PVE host. Open a remote shell as `mgrsys`, then make a backup of that file before you start changing your PVE network:
 
 ~~~sh
 $ sudo cp /etc/network/interfaces /etc/network/interfaces.orig
@@ -95,7 +95,7 @@ Creating a new and isolated Linux bridge in your Proxmox VE system is rather sim
     Realize that:
 
     - The `Apply Configuration` button has been enabled.
-    - Your new Linux bridge has been added to the network list, **but is not active**.
+    - Your new Linux bridge has been added to the network list, **but it is not active**.
     - A log console has appeared right below the network devices list, showing you the "pending changes" you have to apply.
 
 4. Press on the `Apply Configuration` button to make the underlying `ifupdown2` commands apply the changes. This action demands confirmation in the window shown below:
