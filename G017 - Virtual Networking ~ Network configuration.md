@@ -9,31 +9,31 @@
   - [Directories](#directories)
   - [Files](#files)
 - [References](#references)
-  - [Proxmox VE](#proxmox-ve)
+  - [Proxmox](#proxmox)
   - [Linux and virtual networking](#linux-and-virtual-networking)
 - [Navigation](#navigation)
 
 ## Preparing your virtual network for Kubernetes
 
-In the upcoming chapters, I'll show you how to setup a small Kubernetes cluster run on virtual machines. Those VMs will need networking among each other and also with your LAN. Therefore, you need revise the virtual network setup you have and make it fit for the needs you will face later.
+The upcoming chapters explain how to setup a small Kubernetes cluster run on virtual machines. Those VMs will need to be networked with each other and also with your LAN. Therefore, you need revise the virtual network setup you have and make it fit for the needs you will face later.
 
 ## Current virtual network setup
 
-The network setup of your Proxmox VE standalone system is kept at its node level. To see it, you need to get into your PVE web console and browse to the `System > Network` view of your `pve` node.
+The network setup of your Proxmox VE standalone system is kept at its node level. To see it, you need to get into your PVE web console and browse to the `System > Network` view of your `pve` node:
 
 ![Initial network setup](images/g017/pve_node_system_network_initial_setup.webp "Initial network setup")
 
-In the capture above you can see the setup on my own Proxmox VE host, which has these network interfaces:
+In the capture above you can see the setup on this guide's Proxmox VE host, which has these network interfaces:
 
 - `enp3s0`\
-  Is my host's real Ethernet NIC.
+  Is the host's real Ethernet NIC.
 
 - `vmbr0`\
   Is the Linux bridge generated in the installation of Proxmox VE. It holds the IP of this host, and "owns" the `enp3s0` NIC. If you remember, all this was set up [back in the Proxmox VE installation](G002%20-%20Proxmox%20VE%20installation.md).
 
 Your system should have, at least, one `en*` device and the `vmbr0` Linux bridge.
 
-Be aware that any changes you make in this page will be saved in the `/etc/network/interfaces` file of your PVE host. Open a shell as `mgrsys` and then make a backup of that file before you start changing your PVE network:
+Any changes you make in this page will be saved in the `/etc/network/interfaces` file of your PVE host. Open a remote shell as `mgrsys`, then make a backup of that file before you start changing your PVE network:
 
 ~~~sh
 $ sudo cp /etc/network/interfaces /etc/network/interfaces.orig
@@ -56,15 +56,12 @@ Creating a new and isolated Linux bridge in your Proxmox VE system is rather sim
     Notice that there are two options groups in the unfolded list:
 
     - **`Linux` options**\
-      Networking technology included in the Linux kernel, meaning that it's already available in your PVE system.
+      Networking technology included in the Linux kernel, meaning that it is already available in your PVE system.
 
     - **`OVS` options**\
-      Relative to **Open vSwitch** technology. Since it's not installed in your system, these options won't work in your setup.
+      Relative to **Open vSwitch** technology. Since it is not installed in your system, these options cannot work in your setup.
 
-      > [!NOTE]
-      > If you want to know how to enable the OVS technology in your system, check the [**G910** appendix chapter](G910%20-%20Appendix%2010%20~%20Setting%20up%20virtual%20network%20with%20Open%20vSwitch.md).
-
-2. Click on the `Linux Bridge` option and you'll meet the `Create: Linux Bridge` form window:
+2. Click on the `Linux Bridge` option to raise the `Create: Linux Bridge` form window:
 
     ![Create Linux Bridge form window](images/g017/pve_node_system_network_create_linux_bridge.webp "Create Linux Bridge form window")
 
@@ -74,10 +71,10 @@ Creating a new and isolated Linux bridge in your Proxmox VE system is rather sim
       You could put a different name if you wanted to but, since Proxmox VE follows a naming convention for device names like these, it is better to leave the default one to avoid potential issues.
 
     - `IPv4/CIDR` and `Gateway (IPv4)`\
-      Left empty because you don't really need an IP assigned to a bridge for it to do its job at the MAC level.
+      Left empty because you do not really need an IP assigned to a bridge for it to do its job at the MAC level.
 
     - `IPv6/CIDR` and `Gateway (IPv6)`\
-      Also left empty for the same reason as with the IPv4 values, plus you're not even using IPv6 in the setup explained in this guide.
+      Also left empty for the same reason as with the IPv4 values, plus you are not even using IPv6 in the setup explained in this guide.
 
     - `Autostart`\
       You want this bridge to be always available when the system boots up.
@@ -89,13 +86,13 @@ Creating a new and isolated Linux bridge in your Proxmox VE system is rather sim
       Here will be listed all the interfaces connected to this bridge. Right now this list has to be left empty in this bridge. Notice that, in the `vmbr0` bridge, the `enp3s0` interface appears listed in this field.
 
     - `Comment`\
-      Here you could enter a string like `K3s cluster inner networking` (**K3s** will be the Kubernetes distribution used to set up the cluster later).
+      Here you could enter a string like `K3s cluster inner networking` (Rancher K3s will be the Kubernetes distribution used to set up the cluster later).
 
-3. Click on `Create` and you'll see your new `vmbr1` Linux bridge added to the list of network devices:
+3. Click on `Create` to see your new `vmbr1` Linux bridge added to the list of network devices:
 
     ![Linux Bridge created pending changes](images/g017/pve_node_system_network_linux_bridge_created_pending_changes.webp "Linux Bridge created pending changes")
 
-    You'll see that:
+    Realize that:
 
     - The `Apply Configuration` button has been enabled.
     - Your new Linux bridge has been added to the network list, **but is not active**.
@@ -105,15 +102,15 @@ Creating a new and isolated Linux bridge in your Proxmox VE system is rather sim
 
     ![PVE Network Apply Configuration confirmation](images/g017/pve_node_system_network_linux_bridge_apply_config_confirm.webp "PVE Network Apply Configuration confirmation")
 
-    Press on `Yes`, and you'll see a small progress window that should finish rather fast:
+    Press on `Yes`, and a small fast progress window appears:
 
     ![PVE Network Apply Configuration progress window](images/g017/pve_node_system_network_linux_bridge_apply_config_progress.webp "PVE Network Apply Configuration progress window")
 
-5. The `Network` page will refresh automatically and you'll see your new `vmbr1` Linux bridge active in the devices list:
+5. The `Network` page refreshes automatically, showing your new `vmbr1` Linux bridge active in the devices list:
 
     ![PVE Network New vmbr1 Linux Bridge active](images/g017/pve_node_system_network_linux_bridge_active.webp "PVE Network New vmbr1 Linux Bridge active")
 
-6. You can also check out the changes applied at the `/etc/network/interfaces` configuration file of your PVE host. Open a shell as `mgrsys` and open the file with `less`.
+6. You can also check out the changes applied at the `/etc/network/interfaces` configuration file of your PVE host. Open a shell as `mgrsys` and open the file with `less`:
 
     ~~~sh
     $ less /etc/network/interfaces
@@ -156,7 +153,7 @@ Creating a new and isolated Linux bridge in your Proxmox VE system is rather sim
     source /etc/network/interfaces.d/*
     ~~~
 
-    You will find your new `vmbr1` bridge appended to this `interfaces` file with a set of `bridge-` options similar to the original `vmbr0` bridge.
+    Find your new `vmbr1` bridge appended to this `interfaces` file with a set of `bridge-` options similar to the original `vmbr0` bridge.
 
 ## Bridges management
 
@@ -183,7 +180,7 @@ You can handle your bridges through your Proxmox VE web console, but that is a r
 
     See how, at this point, the `vmbr1` bridge has no traffic whatsoever while `vmbr0` has some networking flow going through it.
 
-- There is a command with specific functionality meant for managing bridges, called `bridge`. It's installed in your Proxmox VE system, so you can use it right away. Also, be aware that **the `bridge` command requires `sudo` to be executed**.
+- There is a command with specific functionality meant for managing bridges, called `bridge`. It is already installed in your Proxmox VE system, so you can use it right away. Also, be aware that **the `bridge` command requires `sudo` to be executed**.
 
     > [!NOTE]
     > **To understand the bridge command, you also need to study the particularities of bridges in general**\
@@ -202,21 +199,24 @@ You can handle your bridges through your Proxmox VE web console, but that is a r
 
 ## References
 
-### [Proxmox VE](https://pve.proxmox.com/)
+### [Proxmox](https://www.proxmox.com/en/)
 
-- [Host System Administration. Network Configuration](https://pve.proxmox.com/pve-docs/chapter-sysadmin.html#sysadmin_network_configuration)
-- [Wiki. Network Configuration](https://pve.proxmox.com/wiki/Network_Configuration)
+- [Host System Administration](https://pve.proxmox.com/pve-docs/chapter-sysadmin.html)
+  - [Network Configuration](https://pve.proxmox.com/pve-docs/chapter-sysadmin.html#sysadmin_network_configuration)
+
+- [Proxmox VE Wiki](https://pve.proxmox.com/wiki/Main_Page)
+  - [Network Configuration](https://pve.proxmox.com/wiki/Network_Configuration)
 
 ### Linux and virtual networking
 
 - [Linux Expert. Deep Guide to Bridge Command Line in Linux](https://www.linuxoperatingsystem.net/deep-guide-bridge-command-line-in-linux/)
-- [Fun with veth devices, Linux virtual bridges, KVM, VMware – attach the host and connect bridges via veth](https://linux-blog.anracom.com/tag/linux-bridge-linking/)
-- [KVM networking](https://www.linux-kvm.org/page/Networking)
-- [How to setup and configure network bridge on Debian Linux](https://www.cyberciti.biz/faq/how-to-configuring-bridging-in-debian-linux/)
+- [Linux-Blog – Dr. Mönchmeyer / anracon. Fun with veth devices, Linux virtual bridges, KVM, VMware – attach the host and connect bridges via veth](https://linux-blog.anracom.com/tag/linux-bridge-linking/)
+- [Kernel Virtual Machine. Networking](https://www.linux-kvm.org/page/Networking)
+- [nixCraft. Howto. Debian Linux. How to setup and configure network bridge on Debian Linux](https://www.cyberciti.biz/faq/how-to-configuring-bridging-in-debian-linux/)
 - [Hechao's Blog. Linux Bridge - Part 1](https://hechao.li/posts/linux-bridge-part1/)
 - [Hechao's Blog. Mini Container Series Part 5](https://hechao.li/posts/Mini-Container-Series-Part-5-Network-Isolation/)
-- [Linux: bridges, VLANs and RSTP](https://serverfault.com/questions/824621/linux-bridges-vlans-and-rstp)
-- [Bridging Ethernet Connections (as of Ubuntu 16.04)](https://help.ubuntu.com/community/NetworkConnectionBridge)
+- [ServerFault. Linux: bridges, VLANs and RSTP](https://serverfault.com/questions/824621/linux-bridges-vlans-and-rstp)
+- [Ubuntu. Community Help Wiki. NetworkConnectionBridge. Bridging Ethernet Connections (as of Ubuntu 16.04)](https://help.ubuntu.com/community/NetworkConnectionBridge)
 
 ## Navigation
 
