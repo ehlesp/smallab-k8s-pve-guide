@@ -21,14 +21,13 @@
   - [Directories](#directories)
   - [Files](#files)
 - [References](#references)
+  - [Proxmox](#proxmox)
   - [General SSH configuration](#general-ssh-configuration)
   - [About SSH key pairs](#about-ssh-key-pairs)
   - [User specific authentication methods in SSH](#user-specific-authentication-methods-in-ssh)
   - [Particular sshd parameters](#particular-sshd-parameters)
-  - [About the `authorized_keys` file in Proxmox VE](#about-the-authorized_keys-file-in-proxmox-ve)
   - [About disabling the `root` user](#about-disabling-the-root-user)
   - [About SSH key generation and cryptosystems](#about-ssh-key-generation-and-cryptosystems)
-  - [Proxmox](#proxmox)
 - [Navigation](#navigation)
 
 ## Harden your SSH connections with key pairs
@@ -560,6 +559,28 @@ Be aware of the services or tasks in your server that require SSH connections to
 
 ## References
 
+### [Proxmox](https://www.proxmox.com/en/)
+
+- [Proxmox VE Administration Guide](https://pve.proxmox.com/pve-docs/pve-admin-guide.html)
+  - [Cluster Manager. Requirements](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#pvecm_cluster_requirements)
+
+- [Proxmox. Forums. Proxmox Virtual Environment](https://forum.proxmox.com/#proxmox-virtual-environment.11)
+  - [Proxmox VE: Installation and configuration](https://forum.proxmox.com/forums/proxmox-ve-installation-and-configuration.16/)
+    - [Proxmox v6 default ssh key in authorized_keys file](https://forum.proxmox.com/threads/proxmox-v6-default-ssh-key-in-authorized_keys-file.57898/#post-266842)
+
+      > [!NOTE]
+      > **Regarding ssh in Proxmox VE clusters**\
+      > In a cluster of several nodes, PVE relies on ssh to perform certain tasks, a working communication in-between the nodes is therefore essential. This is why we share `/etc/pve/priv/known_hosts` as well as the keys via the `pmxcfs [0]` between the hosts.
+      >
+      > The `/etc/ssh/ssh_known_hosts` is setup to symlink to `/etc/pve/priv/known_hosts`.
+      >
+      > For a standalone node this does not really matter, but is setup anyway. You can check the fingerprint by `running ssh-keyscan -t rsa <hostname>` and compare it if not sure.
+
+    - [adding own keys to authorized_keys](https://forum.proxmox.com/threads/adding-own-keys-to-authorized_keys.41812/)
+    - [/etc/pve/priv/authorized_keys](https://forum.proxmox.com/threads/etc-pve-priv-authorized_keys.18561/)
+    - [/etc/pve/priv/authorized_keys question](https://forum.proxmox.com/threads/etc-pve-priv-authorized_keys-question.7671/)
+    - [Disable root login](https://forum.proxmox.com/threads/disable-root-login.10512/)
+
 ### General SSH configuration
 
 - [DigitalOcean. SSH Essentials: Working with SSH Servers, Clients, and Keys](https://www.digitalocean.com/community/tutorials/ssh-essentials-working-with-ssh-servers-clients-and-keys)
@@ -589,31 +610,9 @@ Be aware of the services or tasks in your server that require SSH connections to
 - [StackOverflow. Difference between maxstartups and maxsessions in sshd_config](https://stackoverflow.com/questions/31114690/difference-between-maxstartups-and-maxsessions-in-sshd-config)
 - [Crunchtools. Systems Administrator’s Lab: OpenSSH MaxStartups](https://crunchtools.com/systems-administrators-lab-openssh-maxstartups/)
 
-### About the `authorized_keys` file in Proxmox VE
-
-- [Proxmox. Forums. Proxmox Virtual Environment](https://forum.proxmox.com/#proxmox-virtual-environment.11)
-  - [Proxmox VE: Installation and configuration](https://forum.proxmox.com/forums/proxmox-ve-installation-and-configuration.16/)
-    - [Proxmox v6 default ssh key in authorized_keys file](https://forum.proxmox.com/threads/proxmox-v6-default-ssh-key-in-authorized_keys-file.57898/#post-266842)
-
-      > [!NOTE]
-      > **Regarding ssh in Proxmox VE clusters**\
-      > In a cluster of several nodes, PVE relies on ssh to perform certain tasks, a working communication in-between the nodes is therefore essential. This is why we share `/etc/pve/priv/known_hosts` as well as the keys via the `pmxcfs [0]` between the hosts.
-      >
-      > The `/etc/ssh/ssh_known_hosts` is setup to symlink to `/etc/pve/priv/known_hosts`.
-      >
-      > For a standalone node this does not really matter, but is setup anyway. You can check the fingerprint by `running ssh-keyscan -t rsa <hostname>` and compare it if not sure.
-
-    - [adding own keys to authorized_keys](https://forum.proxmox.com/threads/adding-own-keys-to-authorized_keys.41812/)
-    - [/etc/pve/priv/authorized_keys](https://forum.proxmox.com/threads/etc-pve-priv-authorized_keys.18561/)
-    - [/etc/pve/priv/authorized_keys question](https://forum.proxmox.com/threads/etc-pve-priv-authorized_keys-question.7671/)
-
 ### About disabling the `root` user
 
 - [Reddit. Proxmox. Don't disable root ssh login to PVE as I did, you'll get locked out of containers](https://www.reddit.com/r/Proxmox/comments/dkozht/dont_disable_root_ssh_login_to_pve_as_i_did_youll/)
-
-- [Proxmox. Forums. Proxmox Virtual Environment](https://forum.proxmox.com/#proxmox-virtual-environment.11)
-  - [Proxmox VE: Installation and configuration](https://forum.proxmox.com/forums/proxmox-ve-installation-and-configuration.16/)
-    - [Disable root login](https://forum.proxmox.com/threads/disable-root-login.10512/)
 
 ### About SSH key generation and cryptosystems
 
@@ -623,11 +622,6 @@ Be aware of the services or tasks in your server that require SSH connections to
 - [Wikipedia. RSA cryptosystem](https://en.wikipedia.org/wiki/RSA_cryptosystem)
 - [Wikipedia. EdDSA. Ed25519](https://en.wikipedia.org/wiki/EdDSA#Ed25519)
 - [IANIX. Things that use Ed25519](https://ianix.com/pub/ed25519-deployment.html)
-
-### [Proxmox](https://www.proxmox.com/en/)
-
-- [Proxmox VE Administration Guide](https://pve.proxmox.com/pve-docs/pve-admin-guide.html)
-  - [Cluster Manager. Requirements](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#pvecm_cluster_requirements)
 
 ## Navigation
 

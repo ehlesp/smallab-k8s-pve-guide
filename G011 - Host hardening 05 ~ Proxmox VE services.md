@@ -26,10 +26,7 @@
   - [Proxmox hardening and standalone node optimization](#proxmox-hardening-and-standalone-node-optimization)
   - [Services management in Debian](#services-management-in-debian)
   - [NFS and RPC](#nfs-and-rpc)
-  - [Default listening behaviour of `pveproxy`](#default-listening-behaviour-of-pveproxy)
   - [Configuration of SSL/TSL ciphers in `pveproxy`](#configuration-of-ssltsl-ciphers-in-pveproxy)
-  - [ZFS and Ceph](#zfs-and-ceph)
-  - [SPICE proxy](#spice-proxy)
 - [Navigation](#navigation)
 
 ## Reduce your Proxmox VE server's exposed surface
@@ -538,12 +535,25 @@ For example, notice how the `corosync`, `pve-ha-crm` and `pve-ha-lrm` services a
 
 ### [Proxmox](https://www.proxmox.com/en/)
 
-- [Proxmox VE Wiki](https://pve.proxmox.com/wiki/Main_Page)
-  - [Service daemons](https://pve.proxmox.com/wiki/Service_daemons)
-
 - [Proxmox VE Administration Guide](https://pve.proxmox.com/pve-docs/pve-admin-guide.html)
   - [Important Service Daemons](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_important_service_daemons)
     - [pveproxy - Proxmox VE API Proxy Daemon](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_pveproxy_proxmox_ve_api_proxy_daemon)
+    - [spiceproxy - SPICE Proxy Service](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_spiceproxy_spice_proxy_service)
+
+- [Proxmox VE Wiki](https://pve.proxmox.com/wiki/Main_Page)
+  - [Service daemons](https://pve.proxmox.com/wiki/Service_daemons)
+  - [ZFS on Linux](https://pve.proxmox.com/wiki/ZFS_on_Linux).
+  - [Deploy Hyper-Converged Ceph Cluster](https://pve.proxmox.com/wiki/Deploy_Hyper-Converged_Ceph_Cluster).
+
+- [Proxmox. Forums. Proxmox Virtual Environment](https://forum.proxmox.com/#proxmox-virtual-environment.11)
+  - [Proxmox VE: Networking and Firewall](https://forum.proxmox.com/forums/proxmox-ve-networking-and-firewall.17/)
+    - [Is it possible to disable rpcbind (port 111) and how to do it?](https://forum.proxmox.com/threads/is-it-possible-to-disable-rpcbind-port-111-and-how-to-do-it.33590/)
+    - [pveproxy LISTEN address](https://forum.proxmox.com/threads/pveproxy-listen-address.75376/).
+
+  - [Proxmox VE: Installation and configuration](https://forum.proxmox.com/forums/proxmox-ve-installation-and-configuration.16/)
+    - [pveproxy - Disable weak SSL ciphers?](https://forum.proxmox.com/threads/pveproxy-disable-weak-ssl-ciphers.14794/page-3)
+    - [disable spiceproxy](https://forum.proxmox.com/threads/disable-spiceproxy.36638/)
+    - [pve-manager and other updates with optional services masked](https://forum.proxmox.com/threads/pve-manager-and-other-updates-with-optional-services-masked.63652/)
 
 ### Proxmox hardening and standalone node optimization
 
@@ -558,46 +568,15 @@ For example, notice how the `corosync`, `pve-ha-crm` and `pve-ha-lrm` services a
 
 ### NFS and RPC
 
-- [Proxmox. Forums. Proxmox Virtual Environment](https://forum.proxmox.com/#proxmox-virtual-environment.11)
-  - [Proxmox VE: Networking and Firewall](https://forum.proxmox.com/forums/proxmox-ve-networking-and-firewall.17/)
-    - [Is it possible to disable rpcbind (port 111) and how to do it?](https://forum.proxmox.com/threads/is-it-possible-to-disable-rpcbind-port-111-and-how-to-do-it.33590/)
-
 - [ServerFault. Is rpcbind needed for an NFS client?](https://serverfault.com/questions/1015970/is-rpcbind-needed-for-an-nfs-client)
 - [ServerFault. Which ports do I need to open in the firewall to use NFS?](https://serverfault.com/questions/377170/which-ports-do-i-need-to-open-in-the-firewall-to-use-nfs)
 - [Quora. What is the purpose of rpcbind service on Linux Systems?](https://www.quora.com/What-is-the-purpose-of-rpcbind-service-on-Linux-Systems)
 
-### Default listening behaviour of `pveproxy`
-
-- [Proxmox. Forums. Proxmox Virtual Environment](https://forum.proxmox.com/#proxmox-virtual-environment.11)
-  - [Proxmox VE: Networking and Firewall](https://forum.proxmox.com/forums/proxmox-ve-networking-and-firewall.17/)
-    - [pveproxy LISTEN address](https://forum.proxmox.com/threads/pveproxy-listen-address.75376/).
-
 ### Configuration of SSL/TSL ciphers in `pveproxy`
-
-- [Proxmox. Forums. Proxmox Virtual Environment](https://forum.proxmox.com/#proxmox-virtual-environment.11)
-  - [Proxmox VE: Networking and Firewall](https://forum.proxmox.com/forums/proxmox-ve-networking-and-firewall.17/)
-    - [pveproxy - Disable weak SSL ciphers?](https://forum.proxmox.com/threads/pveproxy-disable-weak-ssl-ciphers.14794/page-3)
 
 - [CryptCheck. Supported cipher suites](https://cryptcheck.fr/ciphers)
 - [SSL Dragon. Cipher Suites Explained in Simple Terms: Unlocking the Code](https://www.ssldragon.com/blog/cipher-suites/)
 - [TheSSLStore. Cipher Suites: Ciphers, Algorithms and Negotiating Security Settings](https://www.thesslstore.com/blog/cipher-suites-algorithms-security-settings/)
-
-### ZFS and Ceph
-
-- [Proxmox VE Wiki](https://pve.proxmox.com/wiki/Main_Page)
-  - [ZFS on Linux](https://pve.proxmox.com/wiki/ZFS_on_Linux).
-  - [Deploy Hyper-Converged Ceph Cluster](https://pve.proxmox.com/wiki/Deploy_Hyper-Converged_Ceph_Cluster).
-
-### SPICE proxy
-
-- [Proxmox VE Administration Guide](https://pve.proxmox.com/pve-docs/pve-admin-guide.html)
-  - [Important Service Daemons](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_important_service_daemons)
-    - [spiceproxy - SPICE Proxy Service](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_spiceproxy_spice_proxy_service)
-
-- [Proxmox. Forums. Proxmox Virtual Environment](https://forum.proxmox.com/#proxmox-virtual-environment.11)
-  - [Proxmox VE: Installation and configuration](https://forum.proxmox.com/forums/proxmox-ve-installation-and-configuration.16/)
-    - [disable spiceproxy](https://forum.proxmox.com/threads/disable-spiceproxy.36638/)
-    - [pve-manager and other updates with optional services masked](https://forum.proxmox.com/threads/pve-manager-and-other-updates-with-optional-services-masked.63652/)
 
 ## Navigation
 

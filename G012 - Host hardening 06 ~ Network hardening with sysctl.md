@@ -324,6 +324,10 @@ Chrony is a daemon that keeps your server's clock synchronized with an external 
   - [Proxmox VE firewall](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_pve_firewall)
     - [Configuration files. Host Specific Configuration](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#pve_firewall_host_specific_configuration)
 
+- [Proxmox. Forums. Proxmox Virtual Environment](https://forum.proxmox.com/#proxmox-virtual-environment.11)
+  - [Proxmox VE: Networking and Firewall](https://forum.proxmox.com/forums/proxmox-ve-networking-and-firewall.17/)
+    - [Test environment - Virtualized Proxmox on esxi - network problem](https://forum.proxmox.com/threads/test-environment-virtualized-proxmox-on-esxi-network-problem.37612/)
+
 ### `sysctl` references
 
 - [The Linux Kernel Archives](https://www.kernel.org/)
@@ -337,10 +341,6 @@ Chrony is a daemon that keeps your server's clock synchronized with an external 
 - [GitHub Gist. kfox/sysctl.conf. Linux kernel tuning settings for large number of concurrent clients](https://gist.github.com/kfox/1942782)
 - [Narkive. Ethtool & sysctl.conf hardening per Cryptostorm](https://tails-dev.boum.narkive.com/PdkdEag9/ethtool-sysctl-conf-hardening-per-cryptostorm)
 - [IT Blog. Tuning nf_conntrack](https://ixnfo.com/en/tuning-nf_conntrack.html)
-
-- [Proxmox. Forums. Proxmox Virtual Environment](https://forum.proxmox.com/#proxmox-virtual-environment.11)
-  - [Proxmox VE: Networking and Firewall](https://forum.proxmox.com/forums/proxmox-ve-networking-and-firewall.17/)
-    - [Test environment - Virtualized Proxmox on esxi - network problem](https://forum.proxmox.com/threads/test-environment-virtualized-proxmox-on-esxi-network-problem.37612/)
 
 ### SYN cookies
 
