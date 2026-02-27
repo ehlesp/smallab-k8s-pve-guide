@@ -56,12 +56,12 @@ On the other hand, remember that you have configured your cluster to use two net
 Assuming that you have a regular consumer router handling your LAN, you have two ways for dealing with the issue of possible IP conflicts between your devices and the apps exposed to your LAN by MetalLB:
 
 - **Assign static IPs to all devices in your LAN**\
-  Doable although cumbersome since this demands the manual handling of all IP assignments in your LAN, and also disabling the use of randomized MACs in all devices connected to the LAN. Still, this is the one that can almost (if you also leave the dynamic IP assignment enabled, conflicts may still happen) guarantee that your devices and apps will not collide in their IP assignments. If you opt to this method, be sure of clearing a range of IPs in your router (meaning, do not assign any IP from that range to any device) that MetalLB can use freely.
+  Doable although cumbersome since this demands the manual handling of all IP assignments in your LAN, and also disabling the use of randomized MACs in all devices connected to the LAN. Still, this is the one that can almost guarantee that your devices and apps will not collide in their IP assignments (if you also leave the dynamic IP assignment enabled, conflicts may still happen). If you opt to this method, be sure of clearing a range of IPs in your router (meaning, do not assign any IP from that range to any device) that MetalLB can use freely.
 
 - **Making your private network assign IPs from the `10.0.0.0/8` range**\
-  As I already explained [back in chapter **G025**](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#criteria-for-ips), for my LAN I opted to use the biggest IPv4 range available for private networks: `10.0.0.0/8`. Still, this measure only mitigates the possibility of conflict between a device and a service exposed by MetalLB (or just with another device). This also depends on how capable your LAN's router is handling IP assignments. The good thing is that you do not have to manage manually the IPs assigned to your devices nor disable the use of randomized MACS in all of them.
+  As I already explained [back in chapter **G025**](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#criteria-for-ips), this guide's LAN uses the biggest IPv4 range available for private networks: `10.0.0.0/8`. Still, this measure only mitigates the possibility of conflict between a device and a service exposed by MetalLB (or just with another device). This also depends on how capable your LAN's router is handling IP assignments. The good news is that you do not have to manage manually the IPs assigned to your devices nor disable the use of randomized MACS in all of them.
 
-In my case, I opted to "risk it" and stick with the dynamic IP assignment to allow devices to connect with randomized MACs, which is the default (and more secure) behavior nowadays.
+In this guide's scenario, the router was left with the dynamic IP assignment to allow devices to connect with randomized MACs, which is the default (and more secure) behavior nowadays.
 
 ### Ports used by MetalLB
 
@@ -69,7 +69,7 @@ When using the L2 operation mode, MetalLB requires the `7946` port open both in 
 
 ### Deploying from an external `kubectl` client
 
-In the previous [chapter **G026**](G026%20-%20K3s%20cluster%20setup%2009%20~%20Setting%20up%20a%20kubectl%20client%20for%20remote%20access.md) you prepared an external `kubectl` client system for managing remotely your K3s cluster. Just don't forget to have such client ready and always use it for handling your K3s cluster. This and following chapters will assume that you're using this `kubectl` client system.
+In the previous [chapter **G026**](G026%20-%20K3s%20cluster%20setup%2009%20~%20Setting%20up%20a%20kubectl%20client%20for%20remote%20access.md) you prepared an external `kubectl` client system for managing remotely your K3s cluster. Do not forget to have such client ready and always use it for handling your K3s cluster. This and following chapters will assume that you are using this `kubectl` client system.
 
 ## Choosing the IP ranges for MetalLB
 
@@ -81,9 +81,9 @@ In this chapter, the chosen IP subrange "reserved" for MetalLB is `10.7.0.1-10.7
 > **The bigger the reserved IP range, the greater the risk of having IP conflicts**\
 > In a private network where IPs are dynamically assigned to devices, you want to keep the MetalLB IP range as small as possible to reduce the chance of IP conflicts.
 
-Also notice that the IP range starts with the `10.7.0.1` address rather than with the `10.7.0.0` one. Although `10.7.0.0` is a perfectly valid IP for a device within the `10.0.0.0/8` network, I had connectivity issues that went away when I used the next IP `10.7.0.1`. I suspect this may be an issue in my current router, which could be considering any IP ending in `.0` only as an address identifying a network and not some device. Be aware of this issue if you face connectivity issues when using IPs ending in `.0`, your router or access point may not be able to handle them properly.
+Also notice that the IP range starts with the `10.7.0.1` address rather than with the `10.7.0.0` one. Although `10.7.0.0` is a perfectly valid IP for a device within the `10.0.0.0/8` network, in testing this guide's setup there were connectivity issues that went away when the next IP `10.7.0.1` was used instead. This may be an issue in the router used, which could be considering any IP ending in `.0` only as an address identifying a network and not some device. Be aware of this issue if you face connectivity issues when using IPs ending in `.0`, your router or access point may not be able to handle them properly.
 
-On the other hand, know that MetalLB links IPs to services. When MetalLB moves a service from one node to another, the IP sticks to the service. Any IP within the ranges managed by MetalLB can jump from node to node of your cluster as seen fit by the load balancer.
+On the other hand, know that MetalLB links IPs to services. When a service moves from one node to another, MetalLB ensures that the IP sticks to the service. Any IP within the ranges managed by MetalLB can jump from node to node of your cluster as seen fit by the load balancer.
 
 ## Deploying MetalLB on your K3s cluster
 
@@ -91,7 +91,7 @@ Next, see how to deploy MetalLB using `kubectl` and [Kustomize](https://kubectl.
 
 ### Preparing the Kustomize folder structure
 
-It is better to treat each deployment as an independent project with its own folder structure. On this regard, there is the _overlay_ model [shown in the official introduction to Kustomize](https://kubectl.docs.kubernetes.io/guides/introduction/kustomize/#2-create-variants-using-overlays), but I also found [another one in this "best practices" article](https://www.openanalytics.eu/blog/2021/02/23/kustomize-best-practices/) meant for a repository-based organization of Kustomize projects. I will base the folder structures for the Kustomize projects shown in this and upcoming chapters on what is indicated in the "best practices" article.
+It is better to treat each deployment as an independent project with its own folder structure. On this regard, there is the _overlay_ model [shown in the official introduction to Kustomize](https://kubectl.docs.kubernetes.io/guides/introduction/kustomize/#2-create-variants-using-overlays), but also there is [another one in this "best practices" article](https://www.openanalytics.eu/blog/2021/02/23/kustomize-best-practices/) meant for a repository-based organization of Kustomize projects. This guide bases the folder structures for the Kustomize projects shown in this and upcoming chapters on what is indicated in the "best practices" article.
 
 Therefore, begin by creating a folder structure for your MetalLB deployment files as follows:
 
@@ -99,10 +99,10 @@ Therefore, begin by creating a folder structure for your MetalLB deployment file
 $ mkdir -p $HOME/k8sprjs/metallb/resources
 ~~~
 
-Notice that I have created a structure of three nested folders:
+The command creates a structure of three nested folders:
 
 - `k8sprjs`\
-  Where this MetalLB and the other Kustomize projects of this guide will be kept.
+  Some sort of "root" folder where the MetalLB and all the other Kustomize projects of this guide will be kept.
 
 - `metallb`\
   For the MetalLB deployment Kustomize project itself.
@@ -142,7 +142,7 @@ First, prepare the resource that sets the operation mode of your MetalLB service
 
     This manifest sets the desired configuration to MetalLB:
 
-    - The kind `L2Advertisement` sets the mode used as L2. Notice that you need to use a specific MetalLB (not Kubernetes standard) kind of resource to set the operation mode of MetalLB, not just adjust some parameter.
+    - The kind `L2Advertisement` sets the mode used as L2. You need to use a specific MetalLB (not Kubernetes standard) kind of resource to set the operation mode of MetalLB rather than just adjusting some parameter.
 
     - The `spec.ipAddressPool` parameter points to the pools of usable IPs. In this case, it is just one pool named `default-pool` you will declare right after this `L2Advertisement` object.
 
@@ -174,7 +174,7 @@ Like with [the operation mode](#operation-mode-l2advertisement), MetalLB uses it
 
     - The kind `IPAddressPool` indicates that this is a MetalLB pool of IP addresses.
 
-    - The name is the same `default-pool` one indicated in the `l2-ip.l2advertisement.metallb.yaml`.
+    - The name is the same `default-pool` indicated in the `l2-ip.l2advertisement.metallb.yaml`.
 
     - The `spec.addresses` parameter is a list of IP ranges that can be expressed in different ways. This is useful when you do not have a big continuous range of IPs available in your network. For instance, you could have configured the `default-pool` IP range as:
 
@@ -221,7 +221,7 @@ To put together the resources declared earlier with the official manifest descri
 
     - The `resources` section lists the files describing the resources used to deploy MetalLB:
 
-      - The first item points to the official `Kustomization` declaration of MetalLB. Notice how the url also specifies which version of MetalLB to deploy: `ref=v0.15.2`.
+      - The first item points to the official `Kustomization` declaration of MetalLB. Notice how the URL also specifies which version of MetalLB to deploy: `ref=v0.15.2`.
 
       - The other two items point to the local YAML files you have created previously to declare the alloted IP range for MetalLB.
 
@@ -233,7 +233,7 @@ You can check how the final deployment looks like as a YAML manifest with `kubec
 $ kubectl kustomize $HOME/k8sprjs/metallb/ | less
 ~~~
 
-With the `kustomize` option, `kubectl` builds the whole deployment YAML manifest resulting from processing the `kustomization.yaml` file. Since the output can be quite long, better to append a `| less` (`less` or some other text editor of your choice) to the command for getting a paginated view of the YAML. The command takes a moment to finish because it has to download the MetalLB manifest first, then process and combine it with the other resource files found in your client system. When you finally see the result, you will get a quite long YAML output that embeds the resources you declared together with the others required in the MetalLB deployment. In particular, your L2Advertisement and IPAddressPool objects should look like this:
+With the `kustomize` option, `kubectl` builds the whole deployment YAML manifest resulting from processing the `kustomization.yaml` file. Since the output can be quite long, better to append a `| less` (or some other text editor of your choice) to the command for getting a paginated view of the YAML. The command takes a moment to finish because it has to download the MetalLB manifest first, then process and combine it with the other resource files found in your client system. When you finally see the result, you will get a quite long YAML output that embeds the resources you declared together with the others required in the MetalLB deployment. In particular, your `L2Advertisement` and `IPAddressPool` objects should look like this:
 
 ~~~yaml
 ---
@@ -261,13 +261,13 @@ Furthermore, you may also notice in the resulting YAML that MetalLB is prepared 
 
 ### Deploying MetalLB
 
-Now that you have your Kustomize project ready, you're just one command away from deploying MetalLB:
+Now that you have your Kustomize project ready, you are just one command away from deploying MetalLB:
 
 ~~~sh
 $ kubectl apply -k $HOME/k8sprjs/metallb/
 ~~~
 
-This command automatically looks for a `kustomization.yaml` file in the folder you specify. Then, `kubectl` builds the whole deployment output like with the `kustomize` option but, instead of displaying it, `kubectl` takes that YAML and directly applies it on your Kubernetes cluster. In this case, the `kubectl` command will return an output like the following.
+This command automatically looks for a `kustomization.yaml` file in the folder you specify. Then, `kubectl` builds the whole deployment output like with the `kustomize` option but, instead of displaying it, `kubectl` takes that YAML and directly applies it on your Kubernetes cluster. In this case, the `kubectl` command will return an output like the following:
 
 ~~~sh
 namespace/metallb-system created
@@ -305,7 +305,7 @@ The lines inform about the resources created by your deployment. They could also
 > **The deployment in the cluster may be successful, but the deployed service may have issues**\
 > Even if you do not get a lot of warnings or, worse, errors, the deployment may not have been truly successful due to issues that go beyond what Kubernetes can detect, like configuration problems specific to the deployed service.
 
-Give MetalLB a couple of minutes to get ready, then check with `kubectl` that it has been deployed in your cluster.
+Give MetalLB a couple of minutes to get ready, then check with `kubectl` that it has been deployed in your cluster:
 
 ~~~sh
 $ kubectl get -n metallb-system all -o wide
@@ -329,7 +329,7 @@ replicaset.apps/controller-58fdf44d87   1         1         1       15m   contro
 
 ~~~
 
-The MetalLB resources are all under the `metallb-system` namespace. On the other hand, you can already see the effect on your existing services of having this load balancer running in the K3s cluster.
+The MetalLB resources are all under the `metallb-system` namespace. On the other hand, you can already see the effect on your existing services of having this load balancer running in the K3s cluster:
 
 ~~~sh
 $ kubectl get svc -A
@@ -384,9 +384,10 @@ You can find the Kustomize project for this MetalLB deployment in the following 
 
 ### [Kustomize](https://kustomize.io/)
 
-- [SIG CLI.](https://kubectl.docs.kubernetes.io/)
-  - [Guides](guides/)
+- [SIG CLI. Guides and API References for Kubectl and Kustomize](https://kubectl.docs.kubernetes.io/)
+  - [Guides](https://kubectl.docs.kubernetes.io/guides/)
     - [Introduction. Kustomize](https://kubectl.docs.kubernetes.io/guides/introduction/kustomize/)
+  
   - [Reference](https://kubectl.docs.kubernetes.io/references/)
     - [kustomization. The Kustomization File](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/)
 
