@@ -27,13 +27,13 @@ In particular, the embedded metrics-server comes with a default configuration th
 
 ## Checking the metrics-server's manifest
 
-First you would need to check out the manifest used for deploying the metrics-server and see where you have to apply the required change. This also means that you have to be aware of which version you're going to deploy in your cluster. K3s `v1.33.4+k3s1` comes with the `v0.8.0` release of metrics-server which is, at the time of writing this, also happens to be the latest version available.
+First you would need to check out the manifest used for deploying the metrics-server and see where you have to apply the required change. This also means that you have to be aware of which version you are going to deploy in your cluster. K3s `v1.33.4+k3s1` comes with the `v0.8.0` release of metrics-server which, at the time of writing this, happens to be the latest version available.
 
 > [!IMPORTANT]
 > **Ensure the service's version is compatible with your cluster's Kubernetes version**\
 > Each release of any service comes with their own particularities regarding compatibilities, in particular with your cluster's Kubernetes engine. Always check that the release of any software you want to deploy in your cluster is compatible with the Kubernetes version running your cluster. This detail is more important in particular with applications that work with the Kubernetes API.
 
-Download the `components.yaml` manifest for metrics-server `v0.8.0` from the **Assets** section found [at this Github release page](https://github.com/kubernetes-sigs/metrics-server/releases/tag/v0.8.0). Open it and look for the `Deployment` object declared in it:
+Download the `components.yaml` manifest for metrics-server `v0.8.0` from the _Assets_ section found [at this Github release page](https://github.com/kubernetes-sigs/metrics-server/releases/tag/v0.8.0). Open it and look for the `Deployment` object declared in it:
 
 ~~~yaml
 ---
@@ -116,7 +116,7 @@ This is the object you need to modify to adapt metrics-server to your particular
 
 ## Deployment of metrics-server
 
-As you did with MetalLB in the [previous **G027** chapter](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md#deploying-metallb-on-your-k3s-cluster), you are going to use a Kustomize project to deploy the metrics-server in your cluster.
+As you did with MetalLB in the [previous chapter **G027**](G027%20-%20K3s%20cluster%20setup%2010%20~%20Deploying%20the%20MetalLB%20load%20balancer.md#deploying-metallb-on-your-k3s-cluster), you are going to use a Kustomize project to deploy the metrics-server in your cluster.
 
 ### Preparing the Kustomize folder structure
 
@@ -128,7 +128,7 @@ Create the folder structure to hold the Kustomize project for your metrics-serve
     $ mkdir -p $HOME/k8sprjs/metrics-server/patches
     ~~~
 
-    In the command above you can see that, inside the `metrics-server` folder, I have created a `patches` one. The idea is to patch the default configuration of the service by adding a couple of parameters.
+    In the command above you can see that, inside the `metrics-server` folder, there is also a `patches` one. The idea is to patch the default configuration of the service by adding a couple of parameters.
 
 ### Patch for the metrics-server deployment
 
@@ -140,7 +140,7 @@ The patch to apply to the metrics-server deployment is some sort of "partial" ma
     $ touch $HOME/k8sprjs/metrics-server/patches/metrics-server.deployment.patch.yaml
     ~~~
 
-    This file will contain only the patch to modify the metrics-server deployment object.
+    This file will only contain the patch to modify the metrics-server deployment object.
 
 2. Declare in `metrics-server.deployment.patch.yaml` the patch for the metrics-server deployment:
 
@@ -181,7 +181,7 @@ The patch to apply to the metrics-server deployment is some sort of "partial" ma
       Under this section are configured certain parameters that affect how the metric-server service runs:
 
       - `--cert-dir`\
-        The directory where the TLS certs are located for this service. Here set to a temporary folder, proper for a containerized service.
+        The directory where the TLS certs are located for this service. Here is set to a temporary folder, proper for a containerized service.
 
       - `--secure-port`\
         The port on which to serve HTTPS with authentication and authorization. Here is set to the same one used to connect to kubelets.
@@ -233,7 +233,7 @@ The Kustomize manifest of the metrics-server deployment is also where you specif
 
     Notice that:
 
-    - In the `resources` list you have the URL to the `components.yaml` file, although you could reference here the downloaded file too.
+    - In the `resources` list you have the URL to the official `components.yaml` file of the metrics-server, although you could reference here the downloaded file too.
 
     - The `patches` section is where you specify all the patches you want to apply over the resources you deploy in the Kustomize project. This section supports different ways to declare and apply patches on resources, [check them out in its official Kubernetes documentation](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/patches/). The method used here is probably the cleanest one, since it only needs specifying the path to the patch file.
 
@@ -407,7 +407,7 @@ You can find the Kustomize project for this metrics-server deployment in the fol
 
 ### [Kubernetes](https://kubernetes.io/)
 
-- [Reference. Kustomize](https://kubectl.docs.kubernetes.io/references/kustomize/)
+- [SIG CLI. Reference. Kustomize](https://kubectl.docs.kubernetes.io/references/kustomize/)
   - [kustomization. patches](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/patches/)
 
 - [Kubernetes Documentation. Concepts](https://kubernetes.io/docs/concepts/)
