@@ -22,7 +22,7 @@ At this point of the guide, you can monitor the resource usages in your setup in
   It is important that you also see the usage values from within your Proxmox VE host and VMs, because they are more fine grained and can indicate you better how resources are being used.
 
 - **The `kubectl top` command**\
-  This gives you the view on resources usage from within your K3s cluster.
+  Gives you the view on resources usage from within your K3s cluster.
 
 - **Headlamp**\
   The Headlamp dashboard you deployed in the [previous chapter **G031**](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md) offers a resources usage overview in its main `Clusters` page.
