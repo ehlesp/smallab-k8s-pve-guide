@@ -33,9 +33,9 @@ $ sudo apt install -y curl
 
 ## Getting the right version of `kubectl`
 
-The first thing you must know is the version of the K3s cluster you're going to connect to. This is important because `kubectl` is guaranteed to be compatible only with its own correlative version or those that are at one _minor_ version of difference from it.
+The first thing you must know is the version of the K3s cluster you are going to connect to. This is important because `kubectl` is guaranteed to be compatible only with its own correlative version or those that are at one _minor_ version of difference from it.
 
-For instance, at the time of writing this chapter, the latest `kubectl` _minor_ version is 1.34, meaning that it's compatible with the 1.33, 1.34 and 1.35 versions of the Kubernetes api. K3s follows the same versioning system, since it is "just" a particular distribution of Kubernetes.
+For instance, at the time of writing this chapter, the latest `kubectl` _minor_ version is 1.34, meaning that it has guaranteed compatibility with the 1.33, 1.34 and 1.35 versions of the Kubernetes api. K3s follows the same versioning system, since it is "just" a particular distribution of Kubernetes.
 
 Open a shell to your `k3sserver01` server node and check your K3s software version with this `k3s` command:
 
@@ -51,9 +51,9 @@ To know which is the latest stable release of Kubernetes, check [this `stable.tx
 
 ## Installing `kubectl` on your client system
 
-Your client system has to be prepared before you can install the `kubectl` command in it. First of all, **do not install `kubectl` with a software manager like apt or yum**. This is to avoid that a regular update changes your version of the command to an uncompatible one with your cluster, or not being able to upgrade `kubectl` because some reason of other. So, better make a manual, non system-wide installation of `kubectl` in your client computer.
+Your client system has to be prepared before you can install the `kubectl` command in it. First of all, **do not install `kubectl` with a software manager like apt or yum**. This is to avoid that a regular update changes your version of the command to an uncompatible one with your cluster, or not being able to upgrade `kubectl` because some reason of other. Better make a manual, non system-wide installation of `kubectl` in your client computer.
 
-Said that, let's proceed with this manual installation of `kubectl`:
+Said that, proceed with this manual installation of `kubectl`:
 
 1. Get into your Linux client system as your preferred user and open a shell terminal in it. Then, remaining in the $HOME directory of your user, execute the following `mkdir` command:
 
@@ -82,7 +82,7 @@ Said that, let's proceed with this manual installation of `kubectl`:
     kubectl
     ~~~
 
-3. Adjust the kubectl file permissions to make your current user the only one who can execute it:
+3. Adjust the `kubectl` file permissions to make your current user the only one who can execute it:
 
     ~~~sh
     $ chmod 700 $HOME/bin/kubectl
@@ -94,7 +94,7 @@ At this point, **DO NOT execute the `kubectl` command yet!** You still need to g
 
 The configuration file you need is inside the server node of your K3s cluster:
 
-1. Get into your K3s cluster's server node, and open the `/etc/rancher/k3s/k3s.yaml` file in it. It should look like this:
+1. Get into your K3s cluster's server node, then open the `/etc/rancher/k3s/k3s.yaml` file in it. It should look like this:
 
     ~~~yaml
     apiVersion: v1
@@ -137,7 +137,7 @@ The configuration file you need is inside the server node of your K3s cluster:
       $ touch $HOME/.kube/config ; chmod 640 $HOME/.kube/config
       ~~~
 
-3. Edit the `config` file and edit the `server:` line present there. You'll have to replace the url with the external IP and port of the K3s server node from which you got the configuration file. For instance, it could be `https://10.4.1.1:6443` (the `k3sserver01` node in this guide):
+3. Edit the `config` file and edit the `server:` line present there. You have to replace the URL with the external IP and port of the K3s server node from which you got the configuration file. For this guide, it has to be `https://10.4.1.1:6443` which corresponds to the `k3sserver01` node created in the previous [chapter **G025**](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#k3s-server-node-setup):
 
     ~~~yaml
     ...
@@ -149,9 +149,9 @@ The configuration file you need is inside the server node of your K3s cluster:
 
 ## Opening the `6443` port in the K3s server node
 
-This is the moment for opening the `6443` port on the external IPs of your K3s server node:
+This is the moment for opening the `6443` port on the external IP of your K3s server node:
 
-1. Login into your Proxmox VE web console, then browse to the `Datacenter > Firewall > Security Group` page. Add to the `k3s_srvrs_net0_in` security group the following rule.
+1. Login into your Proxmox VE web console, then browse to the `Datacenter > Firewall > Security Group` page. Add to the `k3s_srvrs_net0_in` security group the following rule:
 
     - Type `in`, Action `ACCEPT`, Protocol `tcp`, Source `local_network_ips`, Dest. port `6443`, Comment `K3s API server port open externally for LAN kubectl clients`.
 
@@ -196,7 +196,7 @@ If you are using bash in your client system, you can enable the bash autocomplet
 
 ## Validate Kubernetes configuration files with `kubeconform`
 
-Since from now on you're going to deal with Kubernetes configuration files, you would like to know if they're valid before applying them in your K3s cluster. To help you with this task, there is a command line tool called [**kubeconform**](https://github.com/yannh/kubeconform) that you can install in your `kubectl` client system [as follows](https://github.com/yannh/kubeconform?tab=readme-ov-file#Installation).
+Since from now on you are going to deal with Kubernetes configuration files, you would like to know if they are valid before applying them in your K3s cluster. To help you with this task, there is a command line tool called [`kubeconform`](https://github.com/yannh/kubeconform) that you can install in your `kubectl` client system [as follows](https://github.com/yannh/kubeconform?tab=readme-ov-file#Installation).
 
 1. Download the compressed package containing the executable in your `$HOME/bin` directory (which you created already during the `kubectl` setup):
 
@@ -255,15 +255,16 @@ Since from now on you're going to deal with Kubernetes configuration files, you 
 
 ### [Kubernetes](https://kubernetes.io/)
 
-- [Install and Set Up kubectl on Linux](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
+- [Kubernetes Documentation. Tasks](https://kubernetes.io/docs/tasks/)
+- [Install Tools. Install and Set Up kubectl on Linux](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
 
-### [K3s](https://docs.k3s.io/)
+### [K3s](https://k3s.io/)
 
-- [Cluster Access](https://docs.k3s.io/cluster-access)
+- [Docs. Cluster Access](https://docs.k3s.io/cluster-access)
 
 ### [kubeconform](https://github.com/yannh/kubeconform)
 
-- [Installation](https://github.com/yannh/kubeconform?tab=readme-ov-file#Installation)
+- [README. Installation](https://github.com/yannh/kubeconform#Installation)
 
 ## Navigation
 
