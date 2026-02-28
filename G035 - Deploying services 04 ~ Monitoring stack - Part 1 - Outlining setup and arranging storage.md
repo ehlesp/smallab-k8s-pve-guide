@@ -27,7 +27,7 @@
 
 ## Improve your K3s cluster's observability with a Prometheus-based monitoring stack
 
-If you have applied everything explained in this guide up to this point, your homelab setup will have a number of monitoring tools running in it. I am talking about the [Traefik dashboard](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md) and [Headlamp](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md), but also the logs and the metrics available in the Proxmox console or through `kubectl`. Also, do not forget all the commands available in the virtual machines running your cluster, like `htop`.
+If you have applied everything explained in this guide up to this point, your homelab setup already has a number of monitoring tools running in it. In particular, you have the [Traefik dashboard](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md) and [Headlamp](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md), but also the logs and metrics available in the Proxmox console or through `kubectl`. Also, do not forget all the commands available in the virtual machines running your cluster, like `htop`.
 
 Still, there are certain metrics that you cannot observe with any of those tools. Those metrics are the ones provided by all the services part of the [Ghost](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md) and [Forgejo](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md) platforms, and are all provided in a Prometheus-compatible format. In other words, you need to deploy a Prometheus-based monitoring stack in your cluster to cover all those metrics that you cannot monitor with the observability tools you have already present in your homelab.
 
@@ -36,7 +36,7 @@ Still, there are certain metrics that you cannot observe with any of those tools
 The very first thing to do is identifying which components you need in your monitoring stack. In this guide, those components will be these:
 
 - **Prometheus**\
-  Open-source monitoring framework ready for Kubernetes. Prometheus will be the core of your monitoring stack, on which all the other monitoring components you will deploy with this guide will be centered around. Again, Prometheus is fundamental because the metrics you cannot see yet are all Prometheus-compatible ones.
+  Open-source monitoring framework ready for Kubernetes. Prometheus is going to be the core of your monitoring stack, on which all the other monitoring components deployed with this guide will be centered around. Again, Prometheus is fundamental because the metrics you cannot see yet are all Prometheus-compatible ones.
 
 - **Kube State Metrics**\
   Service that provides details from all the Kubernetes API objects present in a Kubernetes cluster, but that are not accessible through the native Kubernetes monitoring components. In other words, is an agent that gets cluster-level metrics and exposes them in a Prometheus-compatible `/metrics` endpoint.
@@ -55,10 +55,10 @@ The very first thing to do is identifying which components you need in your moni
 
 ### Determining storage needs for the monitoring stack
 
-You need to identify which monitoring components will require storage space:
+You need to identify which monitoring components require storage space:
 
 - **Prometheus**\
-  Since it will act as a data source for metrics, it will need some storage space where to retain, temporarily, the metrics it scrapes from your K3s cluster.
+  Since it  acts as a data source for metrics, it needs some storage space where to retain, temporarily, the metrics it scrapes from your K3s cluster.
 
 - **Grafana**\
   Requires a small storage space for configuration and user management purposes.
@@ -67,7 +67,7 @@ As you see, you need to create two different storage volumes, one per each servi
 
 ### Choosing the K3s agent node
 
-To balance things out, you want to run Prometheus in one of your K3s agent nodes and Grafana in the remaining one. To do this, use again the affinity rules applied to persistent volumes you have seen before. By using that technique, this guide will make Grafana always run in the `k3sagent01` node and Prometheus in the `k3sagent02` node.
+To balance things out, you want to run Prometheus in one of your K3s agent nodes and Grafana in the remaining one. To do this, use again the affinity rules applied to persistent volumes you have seen before. By using that technique, this guide makes Grafana always run in the `k3sagent01` node and Prometheus in the `k3sagent02` node.
 
 ## Setting up new storage drives in the K3s agents
 
@@ -228,7 +228,7 @@ Get into your `k3sagent01` through a remote shell and do the following:
       /dev/sdd1              lvm2 ---   <2.00g <2.00g
     ~~~
 
-5. Assign a volume group to this new PV, knowing that this volume will be for Grafana, which will be deployed in your cluster in the `monitoring` namespace. So, execute `vgcreate` as shown next:
+5. Assign a volume group to this new PV, knowing that this volume is reserved for Grafana, which will be deployed in your cluster in the `monitoring` namespace. So, execute `vgcreate` as shown next:
 
     ~~~sh
     $ sudo vgcreate monitoring-ssd /dev/sdd1
@@ -363,7 +363,7 @@ Open a remote shell in your `k3sagent02` VM and follow these steps:
     I/O size (minimum/optimal): 512 bytes / 512 bytes
     ~~~
 
-    In the `k3sagent02` is where Ghost was deployed, so you will see listed all the storage related to it. The new SSD drive is the `/dev/sdd` one, which appears at the end of the output above.
+    In the `k3sagent02` is where Ghost was deployed, so you can see listed all the storage related to it. The new SSD drive is the `/dev/sdd` one, which appears at the end of the output above.
 
 2. Create a new GPT partition on the new storage drives with `sgdisk`:
 
@@ -408,7 +408,7 @@ Open a remote shell in your `k3sagent02` VM and follow these steps:
       /dev/sdd1             lvm2 ---  <10.00g <10.00g
     ~~~
 
-5. Assign a volume group to the new PV with `vgcreate`. Remember that this volume will be for Prometheus, which will be deployed in your cluster in the `monitoring` namespace. So, execute `vgcreate` like this:
+5. Assign a volume group to the new PV with `vgcreate`. Remember that this volume is going to be for Prometheus, which will be deployed in your cluster in the `monitoring` namespace. So, execute `vgcreate` like this:
 
     ~~~sh
     $ sudo vgcreate monitoring-ssd /dev/sdd1
@@ -508,7 +508,7 @@ Get back into the remote shell connected to your `k3sagent01` VM and do this:
     $ sudo mount /dev/mapper/monitoring--ssd-grafana--data /mnt/monitoring-ssd/grafana-data
     ~~~
 
-    Check with `df` that it has been mounted correctly. You will find it listed at the bottom of the command's output:
+    Check with `df` that it has been mounted correctly. You can find it listed at the bottom of the command's output:
 
     ~~~sh
     $ df -h
@@ -649,7 +649,7 @@ The last step regarding the storage setup is to create an extra folder serving a
 
 Return to the `k3sagent01` remote shell and follow these steps:
 
-1. Make a `k3smnt` folder **within** the `grafana-data` LV you've just created and mounted:
+1. Make a `k3smnt` folder **within** the `grafana-data` LV you have just created and mounted:
 
     ~~~sh
     $ sudo mkdir /mnt/monitoring-ssd/grafana-data/k3smnt
@@ -673,7 +673,7 @@ Return to the `k3sagent01` remote shell and follow these steps:
 
 Go back to the `k3sagent02` remote shell and do this:
 
-1. Make a `k3smnt` folder within the `prometheus-data` LV you've just created:
+1. Make a `k3smnt` folder within the `prometheus-data` LV you have just created:
 
     ~~~sh
     $ sudo mkdir /mnt/monitoring-ssd/prometheus-data/k3smnt
@@ -699,7 +699,7 @@ Go back to the `k3sagent02` remote shell and do this:
 
 ### About increasing the storage volume's size
 
-After some time, your monitoring services may end being close to fill up their storage space, so you will need to increase their size. Read the [**G907** appendix guide](G907%20-%20Appendix%2007%20~%20Resizing%20a%20root%20LVM%20volume.md) to know how. It shows you how to extend a partition and the LVM filesystem within it, although in that case it works on a LVM volume that happens to be also the root filesystem of a VM.
+After some time, your monitoring services may end being close to fill up their storage space. Therefore, you will need to increase their size. Read the [appendix chapter **G905**](G905%20-%20Appendix%2005%20~%20Resizing%20a%20root%20LVM%20volume.md) to know how. It shows you how to extend a partition and the LVM filesystem within it, although in that case it works on a LVM volume that happens to be also the root filesystem of a VM.
 
 ## Relevant system paths
 

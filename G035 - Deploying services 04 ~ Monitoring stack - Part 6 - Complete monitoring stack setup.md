@@ -1315,7 +1315,7 @@ With the main Kustomize project's YAML output validated, proceed to deploy the m
 
 ## Checking on Prometheus
 
-With your monitoring stack deployed and running, you can try browsing to the web interface of your Prometheus server. In this guide's case, you would browse to `https://prometheus.homelab.cloud`. Prometheus will request your authentication directly through your browser:
+With your monitoring stack deployed and running, you can try browsing to the web interface of your Prometheus server. In this guide's case, you would browse to `https://prometheus.homelab.cloud`. Prometheus requests your authentication directly through your browser:
 
 ![Prometheus basic authorization login form](images/g035/prometheus_basic_auth_login_form.webp  "Prometheus basic authorization login form")
 
@@ -1339,7 +1339,7 @@ See above how the [four alert rules set up in the Prometheus server configuratio
 
 ![Red alerts firing in Alerts tab of Prometheus dashboard](images/g035/prometheus_dashboard_alerts_page_red_alerts_firing.webp "Red alerts firing in Alerts tab of Prometheus dashboard")
 
-I have unfolded the first firing red alert to give you an idea of the details these alerts can give you. In this case, the two alerts are related and are about a problem with the job that scrapes the Prometheus metrics. This happened due to an error on my part, where I forgot to add to the job the basic authentication required to access Prometheus via HTTP. With the problem solved, all the alerts where shown green:
+The first firing red alert is unfolded to give you an idea of the details these alerts can give you. In this case, the two alerts are related and are about a problem with the job that scrapes the Prometheus metrics. This happened due to an error, where it was forgotten to add the basic authentication required to access Prometheus via HTTP to the job. With the problem solved, all the alerts where shown green:
 
 ![All alerts green in Alerts tab of Prometheus dashboard](images/g035/prometheus_dashboard_alerts_page_all_alerts_green.webp "All alerts green in Alerts tab of Prometheus dashboard")
 
@@ -1353,15 +1353,15 @@ Grafana is running in your K3s cluster but is still lacking some configuring so 
 
 Browse to your Grafana server's URL, which in this guide is `https://grafana.homelab.cloud`:
 
-1. You will get to Grafana's login page:
+1. You reach the Grafana's login page:
 
     ![Grafana login page](images/g035/grafana_login_page.webp "Grafana login page")
 
-2. Enter `admin` as username and also as password. Right after login you will be asked to change the password. Do it or skip this step altogether:
+2. Enter `admin` as username and also as password. Right after login you ares asked to change the password. Do it or skip this step altogether:
 
     ![Grafana change password page](images/g035/grafana_change_password_page.webp "Grafana change password page")
 
-3. After login successfully you will get into your Grafana's `Home` dashboard:
+3. After login successfully you get into your Grafana's `Home` dashboard:
 
     ![Grafana Home dashboard](images/g035/grafana_home_dashboard_default.webp "Grafana Home dashboard")
 
@@ -1369,7 +1369,7 @@ Browse to your Grafana server's URL, which in this guide is `https://grafana.hom
 
 ### Adding the Prometheus data source
 
-The very first thing you must configure is the connection to a data source from which Grafana can get data to show. In this case you will make a connection with your Prometheus server:
+The very first thing you must configure is the connection to a data source from which Grafana can get data to show. Here you will configure a connection with your Prometheus server:
 
 1. Click on the menu button found at the upper left side of the Grafana dashboard:
 
@@ -1383,7 +1383,7 @@ The very first thing you must configure is the connection to a data source from 
 
     ![Grafana Connections page with Add new connection option highlighted](images/g035/grafana_connections_add_new_conn.webp "Grafana Connections page with Add new connection option highlighted")
 
-4. In the `Add new connection` page, you will have to wait a moment for it to load the list of all plugins you could potentially use in your Grafana setup:
+4. In the `Add new connection` page, you have to wait a moment for it to load the list of all plugins you could potentially use in your Grafana setup:
 
     ![Grafana Connections Add new connection page showing list of all plugins](images/g035/grafana_connections_add_new_conn_page_all_plugins.webp "Grafana Connections Add new connection page showing list of all plugins")
 
@@ -1395,7 +1395,7 @@ The very first thing you must configure is the connection to a data source from 
 
     ![Grafana Connections Add new connection Prometheus plugin overview](images/g035/grafana_connections_add_new_conn_page_prom_plugin_overview.webp "Grafana Connections Add new connection Prometheus plugin overview")
 
-7. You will reach the form where to setup the connection to your Prometheus server:
+7. You reach the form where to setup the connection to your Prometheus server:
 
     ![prometheus data source Settings form under Connections Data sources section](images/g035/grafana_connections_data_src_prometheus_settings_form.webp "prometheus data source Settings form under Connections Data sources section")
 
@@ -1405,7 +1405,7 @@ The very first thing you must configure is the connection to a data source from 
       Type some significant string here, like `Prometheus Homelab Cloud server`.
 
     - In the `Connection` section, `Prometheus server URL`\
-      Specify the internal absolute FQDN of your Prometheus service with the port concatenated after it. For this guide, the valid URL will be:
+      Specify the internal absolute FQDN of your Prometheus service with the port concatenated after it. For this guide, the valid URL is:
 
       ~~~http
       http://server-prometheus.monitoring.svc.homelab.cluster.:9090
@@ -1434,7 +1434,7 @@ Now you have an active Prometheus data source, but you still need a dashboard to
 
     ![Prometheus data source form Dashboards tab highlighted](images/g035/grafana_prometheus_ds_form_dashboard_tab.webp "Prometheus data source form Dashboards tab highlighted")
 
-    You will get to see the following list of dashboards:
+    You can see the following list of dashboards:
 
     ![Prometheus data source form dashboards list](images/g035/grafana_prometheus_ds_form_dashboard_list.webp "Prometheus data source form dashboards list")
 
@@ -1442,7 +1442,7 @@ Now you have an active Prometheus data source, but you still need a dashboard to
 
     ![Prometheus data source dashboard Prometheus 2.0 Stats highlighted](images/g035/grafana_prometheus_ds_form_dashboard_prom_v2.webp "Prometheus data source dashboard Prometheus 2.0 Stats highlighted")
 
-    The action should be immediate, and the item will switch its `Import` button for a `Re-import` one as a result:
+    The action should be immediate, and the item switches its `Import` button for a `Re-import` one as a result:
 
     ![Prometheus data source dashboard Prometheus 2.0 stats imported](images/g035/grafana_prometheus_ds_form_dashboard_prom_v2_imported.webp "Prometheus data source dashboard Prometheus 2.0 stats imported")
 
@@ -1450,7 +1450,7 @@ Now you have an active Prometheus data source, but you still need a dashboard to
 
     ![Grafana side menu with Dashboards option highlighted](images/g035/grafana_side_menu_dashboards_option.webp "Grafana side menu with Dashboards option highlighted")
 
-    You will get to a page listing the dashboards enabled in your Grafana setup. At this point, you will only see your newly imported `Prometheus 2.0 Stats` dashboard:
+    You get to a page listing the dashboards enabled in your Grafana setup. At this point, you can only see your newly imported `Prometheus 2.0 Stats` dashboard:
 
     ![Grafana enabled dashboards list](images/g035/grafana_enabled_dashboards_list.webp "Grafana enabled dashboards list")
 
@@ -1470,7 +1470,7 @@ Grafana comes with an integrated user authentication and management system. You 
 
 ![Users option in side menu under the Administration Users and access section](images/g035/grafana_admin_users_access_users_option.webp "Users option in side menu under the Administration Users and access section")
 
-Click on the `Users` option and you will reach the users management page of your Grafana setup:
+Click on the `Users` option to reach the users management page of your Grafana setup:
 
 ![Users management page found under the Administration Users and access section](images/g035/grafana_admin_users_access_users_management_page.webp "Users management page found under the Administration Users and access section")
 

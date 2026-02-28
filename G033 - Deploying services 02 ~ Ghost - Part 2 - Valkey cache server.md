@@ -740,7 +740,7 @@ With everything in place, you can check out the YAML resulting from the Ghost Va
 
     - Another detail to notice is how the label `app: cache-valkey` appears not only as label in the `metadata` section of all the resources, but Kustomize has also set it as `selector` both in the `Service` and the `StatefulSet` resources declarations.
 
-3. If you installed the `kubeconform` command in your `kubectl` client system (as explained in the [G026 guide](G026%20-%20K3s%20cluster%20setup%2009%20~%20Setting%20up%20a%20kubectl%20client%20for%20remote%20access.md#validate-kubernetes-configuration-files-with-kubeconform)), you can validate the Kustomize output with it. So, assuming you have dumped the output in a `cache-valkey.k.output.yaml` file, execute the following:
+3. If you installed the `kubeconform` command in your `kubectl` client system (as explained in the [chapter **G026**](G026%20-%20K3s%20cluster%20setup%2009%20~%20Setting%20up%20a%20kubectl%20client%20for%20remote%20access.md#validate-kubernetes-configuration-files-with-kubeconform)), you can validate the Kustomize output with it. So, assuming you have dumped the output in a `cache-valkey.k.output.yaml` file, execute the following:
 
     ~~~sh
     $ kubeconform -summary cache-valkey.k.output.yaml 

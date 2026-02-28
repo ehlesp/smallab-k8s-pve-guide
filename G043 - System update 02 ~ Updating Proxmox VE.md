@@ -119,7 +119,7 @@ On the other hand, you do not know how many times you will need to reboot the Pr
 
 ### Starting the masked spiceproxy service
 
-Back in the [chapter **G011**](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md), you disabled certain Proxmox VE services that are not necessary in a standalone PVE node as the one used in this guide. I also warned you [in the same guide](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md#errors-in-the-apt-upgrade-process) that some updates of Proxmox VE packages may expect certain services to be running and, if not, the update may warn of an error and not finish correctly.
+Back in the [chapter **G011**](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md), you disabled certain Proxmox VE services that are not necessary in a standalone PVE node as the one used in this guide. I also warned you [in the same chapter](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md#errors-in-the-apt-upgrade-process) that some updates of Proxmox VE packages may expect certain services to be running and, if not, the update may warn of an error and not finish correctly.
 
 In particular, the disabled `spiceproxy` service could raise a warning when updating the `pve-manager` package. If you do not want to risk unknown issues during or after the update, you can unmask and start it. Execute the following commands on a remote terminal opened on your Proxmox VE system as `mgrsys`:
 

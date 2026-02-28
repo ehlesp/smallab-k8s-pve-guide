@@ -46,7 +46,7 @@ Also, to secure the access to Prometheus' API and UI, Prometheus' basic authenti
 
 ### Configuration file `prometheus.yaml`
 
-The main configuration file for Prometheus is a YAML file for configuring the scraping jobs your Prometheus server will run. On the other hand, this file is also where you indicate to Prometheus which recording and alerting rule files to load and what alert manager services to use:
+The main configuration file for Prometheus is a YAML file for configuring the scraping jobs your Prometheus server will execute. On the other hand, this file is also where you indicate to Prometheus which recording and alerting rule files to load and what alert manager services to use:
 
 1. Create a `prometheus.yaml` file in the `configs` folder:
 
@@ -234,7 +234,7 @@ The main configuration file for Prometheus is a YAML file for configuring the sc
         How frequently Prometheus has to evaluate recording and alerting rules. Again, you should be careful of not making this time too short, specially if you are using many or particularly complex rules, or your system's performance could degrade noticeably.
 
     - `rule_files`\
-      List of files that hold the recording or alerting rules to apply on the Prometheus instance. The one present in this case is just an example, since this guide's Prometheus setup will not use rules.
+      List of files that hold the recording or alerting rules to apply on the Prometheus instance. The one present in this case is just an example, since this guide's Prometheus setup does not use rules.
 
     - `alerting`\
       This section is for configuring the connection to the Alertmanager instances where to send the alerts from this Prometheus instance. The configuration block shown in this file is just an example, since this Prometheus setup will not send alerts.
@@ -280,7 +280,7 @@ The main configuration file for Prometheus is a YAML file for configuring the sc
       - `prometheus-self`\
         This is the job that scrapes Prometheus' metrics directly from its localhost server process. With this job, you avoid requiring a more complex security setup just to grant Prometheus access to its own metrics through its service.
 
-        Since this Prometheus server will have enabled its basic authentication to secure its web access, this job will have to authenticate itself first before it can access the Prometheus server's metrics. This explains the need for a `basic_auth` section in this job. Notice that, while the username is indicated in this configuration file, the user's password is read from another `basic_auth.pwd` file that [you will declare later as a secret object](#secret-password-file-basic_authpwd). The user to specify here is one you will declare [in yet another secret file for configuring the web access into your Prometheus server](#secret-configuration-file-prometheuswebyaml).
+        Since this Prometheus server will have enabled its basic authentication to secure its web access, this job has to authenticate itself first before it can access the Prometheus server's metrics. This explains the need for a `basic_auth` section in this job. Notice that, while the username is indicated in this configuration file, the user's password is read from another `basic_auth.pwd` file that [you will declare later as a secret object](#secret-password-file-basic_authpwd). The user to specify here is one you will declare [in yet another secret file for configuring the web access into your Prometheus server](#secret-configuration-file-prometheuswebyaml).
 
       Notice that each of these scraping jobs have their own particularities, like a different `scrape_interval` or `relabel_configs` to suit their own needs. To know more about all those parameters, better check out the [official Prometheus documentation](https://prometheus.io/docs/prometheus/latest/configuration/configuration/).
 
@@ -357,7 +357,7 @@ In this guide, the `prometheus.rules.yaml` file contains a set of rules for aler
 
 ### Secret configuration file `prometheus.web.yaml`
 
-Enable your Prometheus' basic authentication by configuring it as indicated [in this official guide](https://prometheus.io/docs/guides/basic-auth/). This implies producing users with the `htpasswd` command [like you had to do for the Traefik dashboard](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md#creating-the-user-with-htpasswd). In this case, you need to create a user for each entity that will need access to Prometheus. Those entities are yourself, the job for scraping metrics, and Grafana (which [you will prepare in the next part of this chapter G035](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana%20server.md)):
+Enable your Prometheus' basic authentication by configuring it as indicated [in this official guide](https://prometheus.io/docs/guides/basic-auth/). This implies producing users with the `htpasswd` command [like you had to do for the Traefik dashboard](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md#creating-the-user-with-htpasswd). In this case, you need to create a user for each entity requiring access to Prometheus. Those entities are yourself, the job for scraping metrics, and Grafana (which [you will prepare in the next part of this chapter **G035**](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana%20server.md)):
 
 1. In your `kubectl` client system, use the `htpasswd` command to generate three users called `promuser`, `prometricsjob` and `grafuser` with their passwords hashed out with the BCrypt encryption:
 
@@ -456,7 +456,7 @@ In the [first part of this chapter G035](G035%20-%20Deploying%20services%2004%20
 
 ## Prometheus server ServiceAccount
 
-[Like the Kube State Metrics service](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%202%20-%20Kube%20State%20Metrics%20service.md#kube-state-metrics-serviceaccount), Prometheus requires a `ServiceAccount` to run its pods. Rather than using the `default` one that will exist in the `monitoring` namespace where your monitoring stack will be deployed, better declare one specific for your Prometheus instance:
+[Like the Kube State Metrics service](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%202%20-%20Kube%20State%20Metrics%20service.md#kube-state-metrics-serviceaccount), Prometheus requires a `ServiceAccount` to run its pods. Rather than using the `default` one that will exist in the `monitoring` namespace where your monitoring stack is going to be deployed, better declare one specific for your Prometheus instance:
 
 1. Create a `server-prometheus.serviceaccount.yaml` file in the `server-prometheus/resources/` folder:
 
@@ -531,7 +531,7 @@ You need to assign a role to the `server-prometheus` service account to grant it
 
 ## Prometheus server ClusterRoleBinding
 
-The `ClusterRole` you have just created before will not be enforced unless you bind it to a `ServiceAccount` or a set of them. Here you will bind it to [the `server-prometheus` service account declared earlier](#prometheus-server-serviceaccount):
+The `ClusterRole` you have just created before is not be enforced unless you bind it to a `ServiceAccount` or a set of them. Here you are going to bind it to [the `server-prometheus` service account declared earlier](#prometheus-server-serviceaccount):
 
 1. Produce a new `server-prometheus.clusterrolebinding.yaml` file in the `resources` directory:
 
@@ -673,7 +673,7 @@ Since your Prometheus server will store data, you better deploy it with a `State
       - The `args` section lists important Prometheus configuration parameters:
 
         - `--config.file`\
-          Points to the absolute path where the main Prometheus configuration file will be found.
+          Points to the absolute path where to find the main Prometheus configuration file.
 
         - `--web.config.file`\
           Path to the configuration file defining how the HTTP access into Prometheus works. Remember that, in this case, [it only specifies the list of users authorized to access Prometheus through basic authentication](#secret-configuration-file-prometheuswebyaml).
@@ -700,7 +700,7 @@ Since your Prometheus server will store data, you better deploy it with a `State
           The configuration file to enable the security options available in Prometheus to secure web accesses. In this case, it only enables the basic authentication of one user.
 
         - `basic_auth.pwd`\
-          The plain text file containing the password of the user assigned to the job that will read the Prometheus server's metrics.
+          The plain text file containing the password of the user assigned to the job of reading the Prometheus server's metrics.
 
         - `/prometheus`\
           Folder where Prometheus will keep the files for its retained metrics database.
@@ -737,7 +737,7 @@ To properly enable Prometheus in your cluster, you need to create its correspond
         protocol: TCP
     ~~~
 
-    This is a headless `Service` like all the others you have seen in previous chapters of this guide. Notice how this service also has the `prometheus.io` annotations to enable Prometheus to scrape its own metrics, although they will be ignored by the Prometheus `kubernetes-service-endpoints` job that scrapes these metrics. Instead, the Prometheus server's metrics will be scraped by a [specific `prometheus-self` job configured to connect with the Prometheus localhost server process directly](#configuration-file-prometheusyaml).
+    This is a headless `Service` like all the others you have seen in previous chapters of this guide. Notice how this service also has the `prometheus.io` annotations to enable Prometheus to scrape its own metrics, although they are going to be ignored by the Prometheus `kubernetes-service-endpoints` job that scrapes these metrics. Instead, the Prometheus server's metrics will be scraped by a [specific `prometheus-self` job configured to connect with the Prometheus localhost server process directly](#configuration-file-prometheusyaml).
 
     Since they are explicitly excluded by the `kubernetes-service-endpoints` job configuration, you can leave the `prometheus.io` annotations here. They still could be used by some other tool able to read Prometheus metrics. Also, it can be considered a good practice to annotate this Prometheus service like all the others you have declared up till now for consistency.
 
@@ -1304,11 +1304,11 @@ This Prometheus server cannot be deployed on its own because is missing several 
 - [GitHub. AWS. EKS Charts. Issues. prometheus: Unable to create mmap-ed active query log](https://github.com/aws/eks-charts/issues/21)
 - [GitHub. Files to accompany the How deploy Prometheus on Kubernetes video](https://github.com/shevyf/prom_on_k8s_howto)
 
-### [Kubernetes](https://kubernetes.io/docs/)
+### [Kubernetes](https://kubernetes.io/)
 
-- [Tasks. Configure Pods and Containers. Configure a Security Context for a Pod or Container](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
+- [Kubernetes Documentation. Tasks. Configure Pods and Containers. Configure a Security Context for a Pod or Container](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
 
-- [Reference. Kubernetes API. Workload Resources. Pod](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/)
+- [Kubernetes Documentation. Reference. Kubernetes API. Workload Resources. Pod](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/)
   - [Security context](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#security-context)
 
 ## Navigation

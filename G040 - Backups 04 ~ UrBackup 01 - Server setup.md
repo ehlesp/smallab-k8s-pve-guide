@@ -141,7 +141,7 @@ The LVM filesystem structure of this VM retains the same names as the VM templat
 
 #### Setting up the second network card
 
-The second network device, or virtual Ethernet card, in the new VM is disabled by default. You have to enable it and assign it a proper IP, so later it can communicate directly with the secondary virtual NICs of your K3s node VMs. Do this by following the instructions [in this particular section of the G024 guide](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md#setting-up-the-second-network-card), but configuring an available IP within the same range as the K3s nodes (`172.16.x.x`). In this guide, the IP for this secondary NIC will be `172.16.3.1`.
+The second network device, or virtual Ethernet card, in the new VM is disabled by default. You have to enable it and assign it a proper IP, so later it can communicate directly with the secondary virtual NICs of your K3s node VMs. Do this by following the instructions [in this particular section of the chapter **G024**](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md#setting-up-the-second-network-card), but configuring an available IP within the same range as the K3s nodes (`172.16.x.x`). In this guide, the IP for this secondary NIC will be `172.16.3.1`.
 
 #### Changing the password of mgrsys
 
