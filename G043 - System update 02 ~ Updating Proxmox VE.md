@@ -48,7 +48,7 @@ On the other hand, the Proxmox VE software is a collection of packages, each of 
 
 ![PVE node Summary tab Package versions button](images/g043/pve_summary_pkg_versions_btn.webp "PVE node Summary tab Package versions button")
 
-Click on this `Package versions` button, and first you will be greeted by the warning about not having a "valid subscription" (a paid one) for enterprise updates:
+Click on this `Package versions` button, and first you are greeted by the warning about not having a "valid subscription" (a paid one) for enterprise updates:
 
 > [!IMPORTANT]
 > **The `Package versions` button does not work when the `No valid subscription` is disabled**\
@@ -85,7 +85,7 @@ For the Proxmox VE `9.0` system updated in this guide, there is a jump to a new 
 - [About. Proxmox Virtual Environment 9.1 available](https://www.proxmox.com/en/about/company-details/press-releases/proxmox-virtual-environment-9-1)
 - [Forum. Annoucements. Proxmox Virtual Environment 9.1 available!](https://forum.proxmox.com/threads/proxmox-virtual-environment-9-1-available.176255/)
 
-Since this is a minor version part of the same major 9.x family, updating the Proxmox VE 9.0 system will be quite straightforward.
+Since this is a minor version part of the same major 9.x family, updating the Proxmox VE 9.0 system is quite straightforward.
 
 ## Updating Proxmox VE
 
@@ -119,7 +119,7 @@ On the other hand, you do not know how many times you will need to reboot the Pr
 
 ### Starting the masked spiceproxy service
 
-Back in the [chapter **G011**](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md), you disabled certain Proxmox VE services that are not necessary in a standalone PVE node as the one used in this guide. I also warned you [in the same chapter](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md#errors-in-the-apt-upgrade-process) that some updates of Proxmox VE packages may expect certain services to be running and, if not, the update may warn of an error and not finish correctly.
+Back in the [chapter **G011**](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md), you disabled certain Proxmox VE services that are not necessary in a standalone PVE node as the one used in this guide. You were also warned [in the same chapter](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md#errors-in-the-apt-upgrade-process) that some updates of Proxmox VE packages may expect certain services to be running and, if not, the update may warn of an error and not finish correctly.
 
 In particular, the disabled `spiceproxy` service could raise a warning when updating the `pve-manager` package. If you do not want to risk unknown issues during or after the update, you can unmask and start it. Execute the following commands on a remote terminal opened on your Proxmox VE system as `mgrsys`:
 
@@ -137,7 +137,7 @@ $ sudo apt update
 $ sudo apt upgrade
 ~~~
 
-Since in this case there are a lot of packages to update, it will take some minutes to finish. Stay put for any questions the upgrade process may ask you:
+Since in this case there are a lot of packages to update, it takes some minutes to finish. Stay put for any questions the upgrade process may ask you:
 
 ![PVE node remote terminal view of apt upgrade progress](images/g043/pve_shell_apt_upgrade_progress.webp "PVE node remote terminal view of apt upgrade progress")
 
@@ -151,37 +151,37 @@ Notice that now the version is `9.1.5` both in the name at the top bar and in th
 > **Some updates cannot be applied immediately**\
 > Although you can see certain updates as available, `apt` can hold them back. Do not worry about them, it means that some other update must arrive at a later date to allow them to be installed in the system.
 
-On the other hand, open a remote terminal with `mgrsys` on your Proxmox VE host and execute the following `apt` command.
+On the other hand, open a remote terminal with `mgrsys` on your Proxmox VE host and execute the following `apt` command:
 
 ~~~sh
 $ sudo apt autoremove
 ~~~
 
-This will clean up any files, like old kernel ones, that `apt` detects as not necessary to keep any more in the system and can be deleted.
+This cleans up any files, like old kernel ones, that `apt` detects as not necessary to keep any more in the system and can be deleted.
 
 ### Checking disabled services
 
-It is possible that an update could "resurrect" any of the services you disabled in the [chapter **G011**](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md). Or maybe they have been changed or even eliminated. Either way you want to check them out to see if they remain disabled and stopped, and you can do that just by checking them with `systemctl`. Below I leave you a quick command rundown for checking all those services.
+It is possible that an update could "resurrect" any of the services you disabled in the [chapter **G011**](G011%20-%20Host%20hardening%2005%20~%20Proxmox%20VE%20services.md). Or maybe they have been changed or even eliminated. Either way you want to check them out to see if they remain disabled and stopped, and you can do that just by checking them with `systemctl`. Below you have a quick command rundown for checking all those services:
 
-- **RPC services**, all related to NFS storage access.
+- **RPC services**, all related to NFS storage access:
 
     ~~~sh
     $ sudo systemctl status rpcbind.target rpcbind.socket rpcbind.service
     ~~~
 
-- **ZFS and CEPH services**.
+- **ZFS and CEPH services**
 
     ~~~sh
     $ sudo systemctl status zfs-mount.service zfs-share.service zfs-volume-wait.service zfs-zed.service zfs-import.target zfs-volumes.target zfs.target ceph-fuse.target
     ~~~
 
-- **SPICE proxy service**.
+- **SPICE proxy service**
 
     ~~~sh
     $ sudo systemctl status spiceproxy.service
     ~~~
 
-- **Proxmox VE High-Availability (HA) services**.
+- **Proxmox VE High-Availability (HA) services**
 
     ~~~sh
     $ sudo systemctl status pve-ha-crm pve-ha-lrm corosync
