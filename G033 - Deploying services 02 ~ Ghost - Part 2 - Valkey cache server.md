@@ -35,17 +35,17 @@
 
 ## You can use Valkey instead of Redis as caching server for Ghost
 
-This second part of the Ghost deployment procedure is where you begin working with the Kustomize project for the whole platform's setup. In particular, you will start by preparing the Kustomize subproject of the caching server for Ghost. The official Ghost documentation mentions [Redis](https://redis.io/), but it is possible to use [Valkey](https://valkey.io/) instead.
+This second part of the Ghost deployment procedure is where you begin working with the Kustomize project for the whole platform's setup. In particular, you will prepare the Kustomize subproject of the caching server for Ghost. The official Ghost documentation mentions [Redis](https://redis.io/), but it is possible to use [Valkey](https://valkey.io/) instead.
 
 ## Kustomize project folders for Ghost and Valkey
 
-You need a main Kustomize project for the deployment of your Ghost platform. In it, you will contain the subprojects for its components like the Valkey cache server. Start by executing the following `mkdir` command to create the necessary project folder structure for this part:
+You need a main Kustomize project for the deployment of your Ghost platform. It will contain the subprojects for its components like the Valkey cache server. Start by executing the following `mkdir` command to create the necessary project folder structure for this part:
 
 ~~~sh
 $ mkdir -p $HOME/k8sprjs/ghost/components/cache-valkey/{configs,resources,secrets}
 ~~~
 
-The main folder for the Valkey Kustomize subproject, `cache-valkey`, is named following the pattern `<component function>-<software name>` which this guide will use also to name the root directories for the remaining component subprojects. There is also a `configs`, a `resources` and a `secrets` subfolder to better differentiate between the YAML manifests declaring the Kubernetes resources from those related to configurations or secret.
+The main folder for the Valkey Kustomize subproject, `cache-valkey`, is named following the pattern `<component function>-<software name>` which this guide also uses to name the main directories for the remaining component subprojects. Furthermore, there is a `configs`, a `resources` and a `secrets` subfolder to better differentiate between the YAML manifests declaring the Kubernetes resources from those related to configurations or secret.
 
 ## Valkey configuration file
 
@@ -82,16 +82,16 @@ You need to fit Valkey to your needs, and the best way is by setting its paramet
       > It is better to leave this parameter with a "flexible" value to avoid worrying about putting a particular IP in several places.
 
     - `protected-mode`\
-      Security option for restricting Valkey from listening in interfaces other than localhost. Enabled by default, is disabled with value `no` so Valkey can listen through the interface that will have the corresponding service's cluster IP assigned.
+      Security option for restricting Valkey from listening in interfaces other than localhost. Enabled by default, is disabled with value `no`. This way, Valkey can listen through the interface that will have the corresponding service's cluster IP assigned.
 
     - `port`\
       The default Valkey port is `6379`, specified here just for clarity.
 
     - `maxmemory`\
-      Limits the memory used by the Valkey server. When the limit is reached, it'll try to remove keys accordingly to the eviction policy set in the `maxmemmory-policy` parameter.
+      Limits the memory used by the Valkey server. When the limit is reached, it tries to remove keys accordingly to the eviction policy set in the `maxmemmory-policy` parameter.
 
     - `maxmemory-policy`\
-      Policy for evicting keys from memory when the `maxmemory` limit is reached. Here is set to `allkeys-lru` so it can remove any key accordingly to an LRU (Least Recently Used) algorithm.
+      Policy for evicting keys from memory when the `maxmemory` limit is reached. Here is set to `allkeys-lru`, enabling it to remove any key accordingly to an LRU (Least Recently Used) algorithm.
 
     - `aclfile`\
       Path to the file containing the Access Control List (ACL) specifying the users authorized to use this Valkey instance. The path specified is the default one, but it is specified here as a reminder of where it is.
@@ -136,7 +136,7 @@ Valkey comes with a `default` user that you could use, but it is better to decla
       Valkey's `default` user comes enabled with no password by default:
 
       - `on`\
-        Enables the `default` user to allow authenticating with it in the Valkey instance. This user will be used by the Prometheus metrics exporter module that will run in the same pod together with your Valkey instance.
+        Enables the `default` user to allow authenticating with it in the Valkey instance. This user will be used by the Prometheus metrics exporter module running in the same pod together with your Valkey instance.
 
       - `~*`\
         Indicates that this `default` user can access all the keys stored in the Valkey instance.
@@ -178,7 +178,7 @@ Valkey comes with a `default` user that you could use, but it is better to decla
 
 ### User for Prometheus metrics exporter
 
-Running in the same pod as the Valkey server, there is going to be a Prometheus metrics exporter module that will use the `default` Valkey user to access the metrics from the Valkey instance. The problem is that you have to duplicate the default user's credentials to make them available as environment variables for this exporter module:
+Running in the same pod as the Valkey server, there is going to be a Prometheus metrics exporter module using the `default` Valkey user to access the metrics from the Valkey instance. The problem is that you have to duplicate the default user's credentials to make them available as environment variables for this exporter module:
 
 1. Create a `default_user_env.properties` under the `secrets` folder:
 
@@ -209,7 +209,7 @@ Running in the same pod as the Valkey server, there is going to be a Prometheus 
 
 Storage in Kubernetes has two sides: enabling storage as persistent volumes (PVs), and the claims (PVCs) on each of those persistent volumes. For your Ghost's Valkey instance you need one persistent volume (to be declared in the last part of this Ghost deployment procedure), and the claim on that particular PV. See next how to declare the `PersistentVolumeClaim` resource for your Valkey instance:
 
-1. A persistent volume claim is a resource, so create a `cache-valkey.persistentvolumeclaim.yaml` file under the `resources` folder:
+1. A persistent volume claim is a resource. Create a `cache-valkey.persistentvolumeclaim.yaml` file under the `resources` folder:
 
     ~~~sh
     $ touch $HOME/k8sprjs/ghost/components/cache-valkey/resources/cache-valkey.persistentvolumeclaim.yaml
@@ -252,7 +252,7 @@ Storage in Kubernetes has two sides: enabling storage as persistent volumes (PVs
 
 ## Valkey StatefulSet
 
-The next thing to do is setting up the `StatefulSet` declaration that will deploy Valkey in your K3s cluster. It has to be a `StatefulSet` rather than a `Deployment` because stateful sets are the resources meant for deploying in Kubernetes apps or services that persist data (their _state_) in a persistent storage. Valkey could be run purely on memory, but it would force it to repopulate its database every time, leading to some delay when booting up:
+The next thing to do is setting up the `StatefulSet` declaration for deploying Valkey in your K3s cluster. It has to be a `StatefulSet` rather than a `Deployment` because stateful sets are the resources meant for deploying in Kubernetes apps or services that persist data (their _state_) in a persistent storage. Valkey could be run purely on memory, but it would force it to repopulate its database every time, leading to some delay when booting up:
 
 1. Create a `cache-valkey.statefulset.yaml` file under the `resources` subfolder:
 
@@ -330,7 +330,7 @@ The next thing to do is setting up the `StatefulSet` declaration that will deplo
                 path: users.acl
     ~~~
 
-    This `StatefulSet` resource describes the template for the pod that will contain the Valkey server and its Prometheus metrics exporter service, each running in their own containers:
+    This `StatefulSet` resource describes the template for the pod containing the Valkey server and its Prometheus metrics exporter service, each running in their own containers:
 
     - `replicas`\
       Given the limitations of the cluster, only one replica of the Valkey pod is requested.
@@ -363,7 +363,7 @@ The next thing to do is setting up the `StatefulSet` declaration that will deplo
             >
             > [Check this thread](https://stackoverflow.com/questions/57197095/why-do-we-need-a-port-containerport-in-a-kuberntes-deployment-container-definiti) to know more about this technicality.
 
-          - The `resources.requests` declares a minimum requirement of CPU and memory resources to grant to the container when it starts. If the container needs more resources, the Kubernetes control plane will take care of assign them if they are available.
+          - The `resources.requests` declares a minimum requirement of CPU and memory resources to grant to the container when it starts. If the container needs more resources, the Kubernetes control plane takes care of assigning them if they are available.
 
           > [!NOTE]
           > **It is better to set minimum requirements, not upper limits**\
@@ -388,10 +388,10 @@ The next thing to do is setting up the `StatefulSet` declaration that will deplo
 
           - In the `envFrom` section, the `cache-valkey-exporter-user` `Secret` resource contains the `default_user_env.properties` file where the `default` username and password are declared for this Prometheus metrics exporter. [You will declare the `Secret` in the Kustomize declaration for this Ghost's Valkey subproject](#valkey-kustomize-project).
 
-          - This container also has minimum requirements of RAM and CPU `resources`. Its `containerPort` has a `name` too, and its number is the one used by default by the exporter, matching the one you will see declared [in the next section within the corresponding Valkey's `Service` resource](#valkey-service).
+          - This container also has minimum requirements of RAM and CPU `resources`. Its `containerPort` has a `name` too, and its number is the one used by default by the exporter, matching the one you will declare [in the next section within the corresponding Valkey's `Service` resource](#valkey-service).
 
       - `spec.volumes`\
-        This section declares the volumes that will be mounted in the pod. In particular, here are enabled all the volumes mounted in the Valkey container:
+        This section declares the volumes that are to be mounted in the pod. In particular, here are enabled all the volumes mounted in the Valkey container:
 
         - `cache-valkey-storage`\
           Invokes the `cache-valkey` `PersistentVolumeClaim` declared earlier for enabling the persistent storage that will contain Valkey's working data.
@@ -408,7 +408,7 @@ The next thing to do is setting up the `StatefulSet` declaration that will deplo
 
 ## Valkey Service
 
-You have declared the pod that will execute the containers running the Valkey server and its Prometheus statistics exporter. Now you need to define the `Service` resource that will give access to them:
+You have declared the pod executing the containers running the Valkey server and its Prometheus statistics exporter. Now you need to define the `Service` resource that enables access to them:
 
 1. Generate a new file named `cache-valkey.service.yaml`, also under the `resources` subfolder:
 
@@ -445,7 +445,7 @@ You have declared the pod that will execute the containers running the Valkey se
     This `Service` resource specifies how to access the services running in the Valkey pod's containers:
 
     - `metadata.annotations`\
-      Two annotations required for the Prometheus data scraping service (you will see how to deploy Prometheus in a later chapter).These annotations inform Prometheus about which port to scrape for getting metrics of your Valkey service, which is data provided by the specialized metrics service that runs in the `metrics` container of the Valkey pod.
+      Two annotations required for the Prometheus data scraping service (Prometheus deployment is covered by a later chapter).These annotations inform Prometheus about which port to scrape for getting metrics of your Valkey service, which is data provided by the specialized metrics service that runs in the `metrics` container of the Valkey pod.
 
     - `spec.type`\
       By default, any `Service` resource is of type `ClusterIP`, meaning that the service is only reachable from within the cluster's internal network. You can omit this parameter altogether from the YAML when you are using this default type.
@@ -454,7 +454,7 @@ You have declared the pod that will execute the containers running the Valkey se
       `StatefulSets` are limited to use [headless services](https://kubernetes.io/docs/concepts/services-networking/service/#headless-services), which are services with no **cluster** IP assigned (which explains the `None` value here). These type of services are reachable by the FQDN they have assigned within the cluster. [Learn more about this FQDN in the next subsection](#valkey-services-fqdn).
 
     - `spec.ports`\
-      Describe the ports open in this service. Notice how I made the `name` and `port` on each port of this `Service` to match the ones already defined for the containers in the [previous `StatefulSet` resource](#valkey-statefulset).
+      Describe the ports open in this service. Notice how the `name` and `port` on each port of this `Service` match the ones already defined for the containers in the [previous `StatefulSet` resource](#valkey-statefulset).
 
       Also see how the `targetPort` parameters invoke the ports in the containers by name, not by number. This technique allows you to change the port number in the containers without affecting this `Service` declaration.
 
@@ -470,7 +470,7 @@ The placeholders between `<>` in the template are rather self-explanatory:
 
 - The `<service name>` refers to the string specified in the `metadata.name` attribute of the `Service` declaration. In the case of the Valkey service is `cache-valkey`.
 
-- The `<namespace>` for the whole Ghost setup will be `ghost`.
+- The `<namespace>` for the whole Ghost setup is going to be `ghost`.
 
 - The `<cluster domain name>` in a Kubernetes cluster is `cluster.local` by default. But remember that this guide changed this value into `homelab.cluster` [by setting the `cluster-domain` parameter in the K3s server node's configuration](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#the-k3sserver01-nodes-configyaml-file).
 
@@ -480,7 +480,11 @@ Therefore, the Valkey headless service will have the following absolute FQDN:
 cache-valkey.ghost.svc.homelab.cluster.
 ~~~
 
-An absolute FQDN is one with the final dot at its end, indicating that it is the complete DNS record and there is no need to initiate a DNS search. Using absolute FQDNs improves the cluster's performance by avoiding DNS searches when connecting with pods or services. You will use it to make the Ghost platform connect with its Valkey server.
+You will use this absolute FQDN to make the Ghost platform connect with its Valkey server.
+
+> [!NOTE]
+> **An absolute FQDN is one with the final dot at its end, indicating that it is the complete DNS record and there is no need to initiate a DNS search**\
+> Using absolute FQDNs improves the cluster's performance by avoiding DNS searches when connecting with pods or services.
 
 ## Valkey Kustomize project
 
@@ -753,7 +757,7 @@ With everything in place, you can check out the YAML resulting from the Ghost Va
 
 ## Do not deploy this Valkey project on its own
 
-This Valkey setup is missing one critical element, the persistent volume it needs to store its working directory data. Do not confuse it with the claim you have configured for your Valkey cache server. That PV and other elements will be declared in the main Kustomize project you will declare in the final part of this Ghost deployment procedure. Until then, do not deploy this Valkey subproject.
+This Valkey setup is missing one critical element, the persistent volume it needs to store its working directory data. Do not confuse it with the claim you have configured for your Valkey cache server. That PV and other elements are to be declared in the main Kustomize project you will declare in the final part of this Ghost deployment procedure. Until then, do not deploy this Valkey subproject.
 
 ## Relevant system paths
 
@@ -788,7 +792,7 @@ This Valkey setup is missing one critical element, the persistent volume it need
 - [Docker Hub. Valkey](https://hub.docker.com/r/valkey/valkey)
 - [Docker Hub. Prometheus Valkey & Redis Metrics Exporter](https://hub.docker.com/r/oliver006/redis_exporter)
 
-- [GitHub. Example `valkey.conf` for Valkey 9.0](https://raw.githubusercontent.com/valkey-io/valkey/9.0/valkey.conf)
+- [GitHub. valkey. Example `valkey.conf` for Valkey 9.0](https://raw.githubusercontent.com/valkey-io/valkey/9.0/valkey.conf)
 
 ### [Redis](https://redis.io/)
 
@@ -802,41 +806,43 @@ This Valkey setup is missing one critical element, the persistent volume it need
 - [Suse Rancher Blog. Deploying Redis Cluster on Top of Kubernetes](https://www.suse.com/c/rancher_blog/deploying-redis-cluster-on-top-of-kubernetes/)
 - [StackOverflow. Redis sentinel vs clustering](https://stackoverflow.com/questions/31143072/redis-sentinel-vs-clustering)
 
-### [Kubernetes](https://kubernetes.io/docs/)
+### [Kubernetes](https://kubernetes.io/)
+
+- [Kubernetes Documentation](https://kubernetes.io/docs/home/)
 
 #### Pods and containers
 
-- [Configure Pods and Containers](https://kubernetes.io/docs/tasks/configure-pod-container/)
+- [Kubernetes Documentation. Tasks. Configure Pods and Containers](https://kubernetes.io/docs/tasks/configure-pod-container/)
   - [Assign Pods to Nodes using Node Affinity](https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes-using-node-affinity/)
   - [Configure a Pod to Use a ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/)
 
-- [Inject Data Into Applications](https://kubernetes.io/docs/tasks/inject-data-application/)
+- [Kubernetes Documentation. Tasks. Inject Data Into Applications](https://kubernetes.io/docs/tasks/inject-data-application/)
   - [Define Dependent Environment Variables](https://kubernetes.io/docs/tasks/inject-data-application/define-interdependent-environment-variables/)
   - [Define Environment Variables for a Container](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/)
 
-- [Scheduling, Preemption and Eviction](https://kubernetes.io/docs/concepts/scheduling-eviction/)
+- [Kubernetes Documentation. Concepts. Scheduling, Preemption and Eviction](https://kubernetes.io/docs/concepts/scheduling-eviction/)
   - [Assigning Pods to Nodes](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/)
 
-- [Workload Resources](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/)
+- [Kubernetes Documentation. Reference. Kubernetes API. Workload Resources](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/)
   - [Pod](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/)
     - [Scheduling](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#scheduling)
 
 #### ConfigMaps
 
-- [Configuration](https://kubernetes.io/docs/concepts/configuration/)
+- [Kubernetes Documentation. Concepts. Configuration](https://kubernetes.io/docs/concepts/configuration/)
   - [ConfigMaps](https://kubernetes.io/docs/concepts/configuration/configmap/)
 
-- [Configuration](https://kubernetes.io/docs/tutorials/configuration/)
+- [Kubernetes Documentation. Tutorials. Configuration](https://kubernetes.io/docs/tutorials/configuration/)
   - [Configuring Redis using a ConfigMap](https://kubernetes.io/docs/tutorials/configuration/configure-redis-using-configmap/)
 
 #### Labels
 
-- [Overview. Objects in Kubernetes](https://kubernetes.io/docs/concepts/overview/working-with-objects/)
+- [Kubernetes Documentation. Concepts. Overview. Objects in Kubernetes](https://kubernetes.io/docs/concepts/overview/working-with-objects/)
   - [Labels and Selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/)
 
 #### Services
 
-- [Services, Load Balancing, and Networking](https://kubernetes.io/docs/concepts/services-networking/)
+- [Kubernetes Documentation. Concepts. Services, Load Balancing, and Networking](https://kubernetes.io/docs/concepts/services-networking/)
   - [Service. Headless Services](https://kubernetes.io/docs/concepts/services-networking/service/#headless-services)
   - [DNS for Services and Pods](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/)
 

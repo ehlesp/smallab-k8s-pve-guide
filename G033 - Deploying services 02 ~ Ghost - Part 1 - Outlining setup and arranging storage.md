@@ -20,19 +20,19 @@
 
 ## Beginning with Ghost
 
-From the services listed in the [chapter **G018**](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md#ghost), let's begin with the publishing platform **Ghost**. Since deploying it requires the configuration and deployment of several different components, the procedure for deploying Ghost is split in five parts, being this chapter the first one of them.
+From the services listed in the [chapter **G018**](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md#ghost), you can begin with the publishing platform **Ghost**. Since deploying it requires the configuration and deployment of several different components, the procedure for deploying Ghost is split in five parts, being this chapter the first one of them.
 
-In this first part, you will see how to outline the setup of your Ghost platform, then work in the arrangement of the storage drives needed to store Ghost's data.
+This first part explains how to outline the setup of your Ghost platform, then works out the arrangement of the storage drives needed to store Ghost components' data.
 
 ## Outlining Ghost's setup
 
 You must define how you want to setup Ghost in your cluster, meaning that you have to decide beforehand how to solve the following points:
 
-- Ghost can use a cache server. Which one will you use and will it be exclusive to the Ghost instance?
+- Ghost can use a cache server. Which one you want to use and will it be exclusive to the Ghost instance?
 
 - For storing operation-related data, Ghost requires a database. Which one are you going to use and how you will setup it?
 
-- Where in your K3s cluster the Ghost's data should be placed?
+- Where in your K3s cluster the data produced by Ghost's components should be placed?
 
 This guide solves the previous points as follows:
 
@@ -40,12 +40,12 @@ This guide solves the previous points as follows:
   Ghost can work with [Redis](https://redis.io/), but this guide rather opts for the compatible alternative [Valkey](https://valkey.io/) configured to have data persistence on a local SSD storage drive.
 
 - **Database**\
-  [Ghost's documentation specifies](https://docs.ghost.org/install/ubuntu) [MySQL](https://www.mysql.com/) as the database of choice, but this guide will use instead the compatible alternative [MariaDB](https://mariadb.org/) with its data saved in a local SSD storage drive.
+  [Ghost's documentation specifies](https://docs.ghost.org/install/ubuntu) [MySQL](https://www.mysql.com/) as the database of choice, but this guide picks instead the compatible alternative [MariaDB](https://mariadb.org/) with its data saved in a local SSD storage drive.
 
 - **Ghost server**\
   Its contents data will be stored in a persistent volume prepared on a local HDD storage drive.
 
-Also be aware that all the services making up this Ghost platform will run in the same K3s agent node. This is because all the local storage will be setup in one agent node, and Kubernetes applies the affinity rule of making pods run in the node that provides their storage.
+Also be aware that all the services making up this Ghost platform are going to run in the same K3s agent node. This is because all the local storage is going to be enabled in one agent node, and Kubernetes applies the affinity rule of making pods run in the node that provides their storage.
 
 ## Choosing the K3s agent node for running Ghost
 
@@ -53,7 +53,7 @@ Your cluster has only two K3s agent nodes, and the two of them are already runni
 
 ## Setting up new storage drives in the K3s agent node
 
-Given how the K3s cluster has been configured in this guide, the only persistent volumes you can use are local ones. They rely on paths found in the K3s node VM's host system, but you do not want to use the root filesystem in which the underlying Debian OS is installed. It is better and safer to have separate drives for each persistent volume, and you can create those storage drives directly from your Proxmox VE web console.
+Given how the K3s cluster has been configured in this guide, the only persistent volumes you can use are local ones. They rely on paths found in the K3s node VM's host system, but you do not want to use the `root` filesystem in which the underlying Debian OS is installed. It is better and safer to have separate drives for each persistent volume, and you can create those storage drives directly from your Proxmox VE web console.
 
 ### Adding the new storage drives to the K3s agent node's VM
 
@@ -167,7 +167,7 @@ Your new storage drives are now available in your K3s agent node VM, but you sti
     $ sudo pvcreate --metadatasize 10m -y -ff /dev/sdc1
     ~~~
 
-    To determine the metadata size, I've used the rule of thumb of allocating 1 MiB per 1 GiB present in the PV.
+    To determine the metadata size, this guide uses the rule of thumb of allocating 1 MiB per 1 GiB present in the PV.
 
     Check with `pvs` that the PVs have been created.
 
@@ -192,7 +192,7 @@ Your new storage drives are now available in your K3s agent node VM, but you sti
     $ sudo vgcreate ghost-hdd /dev/sdc1
     ~~~
 
-    See how I named each VG related to Ghost and the kind of underlying drive used. Then, with `pvs` you can see how each PV is now assigned to their respective VG:
+    See how each VG is named related to Ghost and the kind of underlying drive used. Then, with `pvs` you can see how each PV is now assigned to their respective VG:
 
     ~~~sh
     $ sudo pvs
@@ -220,7 +220,7 @@ Your new storage drives are now available in your K3s agent node VM, but you sti
     $ sudo lvcreate -l 100%FREE -n srv ghost-hdd
     ~~~
 
-    Notice how the `db` LV takes the `70%` of the currently free space in the `ghost-ssd` VG, and how the `cache` LV uses all the **remaining** space available on the same `ghost-ssd` VG. On the other hand, `data` takes all the storage available in the `ghost-hdd` VG. Also see how all the LV's names are short reminders of what kind of data they will store later.
+    Notice how the `db` LV takes the `70%` of the currently free space in the `ghost-ssd` VG, and how the `cache` LV uses **all the remaining space** available on the same `ghost-ssd` VG. On the other hand, `data` takes all the storage available in the `ghost-hdd` VG. Also see how all the LV's names are short reminders of what kind of data they will store later.
 
     Check with `lvs` the new LVs in your VM:
 
@@ -251,7 +251,7 @@ Your new storage drives are now available in your K3s agent node VM, but you sti
 
 Your new LVs need to be formatted as ext4 filesystems and then mounted in the K3s agent node's system:
 
-1. Before you format the new LVs, you need to see their `/dev/mapper/` paths with `fdisk`. To get only the Nextcloud related paths, you can filter out their lines with `grep` because the `ghost` string will be part of their paths:
+1. Before you format the new LVs, you need to see their `/dev/mapper/` paths with `fdisk`. To get only the Ghost related paths, you can filter out their lines with `grep` because the `ghost` string is part of their paths:
 
     ~~~sh
     $ sudo fdisk -l | grep ghost
@@ -296,7 +296,7 @@ Your new LVs need to be formatted as ext4 filesystems and then mounted in the K3
     $ sudo mount /dev/mapper/ghost--hdd-srv /mnt/ghost-hdd/srv
     ~~~
 
-    Verify with `df` that they have been mounted in the system. Since you're working in a K3s agent node, you will also see a bunch of containerd-related filesystems mounted. Your newly mounted LVs will appear at the bottom of the list:
+    Verify with `df` that they have been mounted in the system. Since you are working in a K3s agent node, you are going to see a bunch of containerd-related filesystems mounted. Your newly mounted LVs appear at the bottom of the list:
 
     ~~~sh
     $ df -h
@@ -338,7 +338,7 @@ Your new LVs need to be formatted as ext4 filesystems and then mounted in the K3
 > **Create an inner mount point for pods**\
 > Do not use the directories where you have mounted the new storage volumes as mount points for the persistent volumes you will enable later for the Ghost deployment.
 
-Kubernetes pods can change the owner user and group, and also the permissions, applied to those folders. This can cause a failure when, after a reboot, your K3s agent node tries to mount again its storage volumes. The issue will happen because it will not have the right user or permissions anymore to access the mount point folders. The best thing to do then is to create another folder within each storage volume that can be used safely as mount point by the Ghost pods:
+Kubernetes pods can change the owner user and group, and also the permissions, applied to those folders. This can cause a failure when, after a reboot, your K3s agent node tries to mount again its storage volumes. The issue happens because it no longer has the right user or permissions to access the mount point folders. The best thing to do then is to create another folder within each storage volume that can be used safely as mount point by the Ghost pods:
 
 1. For the LVM storage volumes created before, you have to execute a `mkdir` command like this:
 
@@ -376,7 +376,7 @@ Kubernetes pods can change the owner user and group, and also the permissions, a
 
 ### About increasing the size of volumes
 
-If, after a time using and filling up these volumes, you need to increase their size, take a look to the [appendix chapter **G907**](G907%20-%20Appendix%2007%20~%20Resizing%20a%20root%20LVM%20volume.md). It shows you how to extend a partition and the LVM filesystem within it, although in that case it is done on a LV volume that happens to be also the root filesystem of a VM.
+If, after a time using and filling up these volumes, you need to increase their size, take a look to the [appendix chapter **G907**](G907%20-%20Appendix%2007%20~%20Resizing%20a%20root%20LVM%20volume.md). It shows you how to extend a partition and the LVM filesystem within it although, in that case, it is done on a LV volume that happens to be also the `root` filesystem of a VM.
 
 ## Relevant system paths
 
@@ -407,10 +407,10 @@ If, after a time using and filling up these volumes, you need to increase their 
 
 ## References
 
-### [Ghost](https://docs.ghost.org/)
+### [Ghost](https://ghost.org/)
 
-- [Documentation](https://ghost.org/)
-  - [How To Install Ghost](https://docs.ghost.org/install)
+- [For Developers](https://docs.ghost.org/)
+  - [Documentation. Getting Stared. How To Install Ghost](https://docs.ghost.org/install)
     - [How To Install Ghost On Ubuntu](https://docs.ghost.org/install/ubuntu)
 
 ### Cache servers
