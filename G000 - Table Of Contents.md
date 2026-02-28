@@ -480,7 +480,7 @@
 - [Deploying the main Kustomize project in the cluster](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%205%20-%20Complete%20Forgejo%20platform#deploying-the-main-kustomize-project-in-the-cluster)
 - [Finishing Forgejo installation](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%205%20-%20Complete%20Forgejo%20platform.md#finishing-forgejo-installation)
 - [Security considerations in Forgejo](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%205%20-%20Complete%20Forgejo%20platform.md#security-considerations-in-forgejo)
-- [Forgejo platform's Kustomize project attached to this guide series](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%205%20-%20Complete%20Forgejo%20platform.md#forgejo-platforms-kustomize-project-attached-to-this-guide-series)
+- [Forgejo platform's Kustomize project attached to this guide](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%205%20-%20Complete%20Forgejo%20platform.md#forgejo-platforms-kustomize-project-attached-to-this-guide)
 - [Relevant system paths](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%205%20-%20Complete%20Forgejo%20platform.md#relevant-system-paths)
 - [References](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%205%20-%20Complete%20Forgejo%20platform.md#references)
 

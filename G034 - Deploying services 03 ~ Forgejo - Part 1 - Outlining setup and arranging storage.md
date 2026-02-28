@@ -19,13 +19,13 @@
 
 ## Deploy Forgejo like you deployed Ghost
 
-The next platform to deploy from the ones listed in the [**G018** guide](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md#forgejo) is Forgejo. Forgejo is a Git-based control version system platform which, from a Kubernetes point of view, is like the Ghost platform you have deployed in the previous [**G033** guide](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md). And what exactly makes Forgejo so similar to Ghost?
+The next platform to deploy from the ones listed in the [chapter **G018**](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md#forgejo) is Forgejo. Forgejo is a Git-based control version system platform which, from a Kubernetes point of view, is like the Ghost platform you have deployed in the previous [chapter **G033**](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md). And what exactly makes Forgejo so similar to Ghost?
 
-Both platforms share the need for a database, a storage space for their data and the capacity of using a cache system such as Valkey. Therefore, you can expect that the Forgejo deployment in your Kubernetes cluster should mirrors Ghost's. In fact, the procedure is so similar that I will not repeat in this Forgejo procedure the same explanations I already gave in the Ghost guide, except for specific particularities.
+Both platforms share the need for a database, a storage space for their data and the capacity of using a cache system such as Valkey. Therefore, you can expect the Forgejo deployment in your Kubernetes cluster should mirrors Ghost's. In fact, the procedure is so similar that this Forgejo procedure will not repeat the same explanations already given in the Ghost guide, except for specific particularities.
 
 ## Outlining Forgejo's setup
 
-As you did with Ghost, you must figure out first how to set up all the components that will be part of your Forgejo setup:
+As you did with Ghost, you must figure out first how to set up all the components to become part of your Forgejo setup:
 
 - **Database**\
   PostgreSQL with its data saved in a local SSD storage drive.
@@ -40,9 +40,9 @@ As you did with Ghost, you must figure out first how to set up all the component
   Persistent volume prepared on a local HDD storage drive.
 
 - **Forgejo's [Git Large File Storage (LFS)](https://git-lfs.com/)**\
-  Forgejo is able to use the LFS extensión of Git to handle large files like audios or videos. In this Forgejo setup, those files will be stored in the same persistent volume reserved for the users' repositories.
+  Forgejo is able to use the LFS extensión of Git to handle large files like audios or videos. In this Forgejo setup, those files are going to be stored in the same persistent volume reserved for the users' repositories.
 
-The whole Forgejo setup will run on the same K3s agent node, which will be also the one providing the persistent storage needed for the Forgejo components.
+The whole Forgejo setup is going to run on the same K3s agent node, which will be also the one providing the persistent storage needed for the Forgejo components.
 
 ### Choosing the K3s agent
 
@@ -155,7 +155,7 @@ Since the two new storage drives are already active in your `k3sagent01` VM, you
     $ sudo pvcreate --metadatasize 20m -y -ff /dev/sdc1
     ~~~
 
-    For the metadata size, remember that I use the rule of thumb of allocating 1 MiB per 1 GiB present in the PV.
+    For the metadata size, remember that this guide uses the rule of thumb of allocating 1 MiB per 1 GiB present in the PV.
 
     Check with `pvs` that the PVs have been created:
 
@@ -212,7 +212,7 @@ Since the two new storage drives are already active in your `k3sagent01` VM, you
 
     > [!IMPORTANT]
     > **Remember what the `%FREE` percentage in the `lvcreate` command means**\
-    > The `%FREE` number indicates the percentage the `lvcreate` command will take when creating the light volume from what is currently free (unassigned) in the volume group.
+    > The `%FREE` number indicates the percentage the `lvcreate` command takes from what is currently free (unassigned) in the volume group to create the light volume.
     >
     > In the shell snippet above:
     >
@@ -339,9 +339,9 @@ The new light volumes have to be formatted as ext4 filesystems and mounted:
 
 ### Storage mount points for Forgejo containers
 
-With the LVs mounted, you can create within them the `k3smnt` folders that will act as mounting points for the Forgejo containers' persistent volumes.
+With the LVs mounted, you can create within them the `k3smnt` folders that will act as mounting points for the Forgejo containers' persistent volumes:
 
-1. Use the following `mkdir` command to create a `k3smnt` folder within each Forgejo storage volume.
+1. Use the following `mkdir` command to create a `k3smnt` folder within each Forgejo storage volume:
 
     ~~~sh
     $ sudo mkdir /mnt/{forgejo-ssd/cache,forgejo-ssd/db,forgejo-ssd/data,forgejo-hdd/git}/k3smnt
