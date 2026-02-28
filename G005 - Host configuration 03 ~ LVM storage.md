@@ -469,7 +469,7 @@ The installation process of Proxmox VE created a LVM thin-pool called `data`, wh
       swap pve -wi-ao----  12.00g
     ~~~
 
-    Only two logical volumes are listed now, and with the `pvs` command you can see how much space you have available in the physical volume where the `data` thin-pool was present. In this case it was in the `sda3` unit:
+    Only two logical volumes are listed now, and with the `pvs` command you can see how much space you have available in the physical volume where the `data` thin-pool is present. In this case it is in the `sda3` unit:
 
     ~~~sh
     $ pvs

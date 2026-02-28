@@ -61,7 +61,7 @@ Assuming that you have a regular consumer router handling your LAN, you have two
 - **Making your private network assign IPs from the `10.0.0.0/8` range**\
   As I already explained [back in chapter **G025**](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#criteria-for-ips), this guide's LAN uses the biggest IPv4 range available for private networks: `10.0.0.0/8`. Still, this measure only mitigates the possibility of conflict between a device and a service exposed by MetalLB (or just with another device). This also depends on how capable your LAN's router is handling IP assignments. The good news is that you do not have to manage manually the IPs assigned to your devices nor disable the use of randomized MACS in all of them.
 
-In this guide's scenario, the router was left with the dynamic IP assignment to allow devices to connect with randomized MACs, which is the default (and more secure) behavior nowadays.
+In this guide's scenario, the router is left with the dynamic IP assignment to allow devices to connect with randomized MACs, which is the default (and more secure) behavior nowadays.
 
 ### Ports used by MetalLB
 

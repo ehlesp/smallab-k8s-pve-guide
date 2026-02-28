@@ -66,7 +66,7 @@ $ ssh-keygen -lf .ssh/id_rsa
 4096 SHA256:+c40qYIXrTV+b0KHWenrgHaD4a8AEPeIHFMwZVAUk5U root@pve (RSA)
 ~~~
 
-As you can see in the output above, the key pair's length is `4096` bits, which is enough (at the time this was written) for an RSA-encrypted key pair. But if you want a key pair encrypted with the newer [_Ed25519_ signature scheme](https://en.wikipedia.org/wiki/EdDSA#Ed25519), you can use the `ssh-keygen` command as follows:
+As you can see in the output above, the key pair's length is `4096` bits, which is enough (at the time this is written) for an RSA-encrypted key pair. But if you want a key pair encrypted with the newer [_Ed25519_ signature scheme](https://en.wikipedia.org/wiki/EdDSA#Ed25519), you can use the `ssh-keygen` command as follows:
 
 1. Make a backup of the current `root`'s key pair:
 

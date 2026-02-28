@@ -130,7 +130,7 @@ You can access a container's log with `kubectl`. For instance, to access the log
 $ kubectl logs -n forgejo server-forgejo-0 server | less
 ~~~
 
-See how after indicating the `forgejo` namespace, the pod's name (`server-forgejo-0`) is specified and then the concrete container (`server`). The output has been redirected to `less` for paginating the log. This log is the same one stored in the corresponding `/var/log/pods` path which, at the moment of writing this, was `/var/log/pods/forgejo_server-forgejo-0_3d717aab-d09c-4f4d-9fd6-83f421c70218/server/2.log`.
+See how after indicating the `forgejo` namespace, the pod's name (`server-forgejo-0`) is specified and then the concrete container (`server`). The output has been redirected to `less` for paginating the log. This log is the same one stored in the corresponding `/var/log/pods` path which, at the moment of writing this, is `/var/log/pods/forgejo_server-forgejo-0_3d717aab-d09c-4f4d-9fd6-83f421c70218/server/2.log`.
 
 Moreover, you can access any container logs through Headlamp. In the sidebar menu, click on `Workloads` and then on `Pods`:
 
@@ -186,13 +186,13 @@ root@db-postgresql-0:/# ls -al /etc/postgresql/postgresql.conf
 -rw-rwxr-- 1 root root 608 Feb 11 08:57 /etc/postgresql/postgresql.conf
 ~~~
 
-The `ls` command proofs that the file exists where it was expected to be. You could also read its content with the `cat` or `less` commands.
+The `ls` command proofs that the file exists where it is expected to be. You could also read its content with the `cat` or `less` commands.
 
 > [!NOTE]
 > **Do not expect to find the same commands available on every container image**\
 > For security reasons or to save storage space, some container images may lack many commonly used commands. In other words, do not expect to have the same usual commands on every container you deal with.
 
-On the other hand, you can also see how the Forgejo's PostgreSQL `server` container has produced a bunch of files in the K3s agent node where is running. So, open a shell on the node itself (in the guide was the `k3sagent01` one) and just `ls` the folder where the database's volume is mounted on (`/mnt/forgejo-ssd/db/k3smnt/`):
+On the other hand, you can also see how the Forgejo's PostgreSQL `server` container has produced a bunch of files in the K3s agent node where is running. So, open a shell on the node itself (in the guide is the `k3sagent01` one) and just `ls` the folder where the database's volume is mounted on (`/mnt/forgejo-ssd/db/k3smnt/`):
 
 ~~~sh
 $ ls -al /mnt/forgejo-ssd/db/k3smnt/

@@ -1028,7 +1028,7 @@ The last thing you may want to do is to free the storage space taken by the old 
 $ sudo rm -rf /mnt/forgejo-ssd/db/k3smnt/17
 ~~~
 
-In this appendix's scenario, remember that the folder with the old database files was the one named `17`.
+In this appendix's scenario, remember that the folder with the old database files is the one named `17`.
 
 ## Kustomize project only for updating PostgreSQL included in this guide
 

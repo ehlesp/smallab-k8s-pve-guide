@@ -187,7 +187,7 @@ It is possible that an update could "resurrect" any of the services you disabled
     $ sudo systemctl status pve-ha-crm pve-ha-lrm corosync
     ~~~
 
-In my case, just the `spiceproxy.service` was enabled, [done previously in purpose to avoid possible issues](#starting-the-masked-spiceproxy-service). You can disable it again by masking the service with `systemctl`:
+In this guide's case, just the `spiceproxy.service` is enabled, [done previously in purpose to avoid possible issues](#starting-the-masked-spiceproxy-service). You can disable it again by masking the service with `systemctl`:
 
 ~~~sh
 $ sudo systemctl mask --now spiceproxy

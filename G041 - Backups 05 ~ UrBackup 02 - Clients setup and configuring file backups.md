@@ -27,7 +27,7 @@ With your UrBackup server up and running, now you need to deploy the UrBackup cl
 
 You need to deploy the UrBackup client program **in all of your K3s node VMs**. Since those VMs are Debian systems, you need to execute the corresponding Linux installer of the UrBackup client in all of them. And _corresponding_ means you have to install the correct version of the client, which has to correspond with the version of your UrBackup server.
 
-In this case, since the UrBackup server used is a 2.5.z version (`2.5.35` was the one deployed [in the previous chapter **G040**](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#deploying-urbackup)), you also require to use the client's 2.5.z version. At the time of writing this, the client's latest version is `2.5.29` and you can find it [in this official page](https://www.urbackup.org/download.html#linux_all_binary):
+In this case, since the UrBackup server used is a 2.5.z version (`2.5.35` is the one deployed [in the previous chapter **G040**](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#deploying-urbackup)), you also require to use the client's 2.5.z version. At the time of writing this, the client's latest version is `2.5.29` and you can find it [in this official page](https://www.urbackup.org/download.html#linux_all_binary):
 
 1. The UrBackup client installer also installs a couple of packages, so it is better to have up to date the references to the Debian packages sources in your VMs. So, just execute the following `apt` command to update those references:
 
@@ -87,7 +87,7 @@ In this case, since the UrBackup server used is a 2.5.z version (`2.5.35` was th
       Justs asks for your permission to continue with the installation.
 
     - `Please select the snapshot mechanism to be used for backups`\
-      Below this question the installer only lists the supported snapshot options it has detected as available in the system. The option `5` is chosen here to disable the snapshot mechanism because, in my tests, it has proven to be rather problematic.
+      Below this question the installer only lists the supported snapshot options it has detected as available in the system. The option `5` is chosen here to disable the snapshot mechanism, because this feature has proven to be rather problematic for this guide's setup.
 
       In particular, the option 2 uses the snapshot capabilities of LVM but this method can have relevant performance issues.
 
@@ -463,7 +463,7 @@ There are many parameters to adjust in your UrBackup server, and you have alread
         - `3-4`\
           The task can be launched between the 3 and 4 hours (in 24h format).
 
-        Adjust the time interval to something that fits you better, in my case it was `1-7/10-11`. The time interval format has a bit of complexity, so it is better if you learn how it goes [from the official UrBackup documentation](https://www.urbackup.org/administration_manual.html#x1-610008.3.1).
+        Adjust the time interval to something that fits you better, for this guide's setup is `1-7/10-11`. The time interval format has a bit of complexity, so it is better if you learn how it goes [from the official UrBackup documentation](https://www.urbackup.org/administration_manual.html#x1-610008.3.1).
 
     After appling the changes above, those fields would look as follows:
 
@@ -514,7 +514,7 @@ There are many parameters to adjust in your UrBackup server, and you have alread
     These options configure certain behaviors of the server that affect the client program:
 
     - `Delay after system startup`\
-      When the server discovers a client, how much time in minutes must the server wait to start a backup in that client. Being aware that your clients are all K3s nodes, you may prefer to give them some time to properly start all their services before doing anything. So, here I'd put at least `5` or even `10` minutes.
+      When the server discovers a client, how much time in minutes must the server wait to start a backup in that client. Being aware that your clients are all K3s nodes, you may prefer to give them some time to properly start all their services before doing anything. Therefore, enter here `5` or even `10` minutes at least.
 
     - `Backup window`\
       The server only starts backups on clients in this particular time period. Here you must remember that you have already configured in Proxmox VE a backup job acting on all your K3s node VMs, so you do not want that process and the UrBackup backups start in the same time frame. To avoid that "collision", adjust this backup window to something like `1-7/0-13:30;1-7/17-0` (all days of the week, between 00:00 and 13:30 or between 17:00 and 00:00). Check out this time period format [in the official UrBackup documentation](https://www.urbackup.org/administration_manual.html#x1-610008.3.1).

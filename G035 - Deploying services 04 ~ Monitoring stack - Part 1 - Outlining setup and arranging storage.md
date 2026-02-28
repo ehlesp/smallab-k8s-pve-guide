@@ -363,7 +363,7 @@ Open a remote shell in your `k3sagent02` VM and follow these steps:
     I/O size (minimum/optimal): 512 bytes / 512 bytes
     ~~~
 
-    In the `k3sagent02` is where Ghost was deployed, so you can see listed all the storage related to it. The new SSD drive is the `/dev/sdd` one, which appears at the end of the output above.
+    Is in the `k3sagent02` where the Ghost platform is deployed, so you can see listed all the storage related to it. The new SSD drive is the `/dev/sdd` one, which appears at the end of the output above.
 
 2. Create a new GPT partition on the new storage drives with `sgdisk`:
 

@@ -411,7 +411,7 @@ You have created and configured one VM that will act as a K3s server node, and a
 
 As you did with both your K3s server and first agent nodes, you need to assign concrete static IPs to the network devices. Also, you need to change the hostname:
 
-1. Assign in your router or gateway the static main IP for the new VM. In my criteria, its address would be as follows:
+1. Assign in your router or gateway the static main IP for the new VM. Under this guide's criteria, its address would be as follows:
 
     - K3s **agent** node 2: `10.4.2.2`
 

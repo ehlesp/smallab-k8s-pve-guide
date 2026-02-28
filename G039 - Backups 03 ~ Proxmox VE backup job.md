@@ -51,7 +51,7 @@ The Proxmox VE automated backup system is able to stop and start the affected VM
 
 On one hand, your VMs are the host platform for your Kubernetes cluster. This means that you'll want to have their backups ready at hand before you apply updates or relevant configuration changes on them, or just to be ready in case harmful events happen to those VMs. On the other hand, each VM (in particular the ones serving as K3s agent nodes) holds application and user data, and such contents can change daily.
 
-Taking into account those two perspectives, I'd say that at least a weekly backup of each VM would be the bare minimum to have, although it would be much better if you do it daily.
+Taking into account those two perspectives, at least a weekly backup of each VM would be the bare minimum to have, although it would be much better if you do it daily.
 
 ## Scheduling the backup job in Proxmox VE
 
@@ -390,7 +390,7 @@ You can generate new VMs (or containers) from backups, if you execute the restor
 
     The form is warning about a mismatch between the maximum amount of memory allowed to this VM (512 MiB), and the minimum memory requested (1021 MiB) which keeps the same value it had in the original VM. This has happened because, if you remember, this minimum memory cannot be edited in the configuration for VM restoration. It is not clear if this is on purpose or just a bug of the Proxmox VE version used at the time of writing this (9.0.5). Just remember to always review the hardware of a restored VM to detect problems like this one.
 
-8. Since this was just a demonstration, delete this VM by unfolding the `More` menu then clicking on `Remove`:
+8. Since this is just a demonstration, delete this VM by unfolding the `More` menu then clicking on `Remove`:
 
     ![Removing the new VM](images/g039/pve_restore_bkp_vm_gen_remove_btn.webp "Removing the new VM")
 
@@ -401,7 +401,7 @@ You can generate new VMs (or containers) from backups, if you execute the restor
     Pay attention to the options this window offers:
 
     - `Purge from job configurations`\
-      Means that if this VM was included in backup or other kind of jobs within Proxmox VE, it will be delisted from all of them. Since this particular VM is not in any job, you would not need to enable this one in this case.
+      Means that if this VM is included in a backup or other kind of jobs within Proxmox VE, it will be delisted from all of them. Since this particular VM is not in any job, you would not need to enable this one in this case.
 
     - `Destroy unreferenced disks owned by guest`\
       Refers to those virtual storage drives that are associated with the VM but are not attached to it. With this option on, you can ensure that all virtual storages related to the VM will be removed. Enable this option to be sure that no virtual storage remains from this VM in your Proxmox VE server after its removal.

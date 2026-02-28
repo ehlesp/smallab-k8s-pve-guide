@@ -164,7 +164,7 @@ All these `PersistentVolume` declarations use exactly the same parameters:
 
     - Left unset, it is set to whatever reclaim policy is set in the storage class. The `local-path` has it on `Delete`.
 
-    - `Retain` deletes the persistent volume from the cluster but not the associated storage asset. This means that whatever data was stored there gets preserved.
+    - `Retain` deletes the persistent volume from the cluster but not the associated storage asset. This means that whatever data stored there gets preserved.
 
     - `Delete` deletes both the persistent volume and the associated storage asset, but only if the volume plugin/storage provisioner used supports it. In the case of the Rancher [local-path-provisioner](https://github.com/rancher/local-path-provisioner) used in K3s (associated with the `local-path` storage class), it automatically cleans up the contents stored in the volume.
 
