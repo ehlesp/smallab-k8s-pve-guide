@@ -350,7 +350,7 @@ Once you have configured the paths you want to backup in your clients, you can m
 
 The UrBackup server comes with a default configuration that schedules it to execute automatically both file and image backups on the clients connected to it. Also, you also have already disabled the image backup capability in the [previous chapter **G040**](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#disabling-the-image-backups). Here you can focus on the file backups:
 
-1. Browse to the `Status` page of your UrBackup server, then click on the downward arrow button in the `k3sagent01` row.
+1. Browse to the `Status` page of your UrBackup server, then click on the downward arrow button in the `k3sagent01` row:
 
     ![UrBackup server Status client k3sagent01 options](images/g041/urbackup_server_status_k3sagent01_options.webp "UrBackup server Status client k3sagent01 options")
 
@@ -442,7 +442,7 @@ The UrBackup server comes with a default configuration that schedules it to exec
 
 There are many parameters to adjust in your UrBackup server, and you have already adjusted a few of them. This section will show you a few more general (applied to all clients) parameters to tweak the backup tasks better to the particularities of your homelab system:
 
-1. Browse to the `Settings` page, and stay at the `General` > `Server` tab:
+1. Browse to the `Settings` page, and stay at the `General > Server` tab:
 
     ![UrBackup server Settings General Server tab](images/g041/urbackup_server_settings_general_server.webp "UrBackup server Settings General Server tab")
 
@@ -469,7 +469,7 @@ There are many parameters to adjust in your UrBackup server, and you have alread
 
     ![UrBackup server Settings General Server tab tuned parameters](images/g041/urbackup_server_settings_general_server_tuned.webp "UrBackup server Settings General Server tab tuned parameters")
 
-2. The next tab you must check in `Settings` is `General` > `File Backups`:
+2. The next tab you must check in `Settings` is `General > File Backups`:
 
     ![UrBackup server Settings General File Backups tab](images/g041/urbackup_server_settings_general_file_bkps.webp "UrBackup server Settings General File Backups tab")
 
@@ -501,13 +501,13 @@ There are many parameters to adjust in your UrBackup server, and you have alread
 
     At this point, there is no need to change anything here.
 
-3. Now go to the `General` > `Image Backups` tab:
+3. Now go to the `General > Image Backups` tab:
 
     ![UrBackup server Settings General Image Backups tab](images/g041/urbackup_server_settings_general_image_bkps.webp "UrBackup server Settings General Image Backups tab")
 
-    The first six fields are the image backup equivalents of also the first six ones in the `File Backups` tab, although the `Interval for incremental image backups` field is measured in days rather than in hours. Also see how `Interval for full image backups` is disabled, which is the consequence of disabling the image backups in the `General` > `Server` tab. The `Volumes to backup` field has a `C` letter specified as in the `C` volume of a Windows system. The way it is described in the official documentation seems to indicate that this feature is Windows-only.
+    The first six fields are the image backup equivalents of also the first six ones in the `File Backups` tab, although the `Interval for incremental image backups` field is measured in days rather than in hours. Also see how `Interval for full image backups` is disabled, which is the consequence of disabling the image backups in the `General > Server` tab. The `Volumes to backup` field has a `C` letter specified as in the `C` volume of a Windows system. The way it is described in the official documentation seems to indicate that this feature is Windows-only.
 
-4. Jump to the `General` > `Client` tab:
+4. Jump to the `General > Client` tab:
 
     ![UrBackup server Settings General Client tab](images/g041/urbackup_server_settings_general_client.webp "UrBackup server Settings General Client tab")
 
@@ -561,7 +561,7 @@ You have seen the UrBackup server general configuration, but know that you can a
 
     The lock button indicates if a field is using an inherited "group" value or one that has been set explicitly for this client.
 
-3. If you browse through the other tabs, you will found out that they are essentially the same as the ones found in the `Settings` > `General` page (except the `Server` tab), although with some differences.
+3. If you browse through the other tabs, you will found out that they are essentially the same as the ones found in the `Settings > General` page (except the `Server` tab), although with some differences.
 
 ## Restoration from file backups
 

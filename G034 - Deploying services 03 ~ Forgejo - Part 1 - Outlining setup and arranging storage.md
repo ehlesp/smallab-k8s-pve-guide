@@ -46,7 +46,7 @@ The whole Forgejo setup is going to run on the same K3s agent node, which will b
 
 ### Choosing the K3s agent
 
-The K3s agent chosen in the previous [Ghost **G033** guide](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#choosing-the-k3s-agent-node-for-running-ghost) was the `k3sagent02` VM. To balance the workload in the cluster, better deploy Forgejo in the `k3sagent01` VM instead.
+The K3s agent chosen in the previous [chapter **G033**](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#choosing-the-k3s-agent-node-for-running-ghost) was the `k3sagent02` VM. To balance the workload in the cluster, better deploy Forgejo in the `k3sagent01` VM instead.
 
 ## Setting up new storage drives in the K3s agent
 

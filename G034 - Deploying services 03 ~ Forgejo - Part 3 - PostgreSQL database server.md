@@ -298,7 +298,7 @@ Declare here the `PersistentVolumeClaim` (_PVC_) that claims the `PersistentVolu
     $ touch $HOME/k8sprjs/forgejo/components/db-postgresql/resources/db-postgresql.persistentvolumeclaim.yaml
     ~~~
 
-2. Declare the `PersistentVolumeClaim` object in `resources/db-postgresql.persistentvolumeclaim.yaml`.
+2. Declare the `PersistentVolumeClaim` object in `resources/db-postgresql.persistentvolumeclaim.yaml`:
 
     ~~~yaml
     # Forgejo PostgreSQL claim of persistent storage
@@ -323,7 +323,7 @@ Declare here the `PersistentVolumeClaim` (_PVC_) that claims the `PersistentVolu
 
 Since you already know that databases are better deployed as `StatefulSet` objects, let's create one for your PostgreSQL server:
 
-1. Create a `db-postgresql.statefulset.yaml` in the `resources` path.
+1. Create a `db-postgresql.statefulset.yaml` in the `resources` path:
 
     ~~~sh
     $ touch $HOME/k8sprjs/forgejo/components/db-postgresql/resources/db-postgresql.statefulset.yaml

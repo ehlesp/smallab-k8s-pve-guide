@@ -482,7 +482,7 @@ In the [first part of this chapter G035](G035%20-%20Deploying%20services%2004%20
 
 You need to assign a role to the `server-prometheus` service account to grant it read-only capacities. Do so by declaring a specific `ClusterRole` like this:
 
-1. Generate the file `server-prometheus.clusterrole.yaml` within the `resources` directory.
+1. Generate the file `server-prometheus.clusterrole.yaml` within the `resources` directory:
 
     ~~~sh
     $ touch $HOME/k8sprjs/monitoring/components/server-prometheus/resources/server-prometheus.clusterrole.yaml

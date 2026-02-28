@@ -222,7 +222,7 @@ Since from now on you are going to deal with Kubernetes configuration files, you
     $ chmod 700 kubeconform
     ~~~
 
-5. Test the command by getting its version.
+5. Test the command by getting its version:
 
     ~~~sh
     $ kubeconform -v

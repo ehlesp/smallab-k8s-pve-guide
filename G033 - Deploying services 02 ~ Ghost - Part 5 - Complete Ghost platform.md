@@ -11,7 +11,7 @@
 - [Deploying the main Kustomize project in the cluster](#deploying-the-main-kustomize-project-in-the-cluster)
 - [Start using Ghost](#start-using-ghost)
 - [Security considerations in Ghost](#security-considerations-in-ghost)
-- [Ghost platform's Kustomize project attached to this guide series](#ghost-platforms-kustomize-project-attached-to-this-guide-series)
+- [Ghost platform's Kustomize project attached to this guide](#ghost-platforms-kustomize-project-attached-to-this-guide)
 - [Relevant system paths](#relevant-system-paths)
   - [Folders in `kubectl` client system](#folders-in-kubectl-client-system)
   - [Files in `kubectl` client system](#files-in-kubectl-client-system)
@@ -1270,7 +1270,7 @@ Once you have your Ghost platform running, consider the following security conce
 
     - Do not forget to enable the two-factor authentication to all staff users registered in your site.
 
-## Ghost platform's Kustomize project attached to this guide series
+## Ghost platform's Kustomize project attached to this guide
 
 You can find the Kustomize project for this Ghost platform deployment in the following attached folder.
 

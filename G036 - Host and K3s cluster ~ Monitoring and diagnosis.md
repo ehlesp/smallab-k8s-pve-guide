@@ -32,7 +32,7 @@ In a small or limited system such as the one used in this guide, the first thing
 
 - To monitor the resources usage in your Kubernetes nodes and workloads, you can:
 
-  - Use the Headlamp dashboard you deployed and browsed into [back in the **G031** guide](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md). This is probably your best option for the everyday monitoring of your K3s cluster.
+  - Use the Headlamp dashboard you deployed and browsed into [back in the chapter **G031**](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md). This is probably your best option for the everyday monitoring of your K3s cluster.
 
   - Use the `kubectl top` command from your `kubectl` client system. For instance, you could see the usages of your Ghost platform's pods.
 

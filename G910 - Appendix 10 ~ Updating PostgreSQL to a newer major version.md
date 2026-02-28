@@ -20,7 +20,7 @@
   - [Stage 9. Reconfiguring the PostgreSQL's Kustomize subproject](#stage-9-reconfiguring-the-postgresqls-kustomize-subproject)
   - [Stage 10. Redeploying the Forgejo platform](#stage-10-redeploying-the-forgejo-platform)
   - [Stage 11. Cleaning up the old data](#stage-11-cleaning-up-the-old-data)
-- [Kustomize project only for updating PostgreSQL included in this guide series](#kustomize-project-only-for-updating-postgresql-included-in-this-guide-series)
+- [Kustomize project only for updating PostgreSQL included in this guide](#kustomize-project-only-for-updating-postgresql-included-in-this-guide)
 - [Relevant system paths](#relevant-system-paths)
   - [Folders in `kubectl` client system](#folders-in-kubectl-client-system)
   - [Files in `kubectl` client system](#files-in-kubectl-client-system)
@@ -120,7 +120,7 @@ The trick of this upgrade procedure is the use of a particular Docker image that
 
 You need to undeploy your whole Forgejo setup before you can start tinkering with its PostgreSQL database. Get into your `kubectl` client and do the following:
 
-1. Use `kubectl` to delete the kustomize-based deployment of your Forgejo instance.
+1. Use `kubectl` to delete the kustomize-based deployment of your Forgejo instance:
 
     ~~~sh
     $ kubectl delete -k $HOME/k8sprjs/forgejo/
@@ -201,7 +201,7 @@ For the containerized version `17` of PostgreSQL deployed with this appendix's F
 
     The `I have no name!` message warns about the fact that, since the user `999` does not exist in the system, it has no name to show at the prompt like with `mgrsys`.
 
-3. Get into the `/mnt/forgejo-ssd/db/k3smnt/` folder.
+3. Get into the `/mnt/forgejo-ssd/db/k3smnt/` folder:
 
     ~~~sh
     $ cd /mnt/forgejo-ssd/db/k3smnt/
@@ -351,7 +351,7 @@ Instead of creating this project from scratch, you can base it on the one you al
         $ rm -r secrets
         ~~~
 
-3. For the sake of clarity and reduce the chance of confusion with the files of the original PostgreSQL component subproject, you should also rename the files within the `resources` folder.
+3. For the sake of clarity and reduce the chance of confusion with the files of the original PostgreSQL component subproject, you should also rename the files within the `resources` folder:
 
     ~~~sh
     $ cd $HOME/k8sprjs/postgres-upgrade/resources
@@ -927,7 +927,7 @@ To check out and amend any relevant difference in the new `pg_hba.conf` file, do
     host all all all scram-sha-256
     ~~~
 
-4. Compare the two `pg_hba.conf` files with `diff` again.
+4. Compare the two `pg_hba.conf` files with `diff` again:
 
     ~~~sh
     $ sudo diff /mnt/forgejo-ssd/db/k3smnt/17/pg_hba.conf /mnt/forgejo-ssd/db/k3smnt/18/docker/pg_hba.conf
@@ -1030,7 +1030,7 @@ $ sudo rm -rf /mnt/forgejo-ssd/db/k3smnt/17
 
 In this appendix's scenario, remember that the folder with the old database files was the one named `17`.
 
-## Kustomize project only for updating PostgreSQL included in this guide series
+## Kustomize project only for updating PostgreSQL included in this guide
 
 You can find the Kustomize project meant **only for updating PostgreSQL databases to newer MAJOR versions** at the attached folder indicated below.
 

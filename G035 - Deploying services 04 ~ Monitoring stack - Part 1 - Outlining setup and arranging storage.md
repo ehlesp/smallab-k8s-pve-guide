@@ -43,7 +43,7 @@ The very first thing to do is identifying which components you need in your moni
 
   > [!NOTE]
   > **The Kube State Metrics is not the metrics-server!**\
-  > Do not confuse the **Kube State Metrics** service with the `metrics-server` you deployed in the [**G028** guide](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md).
+  > Do not confuse the **Kube State Metrics** service with the `metrics-server` you deployed in the [chapter **G028**](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md).
   >
   > The `metrics-server` service neither gets the same metrics nor exposes them through an endpoint reachable by Prometheus.
 
@@ -389,7 +389,7 @@ Open a remote shell in your `k3sagent02` VM and follow these steps:
 
     Now you have a `/dev/sdd1` partition in the `/dev/sdd` drive.
 
-4. Use pvcreate to make a new LVM physical volume out of the `/dev/sdd1` partition.
+4. Use pvcreate to make a new LVM physical volume out of the `/dev/sdd1` partition:
 
     ~~~sh
     $ sudo pvcreate --metadatasize 10m -y -ff /dev/sdd1
@@ -655,7 +655,7 @@ Return to the `k3sagent01` remote shell and follow these steps:
     $ sudo mkdir /mnt/monitoring-ssd/grafana-data/k3smnt
     ~~~
 
-2. Use `tree` to verify that the `k3smnt` folder is correct.
+2. Use `tree` to verify that the `k3smnt` folder is correct:
 
     ~~~sh
     $ tree -F /mnt/monitoring-ssd

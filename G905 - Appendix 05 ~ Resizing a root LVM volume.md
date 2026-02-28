@@ -258,7 +258,7 @@ With the real partitions updated, now you can extend the root LVM filesystem in 
 
     It's `LSize` is 8.69 GiB and, below it, you can see the swap volume (`swap_1`) taking up about 544 MiB.
 
-4. Use the following `lvextend` command to extend the `root` volume over all the available free space in the `sda5` PV.
+4. Use the following `lvextend` command to extend the `root` volume over all the available free space in the `sda5` PV:
 
     ~~~sh
     $ sudo lvextend -r -l +100%FREE bkpserver-vg/root

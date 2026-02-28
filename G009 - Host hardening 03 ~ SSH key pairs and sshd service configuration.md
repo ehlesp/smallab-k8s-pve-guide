@@ -406,7 +406,7 @@ By default, the sshd daemon gives users up to six attempts to make the authentic
 
 You already have disabled the password prompts in SSH logins when you changed the `/etc/pam.d/sshd` file before. Still, the sshd daemon has also an option in the `/etc/ssh/sshd_config` file to allow password-based authentication that is convenient to disable:
 
-1. In the `/etc/ssh/sshd_config`, uncomment the `PasswordAuthentication` parameter and set it to `no`.
+1. In the `/etc/ssh/sshd_config`, uncomment the `PasswordAuthentication` parameter and set it to `no`:
 
     ~~~sh
     # To disable tunneled clear text passwords, change to "no" here!
@@ -495,7 +495,7 @@ Hence, it is better to do the following:
             AuthenticationMethods none
     ~~~
 
-4. Save the the change and restart the `sshd` service.
+4. Save the the change and restart the `sshd` service:
 
     ~~~sh
     $ sudo systemctl restart sshd.service

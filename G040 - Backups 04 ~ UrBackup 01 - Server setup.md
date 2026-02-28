@@ -113,7 +113,7 @@ The very first thing you have to do is to change the VM's hostname to match its 
 
 The LVM filesystem structure of this VM retains the same names as the VM template, and this could be confusing. In particular, it is the VG (volume group) that should be changed to something related to this VM, such as `bkpserver-vg`. But this is not a trivial change, in particular because this VM has a **SWAP partition active**. So, tread carefully while following these instructions:
 
-1. First, **temporarily** disable the active SWAP of this VM with the `swapoff` command below.
+1. First, **temporarily** disable the active SWAP of this VM with the `swapoff` command below:
 
     ~~~sh
     $ sudo swapoff -a
@@ -128,7 +128,7 @@ The LVM filesystem structure of this VM retains the same names as the VM templat
 
     If there is nothing listed in the output, like above, you are good to go.
 
-2. Now, follow closely the instructions specified [in this section of the **G024** guide](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md#changing-the-vgs-name), although bearing in mind that the new VG name is `bkpserver-vg` in this guide.
+2. Now, follow closely the instructions specified [in this section of the chapter **G024**](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md#changing-the-vgs-name), although bearing in mind that the new VG name is `bkpserver-vg` in this guide.
 
 3. Finally, you need to edit the file `/etc/initramfs-tools/conf.d/resume` and again find and change the string `debiantpl` for the corresponding one, `bkpserver` in this guide. After the change, the line should look as below:
 
@@ -600,7 +600,7 @@ UrBackup server does not come with SSL/TLS support so, to secure the connections
     $ sudo rm /etc/nginx/sites-enabled/default
     ~~~
 
-7. At last, restart the nginx service to make it refresh its configuration.
+7. At last, restart the nginx service to make it refresh its configuration:
 
     ~~~sh
     $ sudo systemctl restart nginx.service
@@ -612,19 +612,19 @@ UrBackup server does not come with SSL/TLS support so, to secure the connections
 
 As you did for your K3s node VMs [in the chapter **G025**](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#firewall-setup-for-the-k3s-cluster), you have to apply some firewall rules on Proxmox VE to increase the protection on your UrBackup server. In particular, you want this VM reachable only through the ports `22` (for SSH) and `443` (for HTTPS) on its `net0` network device:
 
-1. At the `Datacenter` level, go to `Firewall` > `Alias`. There, add a new alias for the `bkpserver` main IP (the one for the first network device, named `net0` in Proxmox VE):
+1. At the `Datacenter` level, go to `Firewall > Alias`. There, add a new alias for the `bkpserver` main IP (the one for the first network device, named `net0` in Proxmox VE):
 
     ![PVE Datacenter Firewall Alias bkpserver](images/g040/pve_dc_fw_alias_bkpserver.webp "PVE Datacenter Firewall Alias bkpserver")
 
     See above how I named the alias `bkpserver_net0` after the VM is related to.
 
-2. Browse to the `Firewall` > `IPSet` tab. There create a new ipset that only includes the `bkpserver_net0` alias created before:
+2. Browse to the `Firewall > IPSet` tab. There create a new ipset that only includes the `bkpserver_net0` alias created before:
 
     ![PVE Datacenter Firewall IPSet bkpserver](images/g040/pve_dc_fw_ipset_bkpserver.webp "PVE Datacenter Firewall IPSet bkpserver")
 
     Give this ipset a name related to the VM, like `bkpserver_net0_ips`.
 
-3. Now go to the `Firewall` > `Security Group`, where you should create a security group with a name such as `bkpserver_net0_in` containing just the following rules:
+3. Now go to the `Firewall > Security Group`, where you should create a security group with a name such as `bkpserver_net0_in` containing just the following rules:
 
     - `bkpserver_net0_in`:
       - Rule 1: Type `in`, Action `ACCEPT`, Protocol `tcp`, Source `local_network_ips`, Dest. port `22`, Comment `SSH standard port open for entire local network`.
@@ -650,11 +650,11 @@ As you did for your K3s node VMs [in the chapter **G025**](G025%20-%20K3s%20clus
 
     ![PVE VM Firewall bkpserver with security group rule](images/g040/pve_vm_fw_bkpserver_with_secgroup_rule.webp "PVE VM Firewall bkpserver with security group rule")
 
-5. Go to the `Firewall` > `IPset` section of the VM, where you have to add an IP set for the IP filter you will enable later on the `net0` network device of this VM. Remember that the IP set name must begin with the string `ipfilter-`, then followed by the network device's name (`net0` here), otherwise the ipfilter will not work. As shown below, this IP set must contain only the alias of this VM main network device's IP (`bkpserver_net0` in this case):
+5. Go to the `Firewall > IPset` section of the VM, where you have to add an IP set for the IP filter you will enable later on the `net0` network device of this VM. Remember that the IP set name must begin with the string `ipfilter-`, then followed by the network device's name (`net0` here), otherwise the ipfilter will not work. As shown below, this IP set must contain only the alias of this VM main network device's IP (`bkpserver_net0` in this case):
 
     ![PVE VM Firewall IPSet for bkpserver ipfilter](images/g040/pve_vm_fw_ipset_bkpserver_ipfilter.webp "PVE VM Firewall IPSet for bkpserver ipfilter")
 
-6. To enable the firewall on this VM, click on the `Firewall` > `Options` tab. There you have to adjust the options as shown in the following snapshot:
+6. To enable the firewall on this VM, click on the `Firewall > Options` tab. There you have to adjust the options as shown in the following snapshot:
 
     ![PVE VM Firewall Options bkpserver](images/g040/pve_dc_fw_options_bkpserver.webp "PVE VM Firewall Options bkpserver")
 
@@ -668,7 +668,7 @@ As you did for your K3s node VMs [in the chapter **G025**](G025%20-%20K3s%20clus
       > **Remember that enabling this option is not enough**\
       > You need to specify the concrete IPs allowed on the network interface in which you want to apply this security measure, something you have just done in the previous step.
 
-    - The `log_level_in` and `log_level_out` options are set to `info`, enabling the logging of the firewall on the VM. This allows you to see, in the `Firewall` > `Log` view of the VM, any incoming or outgoing traffic that gets dropped or rejected by the firewall.
+    - The `log_level_in` and `log_level_out` options are set to `info`, enabling the logging of the firewall on the VM. This allows you to see, in the `Firewall > Log` view of the VM, any incoming or outgoing traffic that gets dropped or rejected by the firewall.
 
 7. As a final verification, try now browsing to your UrBackup server web interface on the HTTPS url, but also on the HTTP one. Only the HTTPS one should work, while trying to connect with unsecured HTTP should return a time-out or similar error.
 
@@ -682,7 +682,7 @@ Like any other software, the UrBackup server comes with a default configuration 
 
 To enable to UrBackup clients the capacity of accessing and restoring the backups stored in the server, you need to specify the concrete server URL they have to reach to do so:
 
-1. Browse to the `Settings` tab of yor UrBackup server's web interface. By default, this page will put you on the `General` > `Server` options view. There, you'll see the empty parameter `Server URL for client file/backup access/browsing`:
+1. Browse to the `Settings` tab of yor UrBackup server's web interface. By default, this page will put you on the `General > Server` options view. There, you'll see the empty parameter `Server URL for client file/backup access/browsing`:
 
     ![UrBackup server Settings General Server view](images/g040/urbackup_server_settings_general_server_options_default.webp "UrBackup server Settings General Server view")
 
@@ -694,7 +694,7 @@ To enable to UrBackup clients the capacity of accessing and restoring the backup
 
     ![UrBackup server Settings General Server URL set success message](images/g040/urbackup_server_settings_general_server_srv_url_set_success.webp "UrBackup server Settings General Server URL set success message")
 
-3. Now click on the `General` > `Internet/Active clients` tab. In this page, there is a `Server URL clients connect to` field where you also have to specify the same IP and port as before, although respecting the `urbackup` protocol string already set there:
+3. Now click on the `General > Internet/Active clients` tab. In this page, there is a `Server URL clients connect to` field where you also have to specify the same IP and port as before, although respecting the `urbackup` protocol string already set there:
 
     ![UrBackup server Settings General Internet/Active clients Server url empty](images/g040/urbackup_server_settings_general_server_int_clients_srv_url_empty.webp "UrBackup server Settings General Internet/Active clients Server url empty")
 
@@ -712,7 +712,7 @@ On the other hand, this procedure will fail with your K3s node VMs because the t
 
 With all this in mind, the best thing to do in this homelab scenario is to disable, in your UrBackup server, the full image backups feature altogether:
 
-1. Return to the `Settings` > `General` > `Server` options view of your UrBackup server's web interface. There, you will find the option `Do not do image backups` unchecked:
+1. Return to the `Settings > General > Server` options view of your UrBackup server's web interface. There, you will find the option `Do not do image backups` unchecked:
 
     ![UrBackup server Settings General Server images backup enabled](images/g040/urbackup_server_settings_general_server_img_bkp_enabled.webp "UrBackup server Settings General Server images backup enabled")
 

@@ -446,7 +446,7 @@ The VM (or container) backups are just compressed dump files, perfectly accessib
 
 1. Open a shell in your Proxmox VE as `mgrsys`, then do an `ls` to `/mnt`:
 
-    ~~~bash
+    ~~~sh
     $  ls -al /mnt
     total 16
     drwxr-xr-x  4 root root 4096 Sep  2 13:26 .
@@ -459,7 +459,7 @@ The VM (or container) backups are just compressed dump files, perfectly accessib
 
 2. Do `ls` of that `hddusb_bkpvzdumps` folder:
 
-    ~~~bash
+    ~~~sh
     $ ls -al /mnt/hddusb_bkpvzdumps
     total 28
     drwxr-xr-x 4 root root  4096 Sep  2 16:34 .
@@ -472,7 +472,7 @@ The VM (or container) backups are just compressed dump files, perfectly accessib
 
 3. Now execute `ls -alh` on that `dump` folder, being aware that the `h` option gives you the weight of the files in a more human-readable format:
 
-    ~~~bash
+    ~~~sh
     $ ls -alh /mnt/hddusb_bkpvzdumps/dump
     total 8.9G
     drwxr-xr-x 2 root root 4.0K Feb 13 11:48 .

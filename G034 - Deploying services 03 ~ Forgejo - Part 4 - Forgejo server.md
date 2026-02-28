@@ -35,7 +35,7 @@ Like Gitea, Forgejo comes with a web console and embedded Prometheus-formatted m
 
 Prepare your Forgejo's Kustomize project folder tree with this `mkdir` command:
 
-~~~bash
+~~~sh
 $ mkdir -p $HOME/k8sprjs/forgejo/components/server-forgejo/{configs,resources,secrets}
 ~~~
 

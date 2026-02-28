@@ -250,7 +250,7 @@ You know what steps to follow when updating any app, but what is the proper orde
 1. **cert-manager**\
     Deployment procedure found in [chapter **G029**](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md).
 
-    - Remember that cert-manager has a plugin for `kubectl` which you will also need to update. The procedure of upgrading this plugin will be almost the same as installing it, [as is explained in the **G029** guide](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#installing-the-cert-manager-plugin-in-your-kubectl-client-system).
+    - Remember that cert-manager has a plugin for `kubectl` which you will also need to update. The procedure of upgrading this plugin will be almost the same as installing it, [as is explained in the chapter **G029**](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#installing-the-cert-manager-plugin-in-your-kubectl-client-system).
 
 2. **Headlamp**\
     Deployment procedure found in [chapter **G031**](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md).

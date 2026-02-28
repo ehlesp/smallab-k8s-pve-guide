@@ -675,7 +675,7 @@ The connection of your K3s nodes with the NUT server should be enabled now. Chec
 
     - The security group in the `GROUP` rules and alias in the `IPSET` directive correspond to the ones corresponding to the agent nodes.
 
-8. Since the firewall configuration for the second K3s agent node is essentially the same as with the first one, instead of using the web console to set up the firewall for the other VM, open a shell as `mgrsys` on your Proxmox VE host and do the following.
+8. Since the firewall configuration for the second K3s agent node is essentially the same as with the first one, instead of using the web console to set up the firewall for the other VM, open a shell as `mgrsys` on your Proxmox VE host and do the following:
 
     ~~~sh
     $ cd /etc/pve/firewall
@@ -788,13 +788,13 @@ The configuration file you need to enable the graceful node shutdown can be call
 
 It might be that some pods do not shutdown in time and get stuck with the `Shutdown` status. They could reappear later as dead unevicted pods in your cluster after a reboot. To clean them up, you can prepare a system service in your server node that can get rid of them:
 
-1. Create the `k3s-cleanup.service` file at `/lib/systemd/system/`.
+1. Create the `k3s-cleanup.service` file at `/lib/systemd/system/`:
 
     ~~~sh
     $ sudo touch /lib/systemd/system/k3s-cleanup.service
     ~~~
 
-2. Put the next content in the `k3s-cleanup.service` file.
+2. Put the next content in the `k3s-cleanup.service` file:
 
     ~~~properties
     [Unit]

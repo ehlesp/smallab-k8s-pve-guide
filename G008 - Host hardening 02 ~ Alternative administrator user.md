@@ -42,6 +42,7 @@ So, if all the PVE's user management is handled at the `Datacenter` level, does 
 In conclusion, creating a `pam` realm's user in Proxmox VE always implies two basic steps:
 
 1. **Creating the user** directly in the node at the Debian OS level.
+
 2. **Enabling it in the Proxmox VE user management**, either through the web console or by the shell commands Proxmox VE also provides for this and other administrative tasks.
 
 > [!NOTE]

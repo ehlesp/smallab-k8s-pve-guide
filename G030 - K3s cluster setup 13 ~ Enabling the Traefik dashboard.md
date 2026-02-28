@@ -36,6 +36,7 @@ Traefik in K3s comes with its embedded web dashboard enabled by default, but rea
 This chapter shows you how to enable HTTPS access to your Traefik dashboard by doing the following:
 
 1. Creating a user to restrict access into the Traefik dashboard.
+
 2. Declaring an `IngressRoute` that enables access to a `TraefikService` where the dashboard is available. This `IngressRoute` enforces basic authentication with the user created in the previous step.
 
 The first step is just the execution of a command on your `kubectl` client. The other is resolved in the corresponding Kustomize project.

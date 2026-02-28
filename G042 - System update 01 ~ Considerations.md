@@ -59,9 +59,11 @@ Related to the "when" question is the matter of in what order you should deal wi
 In general, you will prefer to start from the bottom:
 
 1. Proxmox VE, since it supports all the system.
-2. The Debian system in the VMs.
+
+2. The Debian system in the VMs:
    1. The UrBackup software, which can be affected by the Debian updates.
-3. The K3s software.
+
+3. The K3s software:
    1. The apps deployed in the K3s cluster.
 
 What if one layer does not have any updates pending? Easy. After making sure that it does not have any updates to apply in that cycle, you just skip it in that particular update cycle.

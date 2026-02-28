@@ -335,7 +335,7 @@ Alternatively, you can just readjust your systemd journal's configuration, makin
     $ sudo cp /etc/systemd/journald.conf /etc/systemd/journald.conf.orig
     ~~~
 
-2. Open `/etc/systemd/journald.conf` with an editor to see the following content.
+2. Open `/etc/systemd/journald.conf` with an editor to see the following content:
 
     ~~~sh
     #  This file is part of systemd.
@@ -406,7 +406,7 @@ Alternatively, you can just readjust your systemd journal's configuration, makin
 
 4. Save the changes and exit the file.
 
-5. Restart the systemd journal service.
+5. Restart the systemd journal service:
 
     ~~~sh
     $ sudo systemctl restart systemd-journald.service

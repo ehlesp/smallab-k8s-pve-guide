@@ -115,7 +115,7 @@ After learning how old the Debian systems are in your VMs, get on with their upd
 
 Either wait for the backup job scheduled in your Proxmox VE to kick in, or launch it manually. Regardless, try to have a fresh backup before updating your VMs, the closest in time you can to the beginning of the update process.
 
-Needless to say that you should not start your update process when a scheduled backup task that affect the VMs is already running, so do not forget to check it in your Proxmox VE web console (in `Datacenter` > `Backup`).
+Needless to say that you should not start your update process when a scheduled backup task that affect the VMs is already running, so do not forget to check it in your Proxmox VE web console (in `Datacenter > Backup`).
 
 Also remember that, in this guide's setup, **the UrBackup VM is not included** in the backup scheduled in the [chapter **G039**](G039%20-%20Backups%2003%20~%20Proxmox%20VE%20backup%20job.md).
 

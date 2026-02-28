@@ -265,7 +265,7 @@ The Fail2Ban configuration files are read in a particular order: first the `.con
 1. `jail.conf`
 2. `jail.d/*.conf` (in alphabetical order)
 3. `jail.local`
-4. `jail.d/*.local` (in alphabetical order).
+4. `jail.d/*.local` (in alphabetical order)
 
 ### Fail2Ban uses `nftables` to enforce the bans
 

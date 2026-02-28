@@ -15,7 +15,7 @@
   - [Adding the Prometheus data source](#adding-the-prometheus-data-source)
   - [Enabling a dashboard for Prometheus data](#enabling-a-dashboard-for-prometheus-data)
   - [Users management](#users-management)
-- [Monitoring stack Kustomize project attached to this guide series](#monitoring-stack-kustomize-project-attached-to-this-guide-series)
+- [Monitoring stack Kustomize project attached to this guide](#monitoring-stack-kustomize-project-attached-to-this-guide)
 - [Relevant system paths](#relevant-system-paths)
   - [Folders in `kubectl` client system](#folders-in-kubectl-client-system)
   - [Files in `kubectl` client system](#files-in-kubectl-client-system)
@@ -242,7 +242,7 @@ Next, tie up your monitoring stack setup by declaring its main Kustomize project
     $ touch $HOME/k8sprjs/monitoring/kustomization.yaml
     ~~~
 
-2. Put the following yaml declaration in that new `kustomization.yaml`.
+2. Put the following yaml declaration in that new `kustomization.yaml`:
 
     ~~~yaml
     # Monitoring stack setup
@@ -1466,7 +1466,7 @@ Now you have an active Prometheus data source, but you still need a dashboard to
 
 ### Users management
 
-Grafana comes with an integrated user authentication and management system. You can find its page in `Administration` > `Users and access` > `Users`:
+Grafana comes with an integrated user authentication and management system. You can find its page in `Administration > Users and access > Users`:
 
 ![Users option in side menu under the Administration Users and access section](images/g035/grafana_admin_users_access_users_option.webp "Users option in side menu under the Administration Users and access section")
 
@@ -1476,7 +1476,7 @@ Click on the `Users` option and you will reach the users management page of your
 
 There is only the `admin` user you have used before. It would be better if you created at least another one with lesser privileges and make it your regular user.
 
-## Monitoring stack Kustomize project attached to this guide series
+## Monitoring stack Kustomize project attached to this guide
 
 You can find the Kustomize project for this Monitoring stack deployment in the following attached folder.
 

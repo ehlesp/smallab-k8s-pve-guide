@@ -324,7 +324,7 @@
 - [Deploying the Traefik dashboard Kustomize project](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md#deploying-the-traefik-dashboard-kustomize-project)
 - [Getting into the Traefik dashboard](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md#getting-into-the-traefik-dashboard)
 - [What to do if Traefik's dashboard has bad performance](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md#what-to-do-if-traefiks-dashboard-has-bad-performance)
-- [Traefik dashboard's Kustomize project attached to this guide series](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md#traefik-dashboards-kustomize-project-attached-to-this-guide)
+- [Traefik dashboard's Kustomize project attached to this guide](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md#traefik-dashboards-kustomize-project-attached-to-this-guide)
 - [Relevant system paths](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md#relevant-system-paths)
 - [References](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md#references)
 
@@ -415,7 +415,7 @@
 - [Deploying the main Kustomize project in the cluster](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#deploying-the-main-kustomize-project-in-the-cluster)
 - [Start using Ghost](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#start-using-ghost)
 - [Security considerations in Ghost](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#security-considerations-in-ghost)
-- [Ghost platform's Kustomize project attached to this guide series](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#ghost-platforms-kustomize-project-attached-to-this-guide-series)
+- [Ghost platform's Kustomize project attached to this guide](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#ghost-platforms-kustomize-project-attached-to-this-guide)
 - [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#relevant-system-paths)
 - [References](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#references)
 
@@ -557,7 +557,7 @@
 - [Deploying the main Kustomize project in the cluster](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#deploying-the-main-kustomize-project-in-the-cluster)
 - [Checking on Prometheus](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#checking-on-prometheus)
 - [Finishing Grafana's setup](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#finishing-grafanas-setup)
-- [Monitoring stack Kustomize project attached to this guide series](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#monitoring-stack-kustomize-project-attached-to-this-guide-series)
+- [Monitoring stack Kustomize project attached to this guide](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#monitoring-stack-kustomize-project-attached-to-this-guide)
 - [Relevant system paths](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#relevant-system-paths)
 - [References](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#references)
 
@@ -742,7 +742,7 @@
 - [Upgrading a containerized PostgreSQL server is not straightforward](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#upgrading-a-containerized-postgresql-server-is-not-straightforward)
 - [Concerns](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#concerns)
 - [Upgrade procedure (for Forgejo's PostgreSQL instance)](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#upgrade-procedure-for-forgejos-postgresql-instance)
-- [Kustomize project only for updating PostgreSQL included in this guide series](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#kustomize-project-only-for-updating-postgresql-included-in-this-guide-series)
+- [Kustomize project only for updating PostgreSQL included in this guide](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#kustomize-project-only-for-updating-postgresql-included-in-this-guide)
 - [Relevant system paths](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#relevant-system-paths)
 - [References](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#references)
 

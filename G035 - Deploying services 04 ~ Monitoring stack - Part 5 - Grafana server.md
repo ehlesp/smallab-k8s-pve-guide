@@ -253,7 +253,7 @@ Like in previous guides, you should validate this Kustomize project's complete Y
     $ kubectl kustomize $HOME/k8sprjs/monitoring/components/server-grafana > server-grafana.k.output.yaml
     ~~~
 
-2. The resulting `server-grafana.k.output.yaml` should look as the yaml next.
+2. The resulting `server-grafana.k.output.yaml` should look as the yaml next:
 
     ~~~yaml
     apiVersion: v1
