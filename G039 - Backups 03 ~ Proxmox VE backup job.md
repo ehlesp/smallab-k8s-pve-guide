@@ -350,9 +350,9 @@ You can generate new VMs (or containers) from backups, if you execute the restor
 
     - The `VM` field is editable here, so you can assign any identifier to the new VM generated from this restoration process.
 
-      - See how by default it already puts the lowest identifier available, in this case `102`. Remember that this ID can't be lower than `100`.
+      - See how by default it already puts the lowest identifier available, in this case `102`. Remember that this ID cannot be lower than `100`.
 
-      - You can't put an ID already in use. If you do, the field will be highlighted in red and the `Restore` button will be disabled. It does not matter if the ID is the same as the VM from which the backup was made, as shown below.
+      - You cannot put an ID already in use. If you do, the field will be highlighted in red and the `Restore` button will be disabled. It does not matter if the ID is the same as the VM from which the backup was made, as shown below.
 
         ![Restore window with wrong configuration](images/g039/pve_restore_bkp_rest_window_bad_cfg.webp "Restore window with wrong configuration")
 
@@ -436,7 +436,7 @@ Imagine that, for some reason, you want or need to restore the `k3sagent02` VM, 
 
     ![Restore VM task error VM is running](images/g039/pve_restore_live_vm_rst_output_error.webp "Restore VM task error VM is running")
 
-    In short, the log messages shown in the `Output` tab tells you that you can't execute a restoration on a VM that is currently running.
+    In short, the log messages shown in the `Output` tab tells you that you cannot execute a restoration on a VM that is currently running.
 
 You might wonder why the web console does not block the `Restore` action right away for running VMs. Since nothing is broken, take this as just one of the many idiosyncrasies within the Proxmox VE software, and hope that they improve this and other things in future releases.
 
