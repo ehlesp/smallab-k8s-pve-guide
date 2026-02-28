@@ -41,9 +41,9 @@
 
 ## Use UrBackup to preserve specific directories
 
-With [UrBackup](https://www.urbackup.org/) you can schedule backups of specific directories rather than whole systems, as you have done in the two previous chapters. But first you need to deploy an UrBackup server and install the corresponding UrBackup clients in the target systems which, in this case, will be your K3s node VMs.
+With [UrBackup](https://www.urbackup.org/) you can schedule backups of specific directories rather than whole systems, as you have done in the two previous chapters. But first you need to deploy an UrBackup server and install the corresponding UrBackup clients in the target systems which, in this case, is going to be your K3s node VMs.
 
-The UrBackup server could be deployed in your K3s Kubernetes cluster (there is a Docker image available of the UrBackup server), but usually you should have the backup server on a completely different system for safety. Of course, for this guide there is only one physical system, so this chapter will teach you how to run a UrBackup server on a small Debian VM that will act as that external system.
+The UrBackup server could be deployed in your K3s Kubernetes cluster (there is a Docker image available of the UrBackup server), but usually you should have the backup server on a completely different system for safety. Of course, for this guide there is only one physical system, so this chapter teaches you how to run a UrBackup server on a small Debian VM acting as that external system.
 
 ## Setting up a new VM for the UrBackup server
 
@@ -54,15 +54,15 @@ You already have a suitable VM template from which you can clone a new Debian VM
 Clone a new VM from the `debiantpl` VM template, as is explained [here in the chapter **G024**](G024%20-%20K3s%20cluster%20setup%2007%20~%20K3s%20node%20VM%20template%20setup.md#full-cloning-of-the-debian-vm-template). The cloning parameters adjusted for generating this chapter's VM were set as follows:
 
 - `VM ID`: `431`.\
-  As you did with the K3s node VMs, give your new VM an ID correlated to the IPs it is going to have. So, for this guide, this new VM will have the ID `431`, which corresponds to the IPs that you will see used later in this chapter.
+  As you did with the K3s node VMs, give your new VM an ID correlated to the IPs it is going to have. So, for this guide, this new VM will have the ID `431`, which corresponds to the IPs assigned later in this chapter.
 
 - `Name`: `bkpserver`.\
-  The VM name should be something meaningful like `bkpserver`. Be aware that later you will set up this name also as the VM's `hostname` within Debian.
+  The VM name should be something meaningful like `bkpserver`. Be aware that this name will also be the VM's `hostname` within Debian.
 
 - `Mode`: `Linked Clone`.\
   Links this VM to the VM template, instead of duplicating it.
 
-After the new VM is cloned, **DO NOT start it**. You still need to take a look to its assigned hardware capabilities. If you have the same kind of limited hardware as the one used in this guide, and also having a K3s Kubernetes cluster already running in the system, you must be careful of how much RAM and CPU you assign to any new VM. So, in this chapter, the new VM will have the same hardware setup as the VM template except on the memory department. It will require a minimum of 256 MiB and will have an upper limit of 1 GiB.
+After the new VM is cloned, **DO NOT start it**. You still need to take a look to its assigned hardware capabilities. If you have the same kind of limited hardware as the one used in this guide, and also having a K3s Kubernetes cluster already running in the system, you must be careful of how much RAM and CPU you assign to any new VM. So, in this chapter, the new VM will have the same hardware setup as the VM template except on the memory department. It will require a minimum of 256 MiB and have an upper limit of 1 GiB.
 
 In the capture below, you can see how the `Hardware` tab looks for this new VM:
 
@@ -95,7 +95,7 @@ A final detail to adjust at this point is to set to `Yes` the parameter `Start a
 
 To facilitate your remote access to the VM, set up a static IP for its `net0` network device in your router or gateway, as you have done for the other VMs. Remember that you can see the MAC of the network device in the `Hardware` tab of your new VM.
 
-In this guide, the VM will have the IP `10.4.3.1`, and notice how the `4.3.1` part corresponds with this VM's ID.
+In this guide, the VM has the IP `10.4.3.1`, and notice how the `4.3.1` part corresponds with this VM's ID.
 
 ### System adjustments
 
@@ -103,7 +103,7 @@ Boot up your `bkpserver` VM, then connect to it through remote SSH shell and log
 
 > [!WARNING]
 > **Use the Debian template credentials to access this new VM**\
-> At this point, to access your `bkpserver` VM you will have to use the same credentials set up in the VM template.
+> At this point, to access your `bkpserver` VM you have to use the same credentials set up in the Debian VM template.
 
 #### Setting a proper hostname string
 
@@ -145,7 +145,7 @@ The second network device, or virtual Ethernet card, in the new VM is disabled b
 
 #### Changing the password of mgrsys
 
-You should change the password of the `mgrsys` user, since it is the same one it had in the VM template. To do so, execute the `passwd` command as `mgrsys` and it will ask you the old and new password for the account:
+You should change the password of the `mgrsys` user, since it is the same one it had in the VM template. To do so, execute the `passwd` command as `mgrsys` and it asks you the old and new password for the account:
 
 ~~~sh
 $ passwd
@@ -158,7 +158,7 @@ passwd: password updated successfully
 
 #### Changing the TOTP code for mgrsys
 
-As you have done with the `mgrsys` password, now you must change its TOTP to make it unique for this `bkpserver` VM. Just execute the `google-authenticator` command, and it will overwrite the current content of the `.google_authenticator` file in the `$HOME` directory of your current user. In this guide, for this VM the command will be as below.
+As you have done with the `mgrsys` password, now you must change its TOTP to make it unique for this `bkpserver` VM. Just execute the `google-authenticator` command, and it overwrites the current content of the `.google_authenticator` file in the `$HOME` directory of your current user. In this guide, for this VM the command is as below:
 
 ~~~sh
 $ google-authenticator -t -d -f -r 3 -R 30 -w 3 -Q UTF8 -i bkpserver.homelab.cloud -l mgrsys@bkpserver
@@ -174,7 +174,7 @@ To connect through SSH to the VM, you are using the key pair originally meant ju
 
 ### Adding a virtual storage drive to the VM
 
-Since main purpose of this new VM is to store backups, you will need to attach a more spacious virtual storage drive (a _hard disk_ in Proxmox VE) to the `bkpserver` VM.
+Since main purpose of this new VM is to store backups, you need to attach a more spacious virtual storage drive (a _hard disk_ in Proxmox VE) to the `bkpserver` VM.
 
 #### Attaching a new hard disk to the VM
 
@@ -292,6 +292,7 @@ With the tools available, now you can turn your `/dev/sdb` drive into a btrfs fi
     - This volume is multidevice, although currently it only has one storage drive.
 
     - The volume works in `single` mode, meaning that:
+
       - The metadata will be mirrored in all the devices in the volume.
       - The data is allocated in "linear" fashion all along the devices in the volume.
 
@@ -299,7 +300,7 @@ With the tools available, now you can turn your `/dev/sdb` drive into a btrfs fi
     > **Never build a multidevice volume with drives of different capabilities**\
     > So do not put in the same volume SSD devices with HDD ones, for instance. Always be sure that they all are of the same kind and have the same I/O capabilities.
 
-    With the btrfs volume configured this way, when you're running out of space in it, you can add another storage device to it. [Check out how in the official btrfs wiki](https://btrfs.wiki.kernel.org/index.php/Using_Btrfs_with_Multiple_Devices#Adding_new_devices).
+    With the btrfs volume configured this way, when you are running out of space in it, you can add another storage device to it. [Check out how in the official btrfs wiki](https://btrfs.wiki.kernel.org/index.php/Using_Btrfs_with_Multiple_Devices#Adding_new_devices).
 
 2. You need a mount point for the btrfs volume, so create one under the standarde `/mnt` folder:
 
@@ -395,7 +396,7 @@ To install UrBackup server in your Debian VM, you just need to install one `.deb
     $ sudo apt install -f
     ~~~
 
-    A few seconds later, this `apt` command will launch a text-based window asking where your UrBackup server should store its backups:
+    A few seconds later, this `apt` command launches a text-based window asking where your UrBackup server should store its backups:
 
     ![UrBackup server default backups path](images/g040/urbackup_server_install_bkp_path.webp "UrBackup server default backups path")
 
@@ -403,7 +404,7 @@ To install UrBackup server in your Debian VM, you just need to install one `.deb
 
     ![UrBackup server changed backups path](images/g040/urbackup_server_install_bkp_path_changed.webp "UrBackup server changed backups path")
 
-    After setting the correct path, press enter and the installation will be completed.
+    After setting the correct path, press enter and the installation finishes.
 
 ### Enabling a domain name for the UrBackup server in your network
 
@@ -413,11 +414,11 @@ Remember to enable a domain name for your UrBackup server in your network, eithe
 
 UrBackup server is installed in your VM, so now you can browse into its web console. Remember to associate its main IP to a domain in your LAN. [As established previously](#enabling-a-domain-name-for-the-urbackup-server-in-your-network), the domain for this UrBackup server is `bkpserver.homelab.cloud`:
 
-1. Access the UrBackup server through an **http** (unsecured!) connection to the port `55414`. For this guide's VM, the whole URL would be `http://bkpserver.homelab.cloud:55414/`. The first page you will see is the `Status` tab of your new UrBackup server:
+1. Access the UrBackup server through an **http** (unsecured!) connection to the port `55414`. For this guide's VM, the whole URL would be `http://bkpserver.homelab.cloud:55414/`. The first page you see is the `Status` tab of your new UrBackup server:
 
     ![UrBackup server Status page](images/g040/urbackup_server_status_page_initial.webp "UrBackup server Status page")
 
-    Notice that you have gotten here without going through any kind of authentication process. This security hole is one of several things you will adjust in the following sections.
+    Notice that you have gotten here without going through any kind of authentication process. This security hole is one of several things you have to adjust in the following sections.
 
     On the other hand, open a remote terminal on the `bkpserver` VM and list the contents of the `/mnt/bkpdata-hdd`:
 
@@ -432,7 +433,7 @@ UrBackup server is installed in your VM, so now you can browse into its web cons
 
     See that UrBackup is already using this storage, and with its own `urbackup` user no less. This confirms you that the backup path configuration set to UrBackup is correct.
 
-2. There is a test you should do to confirm that your UrBackup server will be able to use the btrfs features of the chosen backup storage. Execute the following `urbackup_snapshot_helper` command in your `bkpserver` VM:
+2. There is a test you should do to confirm that your UrBackup server is able to use the btrfs features of the chosen backup storage. Execute the following `urbackup_snapshot_helper` command in your `bkpserver` VM:
 
     ~~~sh
     $ urbackup_snapshot_helper test
@@ -508,7 +509,7 @@ At this point, your UrBackup server allows anonymous access to anyone browsing i
 
     The web interface warns you of the new user added successfully, while you can also see your new administrator listed in the users list.
 
-5. Refresh the page in your browser and the web interface will ask for your new administrator user's password:
+5. Refresh the page in your browser and the web interface asks for your new administrator user's password:
 
     ![UrBackup server password page](images/g040/urbackup_server_password_page.webp "UrBackup server password page")
 
@@ -520,7 +521,7 @@ At this point, your UrBackup server allows anonymous access to anyone browsing i
 
 ### Enabling SSL access to the UrBackup server
 
-UrBackup server does not come with SSL/TLS support so, to secure the connections to the web interface, you have to put a reverse proxy in front of it. I will show you how to do this with an nginx server, slightly adapting what is explained [in this guide](https://github.com/Dmitrius7/UrBackup_simple_make_web_via_ssl_https):
+UrBackup server does not come with SSL/TLS support so, to secure the connections to the web interface, you have to put a reverse proxy in front of it. This chapter shows you how to do this with an nginx server, slightly adapting what is explained [in this guide](https://github.com/Dmitrius7/UrBackup_simple_make_web_via_ssl_https):
 
 1. Open a remote terminal as `mgrsys` to your `bkpserver` VM, then install nginx with `apt`:
 
@@ -534,7 +535,7 @@ UrBackup server does not come with SSL/TLS support so, to secure the connections
     $ sudo openssl req -x509 -nodes -days 3650 -newkey ec -pkeyopt ec_paramgen_curve:P-521 -subj "/O=Urb Security/OU=Urb/CN=Urb.local/CN=Urb" -addext "subjectAltName=DNS:bkpserver.homelab.cloud" -keyout /etc/ssl/certs/urb-cert.key -out /etc/ssl/certs/urb-cert.crt
     ~~~
 
-    The resulting key-pair generated by the openssl command above will be encrypted with the ECDSA algorithm using the P-521 curve, just like the certificates generated for the [Ghost](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#ghost-platforms-tls-certificate), [Forgejo](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%205%20-%20Complete%20Forgejo%20platform.md#forgejo-platforms-tls-certificate) and [monitoring stack](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#monitoring-stack-tls-certificate) deployments already explained in this guide.
+    The resulting key-pair generated by the openssl command above is encrypted with the ECDSA algorithm using the P-521 curve, just like the certificates generated for the [Ghost](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#ghost-platforms-tls-certificate), [Forgejo](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%205%20-%20Complete%20Forgejo%20platform.md#forgejo-platforms-tls-certificate) and [monitoring stack](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#monitoring-stack-tls-certificate) deployments already explained in this guide.
 
 3. Create an empty file in the path `/etc/nginx/sites-available/urbackup.conf`:
 
@@ -582,7 +583,7 @@ UrBackup server does not come with SSL/TLS support so, to secure the connections
     > **Notice the `server_name` parameter with the domain for the UrBackup server**\
     > Do not forget to switch it with the one you are using in your homelab setup.
 
-    With this configuration, nginx will listen for HTTPS requests on the standard HTTPS port `443` to redirect them towards the UrBackup server which is listening in the `55413` port.
+    With this configuration, nginx listens for HTTPS requests on the standard HTTPS port `443` to redirect them towards the UrBackup server which is listening in the `55413` port.
 
     > [!WARNING]
     > **Careful of not specifying UrBackup server's web console `55414` port**\
@@ -616,7 +617,7 @@ As you did for your K3s node VMs [in the chapter **G025**](G025%20-%20K3s%20clus
 
     ![PVE Datacenter Firewall Alias bkpserver](images/g040/pve_dc_fw_alias_bkpserver.webp "PVE Datacenter Firewall Alias bkpserver")
 
-    See above how I named the alias `bkpserver_net0` after the VM is related to.
+    See above how the alias `bkpserver_net0` is named after the VM is related to.
 
 2. Browse to the `Firewall > IPSet` tab. There create a new ipset that only includes the `bkpserver_net0` alias created before:
 
@@ -682,7 +683,7 @@ Like any other software, the UrBackup server comes with a default configuration 
 
 To enable to UrBackup clients the capacity of accessing and restoring the backups stored in the server, you need to specify the concrete server URL they have to reach to do so:
 
-1. Browse to the `Settings` tab of yor UrBackup server's web interface. By default, this page will put you on the `General > Server` options view. There, you'll see the empty parameter `Server URL for client file/backup access/browsing`:
+1. Browse to the `Settings` tab of yor UrBackup server's web interface. By default, this page puts you on the `General > Server` options view. There, you can see the empty parameter `Server URL for client file/backup access/browsing`:
 
     ![UrBackup server Settings General Server view](images/g040/urbackup_server_settings_general_server_options_default.webp "UrBackup server Settings General Server view")
 
@@ -706,13 +707,13 @@ To enable to UrBackup clients the capacity of accessing and restoring the backup
 
 ### Disabling the image backups
 
-By default, the UrBackup server will execute automatically a full image backup from any client it is connected to. Since you already have full images done by Proxmox VE, you do not need to do the same thing again with UrBackup.
+By default, the UrBackup server automatically executes a full image backup from any client it is connected to. Since you already have full images done by Proxmox VE, you do not need to do the same thing again with UrBackup.
 
-On the other hand, this procedure will fail with your K3s node VMs because the tool UrBackup uses in the clients to create the images is incompatible with the _ext2_ filesystem used in the boot partition used on all your Debian VMs.
+On the other hand, this procedure would fail with your K3s node VMs because the tool UrBackup uses in the clients to create the images is incompatible with the _ext2_ filesystem used in the boot partition used on all your Debian VMs.
 
 With all this in mind, the best thing to do in this homelab scenario is to disable, in your UrBackup server, the full image backups feature altogether:
 
-1. Return to the `Settings > General > Server` options view of your UrBackup server's web interface. There, you will find the option `Do not do image backups` unchecked:
+1. Return to the `Settings > General > Server` options view of your UrBackup server's web interface. There you find the option `Do not do image backups` unchecked:
 
     ![UrBackup server Settings General Server images backup enabled](images/g040/urbackup_server_settings_general_server_img_bkp_enabled.webp "UrBackup server Settings General Server images backup enabled")
 
@@ -720,7 +721,7 @@ With all this in mind, the best thing to do in this homelab scenario is to disab
 
     ![UrBackup server Settings General Server images backup disabled](images/g040/urbackup_server_settings_general_server_img_bkp_disabled.webp "UrBackup server Settings General Server images backup disabled")
 
-    Again, due to a bug in the UrBackup server's web interface, you'll still see the success message from the previous change. So, after pressing `Save`, the same success warning will just stay there.
+    Again, due to a bug in the UrBackup server's web interface, you can still see the success message from the previous change. Because of this, after pressing `Save`, the same success warning just stays there.
 
 ## UrBackup server log file
 

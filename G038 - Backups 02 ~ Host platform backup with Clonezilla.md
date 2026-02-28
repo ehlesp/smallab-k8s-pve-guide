@@ -22,7 +22,7 @@ Making a backup of a host platform usually means doing an image of its entire fi
 
 A full host backup is, in short, a complete copy of a host system. This means that you not only backup the operative system with all its critical files, like configuration ones, but also any other data you might have in it.
 
-In the case of the Proxmox VE system deployed in this guide, if you make a full host clone image of it, you will get in your backup:
+In the case of the Proxmox VE system deployed in this guide, if you make a full host clone image of it, you will copy in your backup:
 
 - The whole Proxmox VE system itself, including the underlying Debian operative system and all the Proxmox related files.
 
@@ -48,9 +48,9 @@ The problem with this kind of backup is that you cannot do it while your homelab
 
 ## When to do the backup
 
-In this guide's scenario, the system deployed is just a personal one, but you still have to plan when you want to do this to avoid disrupting your system's availability too much. What could be a somewhat decent backup scheduling for your homelab setup? I can give you a few basic indications:
+In this guide's scenario, the system deployed is just a personal one, but you still have to plan when you want to do this to avoid disrupting your system's availability too much. What could be a somewhat decent backup scheduling for your homelab setup? Here you have a few basic indications:
 
-- Backup **always** before **any** update or configuration change, regardless of its scope.
+- Backup always before any update or configuration change, regardless of its scope.
 
 - Regular monthly backups, to keep the clones fresh enough.
 

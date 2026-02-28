@@ -21,15 +21,15 @@
 
 ## Install UrBackup clients in your K3s node VMs
 
-With your UrBackup server up and running, now you need to deploy the UrBackup client program in all the systems you want to backup. Those systems in this guide will be the VMs running your K3s Kubernetes cluster. This way you will be able to schedule backup jobs in your UrBackup server to run them on your clients.
+With your UrBackup server up and running, now you need to deploy the UrBackup client program in all the systems you want to backup. In this guide, those systems are the VMs running your K3s Kubernetes cluster. This way you will be able to schedule backup jobs in your UrBackup server to run them on your clients.
 
 ## Deploying the UrBackup client program
 
-You need to deploy the UrBackup client program **in all of your K3s node VMs**. Since those VMs are Debian systems, you will need to execute the corresponding Linux installer of the UrBackup client in all of them. And by _corresponding_ I mean you have to install the correct version of the client, which has to correspond with the version of your UrBackup server.
+You need to deploy the UrBackup client program **in all of your K3s node VMs**. Since those VMs are Debian systems, you need to execute the corresponding Linux installer of the UrBackup client in all of them. And _corresponding_ means you have to install the correct version of the client, which has to correspond with the version of your UrBackup server.
 
-In this case, since the UrBackup server used is a 2.5.z version (`2.5.35` was the one deployed [in the previous chapter **G040**](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#deploying-urbackup)), you will also require to use the client's 2.5.z version. At the time of writing this, the client's latest version is `2.5.29` and you can find it [in this official page](https://www.urbackup.org/download.html#linux_all_binary):
+In this case, since the UrBackup server used is a 2.5.z version (`2.5.35` was the one deployed [in the previous chapter **G040**](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#deploying-urbackup)), you also require to use the client's 2.5.z version. At the time of writing this, the client's latest version is `2.5.29` and you can find it [in this official page](https://www.urbackup.org/download.html#linux_all_binary):
 
-1. The UrBackup client installer will also install a couple of packages, so it is better to have up to date the references to the Debian packages sources in your VMs. So, just execute the following `apt` command to update those references:
+1. The UrBackup client installer also installs a couple of packages, so it is better to have up to date the references to the Debian packages sources in your VMs. So, just execute the following `apt` command to update those references:
 
     ~~~sh
     $ sudo apt update
@@ -47,7 +47,7 @@ In this case, since the UrBackup server used is a 2.5.z version (`2.5.35` was th
     $ sudo sh UrBackup\ Client\ Linux\ 2.5.29.sh
     ~~~
 
-    Be aware that this client installation will ask you a couple of questions for setting up its configuration, and maybe also your permission to install some packages through `apt`:
+    Be aware that this client installation asks you a couple of questions for setting up its configuration, and maybe also your permission to install some packages through `apt`:
 
     > [!WARNING]
     > **Give the same answers to these questions in all of your VMs.**
@@ -87,9 +87,9 @@ In this case, since the UrBackup server used is a 2.5.z version (`2.5.35` was th
       Justs asks for your permission to continue with the installation.
 
     - `Please select the snapshot mechanism to be used for backups`\
-      Below this question the installer only lists the supported snapshot options it has detected as available in the system. I have chosen the option `5` here to disable the snapshot mechanism because, in my tests, it has proven to be rather problematic.
+      Below this question the installer only lists the supported snapshot options it has detected as available in the system. The option `5` is chosen here to disable the snapshot mechanism because, in my tests, it has proven to be rather problematic.
 
-      In particular, the option 2 uses the snapshot capabilities of LVM but, from what I have found out about it, this method can have relevant performance issues.
+      In particular, the option 2 uses the snapshot capabilities of LVM but this method can have relevant performance issues.
 
 4. With all the clients installed, browse to your UrBackup server's web interface. In the `Status` page, you should see all the clients autodetected already:
 
@@ -226,7 +226,7 @@ It may happen that you want or need to uninstall the client from any of your VMs
     $ sudo rm /var/log/urbackupclient*
     ~~~
 
-3. Since uninstalling the client affects the system at its lowest level, you will have to reboot the VM:
+3. Since uninstalling the client affects the system at its lowest level, you have to reboot the VM:
 
     ~~~sh
     $ sudo reboot
@@ -306,7 +306,7 @@ This section shows you how to do this by scheduling the backup of the relevant p
       Any folder added to the client gets assigned a name, which is taken from the deepest element in the path. With this `-n` option you can set a more meaningful string as name.
 
     - `-f`\
-      This restricts the backup process **to not follow symlinks that lead outside the backup path**. This is to ensure that the backup procedure will care only about the files directly under the specified path.
+      This restricts the backup process **to not follow symlinks that lead outside the backup path**. This is to ensure that the backup procedure cares only about the files directly under the specified path.
 
     - `-x`\
       Its description says `Do not cross filesystem boundary during backup`, which maybe refers to not read data from different filesystems while doing the backup. It is not clear how this feature can affect something like an LVM based storage that has been built on several partitions from different storage devices.
@@ -340,7 +340,7 @@ This section shows you how to do this by scheduling the backup of the relevant p
 
     - The flags indicate the options enabled on each path.
 
-Now that you have some paths configured in a client, be aware that the UrBackup server comes configured by default to launch file backups periodically on its own. In other words, it could happen that right after you have added those paths, UrBackup could go and execute a file backup automatically. The next section  will have a look at how file backups are managed in the server.
+Now that you have some paths configured in a client, be aware that the UrBackup server comes configured by default to launch file backups periodically on its own. In other words, it could happen that right after you have added those paths, UrBackup could go and execute a file backup automatically. The next section covers how file backups are managed in the server.
 
 ## Backups on the UrBackup server
 
@@ -362,7 +362,7 @@ The UrBackup server comes with a default configuration that schedules it to exec
 
     - The last action for removing the client software from the client computer.
 
-2. To make a file backup, click on either the `Incremental` or the `Full` `file backup` option. You will only get to see a thin blue progress bar at the top of the page, and a new short message in the `Last file backup` column at the `k3sagent01` row:
+2. To make a file backup, click on either the `Incremental` or the `Full` `file backup` option. You only get to see a thin blue progress bar at the top of the page, and a new short message in the `Last file backup` column at the `k3sagent01` row:
 
     ![UrBackup server Status client k3sagent01 file backup queued](images/g041/urbackup_server_status_k3sagent01_file_bkp_queued.webp "UrBackup server Status client k3sagent01 file backup queued")
 
@@ -374,7 +374,7 @@ The UrBackup server comes with a default configuration that schedules it to exec
 
     The top `Activities` table is for activities currently in progress, while the `Last activities` one is where you can see all the backups done previously, like the one launched in the previous step.
 
-    Be aware that, if you try to execute an incremental backup and there is no previous full backup, UrBackup will execute a full backup instead no matter what. This is because incremental backups only store the differences between the previous (incremental or full) backup and the current state of the content being preserved.
+    Be aware that, if you try to execute an incremental backup and there is no previous full backup, UrBackup executes a full backup instead no matter what. This is because incremental backups only store the differences between the previous (incremental or full) backup and the current state of the content being preserved.
 
     This circumnstance also implies that, from time to time, you may need to do a new full backup because you do not want end having incremental backups that diverge too much from their correlative full one. UrBackup by default is also scheduled to make a fresh full backup every number of days, something you will see later in this chapter.
 
@@ -424,13 +424,13 @@ The UrBackup server comes with a default configuration that schedules it to exec
 
     ![UrBackup server Logs Live Log clients list](images/g041/urbackup_server_logs_live_log_list.webp "UrBackup server Logs Live Log clients list")
 
-    Click for instance on the `k3sagent01` client, and a new page will open in your browser:
+    Click for instance on the `k3sagent01` client, and a new page opens in your browser:
 
     ![UrBackup server Logs client k3sagent01 client log](images/g041/urbackup_server_logs_k3sagent01_client_log.webp "UrBackup server Logs client k3sagent01 client log")
 
     Be aware that you do not see the whole client log here, just some of the most recent entries and those that may appear after them. To see the full log, you have to go to the file found at `/var/log/urbackupclient.log` in the client.
 
-    The final detail to know about this `Logs` page is the `Reports` form, that allows you to send summaries of the backups done by email. This feature doesn't work as is, UrBackup needs to connect to an email server to send these messages. I'll show you later were to put this configuration.
+    The final detail to know about this `Logs` page is the `Reports` form, that allows you to send summaries of the backups done by email. This feature doesn't work as is, UrBackup needs to connect to an email server to send these messages. You will learn later were to put this configuration.
 
 6. Another informative tab is the `Statistics` one:
 
@@ -440,7 +440,7 @@ The UrBackup server comes with a default configuration that schedules it to exec
 
 ### Backups' general configuration
 
-There are many parameters to adjust in your UrBackup server, and you have already adjusted a few of them. This section will show you a few more general (applied to all clients) parameters to tweak the backup tasks better to the particularities of your homelab system:
+There are many parameters to adjust in your UrBackup server, and you have already adjusted a few of them. This section shows you a few more general (applied to all clients) parameters to tweak the backup tasks better to the particularities of your homelab system:
 
 1. Browse to the `Settings` page, and stay at the `General > Server` tab:
 
@@ -452,10 +452,10 @@ There are many parameters to adjust in your UrBackup server, and you have alread
       Number of backups started at the same time. The default `100` value is too much for the small and rather loaded system used in this guide, so it is better to reduce it to something like `5`.
 
     - `Max recently active clients`\
-      How many clients the server accepts. Does not make much sense to have such a high default value (`10000`) when you know that you will not ever have more than a handful of clients connected to this server. Let's reduce it to something more reasonable like `10`.
+      How many clients the server accepts. It does not make much sense to have such a high default value (`10000`) when you know that you will never have more than a handful of clients connected to this server. Better reduce it to something more reasonable like `10`.
 
     - `Cleanup time window`\
-      Time period in which this server will clean old backups and inactive clients up. The default value is `1-7/3-4` which means:
+      Time period in which this server cleans old backups and inactive clients up. The default value is `1-7/3-4` which means:
 
         - `1-7`\
           This task is executed all days of the week.
@@ -523,7 +523,7 @@ There are many parameters to adjust in your UrBackup server, and you have alread
 
       ![UrBackup server Settings General Client Backup Window Show details](images/g041/urbackup_server_settings_general_client_bkp_window_show_details.webp "UrBackup server Settings General Client Backup Window Show details")
 
-      After clicking on it, `Backup window` will unfold into four different fields, one per each kind of backup.
+      After clicking on it, `Backup window` unfolds into four different fields, one per each kind of backup.
 
       ![UrBackup server Settings General Client Backup Window all fields](images/g041/urbackup_server_settings_general_client_bkp_window_all_fields.webp "UrBackup server Settings General Client Backup Window all fields")
 
@@ -533,9 +533,9 @@ There are many parameters to adjust in your UrBackup server, and you have alread
       By default, the updates of the client software won't ask the user for its permission.
 
     - `Soft client quota`\
-      Storage space quota applied to the backups of each client during cleanups. Any backups that go over this quota and also beyond the minimal number of file or image backups configured for clients will be removed from the server.
+      Storage space quota applied to the backups of each client during cleanups. Any backups that go over this quota, and also beyond the minimal number of file or image backups configured for clients, will be removed from the server.
 
-    For this guide, the page was left configured like this:
+    For this guide, the page is left configured like this:
 
     ![UrBackup server Settings General Client options tuned](images/g041/urbackup_server_settings_general_client_tuned.webp "UrBackup server Settings General Client options tuned")
 
@@ -547,9 +547,9 @@ You have seen the UrBackup server general configuration, but know that you can a
 
     ![UrBackup server Settings Clients list](images/g041/urbackup_server_settings_clients_list.webp "UrBackup server Settings Clients list")
 
-    When unfolded, you will get a list of active clients organized in groups. In this case, there is only the `Default` group, where UrBackup puts all clients by default. Notice how `k3sagent01` has an `*` next to its name. The UrBackup documentation does not explain the meaning of this mark.
+    When unfolded, you get a list of active clients organized in groups. In this case, there is only the `Default` group, where UrBackup puts all clients by default. Notice how `k3sagent01` has an `*` next to its name. The UrBackup documentation does not explain the meaning of this mark.
 
-2. If you click on the `k3sagent01` client, you will get into the `Settings` page for that client:
+2. If you click on the `k3sagent01` client, you get into the `Settings` page for that client:
 
     ![Client k3sagent01 Settings File Backups tab](images/g041/urbackup_server_settings_client_k3sagent01_file_bkp.webp "Client k3sagent01 Settings File Backups tab")
 
@@ -619,7 +619,7 @@ Anyway, to restore any UrBackup backup automatically on a linux client you have 
 
 ### Logrotate
 
-- [man7.org. logrotate(8) — Linux manual page](https://www.man7.org/linux/man-pages/man8/logrotate.8.html)
+- [Michael Kerrisk. man7.org. Linux. logrotate(8) — Linux manual page](https://www.man7.org/linux/man-pages/man8/logrotate.8.html)
 - [LinuxConfig.org. logrotate command in Linux with examples](https://linuxconfig.org/logrotate)
 
 ## Navigation
