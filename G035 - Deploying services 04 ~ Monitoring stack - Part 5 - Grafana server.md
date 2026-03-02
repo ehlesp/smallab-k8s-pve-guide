@@ -190,7 +190,7 @@ Declare the `Service` object for your Grafana server like this:
         protocol: TCP
     ~~~
 
-    The main thing to notice in this particular headless service is that Grafana also has metrics that Prometheus can scrape. Therefore, the required annotation `prometheus.io` labels are set in the metadata block.
+    The main thing to notice in this particular headless service is that Grafana also has metrics that Prometheus can scrape. Therefore, the required annotation `prometheus.io` labels are set in the `metadata` block.
 
 ### Service's absolute internal FQDN
 
@@ -199,10 +199,6 @@ As a component of the monitoring stack, this headless service is going to be pla
 ~~~http
 server-grafana.monitoring.svc.homelab.cluster.
 ~~~
-
-> [!NOTE]
-> **The last dot in the absolute FQDN is not a mistake!**\
-> It explicitly brands the FQDN as absolute, which avoids doing any searches in the cluster's internal DNS service. This technique allows calling services directly, improving your Kubernetes cluster performance.
 
 ## Grafana server Kustomize project
 
@@ -222,10 +218,10 @@ With all the previous components declared, put them together in a Kustomize subp
     kind: Kustomization
 
     labels:
-      - pairs:
-          app: server-grafana
-        includeSelectors: true
-        includeTemplates: true
+    - pairs:
+        app: server-grafana
+      includeSelectors: true
+      includeTemplates: true
 
     resources:
     - resources/server-grafana.persistentvolumeclaim.yaml

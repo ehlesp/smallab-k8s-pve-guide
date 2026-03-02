@@ -549,10 +549,10 @@ Declare the main `kustomization.yaml` manifest describing the Forgejo server's K
     kind: Kustomization
 
     labels:
-      - pairs:
-          app: server-forgejo
-        includeSelectors: true
-        includeTemplates: true
+    - pairs:
+        app: server-forgejo
+      includeSelectors: true
+      includeTemplates: true
 
     resources:
     - resources/server-forgejo-data.persistentvolumeclaim.yaml

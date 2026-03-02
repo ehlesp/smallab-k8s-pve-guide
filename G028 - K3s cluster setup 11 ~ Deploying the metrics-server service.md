@@ -145,6 +145,7 @@ The patch to apply to the metrics-server deployment is some sort of "partial" ma
 2. Declare in `metrics-server.deployment.patch.yaml` the patch for the metrics-server deployment:
 
     ~~~yaml
+    # Metrics server arguments patch 
     apiVersion: apps/v1
     kind: Deployment
     metadata:

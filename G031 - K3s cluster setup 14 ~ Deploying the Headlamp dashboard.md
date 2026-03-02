@@ -138,7 +138,7 @@ To encrypt the client communications with Headlamp you need a TLS certificate ma
       duration: 2190h # 3 months
       renewBefore: 168h # Certificates must be renewed some time before they expire (7 days)
       dnsNames:
-        - headlamp.homelab.cloud
+      - headlamp.homelab.cloud
       privateKey:
         algorithm: ECDSA
         size: 521
@@ -183,7 +183,7 @@ To enable ingress access into Headlamp, use a Traefik `IngressRoute`:
       name: headlamp
     spec:
       entryPoints:
-        - websecure
+      - websecure
       routes:
       - match: Host(`headlamp.homelab.cloud`)
         kind: Rule

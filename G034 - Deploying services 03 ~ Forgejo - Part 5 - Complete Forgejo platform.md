@@ -209,7 +209,7 @@ Encrypt the communications between your Forgejo platform and its clients with a 
       duration: 2190h # 3 months
       renewBefore: 168h # Certificates must be renewed some time before they expire (7 days)
       dnsNames:
-        - forgejo.homelab.cloud
+      - forgejo.homelab.cloud
       privateKey:
         algorithm: ECDSA
         size: 521
@@ -307,10 +307,10 @@ Once you have all the remaining elements declared, create the main Kustomize pro
     namespace: forgejo
 
     labels:
-      - pairs:
-          platform: forgejo
-        includeSelectors: true
-        includeTemplates: true
+    - pairs:
+        platform: forgejo
+      includeSelectors: true
+      includeTemplates: true
 
     resources:
     - resources/forgejo-hdd-git.persistentvolume.yaml

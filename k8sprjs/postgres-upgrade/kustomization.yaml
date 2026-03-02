@@ -5,10 +5,10 @@ kind: Kustomization
 namespace: postgres-upgrade
 
 labels:
-  - pairs:
-      app: postgres-upgrade
-    includeSelectors: true
-    includeTemplates: true
+- pairs:
+    app: postgres-upgrade
+  includeSelectors: true
+  includeTemplates: true
 
 resources:
 - resources/postgres-upgrade.namespace.yaml

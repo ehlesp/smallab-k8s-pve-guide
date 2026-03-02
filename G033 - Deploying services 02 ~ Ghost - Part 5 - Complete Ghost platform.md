@@ -199,7 +199,7 @@ To encrypt the communications between your Ghost platform and its clients, you n
       duration: 2190h # 3 months
       renewBefore: 168h # Certificates must be renewed some time before they expire (7 days)
       dnsNames:
-        - ghost.homelab.cloud
+      - ghost.homelab.cloud
       privateKey:
         algorithm: ECDSA
         size: 521
@@ -301,10 +301,10 @@ With every required element declared or configured, now you need to put everythi
     namespace: ghost
 
     labels:
-      - pairs:
-          platform: ghost
-        includeSelectors: true
-        includeTemplates: true
+    - pairs:
+        platform: ghost
+      includeSelectors: true
+      includeTemplates: true
 
     resources:
     - resources/ghost-hdd-srv.persistentvolume.yaml

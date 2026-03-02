@@ -283,9 +283,11 @@ Since MariaDB is a program whose main purpose is to store _state_ (meaning data)
             - name: mariadb-config 
               subPath: my.cnf
               mountPath: /etc/mysql/my.cnf
+              readOnly: true
             - name: mariadb-config 
               subPath: initdb.sh
               mountPath: /docker-entrypoint-initdb.d/initdb.sh
+              readOnly: true
             - name: mariadb-storage
               mountPath: /var/lib/mysql
           - name: metrics
@@ -370,7 +372,7 @@ Since MariaDB is a program whose main purpose is to store _state_ (meaning data)
             The default path where MariaDB has its `my.cnf` file. This `my.cnf` file is the one you created before, and you will put it later in the `db-mariadb` config map resource.
 
           - MountPath `/docker-entrypoint-initdb.d/initdb.sh`\
-            The path `/docker-entrypoint-initdb.d` is a special one within the MariaDB container, prepared to execute (in alphabetical order) any shell or SQL scripts you put in here just the **first time** this container is executed. This way you can initialize databases or create extra users, as your `initdb.sh` script does. You will also include `initdb.sh` in the `db-mariadb` config map resource.
+            The path `/docker-entrypoint-initdb.d` is a special one within the MariaDB container, prepared to execute (in alphabetical order) any shell or SQL scripts you put in here just the first time this container is executed. This way you can initialize databases or create extra users, as your `initdb.sh` script does. You will also include `initdb.sh` in the `db-mariadb` config map resource.
 
           - MountPath `/var/lib/mysql`\
             This is the default data folder of MariaDB. It is where the volume `mariadb-storage`'s filesystem is going to be mounted into.
@@ -462,10 +464,10 @@ Now you have to create the main `kustomization.yaml` file describing your Ghost 
     kind: Kustomization
 
     labels:
-      - pairs:
-          app: db-mariadb
-        includeSelectors: true
-        includeTemplates: true
+    - pairs:
+        app: db-mariadb
+      includeSelectors: true
+      includeTemplates: true
 
     resources:
     - resources/db-mariadb.persistentvolumeclaim.yaml

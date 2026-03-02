@@ -8,11 +8,11 @@ rules:
 # Permissions for discovery of nodes, services, endpoints and pods
 - apiGroups: [""]
   resources:
-    - nodes
-    - nodes/proxy
-    - nodes/metrics # Needed for Kubelet/cAdvisor metrics
-    - services
-    - pods
+  - nodes
+  - nodes/proxy
+  - nodes/metrics # Needed for Kubelet/cAdvisor metrics
+  - services
+  - pods
   verbs: ["get", "list", "watch"]
 
 # Permissions for discovery of endpoint slices

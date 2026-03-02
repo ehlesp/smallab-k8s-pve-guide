@@ -56,61 +56,61 @@ Enable the two storage volumes you prepared in [the first part of this chapter G
 
     - Declare the persistent volume for Grafana in `monitoring-ssd-grafana-data.persistentvolume.yaml`:
 
-        ~~~yaml
-        # Persistent storage volume for monitoring stack's Grafana
-        apiVersion: v1
-        kind: PersistentVolume
+      ~~~yaml
+      # Persistent storage volume for monitoring stack's Grafana
+      apiVersion: v1
+      kind: PersistentVolume
 
-        metadata:
-          name: monitoring-ssd-grafana-data
-        spec:
-          capacity:
-            storage: 1.9G
-          volumeMode: Filesystem
-          accessModes:
-          - ReadWriteOnce
-          storageClassName: local-path
-          persistentVolumeReclaimPolicy: Retain
-          local:
-            path: /mnt/monitoring-ssd/grafana-data/k3smnt
-          nodeAffinity:
-            required:
-              nodeSelectorTerms:
-              - matchExpressions:
-                - key: kubernetes.io/hostname
-                  operator: In
-                  values:
-                  - k3sagent01
-        ~~~
+      metadata:
+        name: monitoring-ssd-grafana-data
+      spec:
+        capacity:
+          storage: 1.9G
+        volumeMode: Filesystem
+        accessModes:
+        - ReadWriteOnce
+        storageClassName: local-path
+        persistentVolumeReclaimPolicy: Retain
+        local:
+          path: /mnt/monitoring-ssd/grafana-data/k3smnt
+        nodeAffinity:
+          required:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - k3sagent01
+      ~~~
 
     - Declare the persistent volume for Prometheus in `monitoring-ssd-prometheus-data.persistentvolume.yaml`:
 
-        ~~~yaml
-        # Persistent storage volume for monitoring stack's Prometheus
-        apiVersion: v1
-        kind: PersistentVolume
+      ~~~yaml
+      # Persistent storage volume for monitoring stack's Prometheus
+      apiVersion: v1
+      kind: PersistentVolume
 
-        metadata:
-          name: monitoring-ssd-prometheus-data
-        spec:
-          capacity:
-            storage: 9.8G
-          volumeMode: Filesystem
-          accessModes:
-          - ReadWriteOnce
-          storageClassName: local-path
-          persistentVolumeReclaimPolicy: Retain
-          local:
-            path: /mnt/monitoring-ssd/prometheus-data/k3smnt
-          nodeAffinity:
-            required:
-              nodeSelectorTerms:
-              - matchExpressions:
-                - key: kubernetes.io/hostname
-                  operator: In
-                  values:
-                  - k3sagent02
-        ~~~
+      metadata:
+        name: monitoring-ssd-prometheus-data
+      spec:
+        capacity:
+          storage: 9.8G
+        volumeMode: Filesystem
+        accessModes:
+        - ReadWriteOnce
+        storageClassName: local-path
+        persistentVolumeReclaimPolicy: Retain
+        local:
+          path: /mnt/monitoring-ssd/prometheus-data/k3smnt
+        nodeAffinity:
+          required:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - k3sagent02
+      ~~~
 
     There is nothing in these persistent volumes that you have not already seen before in this guide. Just ensure that the following details are correct:
 
@@ -145,8 +145,8 @@ Declare a TLS certificate to secure communications between clients and your moni
       duration: 2190h # 3 months
       renewBefore: 168h # Certificates must be renewed some time before they expire (7 days)
       dnsNames:
-        - prometheus.homelab.cloud
-        - grafana.homelab.cloud
+      - prometheus.homelab.cloud
+      - grafana.homelab.cloud
       privateKey:
         algorithm: ECDSA
         size: 521
@@ -252,10 +252,10 @@ Next, tie up your monitoring stack setup by declaring its main Kustomize project
     namespace: monitoring
 
     labels:
-      - pairs:
-          platform: monitoring
-        includeSelectors: true
-        includeTemplates: true
+    - pairs:
+        platform: monitoring
+      includeSelectors: true
+      includeTemplates: true
 
     resources:
     - resources/monitoring-ssd-grafana-data.persistentvolume.yaml

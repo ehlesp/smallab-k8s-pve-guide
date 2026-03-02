@@ -78,7 +78,7 @@ The whole configuration of Ghost goes into a single JSON file. Among other param
       },
       "logging": {
         "transports": [
-            "stdout"
+          "stdout"
         ]
       },
       "mail": {
@@ -601,10 +601,10 @@ With all the necessary elements for your Ghost server component declared in thei
     kind: Kustomization
 
     labels:
-      - pairs:
-          app: server-ghost
-        includeSelectors: true
-        includeTemplates: true
+    - pairs:
+        app: server-ghost
+      includeSelectors: true
+      includeTemplates: true
 
     resources:
     - resources/server-ghost.persistentvolumeclaim.yaml

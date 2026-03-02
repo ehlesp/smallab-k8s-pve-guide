@@ -248,7 +248,7 @@ The root CA is the head of your CA structure. This CA only certifies the interme
 
     - In the `spec.privateKey` section, be careful of:
 
-      - Configuring an algorithm supported by all current browsers. For instance, at the time of writing this, the algorithm `Ed25519` is not supported neither by Firefox nor Chrome, nor any browser based on them.
+      - Configuring an algorithm supported by all current browsers. For instance, at the time of writing this, the algorithm `Ed25519` is not supported neither by Firefox nor Chrome, nor any browser derived from them.
 
       - Always having `rotationPolicy` set as `Always`. This makes cert-manager regenerate the certificate's secret rather than reusing the current one. This policy about private key rotation is also [described in the cert-manager documentation](https://cert-manager.io/docs/usage/certificate/#configuring-private-key-rotation).
 

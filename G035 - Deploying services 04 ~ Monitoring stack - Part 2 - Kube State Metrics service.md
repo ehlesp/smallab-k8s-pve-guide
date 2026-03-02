@@ -58,9 +58,9 @@ Prepare one service account for your Kube State Metrics service like this:
     apiVersion: v1
     kind: ServiceAccount
 
-    automountServiceAccountToken: false
     metadata:
       name: agent-kube-state-metrics
+    automountServiceAccountToken: false
     ~~~
 
     This is a really simple resource to declare but also has other parameters available. Check them out in its [official API definition](https://kubernetes.io/docs/reference/kubernetes-api/authentication-resources/service-account-v1/).
@@ -95,7 +95,7 @@ For the previous service account to be able to do anything in your cluster, you 
     - apiGroups: [""]
       resources:
       - configmaps
-    # SENSIBLE INFO: Uncomment ONLY for security audits!
+    # SENSITIVE INFO: Uncomment ONLY for security audits!
     #  - secrets
       - nodes
       - pods
@@ -174,7 +174,7 @@ For the previous service account to be able to do anything in your cluster, you 
       resources: ["leases"]
       verbs: ["list", "watch"]
 
-    # SENSIBLE INFO: Uncomment ONLY for security audits!
+    # SENSITIVE INFO: Uncomment ONLY for security audits!
     # Authentication: security tokens review (internal/advanced usage)
     #- apiGroups: ["authentication.k8s.io"]
     #  resources: ["tokenreviews"]
@@ -197,7 +197,7 @@ For the previous service account to be able to do anything in your cluster, you 
 
     A cluster role is a collection of `rules` that define what actions (`verbs`) can be done on concrete `resources` available in concrete apis (`apiGroups`). The verbs granted by this cluster role are almost always `list` or `watch`, limiting this particular cluster role to a read-only behavior.
 
-    On the other hand, it has been commented out the sensible security-related resources that usually you do not want to leave exposed in metrics (or in any way in general). Uncomment them only if you need to do something like running a security audit on them and, when you are done, **do not forget to block their access again in this cluster role**.
+    On the other hand, the sensitive security-related resources usually you do not want to leave exposed in metrics (or in any way in general) have been commented out. Uncomment them only if you need to do something like running a security audit on them and, when you are done, **do not forget to block their access again in this cluster role**.
 
     > [!NOTE]
     > **`ClusterRole` resources are not namespaced**\
@@ -371,10 +371,6 @@ Since every component of this monitoring stack is going to be under the `monitor
 agent-kube-state-metrics.monitoring.svc.homelab.cluster.
 ~~~
 
-> [!NOTE]
-> **The last dot in the absolute FQDN is not a mistake!**\
-> It explicitly brands the FQDN as absolute, which avoids doing any searches in the cluster's internal DNS service. This technique allows calling services directly, improving your Kubernetes cluster performance.
-
 ## Kube State Metrics Kustomize project
 
 Now put together all the Kube State Metrics resources under a `Kustomization` subproject, declared with the corresponding `kustomization.yaml` file:
@@ -393,11 +389,11 @@ Now put together all the Kube State Metrics resources under a `Kustomization` su
     kind: Kustomization
 
     labels:
-      - pairs:
-          app.kubernetes.io/component: exporter
-          app.kubernetes.io/name: kube-state-metrics
-        includeSelectors: true
-        includeTemplates: true
+    - pairs:
+        app.kubernetes.io/component: exporter
+        app.kubernetes.io/name: kube-state-metrics
+      includeSelectors: true
+      includeTemplates: true
 
     resources:
     - resources/agent-kube-state-metrics.serviceaccount.yaml

@@ -427,7 +427,7 @@ The password required for the basic authentication of the job that will scrape t
 
 ## Prometheus server persistent storage claim
 
-In the [first part of this chapter G035](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#lvm-storage-set-up), you prepared a 10 GiB LVM PV in the `k3sagent02` for storing the Prometheus server data. Now you need to declare a persistent volume claim to connect your Prometheus server with that PV:
+In the [first part of this chapter **G035**](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md#lvm-storage-set-up), you prepared a 10 GiB LVM PV in the `k3sagent02` for storing the Prometheus server data. Now you need to declare a persistent volume claim to connect your Prometheus server with that PV:
 
 1. Create a file named `server-prometheus.persistentvolumeclaim.yaml` under `resources`:
 
@@ -471,12 +471,12 @@ In the [first part of this chapter G035](G035%20-%20Deploying%20services%2004%20
     apiVersion: v1
     kind: ServiceAccount
 
-    automountServiceAccountToken: false
     metadata:
       name: server-prometheus
+    automountServiceAccountToken: false
     ~~~
 
-    This `ServiceAccount` is just like the one declared for [the Kube State Metrics service](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%202%20-%20Kube%20State%20Metrics%20service.md#kube-state-metrics-serviceaccount), down to the `automountServiceAccountToken` parameter set to false for hardening reasons. You will see this parameter set to `true` in the Prometheus server's `StatefulSet` declaration.
+    This `ServiceAccount` is just like the one declared for [the Kube State Metrics service](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%202%20-%20Kube%20State%20Metrics%20service.md#kube-state-metrics-serviceaccount), down to the `automountServiceAccountToken` parameter set to `false` for hardening reasons. You will see this parameter set to `true` in the Prometheus server's `StatefulSet` declaration.
 
 ## Prometheus server ClusterRole
 
@@ -501,11 +501,11 @@ You need to assign a role to the `server-prometheus` service account to grant it
     # Permissions for discovery of nodes, services, endpoints and pods
     - apiGroups: [""]
       resources:
-        - nodes
-        - nodes/proxy
-        - nodes/metrics # Needed for Kubelet/cAdvisor metrics
-        - services
-        - pods
+      - nodes
+      - nodes/proxy
+      - nodes/metrics # Needed for Kubelet/cAdvisor metrics
+      - services
+      - pods
       verbs: ["get", "list", "watch"]
 
     # Permissions for discovery of endpoint slices
@@ -749,10 +749,6 @@ As a component of the monitoring stack, this headless service is going to be pla
 server-prometheus.monitoring.svc.homelab.cluster.
 ~~~
 
-> [!NOTE]
-> **The last dot in the absolute FQDN is not a mistake!**\
-> It explicitly brands the FQDN as absolute, which avoids doing any searches in the cluster's internal DNS service. This technique allows calling services directly, improving your Kubernetes cluster performance.
-
 ## Prometheus server's Kustomize project
 
 After declaring all the required resources for the Prometheus server, you need to put them together under a `kustomization.yaml` file:
@@ -771,10 +767,10 @@ After declaring all the required resources for the Prometheus server, you need t
     kind: Kustomization
 
     labels:
-      - pairs:
-          app: server-prometheus
-        includeSelectors: true
-        includeTemplates: true
+    - pairs:
+        app: server-prometheus
+      includeSelectors: true
+      includeTemplates: true
 
     resources:
     - resources/server-prometheus.serviceaccount.yaml

@@ -5,10 +5,10 @@ kind: Kustomization
 namespace: ghost
 
 labels:
-  - pairs:
-      platform: ghost
-    includeSelectors: true
-    includeTemplates: true
+- pairs:
+    platform: ghost
+  includeSelectors: true
+  includeTemplates: true
 
 resources:
 - resources/ghost-hdd-srv.persistentvolume.yaml

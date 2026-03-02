@@ -11,3 +11,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: headlamp-admin
+  namespace: kube-system

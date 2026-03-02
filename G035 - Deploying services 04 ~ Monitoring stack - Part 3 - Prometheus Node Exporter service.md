@@ -133,8 +133,8 @@ Declare the necessary `Service` resource for completing this Prometheus Node Exp
     metadata:
       name: agent-prometheus-node-exporter
       annotations:
-          prometheus.io/scrape: 'true'
-          prometheus.io/port:   '9100'
+        prometheus.io/scrape: 'true'
+        prometheus.io/port:   '9100'
     spec:
       type: ClusterIP
       clusterIP: None
@@ -155,10 +155,6 @@ As a component of the monitoring stack, this headless service is going to be pla
 agent-prometheus-node-exporter.monitoring.svc.homelab.cluster.
 ~~~
 
-> [!NOTE]
-> **The last dot in the absolute FQDN is not a mistake!**\
-> It explicitly brands the FQDN as absolute, which avoids doing any searches in the cluster's internal DNS service. This technique allows calling services directly, improving your Kubernetes cluster performance.
-
 ## Prometheus Node Exporter Kustomize project
 
 The last thing to declare is the `Kustomization` manifest for this Prometheus Node Exporter project:
@@ -177,11 +173,11 @@ The last thing to declare is the `Kustomization` manifest for this Prometheus No
     kind: Kustomization
 
     labels:
-      - pairs:
-          app.kubernetes.io/component: exporter
-          app.kubernetes.io/name: node-exporter
-        includeSelectors: true
-        includeTemplates: true
+    - pairs:
+        app.kubernetes.io/component: exporter
+        app.kubernetes.io/name: node-exporter
+      includeSelectors: true
+      includeTemplates: true
 
     resources:
     - resources/agent-prometheus-node-exporter.daemonset.yaml

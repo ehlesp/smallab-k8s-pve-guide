@@ -3,11 +3,11 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 labels:
-  - pairs:
-      app.kubernetes.io/component: exporter
-      app.kubernetes.io/name: kube-state-metrics
-    includeSelectors: true
-    includeTemplates: true
+- pairs:
+    app.kubernetes.io/component: exporter
+    app.kubernetes.io/name: kube-state-metrics
+  includeSelectors: true
+  includeTemplates: true
 
 resources:
 - resources/agent-kube-state-metrics.serviceaccount.yaml

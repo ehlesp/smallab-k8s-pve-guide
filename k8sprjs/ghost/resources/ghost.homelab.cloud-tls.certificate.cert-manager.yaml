@@ -10,7 +10,7 @@ spec:
   duration: 2190h # 3 months
   renewBefore: 168h # Certificates must be renewed some time before they expire (7 days)
   dnsNames:
-    - ghost.homelab.cloud
+  - ghost.homelab.cloud
   privateKey:
     algorithm: ECDSA
     size: 521

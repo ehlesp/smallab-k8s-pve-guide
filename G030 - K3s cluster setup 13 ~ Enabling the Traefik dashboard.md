@@ -254,12 +254,12 @@ Notice the following details in this `Secret` object:
 
 - In the `data.users` parameter there is an odd-looking string. This is the content of the `secrets/user` file referenced in the `secretGenerator` block, automatically encoded by Kustomize in base64. You can check that it is the same string on the file by decoding it with `base64 -d` as follows.
 
-    ~~~sh
-    $ echo dGZrdXNlcjokMnkkMTckMG1kUDRXTGRiajhCV2oxbElKTURiLmJYeVlLNzVxUjVBZlJOenV1blp1Q2FtdkFscURsby4K | base64 -d
-    tfkuser:$2y$17$0mdP4WLdbj8BWj1lIJMDb.bXyYK75qR5AfRNzuunZuCamvAlqDlo.
-    ~~~
+  ~~~sh
+  $ echo dGZrdXNlcjokMnkkMTckMG1kUDRXTGRiajhCV2oxbElKTURiLmJYeVlLNzVxUjVBZlJOenV1blp1Q2FtdkFscURsby4K | base64 -d
+  tfkuser:$2y$17$0mdP4WLdbj8BWj1lIJMDb.bXyYK75qR5AfRNzuunZuCamvAlqDlo.
+  ~~~
 
-    See that the base64 string is entered in one line, although it had been returned split in two in the `Secret` object output.
+  See that the base64 string is entered in one line, although it had been returned split in two in the `Secret` object output.
 
 - The `metadata.name` and `metadata.namespace` are exactly as specified in the `kustomization.yaml` file.
 

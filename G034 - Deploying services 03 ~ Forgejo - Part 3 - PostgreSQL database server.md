@@ -570,10 +570,10 @@ Produce the main `kustomization.yaml` file for this PostgreSQL Kustomize subproj
     kind: Kustomization
 
     labels:
-      - pairs:
-          app: db-postgresql
-        includeSelectors: true
-        includeTemplates: true
+    - pairs:
+        app: db-postgresql
+      includeSelectors: true
+      includeTemplates: true
 
     resources:
     - resources/db-postgresql.persistentvolumeclaim.yaml

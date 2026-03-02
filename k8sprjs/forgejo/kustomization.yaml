@@ -5,10 +5,10 @@ kind: Kustomization
 namespace: forgejo
 
 labels:
-  - pairs:
-      platform: forgejo
-    includeSelectors: true
-    includeTemplates: true
+- pairs:
+    platform: forgejo
+  includeSelectors: true
+  includeTemplates: true
 
 resources:
 - resources/forgejo-hdd-git.persistentvolume.yaml

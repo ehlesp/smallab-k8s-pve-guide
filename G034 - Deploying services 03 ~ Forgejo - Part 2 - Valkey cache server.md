@@ -295,10 +295,10 @@ Now declare the main `kustomization.yaml` file that describes the whole Forgejo'
     kind: Kustomization
 
     labels:
-      - pairs:
-          app: cache-valkey
-        includeSelectors: true
-        includeTemplates: true
+    - pairs:
+        app: cache-valkey
+      includeSelectors: true
+      includeTemplates: true
 
     resources:
     - resources/cache-valkey.persistentvolumeclaim.yaml
