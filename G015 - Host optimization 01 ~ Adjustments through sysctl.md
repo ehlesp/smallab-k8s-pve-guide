@@ -21,7 +21,7 @@
 
 ## Tune your Proxmox VE system's `sysctl` files to improve performance
 
-You can get performance improvements in your Proxmox VE system just by setting some parameters in `sysctl` configuration files. Remember that you did something like this for hardening the TCP/IP stack back in the [**G012** chapter](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md).
+You can get performance improvements in your Proxmox VE system just by setting some parameters in `sysctl` configuration files. Remember that you did something like this for hardening the TCP/IP stack back in the [chapter **G012**](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md).
 
 The changes explained in the following sections are focused on improving the performance of your system on different concerns. For the sake of clarity, each concern will have its own `sysctl` file with their own particular parameter set. This is to avoid two problems: having the same parameter defined twice on different configuration files, and worrying about the order in which the parameters are being read (`sysctl` only keeps the last value read for each parameter).
 
@@ -31,13 +31,17 @@ The changes explained in the following sections are focused on improving the per
 
 ## First go the `sysctl` directory
 
-In this chapter you're going to create a bunch of `sysctl` configuration files that all have to be placed in the `/etc/sysctl.d` directory. So, first `cd` to that path:
+In this chapter you are going to create a bunch of `sysctl` configuration files that all have to be placed in the `/etc/sysctl.d` directory. Then, first `cd` to that path:
 
 ~~~sh
 $ cd /etc/sysctl.d/
 ~~~
 
-From this directory, apply the configurations specified in the following sections.
+Staying in this directory, apply the configurations specified in the following sections.
+
+> [!NOTE]
+> **These configurations are self-explanatory**\
+> All the configurations included in this chapter have comments explaining each of their parameters.
 
 ## Network optimizations
 
@@ -306,7 +310,7 @@ From this directory, apply the configurations specified in the following section
 
 ## Reboot the system
 
-Although you've applied the changes with the `sysctl -p` command, it'll be better to restart your server too:
+Although you have applied the changes with the `sysctl -p` command, it is better to restart your server too:
 
 ~~~sh
 $ sudo reboot
@@ -316,9 +320,9 @@ Then, open a new shell as your `mgrsys` user and check your system's journal (wi
 
 ## Final considerations
 
-All the values modified in the previous sections have to be measured and tested against the possibilities of your system and the real load running on it. So expect to revise this configuration later to make it fit to your needs, and maybe even adjust some other `sysctl` parameters that haven't been shown in this guide.
+All the values modified in the previous sections have to be measured and tested against the possibilities of your system and the real workloads running on it. Expect to revise these configurations later to make them fit to your needs, and maybe even adjust any other `sysctl` parameters not specified in this guide.
 
-On the other hand, notice how I avoided touching any `sysctl` configuration files already present in the system (like the ones related to the PVE platform). This guarantees that future updates can change them without complaining about being different as they expected them to be.
+On the other hand, notice how the configurations proposed here avoid touching any `sysctl` configuration files already present in the system (like the ones related to the PVE platform). This guarantees that future updates can change them without complaining about being different as they expected them to be.
 
 ## Relevant system paths
 
@@ -336,52 +340,56 @@ On the other hand, notice how I avoided touching any `sysctl` configuration file
 
 ### `sysctl` variables
 
-- [Networking ip variables](https://www.kernel.org/doc/Documentation/networking/ip-sysctl.txt)
-- [Virtual memory variables](https://www.kernel.org/doc/Documentation/sysctl/vm.txt)
-- [Summary of hugetlbpage (huge pages) support in the Linux kernel](https://www.kernel.org/doc/Documentation/vm/hugetlbpage.txt)
+- [The Linux Kernel Archives](https://www.kernel.org/)
+  - [Networking ip variables](https://www.kernel.org/doc/Documentation/networking/ip-sysctl.txt)
+  - [Virtual memory variables](https://www.kernel.org/doc/Documentation/sysctl/vm.txt)
+  - [Summary of hugetlbpage (huge pages) support in the Linux kernel](https://www.kernel.org/doc/Documentation/vm/hugetlbpage.txt)
+  - [Netfilter Conntrack Sysfs variables](https://www.kernel.org/doc/html/latest/networking/nf_conntrack-sysctl.html)
 
 ### About `sysctl` in general
 
-- [Most popular speedup sysctl options for Proxmox, corrected for the 5.3.18-3-pve kernel](https://gist.github.com/sergey-dryabzhinsky/bcc1a15cb7d06f3d4606823fcc834824#gistcomment-3297285)
-- [Sysctl on Archlinux wiki](https://wiki.archlinux.org/index.php/Sysctl)
-- [Linux Hardening. Secure your Linux Distro in 15 Steps](https://www.pluralsight.com/resources/blog/tech-operations/linux-hardening-secure-server-checklist)
+- [GitHub Gist. sergey-dryabzhinsky/sysctl-proxmox-tune.conf. Most popular speedup sysctl options for Proxmox, corrected for the 5.3.18-3-pve kernel](https://gist.github.com/sergey-dryabzhinsky/bcc1a15cb7d06f3d4606823fcc834824#gistcomment-3297285)
+- [Archlinux. ArchWiki. sysctl](https://wiki.archlinux.org/index.php/Sysctl)
+- [Pluralsight. Tech Insights & How-To Guides. Tech Operations | Tech Insights & How-To Guides. Linux Hardening](https://www.pluralsight.com/resources/blog/tech-operations/linux-hardening-secure-server-checklist)
 
 ### About network optimizations
 
-- [Netfilter Conntrack Sysfs variables](https://www.kernel.org/doc/html/latest/networking/nf_conntrack-sysctl.html)
-- [How long does conntrack remember a connection?](https://unix.stackexchange.com/questions/524295/how-long-does-conntrack-remember-a-connection)
-- [nf_conntrack: table full, dropping packet](https://security.stackexchange.com/questions/43205/nf-conntrack-table-full-dropping-packet)
-- [Resolving “nf_conntrack: table full, dropping packet.” flood message in dmesg Linux kernel log](https://pc-freak.net/blog/resolving-nf_conntrack-table-full-dropping-packet-flood-message-in-dmesg-linux-kernel-log/)
+- [StackExchange. Unix & Linux. How long does conntrack remember a connection?](https://unix.stackexchange.com/questions/524295/how-long-does-conntrack-remember-a-connection)
+- [StackExchange. Information Security. nf_conntrack: table full, dropping packet](https://security.stackexchange.com/questions/43205/nf-conntrack-table-full-dropping-packet)
+- [PC-freak. Resolving “nf_conntrack: table full, dropping packet.” flood message in dmesg Linux kernel log](https://pc-freak.net/blog/resolving-nf_conntrack-table-full-dropping-packet-flood-message-in-dmesg-linux-kernel-log/)
 - [The conntrack-tools user manual](https://conntrack-tools.netfilter.org/manual.html)
-- [Kubernetes Networking Problems Due to the Conntrack](https://deploy.live/blog/kubernetes-networking-problems-due-to-the-conntrack/)
-- [What is the difference between tcp_max_syn_backlog and somaxconn?](https://stackoverflow.com/questions/62641621/what-is-the-difference-between-tcp-max-syn-backlog-and-somaxconn)
-- [Huge improve network performance by change TCP congestion control to BBR](https://djangocas.dev/blog/huge-improve-network-performance-by-change-tcp-congestion-control-to-bbr/)
-- [Linux Increase TCP Port Range with net.ipv4.ip_local_port_range Kernel Parameter](https://www.cyberciti.biz/tips/linux-increase-outgoing-network-sockets-range.html)
-- [Linux increase ip_local_port_range TCP port range](https://ma.ttias.be/linux-increase-ip_local_port_range-tcp-port-range/)
-- [Neighbour Table Overflow – sysctl.Conf Tuning](https://www.serveradminblog.com/2011/02/neighbour-table-overflow-sysctl-conf-tunning/)
-- [Overflow in datagram type sockets](https://www.toptip.ca/2013/02/overflow-in-datagram-type-sockets.html)
+- [Dmitri Lerko. Kubernetes Networking Problems Due to the Conntrack](https://deploy.live/blog/kubernetes-networking-problems-due-to-the-conntrack/)
+- [StackOverflow. What is the difference between tcp_max_syn_backlog and somaxconn?](https://stackoverflow.com/questions/62641621/what-is-the-difference-between-tcp-max-syn-backlog-and-somaxconn)
+- [django-cas-ng. Linux. Huge improve network performance by change TCP congestion control to BBR](https://djangocas.dev/blog/huge-improve-network-performance-by-change-tcp-congestion-control-to-bbr/)
+- [nixCraft. Tutorials. High performance computing. Linux Increase TCP Port Range with net.ipv4.ip_local_port_range Kernel Parameter](https://www.cyberciti.biz/tips/linux-increase-outgoing-network-sockets-range.html)
+- [ Mattias Geniar. Linux increase ip_local_port_range TCP port range](https://ma.ttias.be/linux-increase-ip_local_port_range-tcp-port-range/)
+- [ServerAdminBlog. Neighbour Table Overflow – sysctl.Conf Tuning](https://www.serveradminblog.com/2011/02/neighbour-table-overflow-sysctl-conf-tunning/)
+- [Tips, Tricks and Tools. Overflow in datagram type sockets](https://www.toptip.ca/2013/02/overflow-in-datagram-type-sockets.html)
 
 ### About memory optimizations
 
-- [Understanding vm.swappiness](https://linuxhint.com/understanding_vm_swappiness/)
-- [How does vm.overcommit_memory work?](https://serverfault.com/questions/606185/how-does-vm-overcommit-memory-work)
-- [Memory Overcommit Settings](https://iainvlinux.wordpress.com/2014/02/16/memory-overcommit-settings/)
-- [Reducing inode and dentry caches to keep OOM killer at bay](https://major.io/2008/12/03/reducing-inode-and-dentry-caches-to-keep-oom-killer-at-bay/)
-- [Better Linux Disk Caching & Performance with vm.dirty_ratio & vm.dirty_background_ratio](https://lonesysadmin.net/2013/12/22/better-linux-disk-caching-performance-vm-dirty_ratio/)
+- [LinuxHint. Understanding vm.swappiness](https://linuxhint.com/understanding_vm_swappiness/)
+- [ServerFault. How does vm.overcommit_memory work?](https://serverfault.com/questions/606185/how-does-vm-overcommit-memory-work)
+- [Iain V Linux. Memory Overcommit Settings](https://iainvlinux.wordpress.com/2014/02/16/memory-overcommit-settings/)
+- [Major Hayden. Reducing inode and dentry caches to keep OOM killer at bay](https://major.io/2008/12/03/reducing-inode-and-dentry-caches-to-keep-oom-killer-at-bay/)
+- [The Lone Sysadmin. Better Linux Disk Caching & Performance with vm.dirty_ratio & vm.dirty_background_ratio](https://lonesysadmin.net/2013/12/22/better-linux-disk-caching-performance-vm-dirty_ratio/)
 - [Debian. Wiki. Hugepages](https://wiki.debian.org/Hugepages)
-- [Linux HugePages](https://www.educba.com/linux-hugepages/)
-- [Hugepages and Multiple VMs](https://forum.proxmox.com/threads/hugepages-and-multiple-vms.34075/)
+- [Educba. Software Development. Software Development Tutorials. Linux Tutorial. Linux HugePages](https://www.educba.com/linux-hugepages/)
+
+- [Proxmox. Forums. Proxmox Virtual Environment](https://forum.proxmox.com/#proxmox-virtual-environment.11)
+  - [Proxmox VE: Installation and configuration](https://forum.proxmox.com/forums/proxmox-ve-installation-and-configuration.16/)
+    - [Hugepages and Multiple VMs](https://forum.proxmox.com/threads/hugepages-and-multiple-vms.34075/)
 
 ### Inotify system
 
-- [What is a reasonable amount of inotify watches with Linux?](https://stackoverflow.com/questions/535768/what-is-a-reasonable-amount-of-inotify-watches-with-linux)
-- [Increasing the amount of inotify watchers](https://gist.github.com/ntamvl/7c41acee650d376863fd940b99da836f)
-- [Ubuntu Increase Inotify Watcher (File Watch Limit)](https://dev.to/rubiin/ubuntu-increase-inotify-watcher-file-watch-limit-kf4)
+- [StackOverflow. What is a reasonable amount of inotify watches with Linux?](https://stackoverflow.com/questions/535768/what-is-a-reasonable-amount-of-inotify-watches-with-linux)
+- [GitHub Gist. ntamvl/Increasing-the-amount-of-inotify-watchers.md. Increasing the amount of inotify watchers](https://gist.github.com/ntamvl/7c41acee650d376863fd940b99da836f)
+- [DEV. Ubuntu Increase Inotify Watcher (File Watch Limit)](https://dev.to/rubiin/ubuntu-increase-inotify-watcher-file-watch-limit-kf4)
 
 ### About optimizing the kernel
 
-- [Unable to run bpf program as non root](https://stackoverflow.com/questions/65949586/unable-to-run-bpf-program-as-non-root)
-- [Disable unprivileged BPF](https://gitlab.tails.boum.org/tails/tails/-/issues/11827)
+- [StackOverflow. Unable to run bpf program as non root](https://stackoverflow.com/questions/65949586/unable-to-run-bpf-program-as-non-root)
+- [GitLab. Tails. Issues. Disable unprivileged BPF](https://gitlab.tails.boum.org/tails/tails/-/issues/11827)
 - [Tweaked.io. The GNU/Linux Kernel](http://www.tweaked.io/guide/kernel/)
 
 ## Navigation

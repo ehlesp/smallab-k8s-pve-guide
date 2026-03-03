@@ -133,8 +133,8 @@ Declare the necessary `Service` resource for completing this Prometheus Node Exp
     metadata:
       name: agent-prometheus-node-exporter
       annotations:
-          prometheus.io/scrape: 'true'
-          prometheus.io/port:   '9100'
+        prometheus.io/scrape: 'true'
+        prometheus.io/port:   '9100'
     spec:
       type: ClusterIP
       clusterIP: None
@@ -155,10 +155,6 @@ As a component of the monitoring stack, this headless service is going to be pla
 agent-prometheus-node-exporter.monitoring.svc.homelab.cluster.
 ~~~
 
-> [!NOTE]
-> **The last dot in the absolute FQDN is not a mistake!**\
-> It explicitly brands the FQDN as absolute, which avoids doing any searches in the cluster's internal DNS service. This technique allows calling services directly, improving your Kubernetes cluster performance.
-
 ## Prometheus Node Exporter Kustomize project
 
 The last thing to declare is the `Kustomization` manifest for this Prometheus Node Exporter project:
@@ -177,11 +173,11 @@ The last thing to declare is the `Kustomization` manifest for this Prometheus No
     kind: Kustomization
 
     labels:
-      - pairs:
-          app.kubernetes.io/component: exporter
-          app.kubernetes.io/name: node-exporter
-        includeSelectors: true
-        includeTemplates: true
+    - pairs:
+        app.kubernetes.io/component: exporter
+        app.kubernetes.io/name: node-exporter
+      includeSelectors: true
+      includeTemplates: true
 
     resources:
     - resources/agent-prometheus-node-exporter.daemonset.yaml
@@ -192,7 +188,7 @@ The last thing to declare is the `Kustomization` manifest for this Prometheus No
       newTag: v1.10.2
     ~~~
 
-    The `labels` are the same ones declared [in one of the articles I used as reference](https://medium.com/@lchlaw/tutorial-run-prometheus-node-exporter-using-daemon-set-for-kubernetes-service-discovery-c38421d548ed). Something else you can notice is that there is no `replicas` section. The `DaemonSet` itself takes care automatically of putting one replica of the generated pod on each cluster node.
+    The `labels` are the same ones declared [in one of the articles used as reference for this guide](https://medium.com/@lchlaw/tutorial-run-prometheus-node-exporter-using-daemon-set-for-kubernetes-service-discovery-c38421d548ed). Something else you can notice is that there is no `replicas` section. The `DaemonSet` itself takes care automatically of putting one replica of the generated pod on each cluster node.
 
 ### Validating the Kustomize YAML output
 
@@ -312,7 +308,7 @@ This Prometheus Node Exporter is a component part of a bigger project yet to be 
 ### Prometheus Node Exporter
 
 - [GitHub. Prometheus Node Exporter](https://github.com/prometheus/node_exporter)
-- [Hub. Docker. Prometheus Node Exporter container image](https://hub.docker.com/r/prom/node-exporter)
+- [Docker. Hub. Prometheus Node Exporter container image](https://hub.docker.com/r/prom/node-exporter)
 
 - [Prometheus. Docs. Guides](https://prometheus.io/docs/guides/)
   - [Monitoring Linux host metrics with the Node Exporter](https://prometheus.io/docs/guides/node-exporter/)
@@ -344,7 +340,6 @@ This Prometheus Node Exporter is a component part of a bigger project yet to be 
 #### About pods scheduling
 
 - [Theodo. Working with taints and tolerations in Kubernetes](https://www.theodo.com/en-fr/blog/working-with-taints-and-tolerations-in-kubernetes)
-
 - [GitHub. K3s. Issues. Node taint k3s-controlplane=true:NoExecute](https://github.com/k3s-io/k3s/issues/1401)
 
 ## Navigation

@@ -6,7 +6,7 @@ metadata:
   name: headlamp
 spec:
   entryPoints:
-    - websecure
+  - websecure
   routes:
   - match: Host(`headlamp.homelab.cloud`)
     kind: Rule

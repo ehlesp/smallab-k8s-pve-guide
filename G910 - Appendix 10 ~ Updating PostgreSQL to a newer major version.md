@@ -20,7 +20,7 @@
   - [Stage 9. Reconfiguring the PostgreSQL's Kustomize subproject](#stage-9-reconfiguring-the-postgresqls-kustomize-subproject)
   - [Stage 10. Redeploying the Forgejo platform](#stage-10-redeploying-the-forgejo-platform)
   - [Stage 11. Cleaning up the old data](#stage-11-cleaning-up-the-old-data)
-- [Kustomize project only for updating PostgreSQL included in this guide series](#kustomize-project-only-for-updating-postgresql-included-in-this-guide-series)
+- [Kustomize project only for updating PostgreSQL included in this guide](#kustomize-project-only-for-updating-postgresql-included-in-this-guide)
 - [Relevant system paths](#relevant-system-paths)
   - [Folders in `kubectl` client system](#folders-in-kubectl-client-system)
   - [Files in `kubectl` client system](#files-in-kubectl-client-system)
@@ -120,7 +120,7 @@ The trick of this upgrade procedure is the use of a particular Docker image that
 
 You need to undeploy your whole Forgejo setup before you can start tinkering with its PostgreSQL database. Get into your `kubectl` client and do the following:
 
-1. Use `kubectl` to delete the kustomize-based deployment of your Forgejo instance.
+1. Use `kubectl` to delete the kustomize-based deployment of your Forgejo instance:
 
     ~~~sh
     $ kubectl delete -k $HOME/k8sprjs/forgejo/
@@ -201,7 +201,7 @@ For the containerized version `17` of PostgreSQL deployed with this appendix's F
 
     The `I have no name!` message warns about the fact that, since the user `999` does not exist in the system, it has no name to show at the prompt like with `mgrsys`.
 
-3. Get into the `/mnt/forgejo-ssd/db/k3smnt/` folder.
+3. Get into the `/mnt/forgejo-ssd/db/k3smnt/` folder:
 
     ~~~sh
     $ cd /mnt/forgejo-ssd/db/k3smnt/
@@ -275,35 +275,35 @@ For the containerized version `17` of PostgreSQL deployed with this appendix's F
 
     - For the `k3smnt` folder, `999` user and `root` group ownership:
 
-        ~~~sh
-        $ ls -al /mnt/forgejo-ssd/db
-        total 28
-        drwxr-xr-x 4 root root  4096 Feb 21 14:24 .
-        drwxr-xr-x 5 root root  4096 Jan 20 20:27 ..
-        drwx------ 4  999 root  4096 Feb 22 18:02 k3smnt
-        drwx------ 2 root root 16384 Jan 20 20:27 lost+found
-        ~~~
+      ~~~sh
+      $ ls -al /mnt/forgejo-ssd/db
+      total 28
+      drwxr-xr-x 4 root root  4096 Feb 21 14:24 .
+      drwxr-xr-x 5 root root  4096 Jan 20 20:27 ..
+      drwx------ 4  999 root  4096 Feb 22 18:02 k3smnt
+      drwx------ 2 root root 16384 Jan 20 20:27 lost+found
+      ~~~
 
     - For the `17` and `18` folders, `999` user and `systemd-journal` group ownerships:
 
-        ~~~sh
-        $ sudo ls -al /mnt/forgejo-ssd/db/k3smnt
-        total 16
-        drwx------  4  999 root            4096 Feb 22 18:02 .
-        drwxr-xr-x  4 root root            4096 Feb 21 14:24 ..
-        drwxr-xr-x 19  999 systemd-journal 4096 Feb 22 17:57 17
-        drwxr-xr-x  3  999 systemd-journal 4096 Feb 22 18:02 18
-        ~~~
+      ~~~sh
+      $ sudo ls -al /mnt/forgejo-ssd/db/k3smnt
+      total 16
+      drwx------  4  999 root            4096 Feb 22 18:02 .
+      drwxr-xr-x  4 root root            4096 Feb 21 14:24 ..
+      drwxr-xr-x 19  999 systemd-journal 4096 Feb 22 17:57 17
+      drwxr-xr-x  3  999 systemd-journal 4096 Feb 22 18:02 18
+      ~~~
 
     - For the folder `18/docker`, `999` user and `systemd-journal` group ownership:
 
-        ~~~sh
-        $ sudo ls -al /mnt/forgejo-ssd/db/k3smnt/18
-        total 12
-        drwxr-xr-x 3 999 systemd-journal 4096 Feb 22 18:02 .
-        drwx------ 4 999 root            4096 Feb 22 18:02 ..
-        drwxr-xr-x 2 999 systemd-journal 4096 Feb 22 18:02 docker
-        ~~~
+      ~~~sh
+      $ sudo ls -al /mnt/forgejo-ssd/db/k3smnt/18
+      total 12
+      drwxr-xr-x 3 999 systemd-journal 4096 Feb 22 18:02 .
+      drwx------ 4 999 root            4096 Feb 22 18:02 ..
+      drwxr-xr-x 2 999 systemd-journal 4096 Feb 22 18:02 docker
+      ~~~
 
     Again, remember that this `systemd-journal` coincides, due to have the same Linux group ID, with the `postgres` group running the PostgreSQL server within its Kubernetes pod.
 
@@ -325,33 +325,33 @@ Instead of creating this project from scratch, you can base it on the one you al
 
     - To reduce the chance of confusion, get inside the `postgres-upgrade` folder:
 
-        ~~~sh
-        $ cd $HOME/k8sprjs/postgres-upgrade
-        ~~~
+      ~~~sh
+      $ cd $HOME/k8sprjs/postgres-upgrade
+      ~~~
 
     - Remove the unnecessary files with `rm`:
 
-        ~~~sh
-        $ rm configs/{dbnames.properties,initdb.sh} resources/db-postgresql.service.yaml secrets/dbusers.pwd
-        ~~~
+      ~~~sh
+      $ rm configs/{dbnames.properties,initdb.sh} resources/db-postgresql.service.yaml secrets/dbusers.pwd
+      ~~~
 
-        With the command above you remove:
+      With the command above you remove:
 
-        - A properties file with the names of the PostgreSQL users and the Forgejo database.
+      - A properties file with the names of the PostgreSQL users and the Forgejo database.
 
-        - Shell script that initialized the PostgreSQL users for the metrics exporter and for the Forgejo instance.
+      - Shell script that initialized the PostgreSQL users for the metrics exporter and for the Forgejo instance.
 
-        - The `yaml` definition of the service that exposes the PostgreSQL port. It is not required in the upgrade process since you will not need to access the PostgreSQL server instance at all.
+      - The `yaml` definition of the service that exposes the PostgreSQL port. It is not required in the upgrade process since you will not need to access the PostgreSQL server instance at all.
 
-        - The `pwd` file with the encrypted PostgreSQL users' passwords.
+      - The `pwd` file with the encrypted PostgreSQL users' passwords.
 
     - After removing these files, the `secrets` folder can also be removed from the `postgres-upgrade` since it has been left empty:
 
-        ~~~sh
-        $ rm -r secrets
-        ~~~
+      ~~~sh
+      $ rm -r secrets
+      ~~~
 
-3. For the sake of clarity and reduce the chance of confusion with the files of the original PostgreSQL component subproject, you should also rename the files within the `resources` folder.
+3. For the sake of clarity and reduce the chance of confusion with the files of the original PostgreSQL component subproject, you should also rename the files within the `resources` folder:
 
     ~~~sh
     $ cd $HOME/k8sprjs/postgres-upgrade/resources
@@ -527,60 +527,61 @@ All the changes required are listed in these steps:
     kind: StatefulSet
 
     metadata:
-    name: postgres-upgrade
+      name: postgres-upgrade
     spec:
-    replicas: 1
-    serviceName: postgres-upgrade
-    template:
-      spec:
-        initContainers:
-        - name: pg-checksums
+      replicas: 1
+      serviceName: postgres-upgrade
+      template:
+        spec:
+          initContainers:
+          - name: pg-checksums
             image: tianon/postgres-upgrade:17-to-18
             command: ["/bin/sh", "-c"]
             args:
             - "/usr/lib/postgresql/17/bin/pg_checksums --pgdata /var/lib/postgresql/data/17/ --enable --progress"
+            #- "/usr/lib/postgresql/17/bin/pg_checksums --disable --pgdata /var/lib/postgresql/data/17/"
             volumeMounts:
             - name: postgresql-storage
-            mountPath: /var/lib/postgresql/data
-        containers:
-        - name: pg-upgrade
+              mountPath: /var/lib/postgresql/data
+          containers:
+          - name: pg-upgrade
             image: tianon/postgres-upgrade:17-to-18
             ports:
             - name: pg-upgrade
-            containerPort: 50432
+              containerPort: 50432
             env:
             - name: PGDATAOLD
-            valueFrom:
+              valueFrom:
                 configMapKeyRef:
-                name: postgres-upgrade-config
-                key: postgresql-db-data-old-path
+                  name: postgres-upgrade-config
+                  key: postgresql-db-data-old-path
             - name: PGDATANEW
-            valueFrom:
+              valueFrom:
                 configMapKeyRef:
-                name: postgres-upgrade-config
-                key: postgresql-db-data-new-path
+                  name: postgres-upgrade-config
+                  key: postgresql-db-data-new-path
             resources:
-            requests:
+              requests:
                 cpu: "0.75"
                 memory: 256Mi
             volumeMounts:
             - name: postgresql-storage
-            mountPath: /var/lib/postgresql/data
+              mountPath: /var/lib/postgresql/data
             - name: postgresql-config
-            readOnly: true
-            subPath: postgresql.conf
-            mountPath: /etc/postgresql/postgresql.conf
-        volumes:
-        - name: postgresql-config
+              readOnly: true
+              subPath: postgresql.conf
+              mountPath: /etc/postgresql/postgresql.conf
+          volumes:
+          - name: postgresql-config
             configMap:
-            name: postgres-upgrade-config
-            defaultMode: 444
-            items:
-            - key: postgresql.conf
+              name: postgres-upgrade-config
+              defaultMode: 444
+              items:
+              - key: postgresql.conf
                 path: postgresql.conf
-        - name: postgresql-storage
+          - name: postgresql-storage
             persistentVolumeClaim:
-            claimName: postgres-upgrade
+              claimName: postgres-upgrade
     ~~~
 
     This `StatefulSet` declaration is the component requiring the most significant changes:
@@ -673,7 +674,6 @@ All the changes required are listed in these steps:
     - In `resources` there are several changes:
 
         - The file that declared the service resource has been removed from the list.
-
         - The files declaring the namespace and the persistent volume have been added.
 
     - In `images` is specified the Tianon's custom image.
@@ -927,7 +927,7 @@ To check out and amend any relevant difference in the new `pg_hba.conf` file, do
     host all all all scram-sha-256
     ~~~
 
-4. Compare the two `pg_hba.conf` files with `diff` again.
+4. Compare the two `pg_hba.conf` files with `diff` again:
 
     ~~~sh
     $ sudo diff /mnt/forgejo-ssd/db/k3smnt/17/pg_hba.conf /mnt/forgejo-ssd/db/k3smnt/18/docker/pg_hba.conf
@@ -1028,9 +1028,9 @@ The last thing you may want to do is to free the storage space taken by the old 
 $ sudo rm -rf /mnt/forgejo-ssd/db/k3smnt/17
 ~~~
 
-In this appendix's scenario, remember that the folder with the old database files was the one named `17`.
+In this appendix's scenario, remember that the folder with the old database files is the one named `17`.
 
-## Kustomize project only for updating PostgreSQL included in this guide series
+## Kustomize project only for updating PostgreSQL included in this guide
 
 You can find the Kustomize project meant **only for updating PostgreSQL databases to newer MAJOR versions** at the attached folder indicated below.
 

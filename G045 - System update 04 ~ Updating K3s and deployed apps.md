@@ -10,7 +10,7 @@
   - [Compatibility of deployed apps with new Kubernetes runtime and among each other](#compatibility-of-deployed-apps-with-new-kubernetes-runtime-and-among-each-other)
   - [Versions correlation](#versions-correlation)
 - [Updating apps and K3s](#updating-apps-and-k3s)
-  - [Beware of the backups](#beware-of-the-backups)
+  - [Beware of backups](#beware-of-backups)
   - [Consider doing a backup of your K3s node VMs](#consider-doing-a-backup-of-your-k3s-node-vms)
   - [Updating the apps](#updating-the-apps)
     - [Update order of apps](#update-order-of-apps)
@@ -29,7 +29,7 @@
 
 ## Use `kubectl` to help you when updating your K3s cluster
 
-This chapter explains the procedures for updating the K3s software that runs your Kubernetes cluster, and also how to update the apps deployed in it. To help you in all this, you will need the `kubectl` client system you used to deploy the apps on your K3s Kubernetes cluster.
+This chapter explains the procedures for updating the K3s software that runs your Kubernetes cluster, and also how to update the apps deployed in it. To help you in all this, ready the `kubectl` client system you used to deploy the apps on your K3s Kubernetes cluster.
 
 ## Examining your K3s Kubernetes cluster
 
@@ -85,7 +85,7 @@ Take a look to the `Client version` line, that's the one indicating your `kubect
 
 ### `kubectl`'s most recent version
 
-Since `kubectl` is the official tool for handling Kubernetes clusters, it's kept up with the Kubernetes distribution. As I have already indicated a bit earlier, check [this Kubernetes `stable.txt` file](https://dl.k8s.io/release/stable.txt). It says `v1.35.1` at the moment of typing this, so that is also the version of `kubectl` this guide will upgrade to.
+Since `kubectl` is the official tool for handling Kubernetes clusters, it's kept up with the Kubernetes distribution. As it has been already indicated a bit earlier, check [this Kubernetes `stable.txt` file](https://dl.k8s.io/release/stable.txt). It says `v1.35.1` at the moment of typing this, so that is also the version of `kubectl` this guide will upgrade to.
 
 ### Deployed apps' current version
 
@@ -146,10 +146,10 @@ The column you should pay attention to is the `IMAGES` one, where you can see sp
 
 ### Compatibility of deployed apps with new Kubernetes runtime and among each other
 
-From all the apps you have seen deployed in previous guides, when you update a Kubernetes cluster, you have to worry first about those who provide internal services for your Kubernetes cluster. Those apps usually require particular functionality from the Kubernetes API, so a change in the runtime will affect them more seriously than to a regular app or service. Therefore, identify the apps which can be considered critical in your K3s cluster:
+From all the apps you have seen deployed in previous guides, when you update a Kubernetes cluster, you have to worry first about those who provide internal services for your Kubernetes cluster. Those apps usually require particular functionality from the Kubernetes API, so a change in the runtime can affect them more seriously than to a regular app or service. Therefore, identify the apps which can be considered critical in your K3s cluster:
 
 - [**Cert-manager**](https://cert-manager.io/)\
-  Manager and provider of certificates, like the wildcard one you've used with some of your deployed apps.
+  Manager and provider of certificates, like the wildcard one you have used with some of your deployed apps.
 
   - [List of supported cert-manager releases](https://cert-manager.io/docs/releases/)\
     This list specifies the versions available and with what Kubernetes versions they can run.
@@ -174,13 +174,13 @@ From all the apps you have seen deployed in previous guides, when you update a K
 
   - [Here is the compatibility matrix of the kube-state-metrics](https://github.com/kubernetes/kube-state-metrics#compatibility-matrix).
 
-As I have indicated in some items from the list above, be aware of interdependencies between apps, as in the case of Headlamp relying on metrics-server or the need of the monitoring stack for the metrics provided by the Kube State Metrics service.
+As pointed out in some items from the list above, be aware of interdependencies between apps, as in the case of Headlamp relying on metrics-server or the need of the monitoring stack for the metrics provided by the Kube State Metrics service.
 
-Regarding the rest of apps, usually they should not give you much trouble even with each other. For instance, take the case of Ghost. It has three main components: a cache-valkey server, a database, and the Ghost server. Although they are connected, these applications do not really have that strong interdependencies with each other or even with Kubernetes, which gives you more flexibility to handle their updates. Still, even with this more loose margin, eventually a component could be too old to be used by another one. For instance, a web application usually connects to a database through a specific driver, and that driver will only work with certain versions of the database. This forces you to keep the components version-paired to avoid issues.
+Regarding the rest of apps, usually they should not give you much trouble even with each other. For instance, take the case of Ghost. It has three main components: a cache-valkey server, a database, and the Ghost server. Although they are connected, these applications do not really have that strong interdependencies with each other or even with Kubernetes, which gives you more flexibility to handle their updates. Still, even with this more loose margin, eventually a component could be too old to be used by another one. For instance, a web application usually connects to a database through a specific driver, and that driver can only work with certain versions of the database. This forces you to keep the components version-paired to avoid issues.
 
 ### Versions correlation
 
-Below I list the current (running in the K3s cluster) and latest stable version, at the time of this writing, of each "critical" app identified in the previous point, and indicate which Kubernetes release they are compatible with:
+Below is the list of the current (running in the K3s cluster) and latest stable version, at the time of this writing, of each "critical" app identified in the previous point. The list also indicates which Kubernetes release each app's version is compatible with:
 
 - **Cert-manager**
 
@@ -211,19 +211,19 @@ Thanks to this mapping, now you know that, before upgrading your K3s software to
 
 ## Updating apps and K3s
 
-The first thing you will have to do is to update the critical apps running in your K3s cluster. This is due to the version compatibility issue, already indicated in the previous section, between certain apps and the underlying Kubernetes runtime. If you did it the other way, you could end having old apps failing to run on a newer Kubernetes runtime they don't support.
+The first thing you have to do is to update the critical apps running in your K3s cluster. This is due to the version compatibility issue, already indicated in the previous section, between certain apps and the underlying Kubernetes runtime. If you did it the other way, you could end having old apps failing to run on a newer Kubernetes runtime they don't support.
 
-### Beware of the backups
+### Beware of backups
 
 Check first if there are backup jobs running, either in the UrBackup server or the Proxmox VE system. Only when they have finished, proceed with the update of UrBackup.
 
 ### Consider doing a backup of your K3s node VMs
 
-Although you have the VMs covered by a scheduled backup job in Proxmox VE, you may like to have a more recent copy of them, just in case you need to restore them later. This way, you'll be sure of having their most recent stable state, done right before applying the updates.
+Although you have the VMs covered by a scheduled backup job in Proxmox VE, you may like to have a more recent copy of them, just in case you need to restore them later. This way, you can be sure of having their most recent stable state, done right before applying the updates.
 
 ### Updating the apps
 
-Here you have the general indications to go through when updating the apps deployed in the K3s cluster built with this guide. I will not go deeper than that since each update brings its own particularities and changes, although usually between minor or debug versions you should not have to do much more than incrementing the version number in the corresponding files of your Kustomize projects:
+Here you have the general indications to go through when updating the apps deployed in the K3s cluster built with this guide. This guide will not go deeper than that since each update brings its own particularities and changes, although usually between minor or debug versions you should not have to do much more than incrementing the version number in the corresponding files of your Kustomize projects:
 
 1. Check which are the current and latest stable version available, and see their compatibility with Kubernetes releases and other apps, [as you have seen before right in this chapter](#versions-correlation).
 
@@ -250,7 +250,7 @@ You know what steps to follow when updating any app, but what is the proper orde
 1. **cert-manager**\
     Deployment procedure found in [chapter **G029**](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md).
 
-    - Remember that cert-manager has a plugin for `kubectl` which you will also need to update. The procedure of upgrading this plugin will be almost the same as installing it, [as is explained in the **G029** guide](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#installing-the-cert-manager-plugin-in-your-kubectl-client-system).
+    - Remember that cert-manager has a plugin for `kubectl` which you also need to update. The procedure of upgrading this plugin will be almost the same as installing it, [as is explained in the chapter **G029**](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#installing-the-cert-manager-plugin-in-your-kubectl-client-system).
 
 2. **Headlamp**\
     Deployment procedure found in [chapter **G031**](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md).
@@ -318,7 +318,7 @@ You know what steps to follow when updating any app, but what is the proper orde
 > **Remember to update the Prometheus metric exporters deployed as sidecar containers**\
 > In the Ghost, Forgejo and Monitoring stack platforms, apps like Valkey or the database servers are deployed with Prometheus exporters which need to keep their compatibility. Therefore, when you update the main component in a sidecar setup, do not forget to check if the associated Prometheus metrics exporter also has to be updated to keep compatibility.
 
-The key thing here is to update first the critical apps, while the rest can be done in any order. Also realize that, usually, the only thing you will have to do is just update the image's version number in the `kustomization.yaml` file in the Kustomize project of the app you are updating, unless the update breaks with previous versions in some way.
+The key thing here is to update first the critical apps, while the rest can be done in any order. Also realize that, usually, the only thing you have to do is just update the image's version number in the `kustomization.yaml` file in the Kustomize project of the app you are updating, unless the update breaks with previous versions in some way.
 
 ### Updating K3s
 
@@ -336,7 +336,7 @@ Like when you were updating the apps, you should consider making a backup of you
 
 This basic procedure is just about applying the same installer command you used to deploy K3s on each node (as you did back in the [chapter **G025**](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md)), but with the version number updated:
 
-1. As you have seen [earlier in this chapter](#k3s-most-recent-version), get the version numbers of K3s. What I got for the setup used in this guide was the following:
+1. As you have seen [earlier in this chapter](#k3s-most-recent-version), get the version numbers of K3s. What corresponds for the setup used in this guide is the following:
 
     - Current K3s version in the cluster nodes: `v1.33.4+k3s1`.
     - Latest K3s stable version: `v1.35.1+k3s1`.
@@ -347,9 +347,9 @@ This basic procedure is just about applying the same installer command you used 
 
     > [!IMPORTANT]
     > **Beware of breaking changes between K3s releases**\
-    > You will have to check the release information of all the releases between your current version and the latest one.
+    > You have to check the release information of all the releases between your current version and the latest one.
 
-3. Also related to the K3s configuration, consult the K3s documentation to see if any option you're using in the configuration has been deprecated or changed:
+3. Also related to the K3s configuration, consult the K3s documentation to see if any option you are using in the configuration has been deprecated or changed:
 
     - [K3s Server Configuration Reference](https://docs.k3s.io/cli/server).
     - [K3s Agent Configuration Reference](https://docs.k3s.io/cli/agent).
@@ -400,11 +400,11 @@ This basic procedure is just about applying the same installer command you used 
 
 There's a more elaborated way of updating your K3s nodes, which is Kubernetes-native. It automates, up to a point, the process, although it makes more sense to use it in more complex cluster setups. With the small cluster you have built with this guide, there's little advantage on using this procedure (beyond having some practice with it).
 
-Take a look to this method in the [official K3s documentation](https://docs.k3s.io/upgrades/automated), although you will have to create a kustomize project to put everything explained there in a single and more manageable package. Also bear in mind that with your cluster, no matter what, you will have to edit and launch this process manually every time you want to apply an update.
+Take a look to this method in the [official K3s documentation](https://docs.k3s.io/upgrades/automated), although you have to create a kustomize project to put everything explained there in a single and more manageable package. Also bear in mind that with your cluster, no matter what, you have to edit and launch this process manually every time you want to apply an update.
 
 ### Updating the `kubectl` command
 
-Now that you have your K3s cluster updated, you'll have a mismatch between the version of your `kubectl` command and the Kubernetes server version it's connecting to. Check this out in your `kubectl` client system:
+Now that you have your K3s cluster updated, you have a mismatch between the version of your `kubectl` command and the Kubernetes server version it is connecting to. Check this out in your `kubectl` client system:
 
 ~~~sh
 $ kubectl version
@@ -417,7 +417,7 @@ The `kubectl` command here is behind just by one minor version, so its well with
 
 To update this `kubectl` command, just repeat the steps you did [in the chapter **G026** for downloading and installing the program](G026%20-%20K3s%20cluster%20setup%2009%20~%20Setting%20up%20a%20kubectl%20client%20for%20remote%20access.md#installing-kubectl-on-your-client-system), apart from removing your old `kubectl` executable file first.
 
-After updating your `kubectl` command, you will see the `version` output updated:
+After updating your `kubectl` command, you can see the `version` output updated:
 
 ~~~sh
 $ kubectl version

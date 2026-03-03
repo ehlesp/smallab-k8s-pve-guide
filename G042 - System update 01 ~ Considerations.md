@@ -32,7 +32,7 @@ The setup built in this guide has five software layers, so to speak, each with t
 
 The first three layers are, from the software point of view, independent from each other. The apps deployed in the K3s Kubernetes cluster are only dependant on the cluster itself, but some of them are only compatible with concrete versions of the Kubernetes engine. Those particular cases makes the update of the K3s software more tricky than with the rest of layers identified in the system.
 
-Something else is the UrBackup software, since both the server and the client software have (or can have) dependencies installed in the VMs where they run. Therefore, it will be better to handle the update of the UrBackup software together with the update of the Debian system in the VMs.
+Something else is the UrBackup software, since both the server and the client software have (or can have) dependencies installed in the VMs where they run. Therefore, it is better to handle the update of the UrBackup software together with the update of the Debian system in the VMs.
 
 ## How to update. Update procedures
 
@@ -56,12 +56,14 @@ Broadly speaking, for a small personal homelab system as the one built in this g
 
 Related to the "when" question is the matter of in what order you should deal with the updates of all the layers identified in your homelab. Thanks to the relative independence between the Proxmox VE, the Debian systems within the VMs and the K3s software, in theory you can update these layers on whichever order you need or prefer to follow. Still, it is always better to keep the same order. That way you will find easier to repeat the procedure every time and detect issues when going through it.
 
-In general, you will prefer to start from the bottom:
+In general, you prefer to start from the bottom:
 
-1. Proxmox VE, since it supports all the system.
-2. The Debian system in the VMs.
+1. Proxmox VE, since it supports the whole setup.
+
+2. The Debian system in the VMs:
    1. The UrBackup software, which can be affected by the Debian updates.
-3. The K3s software.
+
+3. The K3s software:
    1. The apps deployed in the K3s cluster.
 
 What if one layer does not have any updates pending? Easy. After making sure that it does not have any updates to apply in that cycle, you just skip it in that particular update cycle.

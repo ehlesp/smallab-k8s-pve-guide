@@ -23,7 +23,7 @@ Back in the [chapter **G023**](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debia
 
 ## What gets covered with the backup job
 
-The backup job explained here will cover the three virtual machines acting as nodes of the K3s Kubernetes cluster deployed in previous guides. This means that each VM will be completely copied in its own backup, including all the virtual storage drives they may have attached at the moment the backup is executed.
+The backup job explained here covers the three virtual machines acting as nodes of the K3s Kubernetes cluster deployed in previous guides. This means that each VM is going to be completely copied in its own backup, including all the virtual storage drives they may have attached at the moment the backup is executed.
 
 Therefore, you are treating these VMs like you did with your Proxmox VE system and Clonezilla in the previous [chapter **G038**](G038%20-%20Backups%2002%20~%20Host%20platform%20backup%20with%20Clonezilla.md), because that is what they are: the VMs are the hosts of your Kubernetes cluster and all the applications deployed in it, together with their data. The difference is that you control the backup procedure in a more friendly way thanks to the capabilities Proxmox VE offers in this regard.
 
@@ -41,9 +41,9 @@ You might think, if I already do Clonezilla backups regularly, why doing these?
 
 Since a VM backup copies the entire virtual machine, the VM must be stopped so the backup process can be executed on it. Of course, this implies that your K3s Kubernetes cluster will not be available for as long as the backup takes to finish. Bear in mind that this unavailability is not symmetric (so to speak):
 
-- When the backup job starts executing the backup of the K3s server node of your Kubernetes cluster, the entire K3s cluster will be down. In particular, you will not be able to reach it with `kubectl`. The agent nodes will keep on running but waiting for their server to come back.
+- When the backup job starts executing the backup of the K3s server node of your Kubernetes cluster, the entire K3s cluster is taken down. This means that you cannot reach it with `kubectl`. The agent nodes keep on running but waiting for their server to come back.
 
-- When the backup executed is on one of the K3s agent nodes, the K3s cluster will be available to your `kubectl` commands, but anything running in the stopped agent node will be down until the backup finishes and the VM boots up again.
+- When the backup executed is on one of the K3s agent nodes, the K3s cluster remains available to your `kubectl` commands, but anything running in the stopped agent node is taken down until the backup finishes and the VM boots up again.
 
 The Proxmox VE automated backup system is able to stop and start the affected VMs on its own. You do not have to worry about manually restart them after the backup job is done.
 
@@ -51,7 +51,7 @@ The Proxmox VE automated backup system is able to stop and start the affected VM
 
 On one hand, your VMs are the host platform for your Kubernetes cluster. This means that you'll want to have their backups ready at hand before you apply updates or relevant configuration changes on them, or just to be ready in case harmful events happen to those VMs. On the other hand, each VM (in particular the ones serving as K3s agent nodes) holds application and user data, and such contents can change daily.
 
-Taking into account those two perspectives, I'd say that at least a weekly backup of each VM would be the bare minimum to have, although it would be much better if you do it daily.
+Taking into account those two perspectives, at least a weekly backup of each VM would be the bare minimum to have, although it would be much better if you do it daily.
 
 ## Scheduling the backup job in Proxmox VE
 
@@ -61,7 +61,7 @@ Scheduling backup jobs is rather easy on Proxmox VE. Just log in the Proxmox VE 
 
     ![PVE Datacenter Backup page](images/g039/pve_dc_backup_page.webp "PVE Datacenter Backup page")
 
-    Here you can schedule backups for a Proxmox VE cluster. Of course, in your case, you will only prepare backups for the VMs in your standalone PVE node.
+    Here you can schedule backups for a Proxmox VE cluster. Of course, in your case, you have to prepare backups only for the VMs in your standalone PVE node.
 
 2. Notice the warning message next to the action buttons available in this page:
 
@@ -77,14 +77,14 @@ Scheduling backup jobs is rather easy on Proxmox VE. Just log in the Proxmox VE 
 
     ![Add button on Backup page](images/g039/pve_dc_backup_add_button.webp "Add button on Backup page")
 
-4. You will get a new window where you can schedule a backup job:
+4. You get into a new window where you can schedule a backup job:
 
     ![General tab in Create backup job window](images/g039/pve_dc_backup_add_bkp_job_gen_tab_clean.webp "General tab in Create backup job window")
 
     This window has several tabs, and you start in the `General` one by default. This tab gives you the parameters to configure how the backup job's is executed:
 
     - `Node`: default is `All`.\
-      In a Proxmox VE cluster environment, with several nodes available, you would be able to choose on which node to run the backup job. Although I haven't seen this explained in the official Proxmox VE documentation, probably, when you choose a node, the list of VMs (and containers if you're also using those) shown in this window will change to show only those running in that PVE node. Also, the documentation doesn't tell if its possible to choose more than one node at the same time.
+      In a Proxmox VE cluster environment, with several nodes available, you would be able to choose on which node to run the backup job. Although this is not explained in the official Proxmox VE documentation, when you choose a node, the list of VMs (and containers if you're also using those) shown in this window will change to list only those running in that PVE node. Also, the documentation doesn't tell if its possible to choose more than one node at the same time.
 
     - `Storage`: default is the first backup storage available in the PVE system.\
       Specifies where to store the backups generated by the job. In this guide there is only one backup storage enabled, the `hddusb_bkpvzdumps`, so that is the one being offered by default.
@@ -147,11 +147,11 @@ Scheduling backup jobs is rather easy on Proxmox VE. Just log in the Proxmox VE 
     - List of VMs and containers: default is **none selected**.\
       The list where you choose which VMs (or containers) you want to backup with this job. Remember that this list changes depending on what `Node` or `Selection mode` are selected.
 
-5. After learning about the `General` tab, you will understand the configuration shown in this snapshot:
+5. After learning about the `General` tab, you can understand the configuration shown in this snapshot:
 
     ![General tab set in Create backup job window](images/g039/pve_dc_backup_add_bkp_job_gen_tab_filled.webp "General tab set in Create backup job window")
 
-    Notice that I have changed the following fields:
+    Notice that the following fields have changed:
 
     - `Node` set to the only node available, the `pve` node.
 
@@ -159,7 +159,7 @@ Scheduling backup jobs is rather easy on Proxmox VE. Just log in the Proxmox VE 
 
     - `Job Comment` has a short line as a reminder of what is being backed up by this job.
 
-    - At the VMs list, I have chosen only the VMs of the K3s Kubernetes cluster. The VM templates already have their own backup made manually, and does not make sense either to run a backup job on them since VM templates cannot be modified (well, except their Proxmox VE configuration which you usually should not touch again).
+    - At the VMs list, only the VMs of the K3s Kubernetes cluster are chosen. The VM templates already have their own backup made manually, and does not make sense either to run a backup job on them since VM templates cannot be modified (well, except their Proxmox VE configuration which you usually should not touch again).
 
     > [!WARNING]  
     > **Do not click on `Create` just yet!**\
@@ -225,7 +225,7 @@ Scheduling backup jobs is rather easy on Proxmox VE. Just log in the Proxmox VE 
 
     ![Create button in Create backup job window](images/g039/pve_dc_backup_add_bkp_job_create_button.webp "Create button in Create backup job window")
 
-    After clicking on the `Create` button, the `Create: backup job` window will close itself and you will see almost immediately the new scheduled job in the main `Backup` page:
+    After clicking on the `Create` button, the `Create: backup job` window closes itself and you see almost immediately the new scheduled job in the main `Backup` page:
 
     ![Backup job listed on Backup page](images/g039/pve_dc_backup_new_job_listed.webp "Backup job listed on Backup page")
 
@@ -269,25 +269,25 @@ With your first backup job ready, you do not have to wait for its scheduled next
 
     Click on `Yes` to allow the backup job to proceed.
 
-5. Unlike other operations done in the Proxmox VE web console, the backup job one does not have a progress window. You will have to unfold the `Tasks` console found at the bottom of the page to see the backup job running:
+5. Unlike other operations done in the Proxmox VE web console, the backup job one does not have a progress window. You have to unfold the `Tasks` console found at the bottom of the page to see the backup job running:
 
     ![Backup job running shown in Tasks console](images/g039/pve_dc_backup_task_console_job_running.webp "Backup job running shown in Tasks console")
 
     Notice the entry with the `Backup job` description and the animated "running" icons. Also, in the sidebar showing all your VMs, see how the VM being backed up currently has its icon changed to something else, indicating that it is going under the procedure.
 
-    On the other hand, if you go to the `Cluster log` tab, you will find there a log entry also related to this backup job:
+    On the other hand, if you go to the `Cluster log` tab, you find there a log entry also related to this backup job:
 
     ![Backup job task start in Cluster log](images/g039/pve_dc_backup_backup_job_start_cluster_log.webp "Backup job task start in Cluster log")
 
     Internally for Proxmox VE, the backup job is a task with an hexadecimal identifier called UPID. See how the log message says "`starting task UPID:pve`" and, after the UPID code itself, you should see the string "`vzdump::mgrsys@pam:`" identifying the user executing the job.
 
-6. After a while, the backup job will end but you will probably notice it first in the `Tasks` console:
+6. After a while, the backup job ends but you will probably notice it first in the `Tasks` console:
 
     ![Backup job shown finished in Task console](images/g039/pve_dc_backup_task_console_job_finished.webp "Backup job shown finished in Task console")
 
     The finished task has an `End Time` set and a `OK` in its `Status` field, replacing the animated running icon from before. In the sidebar, all the affected VMs will appear with their running icon.
 
-    In the `Cluster log` tab, you will find a new log entry referred to the end of the task:
+    In the `Cluster log` tab, you can see a new log entry referred to the end of the task:
 
     ![Backup job task end in Cluster log](images/g039/pve_dc_backup_backup_job_end_cluster_log.webp "Backup job task end in Cluster log")
 
@@ -342,7 +342,7 @@ You can generate new VMs (or containers) from backups, if you execute the restor
 
     With the actions buttons enabled, press on `Restore`.
 
-3. The `Restore` window will appear. It is a bit different to the one you get in the `Backup` tab of any of your VMs' management page:
+3. The `Restore` window appears. It is a bit different to the one you get in the `Backup` tab of any of your VMs' management page:
 
     ![Restore VM window](images/g039/pve_restore_bkp_rest_window_default.webp "Restore VM window")
 
@@ -350,9 +350,9 @@ You can generate new VMs (or containers) from backups, if you execute the restor
 
     - The `VM` field is editable here, so you can assign any identifier to the new VM generated from this restoration process.
 
-      - See how by default it already puts the lowest identifier available, in this case `102`. Remember that this ID can't be lower than `100`.
+      - See how by default it already puts the lowest identifier available, in this case `102`. Remember that this ID cannot be lower than `100`.
 
-      - You can't put an ID already in use. If you do, the field will be highlighted in red and the `Restore` button will be disabled. It does not matter if the ID is the same as the VM from which the backup was made, as shown below.
+      - You cannot put an ID already in use. If you do, the field will be highlighted in red and the `Restore` button will be disabled. It does not matter if the ID is the same as the VM from which the backup was made, as shown below.
 
         ![Restore window with wrong configuration](images/g039/pve_restore_bkp_rest_window_bad_cfg.webp "Restore window with wrong configuration")
 
@@ -368,11 +368,11 @@ You can generate new VMs (or containers) from backups, if you execute the restor
 
     See that the number of `Cores` and `Memory` capacity have been also readjusted, and that the `Restore` button remains enabled since the configuration is proper.
 
-5. Click on `Restore` and the task will start right away, without asking you for confirmation. You will be redirected into a `Task viewer` window showing the progress of the restoration process:
+5. Click on `Restore` and the task starts right away, without asking you for confirmation. Then, you are redirected into a `Task viewer` window showing the progress of the restoration process:
 
     ![Restore process progress window](images/g039/pve_restore_bkp_rest_progress_window.webp "Restore process progress window")
 
-    When you see the log line `TASK OK`, then you will know the restoration process is over.
+    When you see the log line `TASK OK`, you will know the restoration process is over.
 
 6. Close the `Task viewer` and look for the newly generated VM in the sidebar:
 
@@ -384,33 +384,33 @@ You can generate new VMs (or containers) from backups, if you execute the restor
 
     ![Hardware tab of new VM](images/g039/pve_restore_bkp_vm_gen_hw_tab.webp "Hardware tab of new VM")
 
-    See that this VM has the same arrangement in hard disks and network devices as the original `k3sagent01`, although the network devices have different MACs than the original ones. Also see how the `Memory` and `Processors` fields correspond to what has been specified in the restoration window. In particular, notice how the `Memory` field has a mistake. If you edit it you will see that it is wrong:
+    See that this VM has the same arrangement in hard disks and network devices as the original `k3sagent01`, although the network devices have different MACs than the original ones. Also see how the `Memory` and `Processors` fields correspond to what has been specified in the restoration window. In particular, notice how the `Memory` field has a mistake. If you edit it you can see that it is wrong:
 
     ![Editing Memory field from Hardware tab of new VM](images/g039/pve_restore_bkp_vm_gen_hw_tab_mem_edit.webp "Editing Memory field from Hardware tab of new VM")
 
     The form is warning about a mismatch between the maximum amount of memory allowed to this VM (512 MiB), and the minimum memory requested (1021 MiB) which keeps the same value it had in the original VM. This has happened because, if you remember, this minimum memory cannot be edited in the configuration for VM restoration. It is not clear if this is on purpose or just a bug of the Proxmox VE version used at the time of writing this (9.0.5). Just remember to always review the hardware of a restored VM to detect problems like this one.
 
-8. Since this was just a demonstration, delete this VM by unfolding the `More` menu then clicking on `Remove`:
+8. Since this is just a demonstration, delete this VM by unfolding the `More` menu then clicking on `Remove`:
 
     ![Removing the new VM](images/g039/pve_restore_bkp_vm_gen_remove_btn.webp "Removing the new VM")
 
-9. Proxmox VE will ask you to confirm the remove action in the corresponding `Confirm` window:
+9. Proxmox VE asks you to confirm the remove action in the corresponding `Confirm` window:
 
     ![VM removal confirmation window](images/g039/pve_restore_bkp_vm_gen_remove_confirm_clean.webp "VM removal confirmation window")
 
     Pay attention to the options this window offers:
 
     - `Purge from job configurations`\
-      Means that if this VM was included in backup or other kind of jobs within Proxmox VE, it will be delisted from all of them. Since this particular VM is not in any job, you would not need to enable this one in this case.
+      Means that if this VM is included in a backup or other kind of jobs within Proxmox VE, it will be delisted from all of them. Since this particular VM is not in any job, you would not need to enable this one in this case.
 
     - `Destroy unreferenced disks owned by guest`\
-      Refers to those virtual storage drives that are associated with the VM but are not attached to it. With this option on, you can ensure that all virtual storages related to the VM will be removed. Enable this option to be sure that no virtual storage will remain from this VM in your Proxmox VE server.
+      Refers to those virtual storage drives that are associated with the VM but are not attached to it. With this option on, you can ensure that all virtual storages related to the VM will be removed. Enable this option to be sure that no virtual storage remains from this VM in your Proxmox VE server after its removal.
 
 10. Input the VM ID of the virtual machine you are about to remove to confirm the action. Also check both options on just to be sure the removal is thorough:
 
     ![VM removal confirmation window filled](images/g039/pve_restore_bkp_vm_gen_remove_confirm_filled.webp "VM removal confirmation window filled")
 
-    The `Remove` button will be enabled, so click on it. Unfold the `Tasks` console to see the process progress, which should finish in a rather short time:
+    The `Remove` button gets enabled, so click on it. Unfold the `Tasks` console to see the process progress, which should finish in a rather short time:
 
     ![VM removal task done OK](images/g039/pve_restore_bkp_vm_gen_remove_task_done.webp "VM removal task done OK")
 
@@ -436,7 +436,7 @@ Imagine that, for some reason, you want or need to restore the `k3sagent02` VM, 
 
     ![Restore VM task error VM is running](images/g039/pve_restore_live_vm_rst_output_error.webp "Restore VM task error VM is running")
 
-    In short, the log messages shown in the `Output` tab tells you that you can't execute a restoration on a VM that is currently running.
+    In short, the log messages shown in the `Output` tab tells you that you cannot execute a restoration on a VM that is currently running.
 
 You might wonder why the web console does not block the `Restore` action right away for running VMs. Since nothing is broken, take this as just one of the many idiosyncrasies within the Proxmox VE software, and hope that they improve this and other things in future releases.
 
@@ -446,7 +446,7 @@ The VM (or container) backups are just compressed dump files, perfectly accessib
 
 1. Open a shell in your Proxmox VE as `mgrsys`, then do an `ls` to `/mnt`:
 
-    ~~~bash
+    ~~~sh
     $  ls -al /mnt
     total 16
     drwxr-xr-x  4 root root 4096 Sep  2 13:26 .
@@ -459,7 +459,7 @@ The VM (or container) backups are just compressed dump files, perfectly accessib
 
 2. Do `ls` of that `hddusb_bkpvzdumps` folder:
 
-    ~~~bash
+    ~~~sh
     $ ls -al /mnt/hddusb_bkpvzdumps
     total 28
     drwxr-xr-x 4 root root  4096 Sep  2 16:34 .
@@ -472,7 +472,7 @@ The VM (or container) backups are just compressed dump files, perfectly accessib
 
 3. Now execute `ls -alh` on that `dump` folder, being aware that the `h` option gives you the weight of the files in a more human-readable format:
 
-    ~~~bash
+    ~~~sh
     $ ls -alh /mnt/hddusb_bkpvzdumps/dump
     total 8.9G
     drwxr-xr-x 2 root root 4.0K Feb 13 11:48 .
@@ -502,7 +502,7 @@ The VM (or container) backups are just compressed dump files, perfectly accessib
     - A `.vma.zst` file which is the compressed dump file itself.
     - A `.vma.zst.notes` text file with the notes associated to the compressed dump.
 
-Therefore, you can connect through SSH with a tool like WinSCP and copy those files to another storage for better safe keeping. What I cannot tell you is how Proxmox VE keeps track of those files to associate them with their proper VMs, although I suspect it does simply by looking to the VM ID annotated right after the `vzdump-qemu-` string in the file name.
+Therefore, you can connect through SSH with a tool like WinSCP and copy those files to another storage for better safe keeping. What this guide cannot tell you is how Proxmox VE keeps track of those files to associate them with their proper VMs, although one could suspect it just looks to the VM ID annotated right after the `vzdump-qemu-` string in the file name.
 
 ## Relevant system paths
 
@@ -516,10 +516,11 @@ Therefore, you can connect through SSH with a tool like WinSCP and copy those fi
 
 ### [Proxmox](https://www.proxmox.com/en/)
 
-- [Wiki. Backup and Restore](https://pve.proxmox.com/wiki/Backup_and_Restore)
-
 - [Proxmox VE Administration Guide](https://pve.proxmox.com/pve-docs/pve-admin-guide.html)
-  - [16. Backup and Restore](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_vzdump)
+  - [Backup and Restore](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_vzdump)
+
+- [Proxmox VE Wiki](https://pve.proxmox.com/wiki/Main_Page)
+  - [Backup and Restore](https://pve.proxmox.com/wiki/Backup_and_Restore)
 
 ## Navigation
 

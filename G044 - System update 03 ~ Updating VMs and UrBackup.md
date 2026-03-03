@@ -30,7 +30,7 @@
 
 ## Updating the VMs means updating their OS
 
-This chapter covers how to update the virtual machines and the UrBackup software. It is not difficult, but this procedure has its own particularities. Be aware that, where I say "update the VMs", what I really mean is to update the Debian operative system running in the VMs and the software packages installed in them.
+This chapter covers how to update the virtual machines and the UrBackup software. It is not difficult, but this procedure has its own particularities. Be aware that, where it says "update the VMs", what it really means is to update the Debian operative system running in the VMs and the software packages installed in them.
 
 ## Examining your VMs
 
@@ -99,7 +99,7 @@ In this guide's homelab setup, it happened that the K3s node VMs were running wi
 
 ### Debian's most recent version
 
-Go to the [official Debian website](https://www.debian.org/) to discover the current version. In particular, check the latest news, either at the main page or in [the News section](https://www.debian.org/News/). There you'll find the announcements of new versions. At the time of writing this, Debian **13.3** is the most recent version of this distribution. This implied that, in my own system, the oldest VMs were three **minor** versions behind the newest Debian: they had Debian **13.0**, so I had to check the announcements for the **13.1**, **13.2** and **13.3** versions:
+Go to the [official Debian website](https://www.debian.org/) to discover the current version. In particular, check the latest news, either at the main page or in [the News section](https://www.debian.org/News/). There you can find the announcements of new versions. At the time of writing this, Debian **13.3** is the most recent version of this distribution. This implied that, in this guide's system, the oldest VMs were three **minor** versions behind the newest Debian: they had Debian **13.0**, so the announcements for the **13.1**, **13.2** and **13.3** versions also had to be checked:
 
 - [Updated Debian 13: 13.1 released](https://www.debian.org/News/2025/20250906)
 - [Updated Debian 13: 13.2 released](https://www.debian.org/News/2025/20251115)
@@ -115,7 +115,7 @@ After learning how old the Debian systems are in your VMs, get on with their upd
 
 Either wait for the backup job scheduled in your Proxmox VE to kick in, or launch it manually. Regardless, try to have a fresh backup before updating your VMs, the closest in time you can to the beginning of the update process.
 
-Needless to say that you should not start your update process when a scheduled backup task that affect the VMs is already running, so do not forget to check it in your Proxmox VE web console (in `Datacenter` > `Backup`).
+Needless to say that you should not start your update process when a scheduled backup task that affect the VMs is already running, so do not forget to check it in your Proxmox VE web console (in `Datacenter > Backup`).
 
 Also remember that, in this guide's setup, **the UrBackup VM is not included** in the backup scheduled in the [chapter **G039**](G039%20-%20Backups%2003%20~%20Proxmox%20VE%20backup%20job.md).
 
@@ -161,7 +161,7 @@ Either way, know that stopping the K3s services **does not stop** the containers
 
     If you execute this command, remember to do it in **all of your K3s agent nodes**.
 
-Know that, in my case, I **did not** stop the K3s services before applying the updates with `apt` and it went down without any issue.
+Know that, in this guide's case, the K3s services were not stopped before applying the updates with `apt` and they were done without any noticeable issue.
 
 ### Executing the update with `apt` on your VMs
 
@@ -279,7 +279,7 @@ To be up to date with the latest versions of UrBackup, go to [its official site]
 
 #### UrBackup server update
 
-The update is exactly the same procedure you used for installing the UrBackup server `.deb` package, as done in the [chapter **G040**](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#installing-urbackup-server). And no, `apt` will not find the new version automatically because UrBackup server does not have a source repository, forcing you to download the `.deb` file and executing the upgrade manually with `dpkg`.
+The update is exactly the same procedure you used for installing the UrBackup server `.deb` package, as done in the [chapter **G040**](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#installing-urbackup-server). And no, `apt` cannot find the new version automatically because UrBackup server does not have a source repository, forcing you to download the `.deb` file and executing the upgrade manually with `dpkg`.
 
 On the other hand, it is not necessary to stop the UrBackup server service when updating it, like with other services when they are updated with `apt` (`dpkg` is the underlying command that executes the update).
 

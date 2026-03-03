@@ -5,8 +5,8 @@ kind: Service
 metadata:
   name: agent-prometheus-node-exporter
   annotations:
-      prometheus.io/scrape: 'true'
-      prometheus.io/port:   '9100'
+    prometheus.io/scrape: 'true'
+    prometheus.io/port:   '9100'
 spec:
   type: ClusterIP
   clusterIP: None

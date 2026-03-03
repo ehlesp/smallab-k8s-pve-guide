@@ -12,7 +12,7 @@
 
 - [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International Public License](LICENSE.md#creative-commons-attribution-noncommercial-sharealike-40-international-public-license)
 
-## Guides
+## Main chapters
 
 ### [G001 - Hardware setup](G001%20-%20Hardware%20setup.md)
 
@@ -51,8 +51,8 @@
 ### [G005 - Host configuration 03 ~ LVM storage](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md)
 
 - [Your Proxmox VE server's storage needs to be reorganized](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#your-proxmox-ve-servers-storage-needs-to-be-reorganized)
-- [Initial filesystem configuration (**PVE web console**)](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#initial-filesystem-configuration-pve-web-console)
-- [Initial filesystem configuration (**shell as root**)](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#initial-filesystem-configuration-shell-as-root)
+- [Initial filesystem configuration (PVE web console)](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#initial-filesystem-configuration-pve-web-console)
+- [Initial filesystem configuration (shell as root)](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#initial-filesystem-configuration-shell-as-root)
 - [Configuring the unused storage drives](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#configuring-the-unused-storage-drives)
 - [LVM rearrangement in the main storage drive](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#lvm-rearrangement-in-the-main-storage-drive)
 - [References](G005%20-%20Host%20configuration%2003%20~%20LVM%20storage.md#references)
@@ -72,7 +72,7 @@
 - [Enable Two Factor Authentication in your PVE system](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#enable-two-factor-authentication-in-your-pve-system)
 - [Enabling TFA for SSH access](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#enabling-tfa-for-ssh-access)
 - [Enforcing TFA TOTP for accessing the Proxmox VE web console](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#enforcing-tfa-totp-for-accessing-the-proxmox-ve-web-console)
-- [Enforcing TFA TOTP as a default requirement for `pam` realm](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#enforcing-tfa-totp-as-a-default-requirement-for-pam-realm)
+- [Enforcing TFA TOTP as a default requirement for the `pam` realm](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#enforcing-tfa-totp-as-a-default-requirement-for-the-pam-realm)
 - [Incompatibility of PVE web console login with TFA enforced local shell access](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#incompatibility-of-pve-web-console-login-with-tfa-enforced-local-shell-access)
 - [Relevant system paths](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#relevant-system-paths)
 - [References](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md#references)
@@ -127,7 +127,7 @@
 
 - [CPUs also have security vulnerabilities](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#cpus-also-have-security-vulnerabilities)
 - [Discovering your CPU's vulnerabilities](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#discovering-your-cpus-vulnerabilities)
-- [Your Proxmox VE system will already have the correct microcode package applied](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#your-proxmox-ve-system-will-already-have-the-correct-microcode-package-applied)
+- [Your Proxmox VE system already has the correct microcode package applied](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#your-proxmox-ve-system-already-has-the-correct-microcode-package-applied)
 - [Relevant system paths](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#relevant-system-paths)
 - [References](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#references)
 
@@ -306,7 +306,8 @@
 
 - [Use cert-manager to handle certificates in your cluster](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#use-cert-manager-to-handle-certificates-in-your-cluster)
 - [Deploying cert-manager](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#deploying-cert-manager)
-- [Setting up a self-signed CA for your cluster](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#setting-up-a-self-signed-ca-for-your-cluster)
+- [Setting up self-signed CAs for your cluster](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#setting-up-self-signed-cas-for-your-cluster)
+- [Deploying the self-signed CAs](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#deploying-the-self-signed-cas)
 - [Checking your certificates with the cert-manager command line tool](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#checking-your-certificates-with-the-cert-manager-command-line-tool)
 - [Cert-manager's Kustomize project attached to this guide](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#cert-managers-kustomize-project-attached-to-this-guide)
 - [Relevant system paths](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#relevant-system-paths)
@@ -324,7 +325,7 @@
 - [Deploying the Traefik dashboard Kustomize project](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md#deploying-the-traefik-dashboard-kustomize-project)
 - [Getting into the Traefik dashboard](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md#getting-into-the-traefik-dashboard)
 - [What to do if Traefik's dashboard has bad performance](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md#what-to-do-if-traefiks-dashboard-has-bad-performance)
-- [Traefik dashboard's Kustomize project attached to this guide series](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md#traefik-dashboards-kustomize-project-attached-to-this-guide)
+- [Traefik dashboard's Kustomize project attached to this guide](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md#traefik-dashboards-kustomize-project-attached-to-this-guide)
 - [Relevant system paths](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md#relevant-system-paths)
 - [References](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md#references)
 
@@ -415,7 +416,7 @@
 - [Deploying the main Kustomize project in the cluster](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#deploying-the-main-kustomize-project-in-the-cluster)
 - [Start using Ghost](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#start-using-ghost)
 - [Security considerations in Ghost](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#security-considerations-in-ghost)
-- [Ghost platform's Kustomize project attached to this guide series](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#ghost-platforms-kustomize-project-attached-to-this-guide-series)
+- [Ghost platform's Kustomize project attached to this guide](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#ghost-platforms-kustomize-project-attached-to-this-guide)
 - [Relevant system paths](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#relevant-system-paths)
 - [References](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#references)
 
@@ -480,7 +481,7 @@
 - [Deploying the main Kustomize project in the cluster](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%205%20-%20Complete%20Forgejo%20platform#deploying-the-main-kustomize-project-in-the-cluster)
 - [Finishing Forgejo installation](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%205%20-%20Complete%20Forgejo%20platform.md#finishing-forgejo-installation)
 - [Security considerations in Forgejo](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%205%20-%20Complete%20Forgejo%20platform.md#security-considerations-in-forgejo)
-- [Forgejo platform's Kustomize project attached to this guide series](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%205%20-%20Complete%20Forgejo%20platform.md#forgejo-platforms-kustomize-project-attached-to-this-guide-series)
+- [Forgejo platform's Kustomize project attached to this guide](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%205%20-%20Complete%20Forgejo%20platform.md#forgejo-platforms-kustomize-project-attached-to-this-guide)
 - [Relevant system paths](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%205%20-%20Complete%20Forgejo%20platform.md#relevant-system-paths)
 - [References](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%205%20-%20Complete%20Forgejo%20platform.md#references)
 
@@ -557,7 +558,7 @@
 - [Deploying the main Kustomize project in the cluster](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#deploying-the-main-kustomize-project-in-the-cluster)
 - [Checking on Prometheus](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#checking-on-prometheus)
 - [Finishing Grafana's setup](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#finishing-grafanas-setup)
-- [Monitoring stack Kustomize project attached to this guide series](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#monitoring-stack-kustomize-project-attached-to-this-guide-series)
+- [Monitoring stack Kustomize project attached to this guide](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#monitoring-stack-kustomize-project-attached-to-this-guide)
 - [Relevant system paths](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#relevant-system-paths)
 - [References](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#references)
 
@@ -605,7 +606,7 @@
 
 ### [G040 - Backups 04 ~ UrBackup 01 - Server setup](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md)
 
-- [Use UrBackup to preserve specific directories](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#g040-backups-04-urbackup-01-server-setup#use-urbackup-to-preserve-specific-directories)
+- [Use UrBackup to preserve specific directories](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#use-urbackup-to-preserve-specific-directories)
 - [Setting up a new VM for the UrBackup server](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#setting-up-a-new-vm-for-the-urbackup-server)
 - [Deploying UrBackup](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#deploying-urbackup)
 - [Firewall configuration on Proxmox VE](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#firewall-configuration-on-proxmox-ve)
@@ -666,7 +667,7 @@
 - [Relevant system paths](G046%20-%20Cleaning%20up%20your%20homelab%20system.md#relevant-system-paths)
 - [References](G046%20-%20Cleaning%20up%20your%20homelab%20system.md#references)
 
-## Appendixes
+## Appendix chapters
 
 ### [G901 - Appendix 01 ~ Connecting through SSH with PuTTY](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md)
 
@@ -742,10 +743,10 @@
 - [Upgrading a containerized PostgreSQL server is not straightforward](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#upgrading-a-containerized-postgresql-server-is-not-straightforward)
 - [Concerns](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#concerns)
 - [Upgrade procedure (for Forgejo's PostgreSQL instance)](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#upgrade-procedure-for-forgejos-postgresql-instance)
-- [Kustomize project only for updating PostgreSQL included in this guide series](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#kustomize-project-only-for-updating-postgresql-included-in-this-guide-series)
+- [Kustomize project only for updating PostgreSQL included in this guide](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#kustomize-project-only-for-updating-postgresql-included-in-this-guide)
 - [Relevant system paths](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#relevant-system-paths)
 - [References](G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md#references)
 
 ## Navigation
 
-[<< Previous (**README**)](README.md) | [Next (**G001 - Hardware setup) >>](G001%20-%20Hardware%20setup.md)
+[<< Previous (**README**)](README.md) | [Next (**G001 - Hardware setup**) >>](G001%20-%20Hardware%20setup.md)

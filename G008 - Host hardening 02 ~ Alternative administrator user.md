@@ -13,13 +13,13 @@
   - [Directories](#directories)
   - [Files](#files)
 - [References](#references)
-  - [Proxmox VE](#proxmox-ve)
-  - [PAM](#pam)
+  - [Proxmox](#proxmox)
+  - [Pluggable Authentication Module (PAM)](#pluggable-authentication-module-pam)
 - [Navigation](#navigation)
 
 ## Avoid using the root user
 
-In the previous chapters, you've been using the `root` user to work in your Proxmox VE system's setup. That's fine for earlier configuration steps, but it is absolutely not recommended to keep on using it as your server's everyday administrator user.
+In the previous chapters, you have been using the `root` user to work in your Proxmox VE system's setup. That is fine for earlier configuration steps, but it is absolutely not recommended to keep on using it as your server's everyday administrator user.
 
 Since `root` is **the superuser with all the privileges**, using it directly on any Linux server risks inducing all sorts of security or other issues. To mitigate those potential problems, is better to create an alternative administrator user with `sudo` privileges and use it instead of `root`.
 
@@ -27,21 +27,22 @@ Since `root` is **the superuser with all the privileges**, using it directly on 
 
 Proxmox VE can work with up to five authentication realms: pam, Proxmox VE authentication server, LDAP, Microsoft Active Directory and OpenID Connect. The last four can be considered external and shared among all the nodes of a PVE cluster. But what about the remaining `pam`?
 
-The `pam`, which stands for **Pluggable Authentication Module**, is the standard authentication system for any Linux distribution, including the Debian one running your standalone PVE node. But **this `pam` realm is strictly local**, bounded just to the node itself, and **not shared** in any way with any other computer.
+The `pam`, which stands for [**Pluggable Authentication Module**](https://en.wikipedia.org/wiki/Pluggable_Authentication_Module), is the standard authentication system for any Linux distribution, including the Debian one running your standalone PVE node. But **this `pam` realm is strictly local**, bounded just to the node itself, and **not shared** in any way with any other computer.
 
-Is in the `pam` realm of the PVE node where the `root` user exists, like in any other Linux distribution. This same user is also registered within the user management of your Proxmox VE, and it is the only user you have initially to log in the Proxmox VE web console. This means that the `root` user was created first in the `pam` realm, and then linked to your node's Proxmox VE authentication system by the installation process.
+It is in the `pam` realm of the Proxmox VE node where the `root` user exists, like in any other Linux-based system. This same user is also registered within the user management of your Proxmox VE, and it is the only user you have initially to log in the Proxmox VE web console. This means that the `root` user was created first in the `pam` realm, and then linked to your node's Proxmox VE authentication system by the installation process.
 
-Let me show you how to find the user management screen in your PVE's web console. It is available at the `Datacenter` level, as an option called `Users` under `Permissions`.
+Next, learn how you can find the user management screen in your PVE's web console. It is available at the `Datacenter` level, as an option called `Users` under `Permissions`:
 
 ![Proxmox VE user management screen](images/g008/pve_user_management_screen.webp "Proxmox VE user management screen")
 
-So, if all the PVE's user management is handled at the `Datacenter` level, does that mean that PVE takes care somehow of syncing the `pam` realm among the nodes of a cluster (in case you were working on one)? Short answer, no. Changes in the `palm` realm only apply to the node you logged in. Also, from what I've tested, if you create a user directly from the PVE's `Users` page and assign it to the `pam` realm, **it won't create the user at the Debian OS level**.
+So, if all the PVE's user management is handled at the `Datacenter` level, does that mean that Proxmox VE takes care somehow of syncing the `pam` realm among the nodes of a cluster (in case you were working on one)? Short answer, no. Changes in the `palm` realm only apply to the node you logged in. Also, if you create a user directly from the PVE's `Users` page and assign it to the `pam` realm, **it will not create the user at the Debian OS level**.
 
 ### Always create your `pam` users at the OS level first
 
 In conclusion, creating a `pam` realm's user in Proxmox VE always implies two basic steps:
 
 1. **Creating the user** directly in the node at the Debian OS level.
+
 2. **Enabling it in the Proxmox VE user management**, either through the web console or by the shell commands Proxmox VE also provides for this and other administrative tasks.
 
 > [!NOTE]
@@ -54,11 +55,13 @@ Here you are about to create an alternative, and a bit safer, administrator user
 
 In a normal Linux-based server, you would just create a standard user and then give it `sudo` privileges. But such user also has to hold a certain role and concrete privileges within your Proxmox VE platform. Those privileges are security concerns at the PVE's `Datacenter` level, not just of any particular PVE node.
 
-So, you'll need to perform a number of steps to create a new administrative user in your Proxmox VE's `pam` realm.
+Therefore, you need to perform a number of steps to create a new administrative user in your Proxmox VE's `pam` realm.
 
 ### Creating the user with sudo privileges in Debian
 
-1. Open a terminal as `root`. Then create a user called, for instance, `mgrsys` with the `adduser` command:
+Open a remote terminal as `root` connected to your Proxmox VE server, and then:
+
+1. Create a user called, for instance, `mgrsys` with the `adduser` command:
 
     ~~~sh
     $ adduser mgrsys
@@ -66,9 +69,9 @@ So, you'll need to perform a number of steps to create a new administrative user
 
     > [!IMPORTANT]
     > **Stick to a naming criteria for your users!**\
-    > Use a criteria for naming your users, and make those names individualized. This way you'll have a better chance to detect any strange behavior related to your users in the system's logs. For instance, you could follow a pattern like `[role][initials]` or `[role][name][surname]`.
+    > Use a criteria for naming your users, and make those names individualized. This way you have a better chance to detect any strange behavior related to your users in the system's logs. For instance, you could follow a pattern like `[role][initials]` or `[role][name][surname]`.
 
-    The command will ask you the password for the new user first, and then a few informative details like the user's full name. The whole output should be something like this:
+    The `adduser` command first asks the password twice for the new user, and then a few informative details like the user's full name. The whole output should be something like this:
 
     ~~~sh
     New password:
@@ -103,6 +106,8 @@ So, you'll need to perform a number of steps to create a new administrative user
 
 ### Assigning a TOTP code to the new user
 
+Remaining in the same remote terminal session you opened with `root` on your Proxmox VE server:
+
 1. Switch to your new user by using the `su` command, and go to its `$HOME` directory:
 
     ~~~sh
@@ -124,7 +129,7 @@ So, you'll need to perform a number of steps to create a new administrative user
 
 ### Testing `sudo` with the new administrator user
 
-After you've checked that your new administrator user can connect through ssh, make a simple test to see if this user has sudo privileges. For instance, you could try to execute a `ls` with `sudo`.
+After you have checked that your new administrator user can connect through ssh, make a simple test to see if this user has `sudo` privileges. For instance, you could try to execute a `ls` with `sudo`.
 
 ~~~sh
 $ sudo ls -al
@@ -176,15 +181,16 @@ The most convenient way of assigning roles and privileges to users within the Pr
 
     > [!IMPORTANT]
     > **The new group you've just created is just a Proxmox VE one**\
-    > The `pvemgrs` **is not part of the underlying Debian's groups**. Therefore, you won't see it listed in the `/etc/group` file.
+    > The `pvemgrs` **is not part of the underlying Debian's groups**. Therefore, it is not listed in the `/etc/group` file.
 
 ### Enabling the new administrator user in Proxmox VE
 
-The `mgrsys` user you created earlier exists within the Debian OS, but not in the Proxmox VE platform yet. To do so, you have to create the same user within the PVE platform too.
+The `mgrsys` user you created earlier exists within the Debian OS, but not in the Proxmox VE platform yet. To do so, you have to create the same user within the PVE platform too:
 
 1. To create the user in just one line, type a command line (as `root`) like the following:
 
-    > [!WARNING]
+    > [!IMPORTANT]
+    > **Specify an email useful to you in the command below**\
     > Do not forget replacing the `-email` example value shown here with the one you want!
 
     ~~~sh
@@ -204,6 +210,7 @@ The `mgrsys` user you created earlier exists within the Debian OS, but not in th
     ![TOTP form filled for the new mgrsys user](images/g008/new_user_totp_screen.webp "TOTP form filled for the new mgrsys user")
 
     > [!WARNING]
+    > **Be always careful with your secret codes, even expendable ones**\
     > Remember to never share TOTP codes at all!
 
 4. With the TOTP set up correctly, you can try to log with your new `mgrsys` user in the Proxmox VE web console:
@@ -213,7 +220,7 @@ The `mgrsys` user you created earlier exists within the Debian OS, but not in th
 
     ![New mgrsys user has logged in PVE web console](images/g008/pve_new_user_login_web_console.webp "New mgrsys user has logged in PVE web console")
 
-    The new `mgrsys` user has access to the same tabs and options as `root`, thanks of being part of a PVE group with full administrative rights.
+    The new `mgrsys` user has access to the same tabs and options as `root`, thanks to being part of a PVE group with full administrative rights.
 
 ## Relevant system paths
 
@@ -232,16 +239,17 @@ The `mgrsys` user you created earlier exists within the Debian OS, but not in th
 
 ## References
 
-### [Proxmox VE](https://pve.proxmox.com/wiki/Main_Page)
+### [Proxmox](https://www.proxmox.com/en/)
 
-- [Administration Guide. User Management](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#user_mgmt)
-  - [Authentication Realms](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#pveum_authentication_realms)
-  - [Command-line Tool](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_command_line_tool)
-  - [Real World Examples](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_real_world_examples)
+- [Proxmox VE Administration Guide](https://pve.proxmox.com/pve-docs/pve-admin-guide.html)
+  - [User Management](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#user_mgmt)
+    - [Authentication Realms](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#pveum_authentication_realms)
+    - [Command-line Tool](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_command_line_tool)
+    - [Real World Examples](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_real_world_examples)
 
-### PAM
+### Pluggable Authentication Module (PAM)
 
-- [PAM, Pluggable Authentication Module](https://en.wikipedia.org/wiki/Pluggable_authentication_module)
+- [Wikipedia. Pluggable Authentication Module (PAM)](https://en.wikipedia.org/wiki/Pluggable_authentication_module)
 
 ## Navigation
 

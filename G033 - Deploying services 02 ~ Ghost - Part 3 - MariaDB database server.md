@@ -83,9 +83,9 @@ The `my.cnf` file is the default configuration file for MariaDB, where you can a
 
     This `my.cnf` file makes the MariaDB instance fit for the resources-constrained environment of the K3s agent node in which the database is going to run:
 
-    - The [`skip_name_resolve`](https://mariadb.com/docs/server/server-management/variables-and-modes/server-system-variables#skip_name_resolve) forces MariaDB to use only IPs for connections, avoiding wasting time in resolving hostnames first. Since MariaDB is going to be served through a Kubernetes `Service` object, the name resolution is handled by the K3s cluster itself thanks to its CoreDNS service. Ghost will just call that MariaDB `Service` to make use of its database.
+    - The [`skip_name_resolve`](https://mariadb.com/docs/server/server-management/variables-and-modes/server-system-variables#skip_name_resolve) forces MariaDB to use only IPs for connections, avoiding wasting time in resolving hostnames first. Since MariaDB is going to be served through a Kubernetes `Service` object, the name resolution is handled by the K3s cluster itself thanks to its CoreDNS service. Ghost will call that MariaDB `Service` to use its database.
 
-    - The values set in the [`max_connections`](https://mariadb.com/docs/server/server-management/variables-and-modes/server-system-variables#max_connections) and [`thread_cache_size`](https://mariadb.com/docs/server/server-management/variables-and-modes/server-system-variables#thread_cache_size) parameters are considered for a low usage scenario where just a very small number of clients will access the database.
+    - The values set in the [`max_connections`](https://mariadb.com/docs/server/server-management/variables-and-modes/server-system-variables#max_connections) and [`thread_cache_size`](https://mariadb.com/docs/server/server-management/variables-and-modes/server-system-variables#thread_cache_size) parameters are considered for a low usage scenario where just a very small number of clients are expected to access the database.
 
     - The character set `utf8mb4` specified in the `default-character-set`, [`character_set_server`](https://mariadb.com/docs/server/server-management/variables-and-modes/server-system-variables#character_set_server) and [`collation_server`](https://mariadb.com/docs/server/server-management/variables-and-modes/server-system-variables#collation_server) parameters is the most adequate one for modern applications like Ghost. The main advantage of `utf8mb4` is that it accommodates a much wider set of characters than `utf8` or others. As a downside, be aware that `utf8mb4` databases take up more storage space since their characters are "bigger".
 
@@ -132,7 +132,7 @@ There are a few names you need to specify in your database setup. Those names ar
 
 ### Initializer shell script `initdb.sh`
 
-The Prometheus metrics exporter system you will include in your MariaDB server deployment requires its own user to access certain statistical data from the MariaDB instance. You have already configured its name as a variable in the previous `dbnames.properties` file, but you also need to create the user within the MariaDB installation. The problem is that MariaDB can only create one user in its initial run, but you also have to create the user Ghost needs to work with its own database.
+The Prometheus metrics exporter system you are going to include in your MariaDB server deployment requires its own user to access certain statistical data from the MariaDB instance. You have already configured its name as a variable in the previous `dbnames.properties` file, but you also need to create the user within the MariaDB installation. The problem is that MariaDB can only create one user in its initial run, but you also have to create the user Ghost needs to work with its own database.
 
 To solve this conflict, you can use a initializer shell script that creates that extra user you need in the MariaDB database:
 
@@ -153,7 +153,7 @@ To solve this conflict, you can use a initializer shell script that creates that
     FLUSH privileges;"
     ~~~
 
-    This is an SQL script, executed by a MariaDB-provided `mysql` shell command, that creates the required user for the Prometheus metrics exporter. Notice how, instead of putting raw values, environment variables (`MARIADB_PROMETHEUS_EXPORTER_USERNAME` and `MARIADB_PROMETHEUS_EXPORTER_PASSWORD`) are used as placeholders for the username and password values for the Prometheus metrics exporter's user. Those variables will be defined within the `StatefulSet` resource definition you will declare later in this chapter.
+    This is an SQL script, executed by a MariaDB-provided `mysql` shell command, that creates the required user for the Prometheus metrics exporter. Notice how, instead of putting raw values, environment variables (`MARIADB_PROMETHEUS_EXPORTER_USERNAME` and `MARIADB_PROMETHEUS_EXPORTER_PASSWORD`) are used as placeholders for the username and password values for the Prometheus metrics exporter's user. Those variables are to be declared within the `StatefulSet` resource manifest you will declare later in this chapter.
 
 ## MariaDB passwords
 
@@ -185,7 +185,7 @@ For convenience, declare all of these passwords as variables in the same propert
 
 ## MariaDB persistent storage claim
 
-[As you saw when declaring Valkey's storage](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-storage), you need to declare a `PersistentVolumeClaim` to enable access to the persistent volume (to be declared in the last part of this Ghost deployment procedure) that will store the MariaDB instance's data:
+[As you saw when declaring Valkey's storage](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-storage), you need to declare a `PersistentVolumeClaim` to enable access to the persistent volume (to be declared in the last part of this Ghost deployment procedure) storing the MariaDB instance's data:
 
 1. Create a `db-mariadb.persistentvolumeclaim.yaml` file under the `resources` folder:
 
@@ -283,9 +283,11 @@ Since MariaDB is a program whose main purpose is to store _state_ (meaning data)
             - name: mariadb-config 
               subPath: my.cnf
               mountPath: /etc/mysql/my.cnf
+              readOnly: true
             - name: mariadb-config 
               subPath: initdb.sh
               mountPath: /docker-entrypoint-initdb.d/initdb.sh
+              readOnly: true
             - name: mariadb-storage
               mountPath: /var/lib/mysql
           - name: metrics
@@ -367,13 +369,13 @@ Since MariaDB is a program whose main purpose is to store _state_ (meaning data)
         - The `volumeMounts` contains three mount points:
 
           - MountPath `/etc/mysql/my.cnf`\
-            The default path where MariaDB has its `my.cnf` file. This `my.cnf` file is the one you created before, and you'll load it later in the `db-mariadb` config map resource.
+            The default path where MariaDB has its `my.cnf` file. This `my.cnf` file is the one you created before, and you will put it later in the `db-mariadb` config map resource.
 
           - MountPath `/docker-entrypoint-initdb.d/initdb.sh`\
-            The path `/docker-entrypoint-initdb.d` is a special one within the MariaDB container, prepared to execute (in alphabetical order) any shell or SQL scripts you put in here just the **first time** this container is executed. This way you can initialize databases or create extra users, as your `initdb.sh` script does. You'll also include `initdb.sh` in the `db-mariadb` config map resource.
+            The path `/docker-entrypoint-initdb.d` is a special one within the MariaDB container, prepared to execute (in alphabetical order) any shell or SQL scripts you put in here just the first time this container is executed. This way you can initialize databases or create extra users, as your `initdb.sh` script does. You will also include `initdb.sh` in the `db-mariadb` config map resource.
 
           - MountPath `/var/lib/mysql`\
-            This is the default data folder of MariaDB. It is where the volume `mariadb-storage`'s filesystem will be mounted into.
+            This is the default data folder of MariaDB. It is where the volume `mariadb-storage`'s filesystem is going to be mounted into.
 
       - Container `metrics` is for the Prometheus metrics exporter service related to the MariaDB server:
 
@@ -432,7 +434,7 @@ The previous `StatefulSet` requires a `Service` named `db-mariadb` to run, so yo
         name: metrics
     ~~~
 
-    See that this `Service` is headless since the `spec.clusterIP` is `None`, implying that you will need to call it by its FQDN. Also, this service's `port` numbers correspond with the ones configured as `containerPorts` in the MariaDB's `StatefulSet`, although the `targetPort` parameters makes them independent from the configuration set in the pod's containers.
+    See that this `Service` is headless since the `spec.clusterIP` is `None`, implying that you have to call it by its FQDN. Also, this service's `port` numbers correspond with the ones configured as `containerPorts` in the MariaDB's `StatefulSet`, although the `targetPort` parameters makes them independent from the configuration set in the pod's containers.
 
 ### MariaDB Service's FQDN
 
@@ -462,10 +464,10 @@ Now you have to create the main `kustomization.yaml` file describing your Ghost 
     kind: Kustomization
 
     labels:
-      - pairs:
-          app: db-mariadb
-        includeSelectors: true
-        includeTemplates: true
+    - pairs:
+        app: db-mariadb
+      includeSelectors: true
+      includeTemplates: true
 
     resources:
     - resources/db-mariadb.persistentvolumeclaim.yaml
@@ -749,7 +751,7 @@ At this point, you can verify with `kubectl` that the Kustomize project for Ghos
 
 ## Do not deploy this MariaDB project on its own
 
-This MariaDB setup is missing the persistent volume for storing data that you must not confuse with the claim you have configured for your MariaDB server. That PV and other elements will be declared in the main Kustomize project you will declare in the final part of this Ghost deployment procedure. Until then, do not deploy this MariaDB subproject.
+This MariaDB setup is missing the persistent volume for storing data that you must not confuse with the claim you have configured for your MariaDB server. That PV and other elements are going to be declared in the main Kustomize project you will declare in the final part of this Ghost deployment procedure. Until then, do not deploy this MariaDB subproject.
 
 ## Relevant system paths
 
@@ -775,20 +777,22 @@ This MariaDB setup is missing the persistent volume for storing data that you mu
 
 ### [MariaDB](https://mariadb.org)
 
+- [MariaDB Server Documentation](https://mariadb.com/docs/server)
+
+  - [Server Management. Deployment. Configuring MariaDB. Advanced Configuration](https://mariadb.com/docs/server/server-management/install-and-upgrade-mariadb/configuring-mariadb/mariadb-performance-advanced-configurations)
+    - [Configuring MariaDB for Optimal Performance](https://mariadb.com/docs/server/server-management/install-and-upgrade-mariadb/configuring-mariadb/mariadb-performance-advanced-configurations/configuring-mariadb-for-optimal-performance)
+
+  - [Server Management. Variables and Modes](https://mariadb.com/docs/server/server-management/variables-and-modes)
+    - [Server System Variables](https://mariadb.com/docs/server/server-management/variables-and-modes/server-system-variables)
+
+  - [Server Usage. Storage Engines. InnoDB](https://mariadb.com/docs/server/server-usage/storage-engines/innodb)
+    - [InnoDB Buffer Pool](https://mariadb.com/docs/server/server-usage/storage-engines/innodb/innodb-buffer-pool)
+    - [InnoDB System Variables](https://mariadb.com/docs/server/server-usage/storage-engines/innodb/innodb-system-variables)
+
+  - [Reference. Data Types. String Data Types. Character Sets and Collations](https://mariadb.com/docs/server/reference/data-types/string-data-types/character-sets)
+    - [Setting Character Sets and Collations](https://mariadb.com/docs/server/reference/data-types/string-data-types/character-sets/setting-character-sets-and-collations)
+
 - [Docker Hub. MariaDB](https://hub.docker.com/_/mariadb)
-
-- [Server Management. Deployment. Configuring MariaDB. Advanced Configuration](https://mariadb.com/docs/server/server-management/install-and-upgrade-mariadb/configuring-mariadb/mariadb-performance-advanced-configurations)
-  - [Configuring MariaDB for Optimal Performance](https://mariadb.com/docs/server/server-management/install-and-upgrade-mariadb/configuring-mariadb/mariadb-performance-advanced-configurations/configuring-mariadb-for-optimal-performance)
-
-- [Server Management. Variables and Modes](https://mariadb.com/docs/server/server-management/variables-and-modes)
-  - [Server System Variables](https://mariadb.com/docs/server/server-management/variables-and-modes/server-system-variables)
-
-- [Server Usage. Storage Engines. InnoDB](https://mariadb.com/docs/server/server-usage/storage-engines/innodb)
-  - [InnoDB Buffer Pool](https://mariadb.com/docs/server/server-usage/storage-engines/innodb/innodb-buffer-pool)
-  - [InnoDB System Variables](https://mariadb.com/docs/server/server-usage/storage-engines/innodb/innodb-system-variables)
-
-- [Reference. Data Types. String Data Types. Character Sets and Collations](https://mariadb.com/docs/server/reference/data-types/string-data-types/character-sets)
-  - [Setting Character Sets and Collations](https://mariadb.com/docs/server/reference/data-types/string-data-types/character-sets/setting-character-sets-and-collations)
 
 #### MySQL Server Exporter
 
@@ -799,6 +803,8 @@ This MariaDB setup is missing the persistent volume for storing data that you mu
   - [Using Prometheus to Monitor MySQL and MariaDB](https://www.tencentcloud.com/document/product/457/38553)
 
 ### [Kubernetes](https://kubernetes.io/docs/)
+
+- [Kubernetes Documentation](https://kubernetes.io/docs/home/)
 
 #### ConfigMaps
 

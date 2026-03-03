@@ -26,10 +26,11 @@
   - [Linux](#linux)
   - [K3s](#k3s)
   - [Kubernetes](#kubernetes)
+- [Navigation](#navigation)
 
 ## Save storage space by cleaning your system up
 
-Over time, any system accumulates digital "dirt" that you must get rid of, and certainly the homelab setup you have deployed with this guide is no exception for this. Cleaning that dirt will free up some of your precious storage space and, in the case of the K3s cluster nodes, slightly reduce the size of your VMs backups.
+Over time, any system accumulates digital "dirt" that you must get rid of, and certainly the homelab setup you have deployed with this guide is no exception for this. Cleaning that dirt frees up some of your precious storage space and, in the case of the K3s cluster nodes, slightly reduce the size of your VMs backups.
 
 ## Checking your storage status
 
@@ -43,7 +44,7 @@ From the point of view of storage, the homelab system built in this guide has tw
 
 ### Storage space status on the Proxmox VE host
 
-From time to time, you will have to get deeper in your Proxmox VE host to see how its storage capacity is truly faring.
+From time to time, you have to get deeper in your Proxmox VE host to see how its storage capacity is truly faring.
 
 #### Filesystem status on Proxmox VE host
 
@@ -152,7 +153,7 @@ $ sudo journalctl --disk-usage
 Archived and active journals take up 199.9M in the file system.
 ~~~
 
-See how `journalctl` returns a more precise measurement as the one I got previously with `ls`. Of course, you can also compare this measuring with what `du` can tell you:
+See how `journalctl` returns a more precise measurement than the one obtained previously with `ls`. Of course, you can also compare this measuring with what `du` can tell you:
 
 ~~~sh
 $ sudo du -sh /var/log/journal/
@@ -167,7 +168,7 @@ To see the systemd journal logs themselves, you have to use the `journalctl` com
 $ sudo journalctl -r
 ~~~
 
-This command will show you the logs **in reverse order**, starting from the latest one registered, in a `less`-like viewer:
+This command shows you the logs **in reverse order**, starting from the latest one registered, in a `less`-like viewer:
 
 ~~~sh
 Feb 18 13:43:33 pve sudo[51183]: pam_unix(sudo:session): session opened for user root(uid=0) by mgrsys(uid=1000)
@@ -194,7 +195,7 @@ Feb 18 13:31:13 pve systemd[47655]: Startup finished in 933ms.
 
 ### Storage space status on the K3s Kubernetes nodes
 
-All your K3s nodes are Debian systems, just like your Proxmox VE host, so all the things explained in the previous sections about how to check the storage space and which directories you should pay attention first also apply in your K3s VMs. Therefore, from here on the explanations will center around the particular Kubernetes-related things that will eat your storage space in your K3s cluster nodes.
+All your K3s nodes are Debian systems, just like your Proxmox VE host, so all the things explained in the previous sections about how to check the storage space and which directories you should pay attention first also apply in your K3s VMs. Therefore, from here on the explanations center around the particular Kubernetes-related things that eat your storage space in your K3s cluster nodes.
 
 #### Kubernetes container logs
 
@@ -211,7 +212,7 @@ While the logs of the K3s service running on each node [are journaled](G025%20-%
 
 #### Images of Kubernetes containers
 
-The containers you deploy in your Kubernetes cluster run docker images, and these images get stored in the root ( `/` ) filesystem of any node running containers. I won't tell you the exact path where the images are stored, since **you must not touch them directly**. Instead, in a K3s-based Kubernetes cluster such as yours, you can use the `k3s` command to get a list of all the images downloaded in a particular node:
+The containers you deploy in your Kubernetes cluster run docker images, and these images get stored in the root ( `/` ) filesystem of any node running containers. This guide will not tell you the exact path where the images are stored, since **you must not touch them directly**. Instead, in a K3s-based Kubernetes cluster such as yours, you can use the `k3s` command to get a list of all the images downloaded in a particular node:
 
 ~~~sh
 $ sudo k3s crictl images
@@ -242,7 +243,7 @@ The list above tells you about all the images currently stored in the node and, 
 
 ## Cleaning procedures
 
-In general, all the elements mentioned before (logs, temporal files and container images) are all already automatically managed by your system in some way. Still, you could find the default configuration for rotation or pruning of any of those elements too lenient. Then, you may want to either adjust the rotation or pruning configuration, or know how to execute a proper cleaning manually. In this section you will learn how to do manual cleanings.
+In general, all the elements mentioned before (logs, temporal files and container images) are all already automatically managed by your system in some way. Still, you could find the default configuration for rotation or pruning of any of those elements too lenient. Then, you may want to either adjust the rotation or pruning configuration, or know how to execute a proper cleaning manually. In this section you can learn how to do manual cleanings.
 
 > [!IMPORTANT]
 > **Be sure you do not need the elements you prune from your homelab**\
@@ -254,13 +255,13 @@ Here you have to distinguish between the regular `.log` files and the systemd jo
 
 #### Cleaning regular `.log` files
 
-Usually, your log files will be controlled either by `logrotate` or rotated by the same application or service that writes them. For those that are under the management of `logrotate`, you can force a rotation manually if you feel it necessary:
+Usually, your log files are controlled either by `logrotate` or rotated by the same application or service that writes them. For those that are under the management of `logrotate`, you can force a rotation manually if you feel it necessary:
 
 ~~~sh
 $ sudo logrotate --force /path/to/service.logrotate.configuration
 ~~~
 
-That command will force the rotation of the particular logs configured in the specified `/path/to/service.logrotate.configuration` file, and this may or may not free up some space in your filesystem. Also remember that you will usually find the logrotate configuration files in the `/etc/logrotate.d/` folder.
+That command forces the rotation of the particular logs configured in the specified `/path/to/service.logrotate.configuration` file, and this may or may not free up some space in your filesystem. Also remember that you can usually find the logrotate configuration files in the `/etc/logrotate.d/` folder.
 
 With log files not managed by `logrotate` you can try handling them manually, but be always careful of not removing the actual log files currently in use by any service. Instead, you can just empty them with a simple command:
 
@@ -335,7 +336,7 @@ Alternatively, you can just readjust your systemd journal's configuration, makin
     $ sudo cp /etc/systemd/journald.conf /etc/systemd/journald.conf.orig
     ~~~
 
-2. Open `/etc/systemd/journald.conf` with an editor to see the following content.
+2. Open `/etc/systemd/journald.conf` with an editor to see the following content:
 
     ~~~sh
     #  This file is part of systemd.
@@ -392,7 +393,7 @@ Alternatively, you can just readjust your systemd journal's configuration, makin
 
     Check the meaning of all the parameters in this file in the corresponding man page, `man journald.conf`.
 
-3. In this case, I'll show you a simple change to just limit the logs retained to only those within one week. To specify this, uncomment the `MaxRetentionSec` parameter and edit it as follows:
+3. For example, you can apply a simple change to just limit the logs retained to only those within one week. To specify this, uncomment the `MaxRetentionSec` parameter and edit it as follows:
 
     ~~~sh
     MaxRetentionSec=7day
@@ -406,13 +407,13 @@ Alternatively, you can just readjust your systemd journal's configuration, makin
 
 4. Save the changes and exit the file.
 
-5. Restart the systemd journal service.
+5. Restart the systemd journal service:
 
     ~~~sh
     $ sudo systemctl restart systemd-journald.service
     ~~~
 
-This way, systemd will clean up its journals automatically more frequently.
+This way, systemd cleans up its journals automatically more frequently.
 
 > [!NOTE]
 > **Learn more about systemd journaling**\
@@ -420,13 +421,13 @@ This way, systemd will clean up its journals automatically more frequently.
 
 ### Procedures for pruning container images
 
-The only place in your cluster setup where you will have container images is in your K3s nodes. Therefore, the cleaning procedure explained in this subsection only applies to them.
+The only place in your cluster setup where you have container images is in your K3s nodes. Therefore, the cleaning procedure explained in this subsection only applies to them.
 
-It does not matter if a node is a server/master or an agent/worker, both types run containers and both need to cache their images in their root ( `/` ) filesystem to run them when required. The Kubernetes engine does [automatic garbage collection on unused containers and images](https://kubernetes.io/docs/concepts/architecture/garbage-collection/#containers-images), but you might find its default settings too "generous" with your storage space. So here I will show you two ways to deal with the issue of your container images eating up too much of your K3s nodes storage space, one manual and another through the configuration of the K3s Kubernetes engine.
+It does not matter if a node is a server/master or an agent/worker, both types run containers and both need to cache their images in their root ( `/` ) filesystem to run them when required. The Kubernetes engine does [automatic garbage collection on unused containers and images](https://kubernetes.io/docs/concepts/architecture/garbage-collection/#containers-images), but you might find its default settings too "generous" with your storage space. This guide will show you two ways to deal with the issue of your container images eating up too much of your K3s nodes storage space, one manual and another through the configuration of the K3s Kubernetes engine.
 
 #### Pruning container images manually
 
-This is a straightforward procedure that you can execute in all your K3s nodes, but you must be aware that **it will remove any image not currently used in a running container** within your Kubernetes cluster, regardless of its age:
+This is a straightforward procedure that you can execute in all your K3s nodes, but you must be aware that **it removes any image not currently used in a running container** within your Kubernetes cluster, regardless of its age:
 
 1. First, use `df` to get an idea of the usage status of the filesystem where the images are stored, root ( `/` ):
 
@@ -510,7 +511,7 @@ As indicated earlier, the Kubernetes engine handles automatically the pruning of
 - `imageGCLowThresholdPercent`: integer value, set as **80** by default.\
   It must be always **lower** than `imageGCHighThresholdPercent`. Percentage value of the disk/filesystem usage. When disk usage is below this level, the image garbage collector is never executed.
 
-In other words, the Kubernetes engine can only launch (when it deems necessary) the image garbage collector if disk usage has reached or gone over the `imageGCLowThresholdPercent` limit, and when the usage hits or surpasses the `imageGCHighThresholdPercent` threshold the Kubernetes engine will always execute this cleaning process. The garbage collector always starts deleting from the oldest images and keeps going on until it hits the `imageGCLowThresholdPercent` limit.
+In other words, the Kubernetes engine can only launch (when it deems necessary) the image garbage collector if disk usage has reached or gone over the `imageGCLowThresholdPercent` limit, and when the usage hits or surpasses the `imageGCHighThresholdPercent` threshold the Kubernetes engine always execute this cleaning process. The garbage collector always starts deleting from the oldest images and keeps going on until it hits the `imageGCLowThresholdPercent` limit.
 
 > [!NOTE]
 > **The official Kubernetes documentation is not clear about the _disk usage_ notion regarding garbage collection**\
@@ -566,11 +567,11 @@ To estimate a new value for the parameters, also take into account the other rea
 
     > [!IMPORTANT]
     > **Restarting the K3s service does not affect your containers**\
-    > The apps and services deployed in your cluster will keep on running while the K3s service restarts.
+    > The apps and services deployed in your cluster keep on running while the K3s service restarts.
 
 ## Reminder about the `apt` updates
 
-After updating a Debian system, some old `apt` packages can be left back and you will have to remove them manually. This usually happens with old kernel packages, but it can also happen with other packages that apt detects as not in use by any other package. So remember to execute the following `apt` command after applying any `apt upgrade`:
+After updating a Debian system, some old `apt` packages can be left back and you have to remove them manually. This usually happens with old kernel packages, but it can also happen with other packages that apt detects as not in use by any other package. So remember to execute the following `apt` command after applying any `apt upgrade`:
 
 ~~~sh
 $ sudo apt autoremove
@@ -638,5 +639,7 @@ $ sudo apt autoremove
   - [Configuration APIs. Kubelet Configuration (v1beta1)](https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/)
     - [KubeletConfiguration](https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/#kubelet-config-k8s-io-v1beta1-KubeletConfiguration)
   - [Component tools. kubelet](https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/)
+
+## Navigation
 
 [<< Previous (**G045. System update 04**)](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G901. Appendix 01**) >>](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md)

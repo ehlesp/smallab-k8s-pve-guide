@@ -19,19 +19,23 @@ Every time you log in the Proxmox VE web console, or when you get into the updat
 
 This is bothersome, but there is a way to make the web console stop showing it.
 
+> [!WARNING]
+> **Disabling this warning has side effects on the Proxmox VE web console**\
+> When you disable this warning, certain features of the Proxmox VE web console may not work anymore. You will need to restore the warning to be able to use them.
+
 ## Removing the subscription warning
 
 Follow this procedure to remove or disable Proxmox's subscription warning:
 
 1. Open a root shell and `cd` to `/usr/share/javascript/proxmox-widget-toolkit`:
 
-    ~~~bash
+    ~~~sh
     $ cd /usr/share/javascript/proxmox-widget-toolkit
     ~~~
 
-2. In that `proxmox-widget-toolkit` directory there's a javascript library file called `proxmoxlib.js`. Make a `.orig` backup of it:
+2. In that `proxmox-widget-toolkit` directory there is a javascript library file called `proxmoxlib.js`. Make a `.orig` backup of it:
 
-    ~~~bash
+    ~~~sh
     $ cp proxmoxlib.js proxmoxlib.js.orig
     ~~~
 
@@ -42,7 +46,7 @@ Follow this procedure to remove or disable Proxmox's subscription warning:
         title: gettext('No valid subscription'),
     ~~~
 
-4. When you locate it (just search the `No valid subscription` string, its unique in the code), replace `Ext.Msg.show` with `void`:
+4. When you locate it (just search the `No valid subscription` string, it is unique in the code), replace `Ext.Msg.show` with `void`:
 
     ~~~js
     void({ //Ext.Msg.show({
@@ -51,13 +55,13 @@ Follow this procedure to remove or disable Proxmox's subscription warning:
 
 5. Save the change and exit the editor, then restart the Proxmox VE web service:
 
-    ~~~bash
+    ~~~sh
     $ systemctl restart pveproxy.service
     ~~~
 
     This restart may take a few seconds.
 
-6. Browse to the Proxmox web console, but don't forget to refresh your browser's cache (Ctrl + F5) to ensure that you load the modified javascript. Log in and the subscription warning shouldn't appear now.
+6. Browse to the Proxmox web console, but do not forget to refresh your browser's cache (Ctrl + F5) to ensure that you load the modified javascript. Log in and the subscription warning should not appear now.
 
 ## Reverting the changes
 
@@ -67,21 +71,21 @@ If you need to undo the change explained before, you have three options to rever
 
 2. Restoring the `.orig` backup you created of the file within the `proxmox-widget-toolkit` directory:
 
-    ~~~bash
+    ~~~sh
     $ mv proxmoxlib.js.orig proxmoxlib.js
     ~~~
 
 3. Reinstalling the `proxmox-widget-toolkit` package from the repository:
 
-    ~~~bash
+    ~~~sh
     $ apt-get install --reinstall proxmox-widget-toolkit
     ~~~
 
 ## Change executed in just one command line
 
-To do the change in just one (long) command line, just use the following shell command.
+To do the change in just one (long) command line, just use the following shell command:
 
-~~~bash
+~~~sh
 $ sed -Ezi.orig "s/(Ext.Msg.show\(\{\s+title: gettext\('No valid sub)/void\(\{ \/\/\1/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js && systemctl restart pveproxy.service
 ~~~
 
@@ -101,7 +105,7 @@ This fix is known to work on any version starting from Proxmox VE **5.1** up to 
 
 ## References
 
-- [Remove Proxmox Subscription Notice (Including 5.1+ & 6.2-12+)](https://johnscs.com/remove-proxmox51-subscription-notice/)
+- [McLaren Data Systems. Remove Proxmox Subscription Notice (Tested to 8.4)](https://mclarendatasystems.com/remove-proxmox51-subscription-notice/)
 
 ## Navigation
 

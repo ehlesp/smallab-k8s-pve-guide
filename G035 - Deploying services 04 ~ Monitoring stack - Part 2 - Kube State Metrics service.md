@@ -31,7 +31,7 @@ This part is about deploying the _Kube State Metrics_ service to make the "hidde
 
 ## Kustomize project folders for your monitoring stack and Kube State Metrics
 
-Your monitoring stack's components need to be under a common Kustomize project. Create the usual folders as you have seen in previous deployments. Like in those cases, this guide will assume you are working in a special folder for your Kustomize projects, set in a `$HOME/k8sprjs` folder of your `kubectl` client system:
+Your monitoring stack's components need to be under a common Kustomize project. Create the usual folders as you have seen in previous deployments. Like in those cases, this chapter will assume you are working in a dedicated directory for your Kustomize projects, set in a `$HOME/k8sprjs` folder of your `kubectl` client system:
 
 ~~~sh
 $ mkdir -p $HOME/k8sprjs/monitoring/components/agent-kube-state-metrics/resources
@@ -58,9 +58,9 @@ Prepare one service account for your Kube State Metrics service like this:
     apiVersion: v1
     kind: ServiceAccount
 
-    automountServiceAccountToken: false
     metadata:
       name: agent-kube-state-metrics
+    automountServiceAccountToken: false
     ~~~
 
     This is a really simple resource to declare but also has other parameters available. Check them out in its [official API definition](https://kubernetes.io/docs/reference/kubernetes-api/authentication-resources/service-account-v1/).
@@ -73,7 +73,7 @@ Prepare one service account for your Kube State Metrics service like this:
 
 ## Kube State Metrics ClusterRole
 
-For the previous service account to be able to do anything in your cluster, you need to associate it with a role that grants concrete actions to perform. In the case of the Kube State Metrics agents you want to deploy in all your cluster nodes, you will need a reader role able to act cluster-wide. This implies declaring a [ClusterRole resource](https://kubernetes.io/docs/reference/kubernetes-api/authorization-resources/cluster-role-v1/):
+For the previous service account to be able to do anything in your cluster, you need to associate it with a role that grants concrete actions to perform. In the case of the Kube State Metrics agents you want to deploy in all your cluster nodes, you need a reader role able to act cluster-wide. This implies declaring a [ClusterRole resource](https://kubernetes.io/docs/reference/kubernetes-api/authorization-resources/cluster-role-v1/):
 
 1. Generate a file `agent-kube-state-metrics.clusterrole.yaml` within the `agent-kube-state-metrics/resources/` directory:
 
@@ -95,7 +95,7 @@ For the previous service account to be able to do anything in your cluster, you 
     - apiGroups: [""]
       resources:
       - configmaps
-    # SENSIBLE INFO: Uncomment ONLY for security audits!
+    # SENSITIVE INFO: Uncomment ONLY for security audits!
     #  - secrets
       - nodes
       - pods
@@ -174,7 +174,7 @@ For the previous service account to be able to do anything in your cluster, you 
       resources: ["leases"]
       verbs: ["list", "watch"]
 
-    # SENSIBLE INFO: Uncomment ONLY for security audits!
+    # SENSITIVE INFO: Uncomment ONLY for security audits!
     # Authentication: security tokens review (internal/advanced usage)
     #- apiGroups: ["authentication.k8s.io"]
     #  resources: ["tokenreviews"]
@@ -197,7 +197,7 @@ For the previous service account to be able to do anything in your cluster, you 
 
     A cluster role is a collection of `rules` that define what actions (`verbs`) can be done on concrete `resources` available in concrete apis (`apiGroups`). The verbs granted by this cluster role are almost always `list` or `watch`, limiting this particular cluster role to a read-only behavior.
 
-    On the other hand, I have commented out the sensible security-related resources that usually you do not want to leave exposed in metrics (or in any way in general). Uncomment them only if you need to do something like running a security audit on them and, when you are done, **do not forget to block their access again in this cluster role**.
+    On the other hand, the sensitive security-related resources usually you do not want to leave exposed in metrics (or in any way in general) have been commented out. Uncomment them only if you need to do something like running a security audit on them and, when you are done, **do not forget to block their access again in this cluster role**.
 
     > [!NOTE]
     > **`ClusterRole` resources are not namespaced**\
@@ -324,13 +324,13 @@ The Kube State Metrics service is just an agent that does not need to store any 
           Specifies the [secure computing mode (_seccomp_)](https://kubernetes.io/docs/reference/node/seccomp/) to apply to the container. This mode is applied by the profile set in the `type` parameter. In this case, the `RuntimeDefault` profile represents the default container runtime seccomp profile.
 
     - `nodeSelector`\
-      A selector that makes the pod run only on nodes that have the specified label. In this case, the `kubernetes.io/os` label is ensuring that this pod will be executed only on Linux nodes.
+      A selector that makes the pod run only on nodes that have the specified label. In this case, the `kubernetes.io/os` label is ensuring that this pod is restricted to run only on Linux nodes.
 
     - `serviceAccountName`\
       The name of the `ServiceAccount` that will be used to run this pod. Here is set the `agent-kube-state-metrics` one you declared earlier in this document.
 
     - `tolerations`\
-      Allows the Kube State Metrics agent to run in the server node of your K3s cluster. You must allow this pod to tolerate the `NoSchedule` node taint [you configured in that node when you installed it](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#the-k3sserver01-nodes-configyaml-file), otherwise it will not run in the server node and you will not get metrics from it.
+      Allows the Kube State Metrics agent to run in the server node of your K3s cluster. You must allow this pod to tolerate the `NoSchedule` node taint [you configured in that node when you installed it](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#the-k3sserver01-nodes-configyaml-file). Otherwise, it will not run in the server node and you will not get metrics from it.
 
 ## Kube State Metrics Service
 
@@ -371,10 +371,6 @@ Since every component of this monitoring stack is going to be under the `monitor
 agent-kube-state-metrics.monitoring.svc.homelab.cluster.
 ~~~
 
-> [!NOTE]
-> **The last dot in the absolute FQDN is not a mistake!**\
-> It explicitly brands the FQDN as absolute, which avoids doing any searches in the cluster's internal DNS service. This technique allows calling services directly, improving your Kubernetes cluster performance.
-
 ## Kube State Metrics Kustomize project
 
 Now put together all the Kube State Metrics resources under a `Kustomization` subproject, declared with the corresponding `kustomization.yaml` file:
@@ -393,11 +389,11 @@ Now put together all the Kube State Metrics resources under a `Kustomization` su
     kind: Kustomization
 
     labels:
-      - pairs:
-          app.kubernetes.io/component: exporter
-          app.kubernetes.io/name: kube-state-metrics
-        includeSelectors: true
-        includeTemplates: true
+    - pairs:
+        app.kubernetes.io/component: exporter
+        app.kubernetes.io/name: kube-state-metrics
+      includeSelectors: true
+      includeTemplates: true
 
     resources:
     - resources/agent-kube-state-metrics.serviceaccount.yaml
@@ -415,7 +411,7 @@ Now put together all the Kube State Metrics resources under a `Kustomization` su
       newTag: v2.18.0
     ~~~
 
-    Under `labels` there are two labels that also appear in the resources declared in [the official standard example for deploying Kube State Metrics](https://github.com/kubernetes/kube-state-metrics/tree/main/examples/standard). Compared with that example, there is one `version` label missing. I have omitted it because it felt redundant and easy to forget when updating the Kube State Metrics image version.
+    Under `labels` there are two labels that also appear in the resources declared in [the official standard example for deploying Kube State Metrics](https://github.com/kubernetes/kube-state-metrics/tree/main/examples/standard). Compared with that example, there is one `version` label missing. It has been omitted because felt redundant and easy to forget when updating the Kube State Metrics image version.
 
 ### Validating the Kustomize YAML output
 
@@ -681,20 +677,21 @@ This Kube State Metrics agent is a component part of a bigger project yet to be 
   - [Guide To Kube-State-Metrics](https://kubex.ai/kubernetes-tools/kube-state-metrics)
 
 - [DevOpsCube. How To Setup Kube State Metrics on Kubernetes](https://devopscube.com/setup-kube-state-metrics/)
-
 - [GitHub. DevOpsCube. Kube state metrics kubernetes deployment configs](https://github.com/devopscube/kube-state-metrics-configs)
 
-### [Kubernetes](https://kubernetes.io/docs/)
+### [Kubernetes](https://kubernetes.io/)
+
+- [Kubernetes Documentation](https://kubernetes.io/docs/)
 
 #### Security concerns
 
-- [Tasks. Configure Pods and Containers](https://kubernetes.io/docs/tasks/configure-pod-container/)
+- [Kubernetes Documentation. Tasks. Configure Pods and Containers](https://kubernetes.io/docs/tasks/configure-pod-container/)
   - [Configure Service Accounts for Pods](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/)
 
-- [Reference. API Access Control](https://kubernetes.io/docs/reference/access-authn-authz/)
+- [Kubernetes Documentation. Reference. API Access Control](https://kubernetes.io/docs/reference/access-authn-authz/)
   - [Using RBAC Authorization](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)
 
-- [Reference. Kubernetes API](https://kubernetes.io/docs/reference/kubernetes-api/authentication-resources/)
+- [Kubernetes Documentation. Reference. Kubernetes API](https://kubernetes.io/docs/reference/kubernetes-api/authentication-resources/)
   - [Authentication Resources](https://kubernetes.io/docs/reference/kubernetes-api/authentication-resources/)
     - [ServiceAccount](https://kubernetes.io/docs/reference/kubernetes-api/authentication-resources/service-account-v1/)
   - [Authorization Resources](https://kubernetes.io/docs/reference/kubernetes-api/authorization-resources/)
@@ -703,12 +700,12 @@ This Kube State Metrics agent is a component part of a bigger project yet to be 
   - [Workload Resources](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/)
     - [Pod. Security Context](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#security-context-1)
 
-- [Reference. Node Reference Information](https://kubernetes.io/docs/reference/node/)
+- [Kubernetes Documentation. Reference. Node Reference Information](https://kubernetes.io/docs/reference/node/)
   - [Seccomp and Kubernetes](https://kubernetes.io/docs/reference/node/seccomp/)
 
 #### Pods Scheduling
 
-- [Concepts. Scheduling, Preemption and Eviction](https://kubernetes.io/docs/concepts/scheduling-eviction/)
+- [Kubernetes Documentation. Concepts. Scheduling, Preemption and Eviction](https://kubernetes.io/docs/concepts/scheduling-eviction/)
   - [Taints and Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
 
 ### Other Kubernetes-related contents
@@ -716,15 +713,12 @@ This Kube State Metrics agent is a component part of a bigger project yet to be 
 #### About security concerns
 
 - [Hackers Vanguard. Abuse Kubernetes with the AutomountServiceAccountToken](https://hackersvanguard.com/abuse-kubernetes-with-the-automountserviceaccounttoken/)
-
 - [Octopus Deploy. Mixing Kubernetes Roles, RoleBindings, ClusterRoles, and ClusterBindings](https://octopus.com/blog/k8s-rbac-roles-and-bindings)
-
 - [GoLinuxCloud. Kubernetes SecurityContext Capabilities Explained [Examples]](https://www.golinuxcloud.com/kubernetes-securitycontext-capabilities/)
 
 #### About pods scheduling
 
 - [Theodo. Working with taints and tolerations in Kubernetes](https://www.theodo.com/en-fr/blog/working-with-taints-and-tolerations-in-kubernetes)
-
 - [GitHub. K3s. Issues. Node taint k3s-controlplane=true:NoExecute](https://github.com/k3s-io/k3s/issues/1401)
 
 ## Navigation

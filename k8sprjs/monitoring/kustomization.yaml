@@ -5,10 +5,10 @@ kind: Kustomization
 namespace: monitoring
 
 labels:
-  - pairs:
-      platform: monitoring
-    includeSelectors: true
-    includeTemplates: true
+- pairs:
+    platform: monitoring
+  includeSelectors: true
+  includeTemplates: true
 
 resources:
 - resources/monitoring-ssd-grafana-data.persistentvolume.yaml

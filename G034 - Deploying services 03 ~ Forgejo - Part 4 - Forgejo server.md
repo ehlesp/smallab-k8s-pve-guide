@@ -29,13 +29,13 @@
 
 The last component to setup in its own Kustomize subproject is the Forgejo server itself. [Forgejo](https://forgejo.org/) is a platform specialized in storing and managing Git repositories, which you can upload to Forgejo through HTTP or SSH connections. In fact, Forgejo is a hard fork of an equivalent platform called [Gitea](https://about.gitea.com/). Internally, some configuration parameters still use Gitea-related values. In particular, this happens with some paths which will be indicated later in this chapter.
 
-Like Gitea, Forgejo comes with a web console and embedded Prometheus-formatted metrics. All of this means that you will run one Forgejo container with two open ports.
+Like Gitea, Forgejo comes with a web console and embedded Prometheus-formatted metrics. All of this means that you are going to run in your K3s cluster one Forgejo container with two open ports.
 
 ## Forgejo server Kustomize project's folders
 
 Prepare your Forgejo's Kustomize project folder tree with this `mkdir` command:
 
-~~~bash
+~~~sh
 $ mkdir -p $HOME/k8sprjs/forgejo/components/server-forgejo/{configs,resources,secrets}
 ~~~
 
@@ -75,7 +75,7 @@ See here how to configure as environment variables, and in a separated propertie
     The environment variables set above mean the following:
 
     - `FORGEJO__server__DOMAIN`\
-      The domain name for the Forgejo server. As in other cases, you will have to enable the domain in your network or directly in your client systems using the `hosts` file.
+      The domain name for the Forgejo server. As in other cases, you have to enable the domain in your network or directly in your client systems using the `hosts` file.
 
     - `FORGEJO__server__HTTP_ADDR`\
       On which IP address this server will listen on.
@@ -99,7 +99,7 @@ See here how to configure as environment variables, and in a separated propertie
       For enabling the cache on the Forgejo instance.
 
     - `FORGEJO__cache__ADAPTER`\
-      Depending on what caching engine you want to use, you will have to set the proper adapter here to connect to that engine. To use Valkey, you have to specify `redis` here.
+      Depending on what caching engine you want to use, you have to set the proper adapter here to connect to that engine. To use Valkey, you have to specify `redis` here.
 
     - `FORGEJO__session__PROVIDER`\
       Indicates what session engine provider you want to use.
@@ -139,11 +139,11 @@ The only secret values to configure are those corresponding to [the `forgejocach
     FORGEJO_VALKEY_PASSWORD=pAS2wOrD_f0r_The_F0rgEJ0_Us3R
     ~~~
 
-    These two environment variables are just custom non-Forgejo parameters that will be used later in this part when declaring the URI for calling the Valkey server host. They are necessary because it is not possible to reuse the values from Valkey's ACL file for injecting them somewhere else.
+    These two environment variables are just custom non-Forgejo parameters used later in this part when declaring the URI for calling the Valkey server host. They are necessary because it is not possible to reuse the values from Valkey's ACL file for injecting them somewhere else.
 
     > [!WARNING]
     > **URL encode any special character found in these values**\
-    > You will see later how these environment variables are inserted in the connection string for connecting with the Valkey cache server. This forces you will need to URL-encode any special character you might have either in the username or the password. Otherwise, the connection attempt may fail. You could also consider just using alphanumeric values to avoid such issues.
+    > You will see later how these environment variables are inserted in the connection string for connecting with the Valkey cache server. This forces you to URL-encode any special character you might have either in the username or the password. Otherwise, the connection attempt may fail. You could also consider just using alphanumeric values to avoid such issues.
 
 ## Forgejo server persistent storage claims
 
@@ -549,10 +549,10 @@ Declare the main `kustomization.yaml` manifest describing the Forgejo server's K
     kind: Kustomization
 
     labels:
-      - pairs:
-          app: server-forgejo
-        includeSelectors: true
-        includeTemplates: true
+    - pairs:
+        app: server-forgejo
+      includeSelectors: true
+      includeTemplates: true
 
     resources:
     - resources/server-forgejo-data.persistentvolumeclaim.yaml
@@ -863,7 +863,7 @@ At this point, you have completed the Forgejo server Kustomize subproject. It is
 
 ## Do not deploy this Forgejo server project on its own
 
-This Forgejo server setup is missing two critical element, the persistent volumes it needs to store its working directory data and the users Git repositories and LFS contents. Do not confuse them with the claims you have configured for your Forgejo server. Those persistent volumes and other elements will be declared in the main Kustomize project you will declare in the final part of this Forgejo deployment procedure. Until then, do not deploy this Forgejo server subproject.
+This Forgejo server setup is missing two critical element, the persistent volumes it needs to store its working directory data and the users Git repositories and LFS contents. Do not confuse them with the claims you have configured for your Forgejo server. Those persistent volumes and other elements to be declared in the main Kustomize project you will declare in the final part of this Forgejo deployment procedure. Until then, do not deploy this Forgejo server subproject.
 
 ## Relevant system paths
 
@@ -936,9 +936,9 @@ This Forgejo server setup is missing two critical element, the persistent volume
 
 ### [Kubernetes](https://kubernetes.io/docs/)
 
-- [Tasks. Configure Pods and Containers. Configure a Security Context for a Pod or Container](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
+- [Kubernetes Documentation. Tasks. Configure Pods and Containers. Configure a Security Context for a Pod or Container](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
 
-- [Reference. Kubernetes API. Workload Resources. Pod](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/)
+- [Kubernetes Documentation. Reference. Kubernetes API. Workload Resources. Pod](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/)
   - [Ports](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#ports)
 
 ### Other Kubernetes-related contents

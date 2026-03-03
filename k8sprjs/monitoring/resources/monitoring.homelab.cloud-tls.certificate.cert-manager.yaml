@@ -10,8 +10,8 @@ spec:
   duration: 2190h # 3 months
   renewBefore: 168h # Certificates must be renewed some time before they expire (7 days)
   dnsNames:
-    - prometheus.homelab.cloud
-    - grafana.homelab.cloud
+  - prometheus.homelab.cloud
+  - grafana.homelab.cloud
   privateKey:
     algorithm: ECDSA
     size: 521

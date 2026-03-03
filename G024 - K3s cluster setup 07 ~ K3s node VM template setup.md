@@ -16,6 +16,7 @@
   - [Files on the VM](#files-on-the-vm)
 - [References](#references)
   - [Kubernetes](#kubernetes)
+  - [Other contents about swap usage by Kubernetes](#other-contents-about-swap-usage-by-kubernetes)
   - [K3s](#k3s)
   - [Debian and Linux SysOps](#debian-and-linux-sysops)
     - [Changing the `Hostname`](#changing-the-hostname)
@@ -26,27 +27,29 @@
 
 ## You need a more specialized VM template for building K3s nodes
 
-At this point, you have a plain Debian VM template ready. You can use that template to build any virtualized server system you want but, to create VMs that work as K3s Kubernetes cluster nodes, further adjustments are necessary. Since those changes are required for any node of your future K3s cluster, you will want to have a more specialized VM template that comes with all those adjustments already configured.
+At this point, you have a plain Debian VM template ready. You can use that template to build any virtualized server system you want but, to create VMs that work as K3s Kubernetes cluster nodes, further adjustments are necessary. Since those changes are required for any node of your future K3s cluster, it is more practical to have an specialized VM template that comes with all those adjustments already configured.
 
 ## Reasons for a new VM template
 
-Next I'll list the main reasons or things necessary to do in a new VM, cloned from the Debian VM template you already have, so it can suit better the role of a K3s node:
+Suppose you already have a new VM cloned from the Debian VM template created in the previous [chapter **G023**](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md). The main changes you need to apply in that new VM so it suits better the role of a K3s node are listed next:
 
 - **Disabling the swap volume**\
-  By default, Kubernetes does not allow the use of swap to its workloads mainly because of performance reasons. Also, you cannot configure how swap has to be used in a generic way. You must make an assessment of the needs and particularities of each workload that may require having swap available to safeguard their stability when they run out of memory. Also, mind you that the workloads themselves only ask for memory, not swap. The use of swap is handled by Kubernetes itself, and it is a feature still being improved. Furthermore, [the official Kubernetes documentation advises using an independent physical SSD drive exclusively for swapping on each node, and avoid using the swap that is usually enabled at the root filesystem of any Linux system](https://kubernetes.io/docs/concepts/cluster-administration/swap-memory-management/#use-of-a-dedicated-disk-for-swap).
+  By default, Kubernetes does not allow the use of swap to its workloads mainly because of performance reasons. Moreover, you cannot configure how swap has to be used in a generic way. You must make an assessment of the needs and particularities of each workload that may require having swap available to safeguard their stability when they run out of memory.
 
-  Given the limitations and scope of the homelab this guide builds, it is better to deal with the swap issue in the "traditional" Kubernetes way: by disabling it completely in the VM.
+  Also, mind that the workloads themselves only ask for memory, not swap. The use of swap is handled by Kubernetes itself, and it is a feature still being improved. Furthermore, [the official Kubernetes documentation advises using an independent physical SSD drive exclusively for swapping on each node, and avoid using the swap that is usually enabled at the root filesystem of any Linux system](https://kubernetes.io/docs/concepts/cluster-administration/swap-memory-management/#use-of-a-dedicated-disk-for-swap).
+
+  Given the limitations and scope of the homelab this guide builds, it is better to deal with the swap issue in the "traditional" Kubernetes way: by completely disabling it in the VM.
 
 - **Renaming the root VG**\
-  In the LVM storage structure of your Debian VM template, the name of the only VG present is based on your Debian VM template's hostname. This is not a problem per se, but could be misleading while doing some system maintenance tasks. Instead, you should change it to a more suitable name fitting for all your future K3s nodes.
+  In the LVM storage structure of your Debian VM template, the name of the only VG present is based on your Debian VM template's hostname. This is not a problem by itself, but could be misleading while doing some system maintenance tasks. Instead, you should change it to a more suitable name fitting for all your future K3s nodes.
 
 - **Preparing the second network card**\
-  The Debian VM template you have setup in the previous guides has two network cards, but only the principal NIC is active. The second one, connected to the isolated `vmbr1` bridge, is currently disabled but you need to activate it. This way, the only thing left to adjust in this regard on each K3s node will be the IP address.
+  The Debian VM template you have created in the previous chapters has two network cards, but only the principal NIC is active. The second one, connected to the isolated `vmbr1` bridge, is currently disabled but you need to activate it. This way, the only thing left to adjust in this regard on each K3s node will be the IP address.
 
 - **Setting up sysctl parameters**\
-  By having a particular option enabled, K3s requires certain `sysctl` parameters to have concrete values. If they're not set up in such fashion, the K3s service refuses to run.
+  By having a particular option enabled, K3s requires certain `sysctl` parameters to have concrete values. If they are not set up in such way, the K3s service refuses to run.
 
-These aspects affect all the nodes in the K3s cluster. Then, the smart thing to do is to set them right in a VM which, in turn, will become the common template from which you can clone the final VMs that will run as nodes of your K3s cluster.
+These aspects affect all the nodes in the K3s cluster. Then, the smart thing to do is to set them correctly in a VM which, in turn, will become the common template from which you can clone the final VMs that will run as nodes of your K3s cluster.
 
 ## Creating a new VM based on the Debian VM template
 
@@ -54,9 +57,9 @@ This section covers the procedure of creating a new VM cloned from the Debian VM
 
 ### Full cloning of the Debian VM template
 
-Since in this new VM you're going to modify its filesystem structure, let's fully clone your Debian VM template.
+Since in this new VM you are going to modify its filesystem structure, start by fully cloning your Debian VM template:
 
-1. Go to your `debiantpl` template, then unfold the `More` options list. There you'll find the `Clone` option:
+1. Go to your `debiantpl` template, then unfold the `More` options list. There you can find the `Clone` option:
 
     ![Clone option on template](images/g024/pve_node_template_more_clone_option.webp "Clone option on template")
 
@@ -64,7 +67,7 @@ Since in this new VM you're going to modify its filesystem structure, let's full
 
     ![Clone window form](images/g024/pve_node_template_clone_window.webp "Clone window form")
 
-    I'll explain the form parameters below.
+    The form parameters are explained next:
 
     - `Target node`\
       Which node in the Proxmox VE cluster you want to place your cloned VM in. In your case you only have one standalone node, `pve`.
@@ -76,7 +79,7 @@ Since in this new VM you're going to modify its filesystem structure, let's full
       > Proxmox VE does not allow IDs lower than `100`.
 
     - `Name`\
-      This string must be a valid FQDN, like `debiantpl.homelab.cloud`.
+      This string must be a valid FQDN, like `k3snodetpl.homelab.cloud`.
 
       > [!IMPORTANT]
       > **The official Proxmox VE documentation is misleading about this field**\
@@ -99,24 +102,24 @@ Since in this new VM you're going to modify its filesystem structure, let's full
         Is a full copy of the original VM, so it is not linked to it at all. Also, this type allows to be put in a different `Target Storage` if required.
 
     - `Target Storage`\
-      Here you can choose where you want to put the new VM, although you can only choose when making a **full clone**. There are storage types that do not appear in this list, like directories.
+      Here you can choose where you want to put the new VM, although you can choose **only when making a full clone**. Also, there are storage types that do not appear in this list, like directories.
 
     - `Format`\
       Depending on the mode and target storage configured, this value changes to adapt to those other two parameters. It just indicates in which format is going the new VM's volumes to be stored in the Proxmox VE system.
 
-3. Fill the `Clone` form to create a new **Full Clone**  VM as follows:
+3. Fill the `Clone` form to create a new `Full Clone`  VM as follows:
 
     ![Clone window form filled for a full clone](images/g024/pve_node_template_clone_window_filled.webp "Clone window form filled for a full clone")
 
-    Notice that I've given the name of `k3snodetpl` to this full clone, and that I've explicitly chosen the `ssd_disks` as target storage. I could have left the default `Same as source` option since the template volume is also placed in that storage, but I wanted to be explicit here for the sake of clarity.
+    See in the snapshot how the name assigned to the full clone is `k3snodetpl`, and that the  target storage is `ssd_disks`. Alternatively, the target storage could have been left with the default `Same as source` value since the template volume is also placed in that storage. For the sake of clarity, the field has been set explicitly to `ssd_disks`.
 
 4. Click on `Clone` when ready and the form will disappear. Pay attention to the `Tasks` console at the bottom to see how the cloning process goes:
 
     ![Full clone of template in progress](images/g024/pve_node_template_full_clone_progress.webp "Full clone of template in progress")
 
-    See how the new 101 VM appears with a lock icon in the tree at the left. Also, in its `Summary` view, you can see how Proxmox VE warns you that the VM is still being created with the `clone` operation, and even in the `Notes` you can see a reference to a `qmclone temporary file`.
+    See how the new `101` VM appears with a lock icon in the tree at the left. Also, in its `Summary` view, you can see how Proxmox VE warns you that the VM is still being created with the `clone` operation, and even in the `Notes` you can see a reference to a `qmclone temporary file`.
 
-5. When you see in the `Tasks` log that the cloning task appears as `OK`, the `Summary` view will show the VM unlocked and fully created:
+5. When the `Tasks` log reports the cloning task as `OK`, the `Summary` view shows the VM unlocked and fully created:
 
     ![Full clone of template done](images/g024/pve_node_template_full_clone_done.webp "Full clone of template done")
 
@@ -124,7 +127,7 @@ Since in this new VM you're going to modify its filesystem structure, let's full
 
 ## Setting an static IP for the main network device (`net0`)
 
-Do not forget to set up a static IP for the main network device (the `net0` one) of this VM in your router or gateway, ideally following some criteria. You can see the MACs, in the VM's `Hardware` view, as the value of the `virtio` parameter on each network device attached to the VM.
+Do not forget to set up a static IP for the main network device (the `net0` one) of this VM in your router or gateway, ideally following some criteria. You can see the MACs, in the VM's `Hardware` view, as the value of the `virtio` parameter on each network device attached to the VM:
 
 ![Network devices attached to the VM](images/g024/pve_node_new_vm_network_devices.webp "Network devices attached to the VM")
 
@@ -138,7 +141,7 @@ Since this new VM is a clone of the Debian VM template you prepared before, its 
     $ sudo hostnamectl set-hostname k3snodetpl
     ~~~
 
-    If you edit the `/etc/hostname` file directly instead, you'll have to reboot the VM to make it load the new hostname.
+    If you edit the `/etc/hostname` file directly instead, you have to reboot the VM to make it load the new hostname.
 
 2. Edit the `/etc/hosts` file, where you must replace the old hostname (again, `debiantpl`) with the new one. The hostname should only appear in the `127.0.1.1` line:
 
@@ -188,7 +191,7 @@ Follow the next steps to remove the swap completely from your VM:
     ~~~
 
     > [!IMPORTANT]
-    > **Notice that I haven't told you to make a backup of this `resume` file**\
+    > **Notice that you have not been told to make a backup of this `resume` file**\
     > This is because the `update-initramfs` command would also read the backup file regardless of it having a different name, and that would lead to an error.
     >
     > Of course, you could consider making the backup in some other folder, but that forces you to employ a particular (and probably forgettable) backup procedure only for this specific file. To sum it up, just be extra careful when modifying this particular file.
@@ -248,7 +251,7 @@ Follow the next steps to remove the swap completely from your VM:
       root debiantpl-vg -wi-ao---- 9.25g
     ~~~
 
-    Also verify that there's no free space left in the `debiantpl-vg` VG:
+    Also verify that there is no free space left in the `debiantpl-vg` VG:
 
     ~~~sh
     $ sudo vgs
@@ -262,7 +265,7 @@ Follow the next steps to remove the swap completely from your VM:
     $ sudo cp /etc/sysctl.d/85_memory_optimizations.conf /etc/sysctl.d/85_memory_optimizations.conf.bkp
     ~~~
 
-    Then, edit the `/etc/sysctl.d/85_memory_optimizations.conf` file, but just modify the `vm.swappiness` value, setting it to `0`.
+    Then, edit the `/etc/sysctl.d/85_memory_optimizations.conf` file, but just modify the `vm.swappiness` value, setting it to `0`:
 
     ~~~properties
     ...
@@ -270,7 +273,7 @@ Follow the next steps to remove the swap completely from your VM:
     ...
     ~~~
 
-7. Save the changes, refresh the sysctl configuration and reboot.
+7. Save the changes, refresh the sysctl configuration and reboot:
 
     ~~~sh
     $ sudo sysctl -p /etc/sysctl.d/85_memory_optimizations.conf
@@ -279,20 +282,20 @@ Follow the next steps to remove the swap completely from your VM:
 
 ## Changing the VG's name
 
-The VG you have in your VM's LVM structure is the same one defined in your Debian VM template, meaning that it was made correlative to the hostname of the original system. This is not an issue per se, but it is better to give the VG's name a string that correlates with the VM. Since this VM will become a template for all the VMs you'll use as K3s nodes, lets give the VG the name `k3snode-vg`. It's generic but still more meaningful for all the K3s nodes you'll create later than the `debiantpl-vg` string.
+The VG you have in your VM's LVM structure is the same one defined in your Debian VM template, meaning that it was made correlative to the hostname of the original system. This is not an issue per se, but it is better to give the VG's name a string that correlates with the VM. Since this VM is going to be the template for all the VMs you will use as K3s nodes, lets give the VG the name `k3snode-vg`. It is generic but still more meaningful than the `debiantpl-vg` string  for all the K3s nodes you have to create later.
 
 > [!WARNING]
 > **This procedure affects your VM's filesystem**\
 > Although this is not a difficult procedure, follow all the next steps carefully, or you may end messing up your VM's filesystem!
 
-1. Using the `vgrename` command, rename the VG with the suggested name `k3snode-vg`.
+1. Using the `vgrename` command, rename the VG with the suggested name `k3snode-vg`:
 
     ~~~sh
     $ sudo vgrename debiantpl-vg k3snode-vg
       Volume group "debiantpl-vg" successfully renamed to "k3snode-vg"
     ~~~
 
-    Verify with `vgs` that the renaming has been done.
+    Verify with `vgs` that the renaming has been done:
 
     ~~~sh
     $ sudo vgs
@@ -344,7 +347,7 @@ The VG you have in your VM's LVM structure is the same one defined in your Debia
       $ sudo cat /boot/grub/grub.cfg | grep k3snode--vg-root
       ~~~
 
-      Compare this command's output with the one you got first. You should see the **same** lines as before, but with the string changed.
+      Compare this command's output with the one you got first. You should see the same lines as before, but with the string changed.
 
 5. Update the initramfs with the `update-initramfs` command:
 
@@ -358,7 +361,7 @@ The VG you have in your VM's LVM structure is the same one defined in your Debia
     $ sudo reboot
     ~~~
 
-7. Execute the `dpkg-reconfigure` command to regenerate the grub in your VM. To get the correct image to reconfigure, just autocomplete the command after typing `linux-image` and then type the one that corresponds with the kernel **currently running** in your VM:
+7. Execute the `dpkg-reconfigure` command to regenerate the grub in your VM. To get the correct image to reconfigure, just autocomplete the command after typing `linux-image` and then type the one that corresponds with the kernel currently running in your VM:
 
     ~~~sh
     $ sudo dpkg-reconfigure linux-image-6.12.41+deb13-amd64
@@ -412,7 +415,7 @@ The VM has a second network card that is yet to be configured and enabled, and w
     $ sudo cp /etc/network/interfaces /etc/network/interfaces.orig
     ~~~
 
-    Then, **append** the following configuration to the `interfaces` file.
+    Then, append the following configuration to the `interfaces` file:
 
     ~~~sh
     # The secondary network interface
@@ -434,7 +437,7 @@ The VM has a second network card that is yet to be configured and enabled, and w
     $ sudo ifup ens19
     ~~~
 
-    The command will not return any output.
+    The command does not return any output.
 
 4. Use the `ip` command to check out your new network setup:
 
@@ -462,19 +465,19 @@ The VM has a second network card that is yet to be configured and enabled, and w
 
     ![K3s node VM's IPs highlighted in Summary view](images/g024/pve_node_k3snodetpl_ips_highlighted.webp "K3s node VM's IPs highlighted in Summary view")
 
-Thanks to this configuration, now you have an network interface enabled and connected to an isolated bridge. This will help to improve somewhat the hardening of the internal network of the K3s cluster you will build in the upcoming chapters.
+Thanks to this configuration, now you have an network interface enabled and connected to an isolated bridge. This helps to improve somewhat the hardening of the internal network of the K3s cluster you will build in the upcoming chapters.
 
 ## Setting up sysctl kernel parameters for K3s nodes
 
-In the installation of the K3s cluster, which you'll do later in the next [chapter **G025**](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md), I'll tell you to use the `protect-kernel-defaults` option. With it enabled, [you must set certain sysctl parameters to concrete values](https://docs.k3s.io/security/hardening-guide?_highlight=protect&_highlight=kernel&_highlight=defaults#ensure-protect-kernel-defaults-is-set) or the kubelet process executed by the K3s service won't run.
+In the installation of the K3s cluster, which you will perform in the next [chapter **G025**](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md), you will have to use the `protect-kernel-defaults` option. With it enabled, [you must set certain sysctl parameters to concrete values](https://docs.k3s.io/security/hardening-guide?_highlight=protect&_highlight=kernel&_highlight=defaults#ensure-protect-kernel-defaults-is-set) or the kubelet process executed by the K3s service will not run:
 
-1. Create a new empty file in the path `/etc/sysctl.d/90_k3s_kubelet_demands.conf`.
+1. Create a new empty file in the path `/etc/sysctl.d/90_k3s_kubelet_demands.conf`:
 
     ~~~sh
     $ sudo touch /etc/sysctl.d/90_k3s_kubelet_demands.conf
     ~~~
 
-2. Edit this `90_k3s_kubelet_demands.conf` file, adding the following lines.
+2. Edit this `90_k3s_kubelet_demands.conf` file, adding the following lines:
 
     ~~~properties
     ## K3s kubelet demands
@@ -502,7 +505,7 @@ In the installation of the K3s cluster, which you'll do later in the next [chapt
     > **If you skipped the [_memory optimizations_ step of the chapter **G021**](G021%20-%20K3s%20cluster%20setup%2004%20~%20Debian%20VM%20configuration.md#memory-optimizations), you need to adjust the `vm.overcommit_memory` flag here!**\
     > Otherwise, the K3s service you will set up later in the next [chapter **G025**](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#k3s-installation-of-the-server-node-k3sserver01) will not be able to start.
 
-3. Save the `90_k3s_kubelet_demands.conf` file and apply the changes, then reboot the VM.
+3. Save the `90_k3s_kubelet_demands.conf` file and apply the changes, then reboot the VM:
 
     ~~~sh
     $ sudo sysctl -p /etc/sysctl.d/90_k3s_kubelet_demands.conf
@@ -511,19 +514,19 @@ In the installation of the K3s cluster, which you'll do later in the next [chapt
 
 ## Turning the VM into a VM template
 
-With the VM tuned properly, you can turn it into a VM template. Since this procedure is already covered by the previous [chapter **G023**](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md#turning-the-debian-vm-into-a-vm-template), here I'll just remind you that the `Convert to template` action is available as an option in the `More` list of any VM:
+With the VM tuned properly, you can turn it into a VM template. Just repeat the procedure already covered by the previous [chapter **G023**](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md#turning-the-debian-vm-into-a-vm-template), remembering that the `Convert to template` action is available as an option in the `More` list of any VM:
 
 > [!IMPORTANT]
 > **You cannot turn a VM currently in use into a template**\
-> Before executing the conversion, **first shut down the VM you're converting**.
+> Before executing the conversion, **first shut down the VM you are converting**.
 
 ![Convert to template option](images/g024/pve_node_template_more_convert_to_template_option.webp "Convert to template option")
 
-Moreover, update the `Notes` text of this VM with any new or extra detail you might think relevant, and don't forget to make a full backup of the template. This is something you also did in the [chapter **G023**](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md#turning-the-debian-vm-into-a-vm-template), so here I'll just remind you where the option is:
+Moreover, update the `Notes` text of this VM with any new or extra detail you might think relevant, and do not forget to make a full backup of the template. This backup is something you also did in the [chapter **G023**](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md#turning-the-debian-vm-into-a-vm-template), and the next snapshot is a reminder of where you can find the VM backup feature:
 
 ![VM backup button](images/g024/pve_node_template_backup_button.webp "VM backup button")
 
-Remember that restoring backups can free some space (due to the restoration process detecting and ignoring the empty blocks within the image), so consider restoring the VM template immediately after doing the backup to recover some storage space. This is an action you also saw how to do back in the [chapter **G023**](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md).
+Remember that restoring backups can free some space due to the restoration process detecting and ignoring the empty blocks within the image. Therefore, consider restoring the VM template immediately after doing the backup to recover some storage space. This action is also explained in the [chapter **G023**](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md).
 
 ## Relevant system paths
 
@@ -556,13 +559,16 @@ Remember that restoring backups can free some space (due to the restoration proc
 
 ### [Kubernetes](https://kubernetes.io/)
 
-- [Swap memory management](https://kubernetes.io/docs/concepts/cluster-administration/swap-memory-management/)
+- [Kubernetes Documentation. Concepts](https://kubernetes.io/docs/concepts/cluster-administration/)
+  - [Cluster Administration. Swap memory management](https://kubernetes.io/docs/concepts/cluster-administration/swap-memory-management/)
 
-- [Demystifying Swap in Kubernetes: A Handbook for DevOps Engineers](https://medium.com/@robertbotez/demystifying-swap-in-kubernetes-a-handbook-for-devops-engineers-e5ef934593e3)
+### Other contents about swap usage by Kubernetes
 
-### [K3s](https://docs.k3s.io/)
+- [Medium. Robert Botez. Demystifying Swap in Kubernetes: A Handbook for DevOps Engineers](https://medium.com/@robertbotez/demystifying-swap-in-kubernetes-a-handbook-for-devops-engineers-e5ef934593e3)
 
-- [CIS Hardening Guide](https://docs.k3s.io/security/hardening-guide)
+### [K3s](https://k3s.io/)
+
+- [Docs. Security. CIS Hardening Guide](https://docs.k3s.io/security/hardening-guide)
   - [Host-level Requirements](https://docs.k3s.io/security/hardening-guide#host-level-requirements)
     - [Ensure `protect-kernel-defaults` is set](https://docs.k3s.io/security/hardening-guide#ensure-protect-kernel-defaults-is-set)
 
@@ -570,28 +576,28 @@ Remember that restoring backups can free some space (due to the restoration proc
 
 #### Changing the `Hostname`
 
-- [How to Change Hostname in Debian](https://linuxhandbook.com/debian-change-hostname/)
+- [Linux Handbook. How to Change Hostname in Debian](https://linuxhandbook.com/debian-change-hostname/)
 
 #### Disabling the swap
 
-- [Swap Off - why is it necessary?](https://discuss.kubernetes.io/t/swap-off-why-is-it-necessary/6879/4)
-- [How to safely turn off swap permanently and reclaim the space? (on Debian Jessie)](https://unix.stackexchange.com/questions/224156/how-to-safely-turn-off-swap-permanently-and-reclaim-the-space-on-debian-jessie)
-- [Permanently Disable Swap for Kubernetes Cluster](https://brandonwillmott.com/2020/10/15/permanently-disable-swap-for-kubernetes-cluster/)
+- [Discuss. Kubernetes. Community Forums. Swap Off - why is it necessary?](https://discuss.kubernetes.io/t/swap-off-why-is-it-necessary/6879/4)
+- [StackExchange. Unix & Linux. How to safely turn off swap permanently and reclaim the space? (on Debian Jessie)](https://unix.stackexchange.com/questions/224156/how-to-safely-turn-off-swap-permanently-and-reclaim-the-space-on-debian-jessie)
+- [Brandon Willmott. Permanently Disable Swap for Kubernetes Cluster](https://brandonwillmott.com/2020/10/15/permanently-disable-swap-for-kubernetes-cluster/)
 
 #### Changing the VG's name of a `root` LV
 
-- [Rename LVM Volume Group Holding Root File System Volume](https://oraganism.wordpress.com/2013/03/09/rename-lvm-vg-for-root-fs-lv/)
-- [How to fix “volume group old-vg-name not found” at boot after renaming it?](https://unix.stackexchange.com/questions/579720/how-to-fix-volume-group-old-vg-name-not-found-at-boot-after-renaming-it)
-- [Rename a Volume Group (LVM / Debian)](https://blog.raveland.org/post/rename_vg/)
-- [Unable to change Volume Group name](https://www.linuxquestions.org/questions/linux-newbie-8/unable-to-change-volume-group-name-4175676775/)
+- [ORAganism. Rename LVM Volume Group Holding Root File System Volume](https://oraganism.wordpress.com/2013/03/09/rename-lvm-vg-for-root-fs-lv/)
+- [StackExchange. Unix & Linux. How to fix “volume group old-vg-name not found” at boot after renaming it?](https://unix.stackexchange.com/questions/579720/how-to-fix-volume-group-old-vg-name-not-found-at-boot-after-renaming-it)
+- [Raveland Blog. Rename a Volume Group (LVM / Debian)](https://blog.raveland.org/post/rename_vg/)
+- [LinuxQuestions.org. Unable to change Volume Group name](https://www.linuxquestions.org/questions/linux-newbie-8/unable-to-change-volume-group-name-4175676775/)
 
 #### Network interfaces configuration
 
 - [Debian. Wiki. Network Configuration](https://wiki.debian.org/NetworkConfiguration)
-- [How to setup a Static IP address on Debian Linux](https://linuxconfig.org/how-to-setup-a-static-ip-address-on-debian-linux)
-- [Howto: Ubuntu Linux convert DHCP network configuration to static IP configuration](https://www.cyberciti.biz/tips/howto-ubuntu-linux-convert-dhcp-network-configuration-to-static-ip-configuration.html)
-- [Debian Linux Configure Network Interface Cards – IP address and Netmasks](https://www.cyberciti.biz/faq/howto-configuring-network-interface-cards-on-debian/)
-- [Net.bridge.bridge-nf-call and sysctl.conf](https://wiki.libvirt.org/page/Net.bridge.bridge-nf-call_and_sysctl.conf)
+- [LinuxConfig.org. How to setup a Static IP address on Debian Linux](https://linuxconfig.org/how-to-setup-a-static-ip-address-on-debian-linux)
+- [nixCraft. Tutorials. Ubuntu Linux. Howto: Ubuntu Linux convert DHCP network configuration to static IP configuration](https://www.cyberciti.biz/tips/howto-ubuntu-linux-convert-dhcp-network-configuration-to-static-ip-configuration.html)
+- [nixCraft. Howto. Debian Linux. Debian Linux Configure Network Interface Cards – IP address and Netmasks](https://www.cyberciti.biz/faq/howto-configuring-network-interface-cards-on-debian/)
+- [libvirt Wiki. Net.bridge.bridge-nf-call and sysctl.conf](https://wiki.libvirt.org/page/Net.bridge.bridge-nf-call_and_sysctl.conf)
 
 ## Navigation
 

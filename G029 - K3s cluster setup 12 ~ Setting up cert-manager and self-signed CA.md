@@ -28,7 +28,7 @@ Although Traefik has some capabilities to handle certificates, it is better to u
 
 ## Deploying cert-manager
 
-At the time of writing this, there is no official Kustomize way for deploying cert-manager. The closest method is by applying a YAML manifest, but you can build your own Kustomize procedure with it (as you have done for the `metrics-server` deployment in the [previous **G028** guide](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md#deployment-of-metrics-server)).
+At the time of writing this, there is no official Kustomize way for deploying cert-manager. The closest method is by applying a YAML manifest, but you can build your own Kustomize procedure with it (as you have done for the `metrics-server` deployment in the [previous chapter **G028**](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md#deployment-of-metrics-server)).
 
 1. In your `kubectl` client system, create a folder structure for the cert-manager deployment project:
 
@@ -100,7 +100,7 @@ Notice the namespace `cert-manager` specified with the `-n` option in the `kubec
 
 To help you to manage the certificates you put in your cluster, [cert-manager offers an independent command line tool](https://cert-manager.io/docs/reference/cmctl/). You have to install it in your `kubectl` client system, then add it to your user's `$PATH`.
 
-You can install this cert-manager command line tool in a `kubectl` client system like the one configured in the [**G026** chapter](G026%20-%20K3s%20cluster%20setup%2009%20~%20Setting%20up%20a%20kubectl%20client%20for%20remote%20access.md) as follows:
+You can install this cert-manager command line tool in a `kubectl` client system like the one configured in the [chapter **G026**](G026%20-%20K3s%20cluster%20setup%2009%20~%20Setting%20up%20a%20kubectl%20client%20for%20remote%20access.md) as follows:
 
 1. From the [cert-manager command line tool GitHub releases page](https://github.com/cert-manager/cmctl/releases), download the `tar.gz` file of the latest release available (v2.3.0 when writing this):
 
@@ -115,7 +115,7 @@ You can install this cert-manager command line tool in a `kubectl` client system
     $ tar xf cmctl_linux_amd64.tar.gz
     ~~~
 
-    This will extract these files:
+    The `tar` command extracts these files:
 
     - The command line tool as a `cmctl` binary.
 
@@ -154,7 +154,9 @@ You can install this cert-manager command line tool in a `kubectl` client system
     The cert-manager API is ready
     ~~~
 
-Know that the cert-manager's `kubectl` plugin has other commands available, [check them out in its official page](https://cert-manager.io/docs/reference/cmctl/).
+> [!NOTE]
+> **The cert-manager's `kubectl` plugin has other commands available**\
+> Check them all out [in its official page](https://cert-manager.io/docs/reference/cmctl/).
 
 ## Setting up self-signed CAs for your cluster
 
@@ -246,7 +248,7 @@ The root CA is the head of your CA structure. This CA only certifies the interme
 
     - In the `spec.privateKey` section, be careful of:
 
-      - Configuring an algorithm supported by all current browsers. For instance, at the time of writing this, the algorithm `Ed25519` is not supported neither by Firefox nor Chrome, nor any browser based on them.
+      - Configuring an algorithm supported by all current browsers. For instance, at the time of writing this, the algorithm `Ed25519` is not supported neither by Firefox nor Chrome, nor any browser derived from them.
 
       - Always having `rotationPolicy` set as `Always`. This makes cert-manager regenerate the certificate's secret rather than reusing the current one. This policy about private key rotation is also [described in the cert-manager documentation](https://cert-manager.io/docs/usage/certificate/#configuring-private-key-rotation).
 
@@ -351,8 +353,6 @@ After declaring all the cluster issuers and certificates, assemble them under on
     - resources/homelab.cloud-intm-ca01-tls.certificate.cert-manager.yaml
     - resources/homelab.cloud-intm-ca01-issuer.cluster-issuer.cert-manager.yaml
     ~~~
-
-    The resources are ordered to ensure that the issuer created first is the root CA, then the intermediate CA 01.
 
 #### Validating the Kustomize YAML output
 

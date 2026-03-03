@@ -22,14 +22,11 @@
   - [Directories](#directories)
   - [Files](#files)
 - [References](#references)
-  - [Proxmox VE](#proxmox-ve)
+  - [Proxmox](#proxmox)
   - [Proxmox hardening and standalone node optimization](#proxmox-hardening-and-standalone-node-optimization)
   - [Services management in Debian](#services-management-in-debian)
   - [NFS and RPC](#nfs-and-rpc)
-  - [Default listening behaviour of `pveproxy`](#default-listening-behaviour-of-pveproxy)
   - [Configuration of SSL/TSL ciphers in `pveproxy`](#configuration-of-ssltsl-ciphers-in-pveproxy)
-  - [ZFS and Ceph](#zfs-and-ceph)
-  - [SPICE proxy](#spice-proxy)
 - [Navigation](#navigation)
 
 ## Reduce your Proxmox VE server's exposed surface
@@ -262,7 +259,7 @@ By default, `pveproxy` listens on all your system's network interfaces through t
     > **Ensure you specify your PVE system's IP!**\
     > Do not just blindly copy this configuration line and forget about it, or you might very well disable your access to your Proxmox VE web interface!
 
-3. Save the changes and restart the `pveproxy` service.
+3. Save the changes and restart the `pveproxy` service:
 
     ~~~sh
     $ sudo systemctl restart pveproxy.service
@@ -302,13 +299,13 @@ You can apply some degree of access control by specifying a list of allowed IP a
 
 > [!IMPORTANT]
 > **This approach forces you to remember to what program did you apply certain rules**\
-> The `sshd` and other services also offer this kind of access control in their configuration, but managing all those rules in this disperse way is just unnecessarily hard.
+> The `sshd` and other services also offer this kind of access control in their configuration, but managing all those rules in this scattered way is just unnecessarily hard.
 >
 > **Better centralize all the access control rules in the Proxmox VE firewall or putting a similar solution "in front" of all your services.**
 
 If you really need or find useful to enforce some hard access control directly in the PVE proxy's configuration:
 
-1. Edit the `pveproxy` file and append to it the following parameters.
+1. Edit the `pveproxy` file and append to it the following parameters:
 
     ~~~sh
     DENY_FROM="all"
@@ -322,7 +319,7 @@ If you really need or find useful to enforce some hard access control directly i
     ALLOW_FROM="10.0.0.1-10.0.0.5,192.168.0.0/22"
     ~~~
 
-2. Save the changes and restart the `pveproxy` service.
+2. Save the changes and restart the `pveproxy` service:
 
     ~~~sh
     $ sudo systemctl restart pveproxy.service
@@ -330,7 +327,7 @@ If you really need or find useful to enforce some hard access control directly i
 
 ## Disabling RPC services
 
-Since you will not use NFS in your standalone PVE node, here you'll see how to disable all of its related services or daemons:
+Since you will not use NFS in your standalone Proxmox VE node, see here how to disable all of its related services or daemons:
 
 1. Open a shell with your `mgrsys` user, and prevent with `systemctl` the `rpcbind` services from starting up when the system boots up:
 
@@ -349,7 +346,7 @@ Since you will not use NFS in your standalone PVE node, here you'll see how to d
     rpcbind.socket
     ~~~
 
-    Nevermind the warning about the `rpcbind.socket` unit. After the reboot you'll perform in a later step, that service unit and the other rpcbind ones will remain disabled.
+    Nevermind the warning about the `rpcbind.socket` unit. After the reboot you will perform in a later step, that service unit and the other rpcbind ones will remain disabled.
 
 2. `cd` to `/etc/default/` and make a backup of the `nfs-common` file:
 
@@ -375,9 +372,9 @@ Since you will not use NFS in your standalone PVE node, here you'll see how to d
     NEED_GSSD=no
     ~~~
 
-    Notice that I've set the `NEED_` parameters as `no`, disabling certain daemons that won't be used in this guide's PVE setup.
+    Notice how is set the `NEED_` parameters as `no`, disabling certain daemons not used in this guide's PVE setup.
 
-3. There's also a unit loaded in systemd which offers nfs client services. Let's disable it:
+3. There is also a unit loaded in systemd which offers nfs client services. Let's disable it:
 
     ~~~sh
     $ sudo systemctl disable --now nfs-client.target
@@ -395,7 +392,7 @@ Since you will not use NFS in your standalone PVE node, here you'll see how to d
     $ sudo ss -atlnup
     ~~~
 
-    This will print you an output like this:
+    This command will print you an output like this:
 
     ~~~sh
     Netid            State             Recv-Q            Send-Q                       Local Address:Port                       Peer Address:Port           Process
@@ -414,9 +411,9 @@ Since you will not use NFS in your standalone PVE node, here you'll see how to d
 
 ## Disabling `zfs` and `ceph`
 
-ZFS requires a lot of RAM we cannot afford in such a small server as the one used in this guide. Ceph, on the other hand, is impossible to use with just one standalone node. So let's disable all their related services.
+ZFS requires a lot of RAM not affordable in such a small server as the one used in this guide. Ceph, on the other hand, is impossible to use with just one standalone node. Therefore, it is better to disable all of their related services:
 
-1. Open a shell with you administrator user, and disable the `zfs` and `ceph` related services so they don't start when the node boots up:
+1. Open a shell with you administrator user, and disable the `zfs` and `ceph` related services so they do not start when the node boots up:
 
     ~~~sh
     $ sudo systemctl disable --now zfs-mount.service zfs-share.service zfs-volume-wait.service zfs-zed.service zfs-import.target zfs-volumes.target zfs.target ceph-fuse.target
@@ -428,7 +425,7 @@ ZFS requires a lot of RAM we cannot afford in such a small server as the one use
     $ sudo systemctl mask --now ceph.target
     ~~~
 
-3. Reboot the system.
+3. Reboot the system:
 
     ~~~sh
     $ sudo reboot
@@ -444,9 +441,9 @@ ZFS requires a lot of RAM we cannot afford in such a small server as the one use
 
 ## Disabling the SPICE proxy
 
-The `spiceproxy` service allows SPICE clients to connect to virtual machines and containers with graphical environments. Since this guide does not contemplate having a graphical environment running in any VM or container, let's disable this proxy.
+The `spiceproxy` service allows SPICE clients to connect to virtual machines and containers with graphical environments. Since this guide does not contemplate having a graphical environment running in any VM or container, better disable this proxy:
 
-1. Open a shell with you administrator user, and mask the `spiceproxy` service.
+1. Open a shell with you administrator user, and mask the `spiceproxy` service:
 
     ~~~sh
     $ sudo systemctl mask --now spiceproxy
@@ -456,7 +453,7 @@ The `spiceproxy` service allows SPICE clients to connect to virtual machines and
     > **The `pve-manager` service launches `spiceproxy`**\
     > The Proxmox VE startup script called `pve-manager` starts this `spiceproxy` service, and that forces us to `mask` rather than `disable` it with `systemctl`. If you just `disable` the `spiceproxy`, it will be started again by the `pve-manager` after a reboot.
 
-2. Reboot the system.
+2. Reboot the system:
 
     ~~~sh
     $ sudo reboot
@@ -464,7 +461,7 @@ The `spiceproxy` service allows SPICE clients to connect to virtual machines and
 
 3. Check with `htop` or `systemctl` that the `spiceproxy` service is not running.
 
-4. Check with `ss` that there's no `spiceproxy` process with a socket open at the `3128` port.
+4. Check with `ss` that there's no `spiceproxy` process with a socket open at the `3128` port:
 
     ~~~sh
     $ sudo ss -atlnup | grep spiceproxy
@@ -474,31 +471,31 @@ The `spiceproxy` service allows SPICE clients to connect to virtual machines and
 
 > [!NOTE]
 > **The `SPICE` option will remain available**\
-> The `SPICE` option offered by the PVE web console will still be present in the `Shell` list, although of course you won't be able to connect to the server through that method now.
+> The `SPICE` option offered by the PVE web console will still be present in the `Shell` list, although you will not be able to connect to the server through that method now.
 >
 > ![The SPICE option remains available among the web console's shell options](images/g011/pve_web_console_shell_options.webp "The SPICE option remains available among the web console's shell options")
 
 ## Disabling cluster and high availability related services
 
-Since we're working just with a standalone node, it doesn't make much sense to have cluster or high availability related services running for nothing.
+Since you are working just with a standalone node, it does not make much sense to have cluster or high availability related services running for nothing:
 
 > [!WARNING]
 > **Do not attempt to disable the `pve-cluster` daemon**\
-> [The Proxmox VE documentation explicitly says](https://pve.proxmox.com/wiki/Service_daemons#pve-cluster) that this service is **needed** even when not running a cluster.
+> [The Proxmox VE documentation explicitly says](https://pve.proxmox.com/wiki/Service_daemons#pve-cluster) that **this service is needed even when not running a cluster**.
 
-1. Open a shell with you administrator user, and with the `systemctl` command disable and stop the services as follows.
+1. Open a shell with you administrator user, and with the `systemctl` command disable and stop the services as follows:
 
     ~~~sh
     $ sudo systemctl disable --now pve-ha-crm pve-ha-lrm corosync
     ~~~
 
-2. Reboot the system.
+2. Reboot the system:
 
     ~~~sh
     $ sudo reboot
     ~~~
 
-3. Check either with `htop` or `systemctl` that the `pve-ha-crm` and `pve-ha-lrm` services are not running. Corosync wasn't running since your node is a standalone one.
+3. Check either with `htop` or `systemctl` that the `pve-ha-crm` and `pve-ha-lrm` services are not running. Corosync was not running since your node is a standalone one.
 
 ## Considerations
 
@@ -506,7 +503,7 @@ These are a couple of things to be aware of regarding Proxmox VE services.
 
 ### Errors in the `apt upgrade` process
 
-Disabling or masking PVE related services may provoke errors during the `apt upgrade` process of Proxmox VE packages, as it can happen with the `pve-manager` when `apt` does not find the `spiceproxy` daemon available. The update process for some of those PVE packages may expect a certain service to be present or running in the system, and they may try to restart them as part of the update process.
+Disabling or masking PVE related services may provoke errors (or raise warnings at least) during the `apt upgrade` process of Proxmox VE packages, as it can happen with the `pve-manager` when `apt` does not find the `spiceproxy` daemon available. The update process for some of those PVE packages may expect a certain service to be present or running in the system, and they may try to restart them as part of the update process.
 
 You should expect these error happening anytime you run an update of your system, although your Proxmox VE standalone node should keep on running just fine. Any time you end an upgrade process with errors, you can try first the command `sudo apt autoremove` to make `apt` or `dpkg` deal with them somehow.
 
@@ -536,52 +533,50 @@ For example, notice how the `corosync`, `pve-ha-crm` and `pve-ha-lrm` services a
 
 ## References
 
-### [Proxmox VE](https://pve.proxmox.com/)
+### [Proxmox](https://www.proxmox.com/en/)
 
-- [Wiki. Service daemons](https://pve.proxmox.com/wiki/Service_daemons)
+- [Proxmox VE Administration Guide](https://pve.proxmox.com/pve-docs/pve-admin-guide.html)
+  - [Important Service Daemons](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_important_service_daemons)
+    - [pveproxy - Proxmox VE API Proxy Daemon](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_pveproxy_proxmox_ve_api_proxy_daemon)
+    - [spiceproxy - SPICE Proxy Service](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_spiceproxy_spice_proxy_service)
 
-- [Administration Guide. Important Service Daemons](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_important_service_daemons)
-  - [pveproxy - Proxmox VE API Proxy Daemon](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_pveproxy_proxmox_ve_api_proxy_daemon)
+- [Proxmox VE Wiki](https://pve.proxmox.com/wiki/Main_Page)
+  - [Service daemons](https://pve.proxmox.com/wiki/Service_daemons)
+  - [ZFS on Linux](https://pve.proxmox.com/wiki/ZFS_on_Linux).
+  - [Deploy Hyper-Converged Ceph Cluster](https://pve.proxmox.com/wiki/Deploy_Hyper-Converged_Ceph_Cluster).
+
+- [Proxmox. Forums. Proxmox Virtual Environment](https://forum.proxmox.com/#proxmox-virtual-environment.11)
+  - [Proxmox VE: Networking and Firewall](https://forum.proxmox.com/forums/proxmox-ve-networking-and-firewall.17/)
+    - [Is it possible to disable rpcbind (port 111) and how to do it?](https://forum.proxmox.com/threads/is-it-possible-to-disable-rpcbind-port-111-and-how-to-do-it.33590/)
+    - [pveproxy LISTEN address](https://forum.proxmox.com/threads/pveproxy-listen-address.75376/).
+
+  - [Proxmox VE: Installation and configuration](https://forum.proxmox.com/forums/proxmox-ve-installation-and-configuration.16/)
+    - [pveproxy - Disable weak SSL ciphers?](https://forum.proxmox.com/threads/pveproxy-disable-weak-ssl-ciphers.14794/page-3)
+    - [disable spiceproxy](https://forum.proxmox.com/threads/disable-spiceproxy.36638/)
+    - [pve-manager and other updates with optional services masked](https://forum.proxmox.com/threads/pve-manager-and-other-updates-with-optional-services-masked.63652/)
 
 ### Proxmox hardening and standalone node optimization
 
-- [Proxmox Lite](https://www.lowendtalk.com/discussion/165481/proxmox-lite)
-- [PROXMOX Standalone or Cluster](https://www.reddit.com/r/Proxmox/comments/i3mupd/proxmox_standalone_or_cluster/)
+- [LowEndTalk. Proxmox Lite](https://www.lowendtalk.com/discussion/165481/proxmox-lite)
+- [Reddit. Proxmox. PROXMOX Standalone or Cluster](https://www.reddit.com/r/Proxmox/comments/i3mupd/proxmox_standalone_or_cluster/)
 
 ### Services management in Debian
 
-- [How to Start, Stop and Restart Services in Debian 10](https://vitux.com/how-to-start-stop-and-restart-services-in-debian-10/)
-- [The directory `/etc/default/`](https://www.linuxquestions.org/questions/slackware-14/the-directory-etc-default-723942/)
-- [What is the purpose of /etc/default?](https://superuser.com/questions/354944/what-is-the-purpose-of-etc-default)
+- [Vitux. How to Start, Stop and Restart Services in Debian 10](https://vitux.com/how-to-start-stop-and-restart-services-in-debian-10/)
+- [LinuxQuestions.org. The directory `/etc/default/`](https://www.linuxquestions.org/questions/slackware-14/the-directory-etc-default-723942/)
+- [SuperUser. What is the purpose of /etc/default?](https://superuser.com/questions/354944/what-is-the-purpose-of-etc-default)
 
 ### NFS and RPC
 
-- [Is it possible to disable rpcbind (port 111) and how to do it?](https://forum.proxmox.com/threads/is-it-possible-to-disable-rpcbind-port-111-and-how-to-do-it.33590/)
-- [Is rpcbind needed for an NFS client?](https://serverfault.com/questions/1015970/is-rpcbind-needed-for-an-nfs-client)
-- [What is the purpose of rpcbind service on Linux Systems?](https://www.quora.com/What-is-the-purpose-of-rpcbind-service-on-Linux-Systems)
-- [Which ports do I need to open in the firewall to use NFS?](https://serverfault.com/questions/377170/which-ports-do-i-need-to-open-in-the-firewall-to-use-nfs)
-
-### Default listening behaviour of `pveproxy`
-
-- [pveproxy LISTEN address](https://forum.proxmox.com/threads/pveproxy-listen-address.75376/).
+- [ServerFault. Is rpcbind needed for an NFS client?](https://serverfault.com/questions/1015970/is-rpcbind-needed-for-an-nfs-client)
+- [ServerFault. Which ports do I need to open in the firewall to use NFS?](https://serverfault.com/questions/377170/which-ports-do-i-need-to-open-in-the-firewall-to-use-nfs)
+- [Quora. What is the purpose of rpcbind service on Linux Systems?](https://www.quora.com/What-is-the-purpose-of-rpcbind-service-on-Linux-Systems)
 
 ### Configuration of SSL/TSL ciphers in `pveproxy`
 
 - [CryptCheck. Supported cipher suites](https://cryptcheck.fr/ciphers)
-- [pveproxy - Disable weak SSL ciphers?](https://forum.proxmox.com/threads/pveproxy-disable-weak-ssl-ciphers.14794/page-3)
-- [Cipher Suites Explained in Simple Terms: Unlocking the Code](https://www.ssldragon.com/blog/cipher-suites/)
-- [Cipher Suites: Ciphers, Algorithms and Negotiating Security Settings](https://www.thesslstore.com/blog/cipher-suites-algorithms-security-settings/)
-
-### ZFS and Ceph
-
-- [ZFS on Linux](https://pve.proxmox.com/wiki/ZFS_on_Linux).
-- [Deploy Hyper-Converged Ceph Cluster](https://pve.proxmox.com/wiki/Deploy_Hyper-Converged_Ceph_Cluster).
-
-### SPICE proxy
-
-- [spiceproxy - SPICE Proxy Service](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_spiceproxy_spice_proxy_service)
-- [disable spiceproxy](https://forum.proxmox.com/threads/disable-spiceproxy.36638/)
-- [pve-manager and other updates with optional services masked](https://forum.proxmox.com/threads/pve-manager-and-other-updates-with-optional-services-masked.63652/)
+- [SSL Dragon. Cipher Suites Explained in Simple Terms: Unlocking the Code](https://www.ssldragon.com/blog/cipher-suites/)
+- [TheSSLStore. Cipher Suites: Ciphers, Algorithms and Negotiating Security Settings](https://www.thesslstore.com/blog/cipher-suites-algorithms-security-settings/)
 
 ## Navigation
 

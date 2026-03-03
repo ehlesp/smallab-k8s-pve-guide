@@ -26,13 +26,13 @@ In a small or limited system such as the one used in this guide, the first thing
 
 - Proxmox VE's web console has a `Summary` view on all its levels (datacenter, node and virtual machine) in which it shows how the usage of resources is going. On the other hand, the web console offers a page for each storage unit configured in the system. On the other hand, remember that Proxmox VE's web console cannot monitor the Kubernetes cluster running in your VMs.
 
-- Do not forget shell commands like `htop`, `df` or `free`. They will give you a different point of view of the resources usages from within your Proxmox VE host or the VMs. For instance, in the VM nodes of your K3s cluster, you will see with `htop` many lines related to the K3s service running in them and also about the containerd service executing your Kubernetes containers.
+- Do not forget shell commands like `htop`, `df` or `free`. They can give you a different point of view of the resources usages from within your Proxmox VE host or the VMs. For instance, in the VM nodes of your K3s cluster, you can see with `htop` many lines related to the K3s service running in them and also about the containerd service executing your Kubernetes containers.
 
   Still, these commands are not good enough for monitoring your Kubernetes cluster. They show you the Kubernetes-related processes like any other process at the operative system level. In other words, their resolution is "too low" and lack context to help you make sense of what they can report about your Kubernetes cluster.
 
 - To monitor the resources usage in your Kubernetes nodes and workloads, you can:
 
-  - Use the Headlamp dashboard you deployed and browsed into [back in the **G031** guide](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md). This is probably your best option for the everyday monitoring of your K3s cluster.
+  - Use the Headlamp dashboard you deployed and browsed into [back in the chapter **G031**](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md). This is probably your best option for the everyday monitoring of your K3s cluster.
 
   - Use the `kubectl top` command from your `kubectl` client system. For instance, you could see the usages of your Ghost platform's pods.
 
@@ -48,7 +48,7 @@ In a small or limited system such as the one used in this guide, the first thing
 
 ## Checking the logs
 
-Logs are particularly useful when you need to diagnose issues in a system. This section explains the most relevant logs you will have in your homelab setup and how to read them.
+Logs are particularly useful when you need to diagnose issues in a system. This section explains the most relevant logs you have in your homelab setup and how to read them.
 
 ### Proxmox VE logs
 
@@ -62,7 +62,7 @@ The Proxmox VE host is a Debian system, and its logs were usually all found in t
 
   - At the `pve` node level, in the `Firewall > Log` view, you can see all the lines written in the log.
 
-  - At each VM you also have a `Firewall > Log` view, but it will only show the lines related to the current VM.
+  - At each VM you also have a `Firewall > Log` view, but it only shows the lines related to the current VM.
 
 ### Virtual machine logs
 
@@ -76,7 +76,7 @@ The VMs you have setup as K3s nodes are all Debian-based, so their system logs a
 
   - Each pod running in the node has its own folder named following the pattern `<namespace>_<pod's current name>_<cluster-generated UUID>`.
 
-  - Within each pod's folder you will have one directory per container running in that pod. The containers' logs are inside their corresponding folders.
+  - Within each pod's folder, you have one directory per container running in that pod. The containers' logs are inside their corresponding folders.
 
   - For instance, the Ghost platform has two pods with two containers each and one pod with an init container and a regular one. The `tree` command would present them like this:
 
@@ -120,7 +120,7 @@ The VMs you have setup as K3s nodes are all Debian-based, so their system logs a
 
     Notice how there is more than one log file in each container's folder, and that their filenames are just numbers. The higher the number, the more recent the log file is.
 
-    Also see that I needed the `sudo` command to allow `tree` to list the contents of the `pods` folders.
+    Also see that the `sudo` command is needed to allow `tree` to list the contents of the `pods` folders.
 
 ### Container logs
 
@@ -130,7 +130,7 @@ You can access a container's log with `kubectl`. For instance, to access the log
 $ kubectl logs -n forgejo server-forgejo-0 server | less
 ~~~
 
-See how after indicating the `forgejo` namespace, I have specified the pod's name (`server-forgejo-0`) and then the concrete container (`server`). I have also piped the output to `less` for getting the log paginated. This log is the same one stored in the corresponding `/var/log/pods` path which, at the moment of writing this, was `/var/log/pods/forgejo_server-forgejo-0_3d717aab-d09c-4f4d-9fd6-83f421c70218/server/2.log`.
+See how after indicating the `forgejo` namespace, the pod's name (`server-forgejo-0`) is specified and then the concrete container (`server`). The output has been redirected to `less` for paginating the log. This log is the same one stored in the corresponding `/var/log/pods` path which, at the moment of writing this, is `/var/log/pods/forgejo_server-forgejo-0_3d717aab-d09c-4f4d-9fd6-83f421c70218/server/2.log`.
 
 Moreover, you can access any container logs through Headlamp. In the sidebar menu, click on `Workloads` and then on `Pods`:
 
@@ -140,7 +140,7 @@ Above you can see the Workloads Pods section of Headlamp listing all pods runnin
 
 ![Only Ghost pods listed in Workloads Pods section of Headlamp](images/g036/headlamp_workloads_pods_ghost.webp "Only Ghost pods listed in Workloads Pods section of Headlamp")
 
-Clicking on any of the listed Ghost pods will load a view showing the chosen pod's details:
+Clicking on any of the listed Ghost pods loads a view showing the chosen pod's details:
 
 ![Detail view of the Ghost server pod shown in the Workloads Pods section of Headlamp](images/g036/headlamp_workloads_pods_chosen_ghost_server_pod.webp "Detail view of the Ghost server pod shown in the Workloads Pods section of Headlamp")
 
@@ -165,7 +165,7 @@ root@db-postgresql-0:/#
 
 > [!WARNING]
 > **You log as the `root` user in containers that are not rootless**\
-> Be careful when you get into containers that are not rootless since you will log into them as the `root` user.
+> Be careful when you get into containers that are not rootless since you sign in into them as the `root` user.
 
 Understand the previous `kubectl` command:
 
@@ -175,24 +175,24 @@ Understand the previous `kubectl` command:
 
 - With `-c` you specify to what container you want to connect to within the specified pod.
 
-  - If you do not specify the container, `kubectl` will connect you to the first one listed in the `Deployment`, `ReplicaSet` or `StatefulSet` that deployed the pod.
+  - If you do not specify the container, `kubectl` connects to the first one listed in the `Deployment`, `ReplicaSet` or `StatefulSet` that deployed the pod.
 
 - Also, be aware that any command you invoke in a container has to be already present in the image the container is running. In the example above, the PostgreSQL image happens to have the `bash` shell available but other images may only have `sh`.
 
-While inside your PostgreSQL server container, you can take a look at the files defined and mounted by the `StatefulSet` resource you configured [in the Part 3 of the Forgejo platform's deployment guide](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%203%20-%20PostgreSQL%20database%20server.md). You will find them exactly where their corresponding `mountPath` say they should be. For instance, let's check the `postgresql.conf` file:
+While inside your PostgreSQL server container, you can take a look at the files defined and mounted by the `StatefulSet` resource you configured [in the Part 3 of the Forgejo platform's deployment guide](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%203%20-%20PostgreSQL%20database%20server.md). You will find them exactly where their corresponding `mountPath` say they should be. For instance, check the `postgresql.conf` file:
 
 ~~~sh
 root@db-postgresql-0:/# ls -al /etc/postgresql/postgresql.conf 
 -rw-rwxr-- 1 root root 608 Feb 11 08:57 /etc/postgresql/postgresql.conf
 ~~~
 
-The `ls` command proofs that the file exists where it was expected to be. You could also read its content with the `cat` or `less` commands.
+The `ls` command proofs that the file exists where it is expected to be. You could also read its content with the `cat` or `less` commands.
 
 > [!NOTE]
 > **Do not expect to find the same commands available on every container image**\
 > For security reasons or to save storage space, some container images may lack many commonly used commands. In other words, do not expect to have the same usual commands on every container you deal with.
 
-On the other hand, you can also see how the Forgejo's PostgreSQL `server` container has produced a bunch of files in the K3s agent node where is running. So, open a shell on the node itself (in the guide was the `k3sagent01` one) and just `ls` the folder where the database's volume is mounted on (`/mnt/forgejo-ssd/db/k3smnt/`):
+On the other hand, you can also see how the Forgejo's PostgreSQL `server` container has produced a bunch of files in the K3s agent node where is running. So, open a shell on the node itself (in the guide is the `k3sagent01` one) and just `ls` the folder where the database's volume is mounted on (`/mnt/forgejo-ssd/db/k3smnt/`):
 
 ~~~sh
 $ ls -al /mnt/forgejo-ssd/db/k3smnt/
@@ -272,7 +272,7 @@ This seeming mismatch happens because the `postgres` user and group only exist w
 
 On the other hand, the permission mode of the files is the same as how you saw them directly in the agent node. Needless to say that you should be careful of not tinkering with these files unless strictly necessary.
 
-Back in the K3s agent node shell, if you now checked the folder where the Forgejo users Git repositories volume is mounted (`/mnt/forgejo-hdd/git/k3smnt`), you will see that its owner has changed:
+Back in the K3s agent node shell, if you now checked the folder where the Forgejo users Git repositories volume is mounted (`/mnt/forgejo-hdd/git/k3smnt`), you can see that its owner has changed:
 
 ~~~sh
 ~$ ls -al /mnt/forgejo-hdd/git/
@@ -295,11 +295,11 @@ After clicking on the `Terminal/Exec` button, you will see how Headlamp attempts
 
 ![Terminal opened on Forgejo server container in detail view of Forgejo server at the Workloads Pods section of Headlamp](images/g036/headlamp_workloads_pods_chosen_forgejo_server_pod_terminal_open.webp "Terminal opened on Forgejo server container in detail view of Forgejo server at the Workloads Pods section of Headlamp")
 
-What I mean with "attempts" is that Headlamp will try a number of known shells until one works with the container. This is because each container can come with a different terminal but Headlamp cannot know beforehand which one to use.
+What "attempts" means is that Headlamp automatically tries a number of known shells until one works with the container. This is because each container can come with a different shell but Headlamp cannot know beforehand which one to use.
 
 ## Metrics from the monitoring stack
 
-Do not forget that you also have a whole monitoring stack deployed in your Kubernetes cluster, with Prometheus gathering metrics and Grafana able to show them in their own dashboards. The main problem you have to face here is that you will need to setup yourself the dashboards to monitor the metrics scraped from the platforms or apps you deploy in your cluster.
+Do not forget that you also have a whole monitoring stack deployed in your Kubernetes cluster, with Prometheus gathering metrics and Grafana able to show them in their own dashboards. The main problem you have to face here is that you need to setup yourself the dashboards to monitor the metrics scraped from the platforms or apps you deploy in your cluster.
 
 For instance, you may decide to have one dashboard for the metrics from each main component (cache server, database and Forgejo server) of the Forgejo platform. You may find in [Grafana's dashboard marketplace](https://grafana.com/grafana/dashboards/) already prepared dashboards you can use to show the metrics of those components. Another option for you would be to combine all the metrics from the Forgejo components in one single custom dashboard you prepare on your own.
 
@@ -313,15 +313,15 @@ In `Settings`, go to `Plugins` to see which plugins you have loaded in your Head
 
 ![Plugins list in the Headlamp settings](images/g036/headlamp_settings_plugins_list.webp  "Plugins list in the Headlamp settings")
 
-In this guide's setup, there is just [one plugin for connecting with Prometheus](https://github.com/headlamp-k8s/plugins/tree/main/prometheus). If you click in its name, you will get a form for configuring the connection with a Prometheus instance:
+In this guide's setup, there is just [one plugin for connecting with Prometheus](https://github.com/headlamp-k8s/plugins/tree/main/prometheus). If you click in its name, you get a form for configuring the connection with a Prometheus instance:
 
 ![Prometheus plugin empty configuration for connecting with Prometheus](images/g036/headlamp_settings_plugins_prometheus_config.webp "Prometheus plugin empty configuration for connecting with Prometheus")
 
-See in this last snapshot how the plugin has enabled by default an `Auto detect` feature that cannot work as it is: the Prometheus server in the cluster has basic authentication enabled. Given that the plugin configuration does not offer explicit fields to set a user and password, and I have not found any official documentation clearly stating if the plugin supports basic authentication in some way, it may be that this plugin (at least in the version shown in the snapshot above, `0.8.2`) can only work with Prometheus instances that do not require authentication.
+See in this last snapshot how the plugin has enabled by default an `Auto detect` feature that cannot work as it is: the Prometheus server in the cluster has basic authentication enabled. Given that the plugin configuration does not offer explicit fields to set a user and password, and there is no official documentation clearly stating if the plugin supports basic authentication in some way, it may be that this plugin (at least in the version shown in the snapshot above, `0.8.2`) can only work with Prometheus instances that do not require authentication.
 
 ## References
 
-### [Kubernetes](https://kubernetes.io/docs/)
+### [Kubernetes](https://kubernetes.io/)
 
 - [Kubernetes Documentation. Tasks. Monitoring, Logging, and Debugging](https://kubernetes.io/docs/tasks/debug/)
   - [Troubleshooting Applications Tasks. Get a Shell to a Running Container](https://kubernetes.io/docs/tasks/debug-application-cluster/get-shell-running-container/)

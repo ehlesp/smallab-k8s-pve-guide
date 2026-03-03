@@ -25,7 +25,7 @@
 
 ## Forgejo can use PostgreSQL as database
 
-Forgejo is compatible with MariaDB but, instead of essentially repeating [the configuration used for the Ghost platform](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md), it is more interesting to show you how similar can be, from a Kubernetes point of view, the configuration of a different database. Therefore, here you will see how to configure the deployment a PostgreSQL instance for your Forgejo platform.
+Forgejo is compatible with MariaDB but, instead of essentially repeating [the configuration used for the Ghost platform](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md), it is more interesting to show you how similar can be, from a Kubernetes point of view, the configuration of a different database. Therefore, this part explains how to configure the deployment a PostgreSQL instance for your Forgejo platform.
 
 ## PostgreSQL Kustomize project's folders
 
@@ -130,7 +130,7 @@ The `postgresql.conf` is where you can set the parameters for PostgreSQL.
       Logs the session terminations.
 
     - `log_hostname`\
-      When enabled, the server will try to get the hostname of the IPs connecting to it. That hostname resolution can result in a noticeable performance loss, so it is better to have it disabled.
+      When enabled, the server tries to get the hostname of the IPs connecting to it. That hostname resolution can result in a noticeable performance loss, so it is better to have it disabled.
 
     - `compute_query_id`\
       Enables in-core computation of a query identifier. Required to be `on` for the `pg_stat_statements` extension.
@@ -290,7 +290,7 @@ Put them all as variables in the same properties file, to be loaded later as var
 
 ## PostgreSQL persistent storage claim
 
-Declare here the `PersistentVolumeClaim` (_PVC_) that claims the `PersistentVolume` that will be declared in the last part of this Forgejo deployment procedure:
+Declare here the `PersistentVolumeClaim` (_PVC_) that claims the `PersistentVolume` to be declared in the last part of this Forgejo deployment procedure:
 
 1. Create a `db-postgresql.persistentvolumeclaim.yaml` file under the `resources` folder:
 
@@ -298,7 +298,7 @@ Declare here the `PersistentVolumeClaim` (_PVC_) that claims the `PersistentVolu
     $ touch $HOME/k8sprjs/forgejo/components/db-postgresql/resources/db-postgresql.persistentvolumeclaim.yaml
     ~~~
 
-2. Declare the `PersistentVolumeClaim` object in `resources/db-postgresql.persistentvolumeclaim.yaml`.
+2. Declare the `PersistentVolumeClaim` object in `resources/db-postgresql.persistentvolumeclaim.yaml`:
 
     ~~~yaml
     # Forgejo PostgreSQL claim of persistent storage
@@ -323,7 +323,7 @@ Declare here the `PersistentVolumeClaim` (_PVC_) that claims the `PersistentVolu
 
 Since you already know that databases are better deployed as `StatefulSet` objects, let's create one for your PostgreSQL server:
 
-1. Create a `db-postgresql.statefulset.yaml` in the `resources` path.
+1. Create a `db-postgresql.statefulset.yaml` in the `resources` path:
 
     ~~~sh
     $ touch $HOME/k8sprjs/forgejo/components/db-postgresql/resources/db-postgresql.statefulset.yaml
@@ -461,17 +461,17 @@ Since you already know that databases are better deployed as `StatefulSet` objec
             Is an option of the postgres service, used for specifying configuration options at runtime.
 
           - `"config_file=/etc/postgresql/postgresql.conf"`\
-            The `config_file` option is for setting an alternative custom configuration file for the PostgreSQL server. In this case, it will be the `postgresql.conf` file you configured previously, and you'll put in the `/etc/postgresql` path.
+            The `config_file` option is for setting an alternative custom configuration file for the PostgreSQL server. In this case, it is the `postgresql.conf` file configured previously that has to be put in the `/etc/postgresql` path.
 
             > [!IMPORTANT]
             > **It is not possible to directly change the default `postgresql.conf` file that exists under the default data path `/var/lib/postgresql`**\
-            > Trying to do so will provoke a `Read-only file system` error that will not allow the container to start. The same happens with any other configuration file you might consider customize within that `/var/lib/postgresql` path.
+            > Trying to do so provokes a `Read-only file system` error that does not allow the container to start. The same happens with any other configuration file you might consider customize within that `/var/lib/postgresql` path.
 
         - At the `env` section:
 
           - The `POSTGRES_USER` and `POSTGRES_PASSWORD` variables are expected by PostgreSQL to set the superuser's name and password. The `POSTGRES_USER` is defined here also to make it available for the `initdb.sh` script.
 
-          - The `POSTGRES_DB` is the name of the database you want to create initially in your PostgreSQL. This variable's also used in the initialization script.
+          - The `POSTGRES_DB` is the name of the database you want to create initially in your PostgreSQL. This variable is also used in the initialization script.
 
             > [!NOTE]
             > No matter what, there will be always a `postgres` database created in your PostgreSQL server.
@@ -546,7 +546,7 @@ You need a `Service` named `db-postgresql` for the previous `StatefulSet`:
 
 ### Valkey Service's FQDN
 
-Like the Valkey service, this PostgreSQL service will be deployed in the `forgejo` namespace. Therefore, its absolute FQDN will be:
+Like the Valkey service, this PostgreSQL service is going to be deployed in the `forgejo` namespace. Therefore, its absolute FQDN will be:
 
 ~~~txt
 db-postgresql.forgejo.svc.homelab.cluster.
@@ -570,10 +570,10 @@ Produce the main `kustomization.yaml` file for this PostgreSQL Kustomize subproj
     kind: Kustomization
 
     labels:
-      - pairs:
-          app: db-postgresql
-        includeSelectors: true
-        includeTemplates: true
+    - pairs:
+        app: db-postgresql
+      includeSelectors: true
+      includeTemplates: true
 
     resources:
     - resources/db-postgresql.persistentvolumeclaim.yaml
@@ -860,7 +860,7 @@ As usual, check the output of the declared Kustomize project and see that the va
 
 ## Do not deploy this PostgreSQL project on its own
 
-This PostgreSQL setup is missing the `PersistentVolume` it needs to store data. Do not confuse it with the claim you have configured here for your PostgreSQL server. The corresponding `PersistentVolume` and other remaining elements will be declared in the main Kustomize project you will prepare in the final part of this Forgejo deployment procedure.
+This PostgreSQL setup is missing the `PersistentVolume` it needs to store data. Do not confuse it with the claim you have configured here for your PostgreSQL server. The corresponding `PersistentVolume` and other remaining elements to be declared in the main Kustomize project you will prepare in the final part of this Forgejo deployment procedure.
 
 ## Relevant system paths
 
@@ -937,8 +937,9 @@ This PostgreSQL setup is missing the `PersistentVolume` it needs to store data. 
 
 ### [Kubernetes](https://kubernetes.io/)
 
-- [Run a command in a shell](https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#running-a-command-in-a-shell)
+- [Kubernetes Documentation. Tasks. Inject Data Into Applications](https://kubernetes.io/docs/tasks/inject-data-application/)
+  - [Define a Command and Arguments for a Container. Run a command in a shell](https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#running-a-command-in-a-shell)
 
 ## Navigation
 
-[<< Previous (**G034. Deploying services 03. Forgejo Part 2**)](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%202%20-%20Valkey%20cache%20server.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G034. Deploying services 03. Forgejo Part 4**) >>](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%204%20-%20Gitea%20server.md)
+[<< Previous (**G034. Deploying services 03. Forgejo Part 2**)](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%202%20-%20Valkey%20cache%20server.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G034. Deploying services 03. Forgejo Part 4**) >>](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%204%20-%20Forgejo%20server.md)

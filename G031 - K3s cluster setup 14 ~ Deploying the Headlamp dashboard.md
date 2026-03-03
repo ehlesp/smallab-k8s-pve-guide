@@ -18,14 +18,14 @@
   - [Files in `kubectl` client system](#files-in-kubectl-client-system)
 - [References](#references)
   - [Headlamp](#headlamp)
-  - [Kubernetes Documentation](#kubernetes-documentation)
-  - [Traefik Reference](#traefik-reference)
+  - [Kubernetes](#kubernetes)
+  - [Traefik (Proxy)](#traefik-proxy)
   - [Cert-manager](#cert-manager)
 - [Navigation](#navigation)
 
 ## Headlamp is an alternative to the Kubernetes Dashboard
 
-To monitor what is going on in your K3s cluster in a more visual manner, [Kubernetes offers its own native web-based dashboard](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/). That one is fine, but I discovered an interesting alternative dashboard called [Headlamp](https://headlamp.dev/) also worth trying out.
+To monitor what is going on in your K3s cluster in a more visual manner, [Kubernetes offers its own native web-based dashboard](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/). That one is fine, but there is an interesting alternative dashboard called [Headlamp](https://headlamp.dev/) also worth trying out.
 
 > [!WARNING]
 > **Ensure having the metrics-server service running in your cluster first!**\
@@ -36,9 +36,7 @@ To monitor what is going on in your K3s cluster in a more visual manner, [Kubern
 To deploy Headlamp in your homelab cluster, you need:
 
 - A service account with the cluster administrator role.
-
 - A TLS certificate to secure communications with Headlamp.
-
 - An HTTPS ingress to access Headlamp that uses the previously mentioned TLS certificate.
 
 ## Kustomize project's folder structure
@@ -70,7 +68,7 @@ Prepare a `ServiceAccount` for Headlamp like this:
       name: headlamp-admin
     ~~~
 
-    This service account will be the administrator user for your Headlamp instance:
+    This service account will act as the administrator user for your Headlamp instance:
 
     - The name `headlamp-admin` is the one expected in the official Headlamp installation. Its deployment manifest already points to a secret token for a service account called `headlamp-admin`.
 
@@ -140,7 +138,7 @@ To encrypt the client communications with Headlamp you need a TLS certificate ma
       duration: 2190h # 3 months
       renewBefore: 168h # Certificates must be renewed some time before they expire (7 days)
       dnsNames:
-        - headlamp.homelab.cloud
+      - headlamp.homelab.cloud
       privateKey:
         algorithm: ECDSA
         size: 521
@@ -185,7 +183,7 @@ To enable ingress access into Headlamp, use a Traefik `IngressRoute`:
       name: headlamp
     spec:
       entryPoints:
-        - websecure
+      - websecure
       routes:
       - match: Host(`headlamp.homelab.cloud`)
         kind: Rule
@@ -244,7 +242,7 @@ With all the required resources declared, put them all together with the manifes
 
 You may want to take a look at how the resources you declared appear in the Kustomize output before deploying:
 
-1. Execute the `kubectl kustomize` command on the Homelab Kustomize project root folder, redirected to `less` (or to your favorite text editor):
+1. Execute the `kubectl kustomize` command on the Headlamp Kustomize project main folder, redirected to `less` (or to your favorite text editor):
 
     ~~~sh
     $ kubectl kustomize $HOME/k8sprjs/headlamp | less
@@ -413,7 +411,7 @@ You may want to take a look at how the resources you declared appear in the Kust
 
           > [!NOTE]
           > **These variables are not explained in the official Headlamp documentation**\
-          > They are not found even by the search tool [of the Headlamp documentation site](https://headlamp.dev/docs/latest/).
+          > At the time of writing this note, they are not found even by the search tool [of the Headlamp documentation site](https://headlamp.dev/docs/latest/).
 
         - `image`\
           Important to notice that it points to the `latest` image of the Headlamp container. Every time Headlamp gets deployed in your cluster, it will be its last available version.
@@ -477,7 +475,7 @@ Be aware that:
 
 ## Testing Headlamp
 
-Now that you have Headlamp deployed, you can test it if you have enabled its DNS name or hostname in your LAN. In this guide, Headlamp will have the hostname `headlamp.homelab.cloud`:
+Now that you have Headlamp deployed, you can test it if you have enabled its DNS name or hostname in your LAN. In this guide, Headlamp has the hostname `headlamp.homelab.cloud`:
 
 > [!NOTE]
 > **Associate the Headlamp's DNS name or hostname to your Traefik service's IP**\
@@ -532,27 +530,28 @@ You can find the Kustomize project for this Headlamp deployment in this attached
 
 ### [Headlamp](https://headlamp.dev/)
 
-- [Installation](https://headlamp.dev/docs/latest/installation/)
+- [Docs. Installation](https://headlamp.dev/docs/latest/installation/)
 
-### [Kubernetes Documentation](https://kubernetes.io/docs/)
+### [Kubernetes](https://kubernetes.io/)
 
-- [Reference. API Access Control. Managing Service Accounts](https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/)
-  - [User accounts versus service accounts](https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#user-accounts-versus-service-accounts)
-  - [Bound service account token volume mechanism](https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#bound-service-account-token-volume)
+- [Kubernetes Documentation. Reference](https://kubernetes.io/docs/reference/)
+  - [API Access Control. Managing Service Accounts](https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/)
+    - [User accounts versus service accounts](https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#user-accounts-versus-service-accounts)
+    - [Bound service account token volume mechanism](https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#bound-service-account-token-volume)
 
-- [Reference. Command line tool (kubectl)](https://kubernetes.io/docs/reference/kubectl/)
-  - [kubectl reference. kubectl create. kubectl create token](https://kubernetes.io/docs/reference/kubectl/generated/kubectl_create/kubectl_create_token/)
+  - [Command line tool (kubectl)](https://kubernetes.io/docs/reference/kubectl/)
+    - [kubectl reference. kubectl create. kubectl create token](https://kubernetes.io/docs/reference/kubectl/generated/kubectl_create/kubectl_create_token/)
 
-### [Traefik Reference](https://doc.traefik.io/traefik/reference/)
+### [Traefik (Proxy)](https://traefik.io/traefik)
 
-- [Routing Configuration](https://doc.traefik.io/traefik/reference/routing-configuration/)
-  - [Kubernetes. Kubernetes CRD. HTTP. IngressRoute](https://doc.traefik.io/traefik/reference/routing-configuration/kubernetes/crd/http/ingressroute/)
+- [Reference. Routing Configuration. Kubernetes. Kubernetes CRD. HTTP. IngressRoute](https://doc.traefik.io/traefik/reference/routing-configuration/kubernetes/crd/http/ingressroute/)
 
-### [Cert-manager](https://cert-manager.io/docs/)
+### [Cert-manager](https://cert-manager.io/)
 
-- [Requesting Certificates. Certificate resource](https://cert-manager.io/docs/usage/certificate/)
-- [Reference. API Reference. cert-manager.io/v1](https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1)
-  - [CertificateSpec](https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.CertificateSpec)
+- [Documentation](https://cert-manager.io/docs/)
+  - [Requesting Certificates. Certificate resource](https://cert-manager.io/docs/usage/certificate/)
+  - [Reference. API Reference. cert-manager.io/v1](https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1)
+    - [CertificateSpec](https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.CertificateSpec)
 
 ## Navigation
 

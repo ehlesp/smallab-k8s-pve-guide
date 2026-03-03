@@ -47,15 +47,15 @@ $ mkdir -p $HOME/k8sprjs/forgejo/components/cache-valkey/{configs,resources,secr
 
 ## Valkey configuration file
 
-Prepare the `valkey.conf` file that will specify some configuration values for your Forgejo's Valkey server.
+Prepare the `valkey.conf` file specifying the configuration values for your Forgejo's Valkey server:
 
-1. In the `configs` subfolder of the Valkey project, create a `valkey.conf` file.
+1. In the `configs` subfolder of the Valkey project, create a `valkey.conf` file:
 
     ~~~sh
     $ touch $HOME/k8sprjs/forgejo/components/cache-valkey/configs/valkey.conf
     ~~~
 
-2. Copy in `valkey.conf` the lines below.
+2. Copy in `valkey.conf` the lines below:
 
     ~~~properties
     # Custom Valkey configuration
@@ -229,7 +229,7 @@ Since Forgejo's Valkey instance stores state, it has to be deployed with a `Stat
                 path: users.acl
     ~~~
 
-    You may notice that this declaration is identical to [the `StatefulSet` resource declared for the Ghost's Valkey instance](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-statefulset). This will not be an issue since the whole Forgejo's setup will be deployed in its own distinct `forgejo` namespace in the final part of this deployment procedure.
+    You may notice that this declaration is identical to [the `StatefulSet` resource declared for the Ghost's Valkey instance](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-statefulset). This is not going to be an issue since the whole Forgejo's setup will be deployed in its own distinct `forgejo` namespace in the final part of this deployment procedure.
 
 ## Valkey Service
 
@@ -271,7 +271,7 @@ Declare the `Service` object required for Forgejo's Valkey `StatefulSet` pod:
 
 ### Valkey Service's FQDN
 
-Since the whole Forgejo setup will be deployed in the `forgejo` namespace, the absolute FQDN of the Valkey service will be this:
+Since the whole Forgejo setup will be deployed in the `forgejo` namespace, the absolute FQDN of the Valkey service is going to be this one:
 
 ~~~txt
 cache-valkey.forgejo.svc.homelab.cluster.
@@ -295,10 +295,10 @@ Now declare the main `kustomization.yaml` file that describes the whole Forgejo'
     kind: Kustomization
 
     labels:
-      - pairs:
-          app: cache-valkey
-        includeSelectors: true
-        includeTemplates: true
+    - pairs:
+        app: cache-valkey
+      includeSelectors: true
+      includeTemplates: true
 
     resources:
     - resources/cache-valkey.persistentvolumeclaim.yaml
@@ -499,7 +499,7 @@ With all the necessary resources declared for your Forgejo Valkey instance, revi
 
 ## Do not deploy this Valkey project on its own
 
-This Valkey setup is missing one critical element, the persistent volume it needs to store its working directory data. Do not confuse it with the claim you have configured for your Valkey cache server. That persistent volume and other elements will be declared in the main Kustomize project you will declare in the final part of this Forgejo deployment procedure. Until then, do not deploy this Valkey subproject.
+This Valkey setup is missing one critical element, the persistent volume it needs to store its working directory data. Do not confuse it with the claim you have configured for your Valkey cache server. That persistent volume and other elements are going to be declared in the main Kustomize project you will declare in the final part of this Forgejo deployment procedure. Until then, do not deploy this Valkey subproject.
 
 ## Relevant system paths
 
@@ -534,7 +534,7 @@ This Valkey setup is missing one critical element, the persistent volume it need
 - [Docker Hub. Valkey](https://hub.docker.com/r/valkey/valkey)
 - [Docker Hub. Prometheus Valkey & Redis Metrics Exporter](https://hub.docker.com/r/oliver006/redis_exporter)
 
-- [GitHub. Example `valkey.conf` for Valkey 9.0](https://raw.githubusercontent.com/valkey-io/valkey/9.0/valkey.conf)
+- [GitHub. Valkey. Example `valkey.conf` for Valkey 9.0](https://raw.githubusercontent.com/valkey-io/valkey/9.0/valkey.conf)
 
 ### [Redis](https://redis.io/)
 
@@ -550,39 +550,41 @@ This Valkey setup is missing one critical element, the persistent volume it need
 
 ### [Kubernetes](https://kubernetes.io/docs/)
 
+- [Kubernetes Documentation](https://kubernetes.io/docs/home/)
+
 #### Pods and containers
 
-- [Tasks. Configure Pods and Containers](https://kubernetes.io/docs/tasks/configure-pod-container/)
+- [Kubernetes Documentation. Concepts. Scheduling, Preemption and Eviction](https://kubernetes.io/docs/concepts/scheduling-eviction/)
+  - [Assigning Pods to Nodes](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/)
+
+- [Kubernetes Documentation. Tasks. Configure Pods and Containers](https://kubernetes.io/docs/tasks/configure-pod-container/)
   - [Assign Pods to Nodes using Node Affinity](https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes-using-node-affinity/)
   - [Configure a Pod to Use a ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/)
 
-- [Tasks. Inject Data Into Applications](https://kubernetes.io/docs/tasks/inject-data-application/)
+- [Kubernetes Documentation. Tasks. Inject Data Into Applications](https://kubernetes.io/docs/tasks/inject-data-application/)
   - [Define Dependent Environment Variables](https://kubernetes.io/docs/tasks/inject-data-application/define-interdependent-environment-variables/)
   - [Define Environment Variables for a Container](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/)
 
-- [Concepts. Scheduling, Preemption and Eviction](https://kubernetes.io/docs/concepts/scheduling-eviction/)
-  - [Assigning Pods to Nodes](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/)
-
-- [Reference. Kubernetes API. Workload Resources](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/)
+- [Kubernetes Documentation. Reference. Kubernetes API. Workload Resources](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/)
   - [Pod](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/)
     - [Scheduling](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#scheduling)
 
 #### ConfigMaps
 
-- [Concepts. Configuration](https://kubernetes.io/docs/concepts/configuration/)
+- [Kubernetes Documentation. Concepts. Configuration](https://kubernetes.io/docs/concepts/configuration/)
   - [ConfigMaps](https://kubernetes.io/docs/concepts/configuration/configmap/)
 
-- [Tutorials. Configuration](https://kubernetes.io/docs/tutorials/configuration/)
+- [Kubernetes Documentation. Tutorials. Configuration](https://kubernetes.io/docs/tutorials/configuration/)
   - [Configuring Redis using a ConfigMap](https://kubernetes.io/docs/tutorials/configuration/configure-redis-using-configmap/)
 
 #### Labels
 
-- [Concepts. Overview. Objects in Kubernetes](https://kubernetes.io/docs/concepts/overview/working-with-objects/)
+- [Kubernetes Documentation. Concepts. Overview. Objects in Kubernetes](https://kubernetes.io/docs/concepts/overview/working-with-objects/)
   - [Labels and Selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/)
 
 #### Services
 
-- [Concepts. Services, Load Balancing, and Networking](https://kubernetes.io/docs/concepts/services-networking/)
+- [Kubernetes Documentation. Concepts. Services, Load Balancing, and Networking](https://kubernetes.io/docs/concepts/services-networking/)
   - [Service. Headless Services](https://kubernetes.io/docs/concepts/services-networking/service/#headless-services)
 
 ### Other Kubernetes-related contents

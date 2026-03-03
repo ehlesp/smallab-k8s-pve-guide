@@ -30,6 +30,7 @@
   - [Directories on Debian VM](#directories-on-debian-vm)
   - [Files on Debian VM](#files-on-debian-vm)
 - [References](#references)
+  - [Proxmox](#proxmox)
   - [QEMU](#qemu)
   - [About `sudo`](#about-sudo)
   - [Disabling `root` login](#disabling-root-login)
@@ -38,19 +39,19 @@
 
 ## You have to configure your new Debian VM
 
-Now you have a functional Debian VM but, as you did with your Proxmox VE host, it needs to be configured. This chapter will show you most of the same setup procedures detailed in the chapters between [**G003**](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources%2C%20updates%20and%20extra%20tools.md) and [**G016**](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md), but in an condensed manner. It will also add some extra steps needed for setting up particular aspects on this VM.
+Now you have a functional Debian VM but, as you did with your Proxmox VE host, you have to configure it. This chapter indicates most of the same setup procedures detailed in the chapters between [**G003**](G003%20-%20Host%20configuration%2001%20~%20Apt%20sources%2C%20updates%20and%20extra%20tools.md) and [**G016**](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md), but in an condensed manner. This chapter also adds some extra steps needed for setting up particular aspects on this VM.
 
 ## Suggestion about the IP organization within your LAN
 
-Before you go further configuring your new VM or creating some more, you should consider organizing the IPs in your network. With this I mean that you should assign static IPs (if you haven't done it already) to your Proxmox VE server and your VMs, including your new one. This will allow you to know to what IPs to connect to through SSH easily, rather than being forced to check every time what IP is assigned to your VMs and Proxmox VE host. Also will help you avoid potential IP conflicts among your devices and VMs. I suggest you to figure out first, in a document or spreadsheet, the IP distribution you want within your network. This way you can see how to divide the IPs among all your present devices and future VMs.
+Before you start configuring your new VM or create some more, you should consider organizing the IPs in your network. This means that you should assign static IPs (if you have not done it already) to your Proxmox VE server and your new and future VMs. This allows you to know to what IPs to connect to through SSH easily, rather than being forced to check every time what IP is assigned to your VMs and Proxmox VE host. Also it helps you avoid potential IP conflicts among your devices and VMs. Start by figuring out first, in a document or spreadsheet, the IP distribution you want within your network. This way you can see how to divide the IPs among all your present devices and future VMs.
 
-I'll tell you how I've done it in my own LAN as an example. I set my router's LAN as a `10.0.0.0/8` network, which gives a very big range of IP numbers. Then, I only set static IPs in specific subranges (just defined in a spreadsheet) for my Proxmox VE server and the VMs I run in it. My Proxmox VE standalone node's IP is in a particular subrange (`10.1.0.0`), while all my Proxmox-based VMs are in a different one (`10.4.0.0`). Since the range of IPs available in a `10.0.0.0` network is enormous for a home LAN, I can afford leaving my user devices getting random IPs (with randomized MACs for better security) without worrying about possible IP conflicts.
+Here is a description of how it has been done in the LAN used for this guide. The router's LAN is set as a `10.0.0.0/8` network, which gives a very big range of IP numbers. Then, there are static IPs set in specific subranges (just defined in a spreadsheet) only for the Proxmox VE server and the VMs run in it. The Proxmox VE standalone node's IP is in a particular subrange (`10.1.0.0`), while all the Proxmox-based VMs are in a different one (`10.4.0.0`). Since the range of IPs available in a `10.0.0.0` network is enormous for a home LAN, it is possible to leave the users' devices getting random IPs (with randomized MACs for better security) without worrying much about possible IP conflicts.
 
 ## Adding the `apt` sources for _non-free_ packages
 
-It might happen that you need to install `apt` packages in your VM that are _non-free_ for Debian standards. To allow that, you need to enable the right `apt` sources in your Debian VM.
+It might happen that you need to install `apt` packages in your VM that are _non-free_ for Debian standards. To allow that, you need to enable the right `apt` sources in your Debian VM:
 
-1. Start the VM, then open a `noVNC` shell and log in the VM as `root`, or open a SSH session and log in as your **other user** (the `sshd` server won't allow you to log in as `root` using a password). If you choose the SSH method, you'll have to become `root` with the `su` command:
+1. Start the VM, then open a `noVNC` shell and log in the VM as `root`, or open a SSH session and log in as your other user (the `sshd` server will not allow you to log in as `root` using a password). If you choose the SSH method, you have to become `root` with the `su` command:
 
     ~~~sh
     $ su root
@@ -68,7 +69,7 @@ It might happen that you need to install `apt` packages in your VM that are _non
     $ touch debian-nonfree.list
     ~~~
 
-4. Edit the `debian-nonfree.list` file, filling it with the lines below:
+4. Edit the `debian-nonfree.list` file, filling it with these lines:
 
     ~~~sh
     deb http://deb.debian.org/debian trixie non-free
@@ -92,7 +93,7 @@ It might happen that you need to install `apt` packages in your VM that are _non
 
 ## Installing extra packages
 
-The Debian OS you have running in your VM is rather barebone, so let's install some packages that can be useful to have in a server. Some of them will be also necessary in the following steps described in this chapter. As `root`, execute the following `apt` command.
+The Debian OS you have running in your VM is rather barebones. You have to install in it some packages useful to have in a server. Some of them are also necessary to perform the next steps described in this chapter. As `root`, execute the following `apt` command:
 
 ~~~sh
 $ apt install -y ethtool fail2ban gdisk htop libpam-google-authenticator net-tools nut-client sudo tree vim
@@ -100,11 +101,11 @@ $ apt install -y ethtool fail2ban gdisk htop libpam-google-authenticator net-too
 
 ## The QEMU guest agent comes enabled in Debian
 
-To grant the Proxmox VE platform a better control of its VMs, you need to have deployed in them the QEMU guest agent service. Debian already comes with it installed and running, so you can go to the web console and check the `Status` block in your VM's `Summary` tab:
+To grant the Proxmox VE platform a better control of its VMs, you need to have deployed in them the QEMU guest agent service. Since Debian already comes with it installed and running, you can go to the web console and check the `Status` block in your VM's `Summary` tab:
 
 ![PVE web console connects with QEMU guest agent on VM](images/g021/pve_qemu_guest_agent_web_console_connects.webp "PVE web console connects with QEMU guest agent on VM")
 
-The web console now shows the v4 and v6 IPs of the VM's current main network card. If you click on `More`, you will see all the MACs and IPs assigned to all the network devices currently present in your VM:
+The web console now shows the v4 and v6 IPs of the VM's current main network card. If you click on `More`, you can see all the MACs and IPs assigned to all the network devices currently present in your VM:
 
 ![Guest Agent Network Information window of VM](images/g021/pve_qemu_guest_agent_web_console_connects_show_more.webp "Guest Agent Network Information window of VM")
 
@@ -120,7 +121,7 @@ Thanks to this QEMU agent, you can execute PVE web console actions like `Shutdow
 
 ### Discovering the QEMU guest agent configuration
 
-Another important detail to take into account is the configuration of this QEMU agent. Although in the case of your first Debian VM it works well just with the default values, you should know where to find its configuration files:
+Another important detail to take into account is the configuration of this QEMU agent. Although, in the case of your first Debian VM, it works well just with the default values, you should know where to find its configuration files:
 
 - `/etc/qemu`
   Directory for the agent configuration files.
@@ -145,7 +146,7 @@ If you want to know what is the concrete configuration of the QEMU agent running
     $ ./qemu-ga -D
     ~~~
 
-3. The previous command will return you an output like the following:
+3. The `qemu-ga` command returns an output like this:
 
     ~~~properties
     [general]
@@ -175,28 +176,28 @@ The user you created in the Debian installation process, which in this guide is 
     ~~~
 
     > [!WARNING]
-    > **You will not be able to execute the `adduser` command from a SSH shell with `mgrsys`**\
-    > I does not matter if you become `root` with `su` as you've just done in the previous section. You must be root within a **noVNC** shell or the `adduser` command won't work.
+    > **You cannot execute the `adduser` command from a SSH shell with `mgrsys`**\
+    > I does not matter if you become `root` with `su` as you have just done in the previous section. You must be root within a **noVNC or local shell** or the `adduser` command will not work.
 
-2. Now login as the `mgrsys` user with a regular SSH shell, then test that `sudo` is working with a harmless command like `ls`:
+2. Now login as the `mgrsys` user with a regular SSH shell, then test that `sudo` works with a harmless command like `ls`:
 
     ~~~sh
     $ sudo ls -al
     ~~~
 
-    The command will just ask you your `mgrsys`'s password.
+    The `sudo` command immediately requires your `mgrsys`'s password:
 
     ~~~sh
     [sudo] password for mgrsys:
     ~~~
 
-    Type the password and `ls` will be executed.
+    Type the password to finally execute `ls`.
 
 ### Assigning a TOTP code to the administrative user
 
 Having a TOTP code hardens the login of your administrative user:
 
-1. As your administrative user, create a TOTP token with the `google-authenticator` program as follows:
+1. As your administrative `mgrsys` user, create a TOTP token with the `google-authenticator` program as follows:
 
     ~~~sh
     $ google-authenticator -t -d -f -r 3 -R 30 -w 3 -Q UTF8 -i debiantpl.homelab.cloud -l mgrsys@debiantpl
@@ -208,7 +209,7 @@ Having a TOTP code hardens the login of your administrative user:
 2. Copy all the codes given by the `google-authenticator` command in a safe location, like a password manager:
 
 > [!NOTE]
-> The configuration for the TOTP code is saved in the administrative user's `HOME` directory, in a `.google_authenticator` file.
+> The configuration for the TOTP code is saved in the administrative user's `HOME` directory, in a plain text `.google_authenticator` file.
 
 ### SSH key pair for the administrative user
 
@@ -221,7 +222,7 @@ It is much better if you login as your administrative user with a SSH key pair:
     ~~~
 
     > [!NOTE]
-    > **The `ssh-keygen` command will ask you for a passphrase, but you can leave it empty**\
+    > **The `ssh-keygen` command asks you for a passphrase, but you can leave it empty**\
     > Ideally, you want to set up a passphrase for your key pair. Still, take into account that you will also use TOTP codes when connecting through SSH after finishing this chapter. This means that, when you login, you will have to enter both the TOTP code and the passphrase, if you also specified it. Depending on the SSH client you use, this may be cumbersome depending on the time limit you set to enter the login credentials.
 
 2. Authorize the public key of your newly generated pair:
@@ -232,22 +233,22 @@ It is much better if you login as your administrative user with a SSH key pair:
     $ cat id_ed25519.pub >> authorized_keys
     ~~~
 
-3. Export this key pair and keep it in a safe location. Remember that you will need to generate the `.ppk` file from the private key so you can connect from Windows clients. Check out the [**G901** appendix chapter](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md) to see how.
+3. Export this key pair and keep it in a safe location. Remember that you need to generate the `.ppk` file from the private key for connecting from Windows clients. Check out the [appendix chapter **G901**](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md#generating-a-ppk-file-from-a-private-key) to learn how.
 
 > [!WARNING]
-> **You won't be able to login as the administrative user with its new SSH key pair yet!**\
+> **You cannot login as the administrative user with its new SSH key pair yet!**\
 > Since the `publickey` method is still not enabled in the `sshd` service's configuration, the SSH server in your Proxmox VE node will reject your key pair if you attempt to login with it.
 >
 > Just use the password and the TOTP code for now at this point. In the next [Hardening the `sshd` service](#hardening-the-sshd-service) section you will finally enable the `publickey` method, allowing you login remotely with your key pair.
 
 ## Hardening the `sshd` service
 
-As you did in the [**G007**](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md) and [**G009** chapters](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md), you need to change two configuration files:
+As you did in the chapters [**G007**](G007%20-%20Host%20hardening%2001%20~%20TFA%20authentication.md) and [**G009**](G009%20-%20Host%20hardening%2003%20~%20SSH%20key%20pairs%20and%20sshd%20service%20configuration.md), you need to change two configuration files:
 
 - `/etc/pam.d/sshd`
 - `/etc/ssh/sshd_config`
 
-Also, you'll need to create a new `pam` group for grouping the users that will connect through SSH to the VM, like the administrative user `mgrsys`.
+You also need to create a new `pam` group for grouping the users that will connect through SSH to the VM, like the administrative user `mgrsys`.
 
 ### Create group for SSH users
 
@@ -479,7 +480,7 @@ Fail2Ban is already enabled for SSH connections in the VM, but it needs a more r
 
 Now that your Debian VM has an administrative `sudo` user like `mgrsys` and a hardened SSH service, you can disable the `root` user login altogether:
 
-1. As your administrative user, `cd` to `/etc` and check the `passwd` files present there:
+1. As your administrative `mgrsys` user, `cd` to `/etc` and check the `passwd` files present there:
 
     ~~~sh
     $ cd /etc/
@@ -510,17 +511,17 @@ Now that your Debian VM has an administrative `sudo` user like `mgrsys` and a ha
     root:!$7$HVw1KYN.qAC.lOMC$zb3vRm1oqqdR.gITdV.Lce9XuTjkv7CZ2z4R7diVsduplK.cAGeByZc1Gk3wfhQA6pzuzls3VT9/GhcjehiX70:20336:0:99999:7:::
     ~~~
 
-To check that you cannot login with the `root` user, open a noVNC terminal on the VM from the web console and try to login as `root`. You'll get a `Login incorrect` message back every time you try.
+To check that you cannot login with the `root` user, open a noVNC terminal on the VM from the web console and try to login as `root`. You will get a `Login incorrect` message back every time you try.
 
 ## Configuring the VM with `sysctl`
 
-Next thing to do is to harden and improve the configuration of the VM with `sysctl` settings, as you did in the chapters [**G012**](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md) and [**G015**](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md) for your Proxmox VE host. Since your VM is also running a Debian system, the `sysctl` values applied here will be mostly the same as the ones applied to your PVE node.
+Next thing to do is to harden and improve the configuration of the VM with `sysctl` settings, as you did in the chapters [**G012**](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md) and [**G015**](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md) for your Proxmox VE host. Since your VM is also running a Debian system, the `sysctl` values applied here are mostly the same as the ones applied to your PVE node.
 
 > [!NOTE]
 > **This `sysctl` configuration is kind of generic but oriented to support virtualization and containers, as the Proxmox VE platform does**\
 > In later chapters of this guide, you will have to change some of these settings in the VMs you will use as nodes of your Kubernetes cluster.
 
-So, as `mgrsys`, `cd` to `/etc/sysctl.d/` and apply the configuration files detailed in the following subsections.
+As `mgrsys`, `cd` to `/etc/sysctl.d/` and apply the configuration files detailed in the following subsections.
 
 ~~~sh
 $ cd /etc/sysctl.d
@@ -887,7 +888,7 @@ $ cd /etc/sysctl.d
 
 ## Reboot the VM
 
-Although you've applied the changes with the `sysctl -p` command, restart the VM.
+Although you have applied the changes with the `sysctl -p` command, restart the VM.
 
 ~~~sh
 $ sudo reboot
@@ -897,7 +898,7 @@ Then, login as `mgrsys` and check the system's journal (`journalctl` command) to
 
 ## Disabling transparent hugepages on the VM
 
-Back in the [**G016** chapter](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md), you disabled the transparent hugepages in your Proxmox VE host. Now you'll do the same in this VM.
+Back in the [chapter **G016**](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md), you disabled the transparent hugepages in your Proxmox VE host. Do the same in this VM:
 
 1. Check the current status of the transparent hugepages:
 
@@ -906,7 +907,7 @@ Back in the [**G016** chapter](G016%20-%20Host%20optimization%2002%20~%20Disabli
     [always] madvise never
     ~~~
 
-    Is set as `always` active, which means that probably is already in use. Check it's current usage then.
+    Is set as `always` active, which means that probably is already in use. Check its current usage then:
 
     ~~~sh
     $ grep AnonHuge /proc/meminfo
@@ -945,7 +946,7 @@ Back in the [**G016** chapter](G016%20-%20Host%20optimization%2002%20~%20Disabli
 
 ## Regarding the microcode `apt` packages for CPU vulnerabilities
 
-In the [chapter **G013**](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md), you applied a microcode package to mitigate vulnerabilities found within your host's CPU. You could think that you also need to apply such package in the VM, but installing it in a VM is useless, since the hypervisor won't allow the VM to apply such microcode to the real CPU installed in your Proxmox VE host. In short, never install CPU microcode packages in VMs.
+In the [chapter **G013**](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md), you applied a microcode package to mitigate vulnerabilities found within your host's CPU. You could think that you also need to apply such package in the VM, but installing it in a VM is useless, since the KVM hypervisor does not allow the VM to apply such microcode to the real CPU installed in your Proxmox VE host. In short, never install CPU microcode packages in VMs.
 
 ### The Debian installer has installed the microcode package
 
@@ -1015,24 +1016,29 @@ While monitoring the installation of the Debian VM, I noticed that the installer
 
 ## References
 
+### [Proxmox](https://www.proxmox.com/en/)
+
+- [Proxmox VE Wiki](https://pve.proxmox.com/wiki/Main_Page)
+  - [Qemu-guest-agent](https://pve.proxmox.com/wiki/Qemu-guest-agent)
+
 ### [QEMU](https://www.qemu.org/)
 
-- [QEMU. Wiki. Features/GuestAgent](https://wiki.qemu.org/Features/GuestAgent)
-- [Proxmox VE. Wiki. Qemu-guest-agent](https://pve.proxmox.com/wiki/Qemu-guest-agent)
+- [QEMU Wiki](https://wiki.qemu.org/Main_Page)
+- [Features/GuestAgent](https://wiki.qemu.org/Features/GuestAgent)
 
 ### About `sudo`
 
-- [Debian superuser rights (sudo, visudo)](https://serverspace.us/support/help/debian-superuser-rights-sudo-visudo/)
+- [Server Space. Tutorials. Instructions. Debian superuser rights (sudo, visudo)](https://serverspace.us/support/help/debian-superuser-rights-sudo-visudo/)
 
 ### Disabling `root` login
 
-- [4 Ways to Disable Root Account in Linux](https://www.tecmint.com/disable-root-login-in-linux/)
-- [Should I disable the root account on my Debian PC for security?](https://unix.stackexchange.com/a/383309)
-- [Who creates /etc/{group,gshadow,passwd,shadow}-?](https://unix.stackexchange.com/questions/27717/who-creates-etc-group-gshadow-passwd-shadow)
+- [Tecmint. 4 Ways to Disable Root Account in Linux](https://www.tecmint.com/disable-root-login-in-linux/)
+- [StackExchange. Unix & Linux. Should I disable the root account on my Debian PC for security?](https://unix.stackexchange.com/a/383309)
+- [StackExchange. Unix & Linux. Who creates /etc/{group,gshadow,passwd,shadow}-?](https://unix.stackexchange.com/questions/27717/who-creates-etc-group-gshadow-passwd-shadow)
 
 ### Microcode packages on VMs
 
-- [What if you have a microcode package installed on the VM?](https://www.reddit.com/r/debian/comments/bqk2z0/is_it_necessary_to_install_intelmicrocode_to/eo5zt6i?utm_source=share&utm_medium=web2x&context=3)
+- [Reddit. debian. What if you have a microcode package installed on the VM?](https://www.reddit.com/r/debian/comments/bqk2z0/is_it_necessary_to_install_intelmicrocode_to/eo5zt6i?utm_source=share&utm_medium=web2x&context=3)
 
 ## Navigation
 

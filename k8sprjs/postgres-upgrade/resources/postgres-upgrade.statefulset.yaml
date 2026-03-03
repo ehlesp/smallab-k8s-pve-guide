@@ -14,8 +14,8 @@ spec:
         image: tianon/postgres-upgrade:17-to-18
         command: ["/bin/sh", "-c"]
         args:
-          - "/usr/lib/postgresql/17/bin/pg_checksums --pgdata /var/lib/postgresql/data/17/ --enable --progress"
-#          - "/usr/lib/postgresql/17/bin/pg_checksums --disable --pgdata /var/lib/postgresql/data/17/"
+        - "/usr/lib/postgresql/17/bin/pg_checksums --pgdata /var/lib/postgresql/data/17/ --enable --progress"
+        #- "/usr/lib/postgresql/17/bin/pg_checksums --disable --pgdata /var/lib/postgresql/data/17/"
         volumeMounts:
         - name: postgresql-storage
           mountPath: /var/lib/postgresql/data

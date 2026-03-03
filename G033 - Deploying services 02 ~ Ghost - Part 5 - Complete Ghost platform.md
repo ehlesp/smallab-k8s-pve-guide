@@ -11,7 +11,7 @@
 - [Deploying the main Kustomize project in the cluster](#deploying-the-main-kustomize-project-in-the-cluster)
 - [Start using Ghost](#start-using-ghost)
 - [Security considerations in Ghost](#security-considerations-in-ghost)
-- [Ghost platform's Kustomize project attached to this guide series](#ghost-platforms-kustomize-project-attached-to-this-guide-series)
+- [Ghost platform's Kustomize project attached to this guide](#ghost-platforms-kustomize-project-attached-to-this-guide)
 - [Relevant system paths](#relevant-system-paths)
   - [Folders in `kubectl` client system](#folders-in-kubectl-client-system)
   - [Files in `kubectl` client system](#files-in-kubectl-client-system)
@@ -22,7 +22,7 @@
 
 ## Putting together the whole Ghost platform
 
-This is the final part of the Ghost platform deployment procedure. Here you will declare:
+This is the final part of the Ghost platform deployment procedure. Here you are going to declare:
 
 - The persistent storage volumes claimed by the Ghost components.
 - The TLS certificate for encrypting client communications with the Ghost platform.
@@ -156,17 +156,17 @@ All these `PersistentVolume` declarations use exactly the same parameters:
 
     > [!IMPORTANT]
     > **Mind the value you set in the `storageClassName` parameter**\
-    > If you leave the `storageClassName` parameter unset, its value will be set internally to the default one (`local-path` in a K3s cluster). On the other hand, if the value is the empty string (`storageClassName: ""`), this leaves the volume with no storage class assigned at all.
+    > If you leave the `storageClassName` parameter unset, its value is set internally to the default one (`local-path` in a K3s cluster). On the other hand, if the value is the empty string (`storageClassName: ""`), this leaves the volume with no storage class assigned at all.
 
   - The `spec.persistentVolumeReclaimPolicy` parameter is about the reclaim policy to apply to this persistent volume. When all the persistent volume claims that required this volume are deleted from the cluster, the system must know what to do with this storage.
 
     - There are only two policies to use here: `Retain` or `Delete`.
 
-    - Left unset, it will be set to whatever reclaim policy is set in the storage class. The `local-path` has it on `Delete`.
+    - Left unset, it is set to whatever reclaim policy is set in the storage class. The `local-path` has it on `Delete`.
 
-    - `Retain` deletes the persistent volume from the cluster but not the associated storage asset. This means that whatever data was stored there will be preserved.
+    - `Retain` deletes the persistent volume from the cluster but not the associated storage asset. This means that whatever data stored there gets preserved.
 
-    - `Delete` deletes both the persistent volume and the associated storage asset, but only if the volume plugin/storage provisioner used supports it. In the case of the Rancher [local-path-provisioner](https://github.com/rancher/local-path-provisioner) used in K3s (associated with the `local-path` storage class), it will automatically clean up the contents stored in the volume.
+    - `Delete` deletes both the persistent volume and the associated storage asset, but only if the volume plugin/storage provisioner used supports it. In the case of the Rancher [local-path-provisioner](https://github.com/rancher/local-path-provisioner) used in K3s (associated with the `local-path` storage class), it automatically cleans up the contents stored in the volume.
 
   - In `spec.local.path` is where you specify the **absolute path**, within the node's filesystem, where you want to mount this volume. Notice how, in all the PVs, it has the path to their corresponding `k3smnt` folder you already left prepared in your `k3sagent02` VM.
 
@@ -199,7 +199,7 @@ To encrypt the communications between your Ghost platform and its clients, you n
       duration: 2190h # 3 months
       renewBefore: 168h # Certificates must be renewed some time before they expire (7 days)
       dnsNames:
-        - ghost.homelab.cloud
+      - ghost.homelab.cloud
       privateKey:
         algorithm: ECDSA
         size: 521
@@ -215,7 +215,7 @@ To encrypt the communications between your Ghost platform and its clients, you n
 
 ## Traefik IngressRoute for enabling HTTPS access to the Ghost platform
 
-As you did with the [Traefik dashboard](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md) or [Headlamp](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md), better handle the ingress into your Ghost platform with a Traefik `IngressRoute`. This will allow you to provide a proper HTTPS access that uses [the TLS certificate you have declared in the previous section](#ghost-platforms-tls-certificate):
+As you did with the [Traefik dashboard](G030%20-%20K3s%20cluster%20setup%2013%20~%20Enabling%20the%20Traefik%20dashboard.md) or [Headlamp](G031%20-%20K3s%20cluster%20setup%2014%20~%20Deploying%20the%20Headlamp%20dashboard.md), better handle the ingress into your Ghost platform with a Traefik `IngressRoute`. This allows you to provide a proper HTTPS access that uses [the TLS certificate you have declared in the previous section](#ghost-platforms-tls-certificate):
 
 1. Create the `ghost.homelab.cloud.ingressroute.traefik.yaml` in the `resources` folder:
 
@@ -301,10 +301,10 @@ With every required element declared or configured, now you need to put everythi
     namespace: ghost
 
     labels:
-      - pairs:
-          platform: ghost
-        includeSelectors: true
-        includeTemplates: true
+    - pairs:
+        platform: ghost
+      includeSelectors: true
+      includeTemplates: true
 
     resources:
     - resources/ghost-hdd-srv.persistentvolume.yaml
@@ -325,7 +325,7 @@ With every required element declared or configured, now you need to put everythi
       - The `Namespace` object itself.
       - The `PersistentVolume` resources.
 
-    - The `labels` will brand all the resources part of this Kustomize project with a `platform` label. Remember that you already set an `app` label within each major component.
+    - The `labels` brands all the resources part of this Kustomize project with a `platform` label. Remember that you already set an `app` label within each major component.
 
     - In the `resources` list you have YAML files and also the directories of the components you have configured in the previous parts of this guide.
 
@@ -1125,7 +1125,7 @@ Before deploying your Ghost Kustomize project, review first its YAML output:
     The most important thing here is to verify that the resources that get their names modified by Kustomize with an autogenerated suffix, in particular `ConfigMaps` and `Secrets`, are called by their modified name wherever they are used in this setup.
 
     > [!NOTE]\
-    > **Kustomize will not change the names if they have been put in non-standard Kubernetes parameters**\
+    > **Kustomize does not change the names if they have been put in non-standard Kubernetes parameters**\
     > It might also be possible that Kustomize may not even touch values in certain particular standard ones.
 
     On the other hand, notice how Kustomize has grouped all the resources together according to their kind and ordered them alphabetically by `metadata.name`. Also see how the `ghost` namespace has been set in all resources except in the `PersistentVolume` ones because those in particular are not namespaced.
@@ -1192,7 +1192,7 @@ If you are satisfied with the YAML output of your Ghost Kustomize project, proce
 
     - The components shown first are the persistent volumes with all their main details. Notice how the values under the `CAPACITY` column are in megabytes (`M`), although those sizes were specified in gigabytes (`G`) in their YAML manifests. Also see how there is no information about to which node are the volumes associated to. The status `Bound` means that the volume has been claimed, so it is not free at the moment.
 
-    - Right below the persistent volumes you got the persistent volume claims, and all of them appear with `Bound` status and with the name of the `VOLUME` they're bound to. And, as it happened with the PVs, the PVCs' requested `CAPACITY` is shown in megabytes (`M`) rather than gigabytes (`G`).
+    - Right below the persistent volumes you got the persistent volume claims, and all of them appear with `Bound` status and with the name of the `VOLUME` they are bound to. And, as it happened with the PVs, the PVCs' requested `CAPACITY` is shown in megabytes (`M`) rather than gigabytes (`G`).
 
     - All the config maps declared in this Ghost project are listed next, with their corresponding Kubernetes-autogenerated suffix attached to their names. Among them appears a `kube-root-ca.crt`, which is a public TLS CA certificate used internally to verify the identity of the cluster's Kubernetes API server.
 
@@ -1216,7 +1216,7 @@ If you are satisfied with the YAML output of your Ghost Kustomize project, proce
 
 ## Start using Ghost
 
-When the pod for the Ghost server is listed as READY, browse to your Ghost platform (found in `https://ghost.homelab.cloud` for this guide) and you will be met with the homepage of its basic default site:
+When the pod for the Ghost server is listed as READY, browse to your Ghost platform (found in `https://ghost.homelab.cloud` for this guide) to see the homepage of its basic default site:
 
 ![Ghost default site homepage](images/g033/ghost-default-site.webp "Ghost default site homepage")
 
@@ -1228,25 +1228,25 @@ This is not really "your" site yet, it is just some default content for Ghost to
 
 You still need to explicitly setup your site, and register your first staff user:
 
-1. Browse into the `/ghost` subpath in your Ghost server. You will be redirected to a setup form where you can give a title to your site and configure your first staff user. In this guide, this setup page's full URL would be `https://ghost.homelab.cloud/ghost`:
+1. Browse into the `/ghost` subpath in your Ghost server. Ghost redirecteds you to a setup form where you can give a title to your site and configure your first staff user. In this guide, this setup page's full URL would be `https://ghost.homelab.cloud/ghost`:
 
     ![Ghost site setup form](images/g033/ghost-site-setup-form.webp "Ghost site setup form")
 
-2. After pressing the "Create account & start publishing" button in the previous form, you will get directly signed in as that new staff user in your Ghost site's administration dashboard:
+2. After pressing the "Create account & start publishing" button in the previous form, you get directly signed in as that new staff user in your Ghost site's administration dashboard:
 
     ![Onboarding in Ghost site administration area](images/g033/ghost-site-admin-area-onboarding.webp "Onboarding in Ghost site administration area")
 
-    You will be welcomed by the onboarding `Let's get started!` page that will help you start working with your Ghost site. Be aware that Ghost will automatically make your first staff user the owner of the site.
+    You are welcomed by the onboarding `Let's get started!` page that helps you start working with your Ghost site. Be aware that Ghost makes your first staff user the owner of the site automatically.
 
     Also, you will receive a welcome email in the email address of your staff user:
 
     ![Ghost new site welcome email](images/g033/ghost-welcome-email-site-staff-user.webp  "Ghost new site welcome email")
 
-3. With the site initialized and your first staff user registered, everytime you need to sign back into your Ghost site, remember to browse to the "hidden" administration subpath `/ghost`. Ghost will redirect you directly to the "Sign in" for staff users:
+3. With the site initialized and your first staff user registered, everytime you need to sign back into your Ghost site, remember to browse to the "hidden" administration subpath `/ghost`. Ghost redirects you directly to the "Sign in" page for staff users:
 
     ![Ghost site sign in form for staff users](images/g033/ghost-site-sign-in-staff-users.webp "Ghost site sign in form for staff users")
 
-    The full subpath of this page is `/ghost/#/signin`. Ghost will redirect you here automatically when browsing to the `/ghost` subpath if you do not have a staff user session active in the site yet.
+    The full subpath of this page is `/ghost/#/signin`. Ghost redirects you here automatically when browsing to the `/ghost` subpath if you do not have a staff user session active in the site yet.
 
     > [!IMPORTANT]
     > **Staff users and members are different types of accounts in Ghost**\
@@ -1270,7 +1270,7 @@ Once you have your Ghost platform running, consider the following security conce
 
     - Do not forget to enable the two-factor authentication to all staff users registered in your site.
 
-## Ghost platform's Kustomize project attached to this guide series
+## Ghost platform's Kustomize project attached to this guide
 
 You can find the Kustomize project for this Ghost platform deployment in the following attached folder.
 
@@ -1315,7 +1315,7 @@ You can find the Kustomize project for this Ghost platform deployment in the fol
 
 ### [SREDevOps.org](https://www.sredevops.org/)
 
-- [How to deploy Ghost CMS on Kubernetes](www.sredevops.org/en/how-to-deploy-ghost-cms-on-kubernetes/)
+- [How to deploy Ghost CMS on Kubernetes](https://www.sredevops.org/en/how-to-deploy-ghost-cms-on-kubernetes/)
 
 - [GitHub. Ghost on Kubernetes](https://github.com/sredevopsorg/ghost-on-kubernetes)
 

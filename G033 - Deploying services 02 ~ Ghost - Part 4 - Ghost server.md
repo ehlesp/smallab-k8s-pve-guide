@@ -78,7 +78,7 @@ The whole configuration of Ghost goes into a single JSON file. Among other param
       },
       "logging": {
         "transports": [
-            "stdout"
+          "stdout"
         ]
       },
       "mail": {
@@ -200,7 +200,7 @@ The whole configuration of Ghost goes into a single JSON file. Among other param
       > This way, rather than having one bloated `hosts` line with all the DNS names related to the Traefik service IP, you can have those hostnames more clearly separated for readability.
 
     - `server`\
-      This block has the parameters declaring through which IP (the `host` value) and `port` the Ghost instance has to listen. In this case, Ghost will listen through all available IPs (`0.0.0.0`) in the port 2368, which is the default one for Ghost.
+      This block has the parameters declaring through which IP (the `host` value) and `port` the Ghost instance has to listen. In this case, Ghost is configured to listen through all available IPs (`0.0.0.0`) in the port 2368, which is the default one for Ghost.
 
     - `logging`\
       Where to define where and how Ghost must deliver its logs. In this case, it is configured to print them in the standard output (`stdout`) rather than putting them in a file.
@@ -246,7 +246,7 @@ The whole configuration of Ghost goes into a single JSON file. Among other param
       This parameter allows to pick which process manager to use for handling the Ghost server process, and supports only the `local` and `systemd` options. Beyond this, there is no further explanation about this parameter as you can see [in the _Service options_ section found here](https://docs.ghost.org/ghost-cli#options).
 
     - `paths.contentPath`\
-      This path is where Ghost will keep contents like data, images, logs and adapters. The path specified here correlates to the ones you will see configured in the custom rootless Ghost container image specified in the `StateFulSet` declared later in this part.
+      This path is where Ghost keeps contents like data, images, logs and adapters. The path specified here correlates to the ones you are going to see configured in the custom rootless Ghost container image specified in the `StateFulSet` declared later in this part.
 
     > [!WARNING]
     > **The passwords are put in `secrets/config.production.json` as plain unencrypted text**\
@@ -254,7 +254,7 @@ The whole configuration of Ghost goes into a single JSON file. Among other param
 
 ## Ghost server environment variables
 
-There are a few environment variables you will have to declare in the Ghost server deployment that are better put together in one configuration file:
+There are a few environment variables you have to declare in the Ghost server deployment that are better put together in one configuration file:
 
 1. Create a new `env.properties` file under `configs`:
 
@@ -276,14 +276,14 @@ There are a few environment variables you will have to declare in the Ghost serv
       Path where the Ghost server software will be installed.
 
     - `GHOST_CONTENT`\
-      Path where the contents stored by Ghost will be kept.
+      Path where the Ghost contents are going to be stored.
 
     - `NODE_ENV`\
       Determines the mode in which the Ghost server is going to run. Ghost supports the `production` and `development` modes which, among other details, determine which type of database is used with Ghost. In `production` mode, Ghost requires using a MySQL database, whereas in `development` mode also allows using an SQLite one instead.
 
 ## Ghost server persistent storage claim
 
-Here you will declare the `PersistentVolumeClaim` that links your Ghost server with the persistent volume (declared in the last part of this Ghost deployment procedure) that will hold its contents:
+Here you are going to declare the `PersistentVolumeClaim` that links your Ghost server with the persistent volume (declared in the last part of this Ghost deployment procedure) that will hold its contents:
 
 1. Create a `server-ghost.persistentvolumeclaim.yaml` file under `resources`:
 
@@ -471,7 +471,7 @@ The Ghost server stores content, making necessary to deploy it as a `StatefulSet
 
       - The init container `image` is of a BusyBox utility environment. This is a lightweight utility system that comes with a set of common tools helpful in managing Kubernetes clusters.
 
-      - The `GHOST_CONTENT` environment variable is the path where the Ghost server will store all its contents. Notice that this variable is loaded in a `ConfigMap` resource you will set later in the corresponding Kustomize declaration for this Ghost server subproject.
+      - The `GHOST_CONTENT` environment variable is the path where the Ghost server is going to store all its contents. Notice that this variable is loaded in a `ConfigMap` resource you will set later in the corresponding Kustomize declaration for this Ghost server subproject.
 
       - The init container has a `securityContext` to limit its security footprint:
 
@@ -500,7 +500,7 @@ The Ghost server stores content, making necessary to deploy it as a `StatefulSet
         > [!NOTE]
         > [Learn more about how to configure these probes in this official Kubernetes documentation](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes).
 
-      - The `envFrom` block loads the environment variables configured in the file declared earlier that will be handled by a `ConfigMap` resource you will enable in the Kustomize declaration for this Ghost server subproject.
+      - The `envFrom` block loads the environment variables configured in the file declared earlier to be handled by a `ConfigMap` resource you are going to enable in the Kustomize declaration for this Ghost server subproject.
 
       - The `volumeMounts` connects the Ghost server container with three storage resources:
 
@@ -530,7 +530,7 @@ The Ghost server stores content, making necessary to deploy it as a `StatefulSet
 
     - The `hostAliases` block allows adding entries to the `/etc/hosts` file of the pod generated by this StatefulSet. Since Ghost needs to find its own `url` active, and there is no external DNS service resolving its hostname, it is necessary to enable it within the pod's `/etc/hosts` file.
 
-      The `ip` value is the static IP of the Traefik service through which the Ghost server will be reachable. The `hostnames` list has the hostname specified [in the `url` parameter of the Ghost configuration file](#ghost-server-configuration-file).
+      The `ip` value is the static IP of the Traefik service through which the Ghost server is going to be reachable. The `hostnames` list has the hostname specified [in the `url` parameter of the Ghost configuration file](#ghost-server-configuration-file).
 
     - In the `volumes` block you have the three storage resources needed in this Ghost server pod:
 
@@ -601,10 +601,10 @@ With all the necessary elements for your Ghost server component declared in thei
     kind: Kustomization
 
     labels:
-      - pairs:
-          app: server-ghost
-        includeSelectors: true
-        includeTemplates: true
+    - pairs:
+        app: server-ghost
+      includeSelectors: true
+      includeTemplates: true
 
     resources:
     - resources/server-ghost.persistentvolumeclaim.yaml
@@ -892,12 +892,10 @@ As with the other components, you should check the output generated by the Ghost
 This Ghost server cannot be deployed on its own because is missing several things:
 
 - The persistent volume it needs to store its data.
-
 - It needs the Valkey cache server and the MariaDB server to run.
+- Both the ingress resource and the TLS certificate for encrypted communications with the Ghost server to be declared in the last part of this deployment procedure.
 
-- Both the ingress resource and the TLS certificate for encrypted communications with the Ghost server will be declared in the last part of this deployment procedure.
-
-Again I must tell you to wait to the upcoming final part of this Ghost deployment procedure. There you will add the missing parts, tie everything together and deploy the whole setup in one go.
+Again, you must wait to the upcoming final part of this Ghost deployment procedure. There you will add the missing parts, tie everything together and deploy the whole setup in one go.
 
 ## Relevant system paths
 
@@ -946,6 +944,8 @@ Again I must tell you to wait to the upcoming final part of this Ghost deploymen
 - [How to deploy Ghost CMS on Kubernetes](https://www.sredevops.org/en/how-to-deploy-ghost-cms-on-kubernetes/)
 
 ### [Kubernetes](https://kubernetes.io/docs/)
+
+- [Kubernetes Documentation](https://kubernetes.io/docs/)
 
 #### ConfigMaps
 

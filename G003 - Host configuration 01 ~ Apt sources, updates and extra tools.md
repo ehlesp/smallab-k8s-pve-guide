@@ -8,25 +8,24 @@
   - [You can use `apt` directly](#you-can-use-apt-directly)
 - [Installing useful extra tools](#installing-useful-extra-tools)
   - [Utilities for visualizing sensor information](#utilities-for-visualizing-sensor-information)
-    - [The lm\_sensors package](#the-lm_sensors-package)
+    - [The `lm_sensors` package](#the-lm_sensors-package)
     - [The Stress Terminal UI: s-tui](#the-stress-terminal-ui-s-tui)
 - [Relevant system paths](#relevant-system-paths)
   - [Directories](#directories)
   - [Files](#files)
 - [References](#references)
   - [Proxmox](#proxmox)
-  - [Tools](#tools)
+  - [Proxmox VE related contents](#proxmox-ve-related-contents)
+  - [System tools](#system-tools)
 - [Navigation](#navigation)
 
 ## Proxmox VE 9.0 runs on Debian 13 "trixie"
 
-Remember that your Proxmox VE 9.0 runs on a **Debian** _GNU Linux version 13_ (_trixie_).
-
-The Debian version can be checked by opening the file `/etc/os-release` found in the system.
+Remember that your Proxmox VE 9.0 runs on a **Debian** _GNU Linux version 13_ (_trixie_). You can check the Debian version in the `/etc/os-release` file found in the system.
 
 ## Editing the apt repository sources
 
-Proxmox VE comes with its `apt` system configured to point at two repositories for **enterprise subscriptions**, one for Proxmox VE itself while the other is for the Proxmox version of the Ceph distributed storage system. This is a problem because, unless you already have such subscription, you won't be able to perform system updates at all. Look what happens if, in a `root` shell, you try to execute `apt update` with the default setup.
+Proxmox VE comes with its `apt` system configured to point at two repositories for **enterprise subscriptions**, one for Proxmox VE itself while the other is for the Proxmox version of the Ceph distributed storage system. This is a problem because, unless you already have such subscription, you will not be able to perform system updates at all. Look what happens if, in a `root` shell, you try to execute `apt update` with the default setup:
 
 ~~~sh
 $ apt update
@@ -49,11 +48,11 @@ Notice: Updating from such a repository can't be done securely, and is therefore
 Notice: See apt-secure(8) manpage for repository creation and user configuration details.
 ~~~
 
-See the lines like the `Err:6` one indicating an error in the process. Since you don't have a valid enterprise subscription, your system is `Unauthorized` to get updates from Proxmox's enterprise repository.
+See the lines like the `Err:6` one indicating an error in the process. Without a valid enterprise subscription, your system is `Unauthorized` to get updates from Proxmox's enterprise repository.
 
 ### Changing the apt repositories
 
-You need to disable the enterprise repositories and enable the repository for non-subscribers.
+You need to disable the enterprise repositories and enable the repository for non-subscribers:
 
 1. Access your Proxmox VE web console as `root`, and browse to your `pve` node's `Updates > Repositories` section:
 
@@ -63,23 +62,23 @@ You need to disable the enterprise repositories and enable the repository for no
 
 2. Notice that there are two enterprise repositories, one for the [Ceph distributed storage technology](https://ceph.io/en/) embedded in Proxmox while the other is for Proxmox VE itself. **You have to disable both**:
 
-    Begin with the Ceph enterprise repository, the one with the URI `https://enterprise.proxmox.com/debian/ceph-squid`.
+    Begin with the Ceph enterprise repository, the one with the URI `https://enterprise.proxmox.com/debian/ceph-squid`:
 
     ![Proxmox Ceph enterprise repository selected to be disabled](images/g003/pve_node_updates_repositories_section_disable_enterprise_ceph.webp "Proxmox Ceph enterprise repository selected to be disabled")
 
-    See that the `Disable` button is now active, so press it to disable the enterprise repository. Then, do the same with the other enterprise repository, the one for Proxmox VE with the URI `https://enterprise.proxmox.com/debian/pve`.
+    See that the `Disable` button is now active, so press it to disable the enterprise repository. Then, do the same with the other enterprise repository, the one for Proxmox VE with the URI `https://enterprise.proxmox.com/debian/pve`:
 
     ![Proxmox VE enterprise repository selected to be disabled](images/g003/pve_node_updates_repositories_section_disable_enterprise_pve.webp "Proxmox VE enterprise repository selected to be disabled")
 
-3. With both Proxmox enterprise repositories disabled, the web console will warn you that you won't get any updates for your Proxmox VE platform:
+3. With both Proxmox enterprise repositories disabled, the web console warns you that you will not get any updates for your Proxmox VE platform:
 
     ![Error warning about not having a Proxmox VE repository enabled](images/g003/pve_node_updates_repositories_section_warning_no_repository.webp "Error warning about not having a Proxmox VE repository enabled")
 
-4. Click on the `Add` button now. The web console will prompt the same warning you saw when you logged in:
+4. Click on the `Add` button now. The web console prompts the same warning you saw when you logged in:
 
     ![No valid subscription warning](images/g003/pve_node_updates_repositories_section_warning_no_subscription.webp "No valid subscription warning")
 
-    Click on `OK` and you'll get to the windows where you can add apt repositories.
+    Click on `OK` to open the window where you can add apt repositories:
 
     ![Add apt repositories window](images/g003/pve_node_updates_repositories_section_add_repository_window.webp "Add apt repositories window")
 
@@ -87,7 +86,7 @@ You need to disable the enterprise repositories and enable the repository for no
 
     ![Proxmox No-Subscription repository selected](images/g003/pve_node_updates_repositories_section_add_repository_no_subscription.webp "Proxmox No-Subscription repository selected")
 
-6. With the `No-Subscription` repository added, you'll see a different status in the `Repositories` screen:
+6. With the `No-Subscription` repository added, you see a different status in the `Repositories` screen:
 
     ![Repositories screen updated](images/g003/pve_node_updates_repositories_updated.webp "Repositories screen updated")
 
@@ -95,9 +94,9 @@ You need to disable the enterprise repositories and enable the repository for no
 
 ## Update your system
 
-Now you can browse to the `Updates` screen and see what's pending:
+Now you can browse to the `Updates` screen and see what is pending:
 
-1. Browse to the `Updates` tab, and click on the `Refresh` button to be sure that you're getting the most recent list of updates:
+1. Browse to the `Updates` tab, and click on the `Refresh` button to be sure that you are getting the most recent list of updates:
 
     ![Refresh button on Updates view](images/g003/pve_node_updates_refresh_button.webp "Refresh button on Updates view")
 
@@ -105,7 +104,7 @@ Now you can browse to the `Updates` screen and see what's pending:
 
     ![No valid subscription warning](images/g003/pve_node_updates_repositories_section_warning_no_subscription.webp "No valid subscription warning")
 
-    Close that window and you'll meet a new one in which you'll see the `apt update` task's progress:
+    Close that window and meet a new one in which you can see the `apt update` task's progress:
 
     ![Update package task window](images/g033/../g003/pve_node_updates_task_window.webp "Update package task window")
 
@@ -119,7 +118,7 @@ Now you can browse to the `Updates` screen and see what's pending:
 
     ![Upgrade button](images/g003/pve_node_updates_upgrade_button.webp "Upgrade button")
 
-3. By default, the web console will open a noVNC shell console, using your `root` user, in which it'll launch the `apt dist-upgrade` command:
+3. By default, the web console opens a noVNC shell console, using your `root` user, in which it launches the `apt dist-upgrade` command:
 
     ![apt upgrade in noVNC shell](images/g003/pve_node_updates_noVNC_shell.webp "apt upgrade in noVNC shell")
 
@@ -127,7 +126,7 @@ Now you can browse to the `Updates` screen and see what's pending:
     > **Pay attention to when the `apt` command requests your confirmation to proceed!**\
     > Also, be aware that some packages may require your input for some reason or other.
 
-4. When the apt command finishes, it'll return the control to the prompt within the shell console:
+4. When the `apt` command finishes, it returns the control to the prompt within the shell console:
 
     ![apt upgrade finished](images/g003/pve_node_updates_noVNC_shell_apt_ended.webp "apt upgrade finished")
 
@@ -135,19 +134,19 @@ Now you can browse to the `Updates` screen and see what's pending:
 
     ![noVNC shell disconnecting](images/g003/pve_node_updates_noVNC_shell_logout.webp "noVNC shell disconnecting")
 
-5. Back in the `Updates` view of your `pve` node, you'll see that the updates list hasn't been refreshed. So, press again on the `Refresh` button to update the list:
+5. Back in the `Updates` view of your `pve` node, see that the updates list has not been refreshed. Press again on the `Refresh` button to update the list:
 
     ![Refresh button on Updates view](images/g003/pve_node_updates_refresh_button_after_update.webp "Refresh button on Updates view")
 
-6. The `Updates` view may or may not show more updates to apply after refreshing. So, keep on applying the upgrades until none appears listed in this page:
+6. The `Updates` view may or may not show more updates to apply after refreshing. Keep on applying the upgrades until none appears listed in this page:
 
     ![Updates list empty](images/g003/pve_node_updates_empty_list.webp "Updates list empty")
 
-7. If you've applied many updates, or if some of them were kernel-related, it's better if you reboot the system. Just press on the `Reboot` button while having your `pve` node selected:
+7. If you have applied many updates, or if some of them were kernel-related, it is better if you reboot the system. Just press on the `Reboot` button while having your `pve` node selected:
 
     ![Reboot button in web console](images/g003/pve_node_reboot_button.webp "Reboot button in web console")
 
-    The Proxmox VE web console will ask you to confirm the action. Click on `Yes` to proceed:
+    The Proxmox VE web console asks your confirmation. Click on `Yes` to proceed:
 
     ![PVE node reboot confirmation](images/g003/pve_node_reboot_confirmation.webp "PVE node reboot confirmation")
 
@@ -157,24 +156,25 @@ Now you can browse to the `Updates` screen and see what's pending:
 
 As you have seen before, you can end having to apply several updates at once in your system. In theory, a good administrator has to be diligent and verify that each update is safe to apply. In reality, trying to do that is not possible. Still, you should at least be aware of the updates that directly affect the Proxmox VE platform, the ones that can update to a more recent minor or major version. Those are the ones that could break things in your setup, specially the major ones (for instance, when going from a version 8.y.z to a 9.y.z one).
 
-My advice here is, since you only have one standalone node so, before you apply such updates, you should make a clone of your only node's Proxmox VE root filesystem (or the entire drive) with a tool like **Clonezilla**. This way, if something goes south in the upgrade, you can always go back to the previous stable state.
-
-> [!NOTE]
-> Check out the [**G905** appendix chapter](G905%20-%20Appendix%2005%20~%20Cloning%20storage%20drives%20with%20Clonezilla.md) to see how to use Clonezilla to backup your host's storage drives.
+Since you only have one standalone node, before you apply such updates, you should make a clone of your only node's Proxmox VE root filesystem (or the entire drive) with a tool like [Clonezilla](https://clonezilla.org/). This way, if something goes south in the upgrade, you can always go back to the previous stable state.
 
 ### You can use `apt` directly
 
 Instead of using the `Updates` screen in the web console, you can use the `apt` command directly through an SSH shell or by opening a shell directly from the web console.
 
-Personally, I prefer to connect through a SSH client to the server, as it's explained in the [**G901** appendix chapter about PuTTY](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md). If you prefer to open the shell from the Proxmox VE web console, know that it offers three different options:
+> [!NOTE]
+> **Check the appendix G901 about connecting with the PuTTY client**\
+> If you want to connect through a SSH client to your servers, you can do it with a client like PuTTY as it is explained by the [appendix chapter **G901**](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md).
 
-![Web console shell options](images/g003/pve_node_shell_options.webp "Web console shell options")
+If you prefer to open the shell from the Proxmox VE web console, know that it offers three different options:
 
-I recommend the `xterm.js` option, since that shell allows you to copy and paste, unlike the **noVCN** one. `SPICE` does not open you a shell, it gives you a file that you have to use in a special client prepared to use the SPICE protocol.
+![Proxmox VE web console shell options](images/g003/pve_node_shell_options.webp "Proxmox VE web console shell options")
+
+The best option is the `xterm.js` shell, since it allows you to copy and paste, unlike the `noVCN` one. `SPICE` does not open you a shell, it gives you a file that you have to use in a special client prepared to use the SPICE protocol.
 
 ## Installing useful extra tools
 
-Now that you can use the `apt` command properly, it's time to install some useful tools for different purposes:
+Now that you can use the `apt` command properly, it is time to install some useful tools for different purposes:
 
 - `htop`\
   Interactive text-based process viewer, similar to `top` but much more user friendly and colorful (on terminals that support color).
@@ -183,13 +183,13 @@ Now that you can use the `apt` command properly, it's time to install some usefu
   Package that includes several useful commands for network management.
 
 - `sudo`\
-  A command that allows a sysadmin to give limited `root` privileges to users and log root activity.
+  A command that allows a system administrator to give limited `root` privileges to users and log root activity.
 
 - `tree`\
   Is a recursive directory listing command that produces a depth indented listing of files.
 
 - `vim`\
-  A more complete version of the `vi` editor, which includes fancy things like syntax coloring.
+  A more complete version of the `vi` editor, which includes fancy features like syntax coloring.
 
 To install all of the above at once, open a shell terminal as `root` and use the following command:
 
@@ -199,17 +199,17 @@ $ apt install -y htop net-tools sudo tree vim
 
 ### Utilities for visualizing sensor information
 
-Any modern computer comes with a bunch of integrated sensors, usually ones that return CPU's cores temperatures, fan speeds and voltages. Sure you'd like to see those values through the shell easily, right? There is a bunch of tools that give such information, but here I'll propose you the two that I found more interesting.
+Any modern computer comes with a bunch of integrated sensors, usually ones that return CPU's cores temperatures, fan speeds and voltages. Sure you would like to see those values through the shell easily, right? There is a bunch of tools that give such information, but this guide proposes you two quite interesting ones.
 
-#### The lm_sensors package
+#### The `lm_sensors` package
 
 The `lm_sensors` package provides a `sensors` command that allows you to see the values returned by the sensors integrated in a Linux host like your PVE server.
 
 > [!NOTE]
 > **The `lm_sensors` package is no longer updated**\
-> It still works, in particular with old hardware like the one used in this guide, but don't be surprised if it stops working in the future.
+> It still works, in particular with old hardware like the one used in this guide, but do not be surprised if it stops working in the future.
 
-To be able to use the `sensors` command, you'll need to install and configure the `lm_sensors` package as follows:
+To be able to use the `sensors` command, you need to install and configure the `lm_sensors` package as follows:
 
 1. Open a shell in your main `pve` node as `root` (or as a `sudo`-able user if you already got one), then execute the next `apt` command:
 
@@ -217,7 +217,7 @@ To be able to use the `sensors` command, you'll need to install and configure th
     $ apt install -y lm-sensors
     ~~~
 
-2. Execute `sensors-detect`. This will launch a scan on your system looking for all the sensors available in it, so it can determine which kernel modules `lm_sensors` has to use. This scan is automatic, but the command will ask you on every step of the procedure:
+2. Execute `sensors-detect`. This launches a scan on your system looking for all the sensors available in it, so it can determine which kernel modules `lm_sensors` has to use. This scan is automatic, but the command asks you on every step of the procedure:
 
     > [!WARNING]
     > **Some steps might give trouble if executed in your system!**\
@@ -315,9 +315,9 @@ To be able to use the `sensors` command, you'll need to install and configure th
     Unloading cpuid... OK
     ~~~
 
-    I've ommited a big chunk of the `sensors-detect` command's output since it resulted to be very long in my reference hardware, but know that I executed all steps except one without issues. See how the final question asks for your permission to write some lines in the `/etc/modules` file. Say `yes` to it, but bear in mind that, if you uninstall the `lm_sensors` package later, those lines will remain written in `/etc/modules`.
+    A big chunk of the `sensors-detect` command's output has been omitted since it resulted to be very long in this guide's reference hardware. Still, know that all but one of the steps were executed without issues. See how the final question asks for your permission to write some lines in the `/etc/modules` file. Say `yes` to it, but bear in mind that, if you uninstall the `lm_sensors` package later, those lines will remain written in `/etc/modules`.
 
-    Below you can see the lines sensors-detect wrote in the `/etc/modules` file of my PVE host. Bear in mind that these lines may be different in your system.
+    Below you can see the lines `sensors-detect` wrote in the `/etc/modules` file of this guide's PVE host. Bear in mind that these lines may be different in your system:
 
     ~~~sh
     # /etc/modules is obsolete and has been replaced by /etc/modules-load.d/.
@@ -333,7 +333,7 @@ To be able to use the `sensors` command, you'll need to install and configure th
 
     > [!NOTE]
     > **The `/etc/modules` file has been replaced by the `/etc/modules-load.d/` directory**\
-    > Notice the related warning about this change at the beggining of the `/etc/modules` file. If you check inside the `/etc/modules-load.d/` directory, you will find a `modules.conf` symlink file pointing to the `/etc/modules` file ensuring retrocompatibility with packages that still haven't adapted to this change like `lm_sensors`.
+    > Notice the related warning about this change at the beginning of the `/etc/modules` file. If you check inside the `/etc/modules-load.d/` directory, you will find a `modules.conf` symlink file pointing to the `/etc/modules` file ensuring backwards compatibility with packages that still have not adapted to this change like `lm_sensors`.
 
 3. To ensure that all the modules configured by `sensors-detect` are loaded, reboot your system:
 
@@ -386,30 +386,31 @@ To be able to use the `sensors` command, you'll need to install and configure th
     Core 3:       +35.0°C  (high = +105.0°C, crit = +105.0°C)
     ~~~
 
-    Notice how the command outputs all sorts of information from the system: different temperature measurements from different adapters and interfaces, the speed of the fans present in my host and also some voltage information. Also see how the command has printed `ALARM` on several lines, which are warnings of things the command is finding odd. Since my computer is working fine, this is more probably a question of configuring the command so it evaluates the values properly. As you may imagine, the output of this command will be quite different in your machine.
+    Notice how the command outputs all sorts of information from the system: different temperature measurements from different adapters and interfaces, the speed of the fans present in the host and also some voltage information. Also see how the command has printed `ALARM` on several lines, which are warnings of things the command is finding odd. Since this guide's host is working fine, this is more probably a question of configuring the command so it evaluates the values properly. As you may imagine, the output of this command will be quite different in your machine.
 
 #### The Stress Terminal UI: s-tui
 
-The _Stress Terminal UI_, or just `s-tui`, is a command that gives you a much more graphical vision of the current performance of your hardware. To get it, just install its package with `apt`.
+The _Stress Terminal UI_, or just `s-tui`, is a command that gives you a much more graphical vision of the current performance of your hardware. To get it, just install its package with `apt`:
 
 ~~~sh
 $ apt install -y s-tui
 ~~~
 
-With the package installed, just execute the `s-tui` command.
+With the package installed, just execute the `s-tui` command:
 
 > [!IMPORTANT]
+> **Execute s-tui with `sudo` when using a regular user**\
 > When using a **non-root** user, execute this command with `sudo` so it can access all the system sensors.
 
 ~~~sh
 $ s-tui
 ~~~
 
-You should see the main screen of `s-tui` immediately.
+You should see the main screen of `s-tui` immediately:
 
 ![Main screen of s-tui](images/g003/pve_node_shell_s-tui.webp "Main screen of s-tui")
 
-You can use the arrows or the Page Up/Down keys to browse in the left-side menu and even change some options. Going down in the menu, you'll see all the sensors this command is able to read. The settings of `s-tui` are kept in the user's `.config/s-tui` folder.
+You can use the arrows or the `Page Up/Down keys` to browse in the left-side menu and even change some options. Going down in the menu, you can see all the sensors this command is able to read. The settings of `s-tui` are kept in the user's `.config/s-tui` folder.
 
 ## Relevant system paths
 
@@ -433,9 +434,11 @@ You can use the arrows or the Page Up/Down keys to browse in the left-side menu 
   - [Proxmox VE No-Subscription Repository](https://pve.proxmox.com/wiki/Package_Repositories#sysadmin_no_subscription_repo)
   - [Roadmap](https://pve.proxmox.com/wiki/Roadmap)
 
-- [How to: Fix Proxmox/PVE update failed(Failed to fetch 401 Unauthorized) (TASK ERROR: command ‘apt-get update’ failed: exit code 100)](https://dannyda.com/2020/06/19/how-to-fix-proxmox-pve6-1-26-1-7-update-failedfailed-to-fetch-401-unauthorized-task-error-command-apt-get-update-failed-exit-code-100/)
+### Proxmox VE related contents
 
-### Tools
+- [Blog-D without Nonsense. How to: Fix Proxmox/PVE update failed(Failed to fetch 401 Unauthorized) (TASK ERROR: command ‘apt-get update’ failed: exit code 100)](https://dannyda.com/2020/06/19/how-to-fix-proxmox-pve6-1-26-1-7-update-failedfailed-to-fetch-401-unauthorized-task-error-command-apt-get-update-failed-exit-code-100/)
+
+### System tools
 
 - [Ceph](https://ceph.io/en/)
 - [Clonezilla](https://clonezilla.org/)
