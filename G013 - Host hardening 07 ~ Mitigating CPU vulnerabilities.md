@@ -2,7 +2,7 @@
 
 - [CPUs also have security vulnerabilities](#cpus-also-have-security-vulnerabilities)
 - [Discovering your CPU's vulnerabilities](#discovering-your-cpus-vulnerabilities)
-- [Your Proxmox VE system will already have the correct microcode package applied](#your-proxmox-ve-system-will-already-have-the-correct-microcode-package-applied)
+- [Your Proxmox VE system already has the correct microcode package applied](#your-proxmox-ve-system-already-has-the-correct-microcode-package-applied)
 - [Relevant system paths](#relevant-system-paths)
   - [Directories](#directories)
   - [Files](#files)
@@ -35,7 +35,7 @@ To check out what known vulnerabilities your CPU has, perform these steps:
 
 As you can imagine, the list of vulnerabilities will change depending on the CPU inspected.
 
-## Your Proxmox VE system will already have the correct microcode package applied
+## Your Proxmox VE system already has the correct microcode package applied
 
 To mitigate these bugs, it is required to install the proper microcode `apt` package for your CPU: the `intel-microcode` or the `amd-microcode` one. In this guide's case, the Proxmox VE installation process already installed the correct package (the `intel-microcode` one) in the system. This can be discovered by first checking what `apt` sources are configured in the `/etc/apt/sources.list.d/debian.sources` file:
 

@@ -26,6 +26,7 @@
   - [Linux](#linux)
   - [K3s](#k3s)
   - [Kubernetes](#kubernetes)
+- [Navigation](#navigation)
 
 ## Save storage space by cleaning your system up
 
@@ -638,5 +639,7 @@ $ sudo apt autoremove
   - [Configuration APIs. Kubelet Configuration (v1beta1)](https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/)
     - [KubeletConfiguration](https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/#kubelet-config-k8s-io-v1beta1-KubeletConfiguration)
   - [Component tools. kubelet](https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/)
+
+## Navigation
 
 [<< Previous (**G045. System update 04**)](G045%20-%20System%20update%2004%20~%20Updating%20K3s%20and%20deployed%20apps.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G901. Appendix 01**) >>](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md)

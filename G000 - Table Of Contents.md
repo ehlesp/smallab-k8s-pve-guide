@@ -12,7 +12,7 @@
 
 - [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International Public License](LICENSE.md#creative-commons-attribution-noncommercial-sharealike-40-international-public-license)
 
-## Guides
+## Main chapters
 
 ### [G001 - Hardware setup](G001%20-%20Hardware%20setup.md)
 
@@ -127,7 +127,7 @@
 
 - [CPUs also have security vulnerabilities](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#cpus-also-have-security-vulnerabilities)
 - [Discovering your CPU's vulnerabilities](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#discovering-your-cpus-vulnerabilities)
-- [Your Proxmox VE system will already have the correct microcode package applied](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#your-proxmox-ve-system-will-already-have-the-correct-microcode-package-applied)
+- [Your Proxmox VE system already has the correct microcode package applied](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#your-proxmox-ve-system-already-has-the-correct-microcode-package-applied)
 - [Relevant system paths](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#relevant-system-paths)
 - [References](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#references)
 
@@ -306,7 +306,8 @@
 
 - [Use cert-manager to handle certificates in your cluster](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#use-cert-manager-to-handle-certificates-in-your-cluster)
 - [Deploying cert-manager](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#deploying-cert-manager)
-- [Setting up a self-signed CA for your cluster](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#setting-up-a-self-signed-ca-for-your-cluster)
+- [Setting up self-signed CAs for your cluster](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#setting-up-self-signed-cas-for-your-cluster)
+- [Deploying the self-signed CAs](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#deploying-the-self-signed-cas)
 - [Checking your certificates with the cert-manager command line tool](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#checking-your-certificates-with-the-cert-manager-command-line-tool)
 - [Cert-manager's Kustomize project attached to this guide](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#cert-managers-kustomize-project-attached-to-this-guide)
 - [Relevant system paths](G029%20-%20K3s%20cluster%20setup%2012%20~%20Setting%20up%20cert-manager%20and%20self-signed%20CA.md#relevant-system-paths)
@@ -605,7 +606,7 @@
 
 ### [G040 - Backups 04 ~ UrBackup 01 - Server setup](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md)
 
-- [Use UrBackup to preserve specific directories](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#g040-backups-04-urbackup-01-server-setup#use-urbackup-to-preserve-specific-directories)
+- [Use UrBackup to preserve specific directories](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#use-urbackup-to-preserve-specific-directories)
 - [Setting up a new VM for the UrBackup server](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#setting-up-a-new-vm-for-the-urbackup-server)
 - [Deploying UrBackup](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#deploying-urbackup)
 - [Firewall configuration on Proxmox VE](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md#firewall-configuration-on-proxmox-ve)
@@ -666,7 +667,7 @@
 - [Relevant system paths](G046%20-%20Cleaning%20up%20your%20homelab%20system.md#relevant-system-paths)
 - [References](G046%20-%20Cleaning%20up%20your%20homelab%20system.md#references)
 
-## Appendixes
+## Appendix chapters
 
 ### [G901 - Appendix 01 ~ Connecting through SSH with PuTTY](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md)
 
@@ -748,4 +749,4 @@
 
 ## Navigation
 
-[<< Previous (**README**)](README.md) | [Next (**G001 - Hardware setup) >>](G001%20-%20Hardware%20setup.md)
+[<< Previous (**README**)](README.md) | [Next (**G001 - Hardware setup**) >>](G001%20-%20Hardware%20setup.md)

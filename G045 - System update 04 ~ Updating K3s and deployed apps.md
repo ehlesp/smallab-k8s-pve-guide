@@ -10,7 +10,7 @@
   - [Compatibility of deployed apps with new Kubernetes runtime and among each other](#compatibility-of-deployed-apps-with-new-kubernetes-runtime-and-among-each-other)
   - [Versions correlation](#versions-correlation)
 - [Updating apps and K3s](#updating-apps-and-k3s)
-  - [Beware of the backups](#beware-of-the-backups)
+  - [Beware of backups](#beware-of-backups)
   - [Consider doing a backup of your K3s node VMs](#consider-doing-a-backup-of-your-k3s-node-vms)
   - [Updating the apps](#updating-the-apps)
     - [Update order of apps](#update-order-of-apps)
@@ -213,7 +213,7 @@ Thanks to this mapping, now you know that, before upgrading your K3s software to
 
 The first thing you have to do is to update the critical apps running in your K3s cluster. This is due to the version compatibility issue, already indicated in the previous section, between certain apps and the underlying Kubernetes runtime. If you did it the other way, you could end having old apps failing to run on a newer Kubernetes runtime they don't support.
 
-### Beware of the backups
+### Beware of backups
 
 Check first if there are backup jobs running, either in the UrBackup server or the Proxmox VE system. Only when they have finished, proceed with the update of UrBackup.
 
