@@ -18,7 +18,7 @@
 
 You really need to protect your server from electrical surges, power cuts or outages. A common way to achieve that protection is with a Uninterruptible Power Supply (_UPS_) unit, like the one part of this guide's hardware setup described in [the chapter **G001**](G001%20-%20Hardware%20setup.md#the-reference-hardware-setup).
 
-This chapter shows how to make your Proxmox VE host monitor the UPS unit with a generic package called **NUT (Network UPS Tool)**. However, be aware that your UPS unit's brand may already have its own particular software for UPS management.
+This chapter explains how to make your Proxmox VE host monitor the UPS unit with a generic package called **NUT (Network UPS Tool)**. However, be aware that your UPS unit's brand may already have its own particular software for UPS management.
 
 > [!IMPORTANT]
 > **NUT may not support your concrete UPS unit**\

@@ -2,7 +2,7 @@
 
 - [You just need a capable enough computer](#you-just-need-a-capable-enough-computer)
 - [The reference hardware setup](#the-reference-hardware-setup)
-  - [Why this hardware setup?](#why-this-hardware-setup)
+- [Why this hardware setup?](#why-this-hardware-setup)
 - [References](#references)
   - [Hardware](#hardware)
 - [Navigation](#navigation)
@@ -39,11 +39,11 @@ The hardware used in this guide is an upgraded [Packard Bell iMedia S2883 deskto
 
 - The computer also has some USB 2 connectors plus one USB 3 plug.
 
-- The UPS is an [Eaton 3S700D](https://www.eaton.com/at/en-gb/skuPage.3S700D.html) unit.
+- The UPS is an [Eaton 3S700D](https://www.eaton.com/ch/en-gb/skuPage.3S700D.html) unit.
 
 This rather cheap rig is somewhat close to what, at the time of writing this, a basic modern NUC or mini PC can come with.
 
-### Why this hardware setup?
+## Why this hardware setup?
 
 Let me explain why you should consider a hardware configuration like this as your bare minimum:
 
@@ -81,7 +81,7 @@ A hardware setup like this does not allow you to use features usually found in p
 
 - [Intel Pentium J1900](https://www.intel.com/content/www/us/en/products/sku/78867/intel-celeron-processor-j1900-2m-cache-up-to-2-42-ghz/specifications.html)
 
-- [Eaton 3S700D](https://www.eaton.com/at/en-gb/skuPage.3S700D.html)
+- [Eaton 3S700D](https://www.eaton.com/ch/en-gb/skuPage.3S700D.html)
 
 ## Navigation
 

@@ -18,6 +18,7 @@
 
 - [You just need a capable enough computer](G001%20-%20Hardware%20setup.md#you-just-need-a-capable-enough-computer)
 - [The reference hardware setup](G001%20-%20Hardware%20setup.md#the-reference-hardware-setup)
+- [Why this hardware setup?](G001%20-%20Hardware%20setup.md#why-this-hardware-setup)
 - [References](G001%20-%20Hardware%20setup.md#references)
 
 ### [G002 - Proxmox VE installation](G002%20-%20Proxmox%20VE%20installation.md)
@@ -666,6 +667,14 @@
 - [Reminder about the `apt` updates](G046%20-%20Cleaning%20up%20your%20homelab%20system.md#reminder-about-the-apt-updates)
 - [Relevant system paths](G046%20-%20Cleaning%20up%20your%20homelab%20system.md#relevant-system-paths)
 - [References](G046%20-%20Cleaning%20up%20your%20homelab%20system.md#references)
+
+### [G047 - Understanding your homelab setup through diagrams](G047%20-%20Understanding%20your%20homelab%20setup%20through%20diagrams.md)
+
+- [This guide's homelab setup is complex](G047%20-%20Understanding%20your%20homelab%20setup%20through%20diagrams.md#this-guides-homelab-setup-is-complex)
+- [Hardware](G047%20-%20Understanding%20your%20homelab%20setup%20through%20diagrams.md#hardware)
+- [Virtual environment](G047%20-%20Understanding%20your%20homelab%20setup%20through%20diagrams.md#virtual-environment)
+- [Kubernetes cluster](G047%20-%20Understanding%20your%20homelab%20setup%20through%20diagrams.md#kubernetes-cluster)
+- [References](G047%20-%20Understanding%20your%20homelab%20setup%20through%20diagrams.md#references)
 
 ## Appendix chapters
 

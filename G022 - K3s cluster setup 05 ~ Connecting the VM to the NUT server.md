@@ -650,7 +650,7 @@ This is the only way you will be able to see all the logs being registered in th
 Sep 05 20:01:46 debiantpl nut-monitor[903]: UPS [eaton@10.1.0.1]: connect failed: Connection failure: Connection timed out
 ~~~
 
-The NUT monitor daemon on your VM tries to connect every few seconds to the NUT server on your PVE node, but something is wrong and the connection times out. What's missing? Just a small detail, regarding the security group you created in the firewall at the `Datacenter` level of your Proxmox VE platform.
+The NUT monitor daemon on your VM tries to connect every few seconds to the NUT server on your PVE node, but something is wrong and the connection times out. What is missing? Just a small detail affecting the security group you created in the firewall at the `Datacenter` level of your Proxmox VE platform.
 
 Go back to your PVE web console, browse to `Datacenter > Firewall > Security Group` and select the group you created there before, the `nut_port_accept_in` one:
 

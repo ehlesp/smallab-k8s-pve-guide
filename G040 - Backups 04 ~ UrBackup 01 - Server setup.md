@@ -136,8 +136,9 @@ The LVM filesystem structure of this VM retains the same names as the VM templat
     RESUME=/dev/mapper/bkpserver--vg-swap_1
     ~~~
 
-    > **BEWARE!**  
-    > Do not make a `.orig` backup of this file, or not in the very same directory the original is. Debian reads all files within the directory!
+    > [!WARNING]
+    > **Careful when doing a backup of this `resume` file**\
+    > Do not make a `.orig` backup of this `resume` file, or not in the very same directory the original is. **Debian reads all files within the directory!**
 
 #### Setting up the second network card
 

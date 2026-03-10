@@ -302,7 +302,9 @@ You know what steps to follow when updating any app, but what is the proper orde
 
     1. **Kube State Metrics**\
         Kustomize project preparation explained in [chapter **G035** - Deploying services 04 ~ Monitoring stack - Part 2](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%202%20-%20Kube%20State%20Metrics%20service.md).
-        > **BEWARE!**  
+
+        > [!NOTE]
+        > **This service is correlated with the Kubernetes runtime version**\
         > Updating to a newer Kubernetes runtime may force you to update this service in particular.
 
     2. **Prometheus Node Exporter**\
