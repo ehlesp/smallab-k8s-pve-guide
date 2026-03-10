@@ -145,4 +145,4 @@ The PuTTY interface is "old school", which makes setting up a remote SSH connect
 
 ## Navigation
 
-[<< Previous (**G046. Cleaning up your homelab system**)](G046%20-%20Cleaning%20up%20your%20homelab%20system.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G902. Appendix 02**) >>](G902%20-%20Appendix%2002%20~%20Vim%20vimrc%20configuration.md)
+[<< Previous (**G047. Understanding your homelab setup through diagrams**)](G047%20-%20Understanding%20your%20homelab%20setup%20through%20diagrams.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G902. Appendix 02**) >>](G902%20-%20Appendix%2002%20~%20Vim%20vimrc%20configuration.md)
