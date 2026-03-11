@@ -8,11 +8,12 @@
 - [Table of contents](#table-of-contents)
 - [References](#references)
   - [Software](#software)
+  - [GitHub Docs](#github-docs)
 - [Navigation](#navigation)
 
 ## A complete guide for building a virtualized Kubernetes homelab
 
-Welcome to the revised version of this guide for building your own small Kubernetes homelab with a low-end consumer-grade computer. In its chapters you will find a complete procedure to setup a virtualization platform where to run a compact Kubernetes cluster using virtual machines as nodes. Not only that, here you will find concrete examples of app deployments showing how to make real use of your Kubernetes cluster. Furthermore, this guide also contains instructions covering other details such as hardening, backups, or updates planning.
+Welcome to the revised version of this guide for building your own small Kubernetes homelab with a low-end consumer-grade computer. Its chapters offer procedures to setup a virtualization platform where to run a compact Kubernetes cluster using virtual machines as nodes. Not only that, here you can find concrete examples of app deployments showing how to make real use of your Kubernetes cluster. Furthermore, this guide also contains instructions covering other details such as hardening, backups, or updates planning.
 
 This guide avoids using tools such as K3sup, Terraform or Helm to handle Kubernetes-related tasks. For the most part, it only uses the official `kubectl` command and Kustomize-based declarations. On the hardware side, the real computer this guide is based on might surprise you with its somewhat limited specifications. The first [chapter **G001**](G001%20-%20Hardware%20setup.md) explains its specifications in detail, and may help you budget your own homelab setup better.
 
@@ -22,19 +23,19 @@ It is also important to highlight that this guide is complete. Its core goal is 
 
 ## Main concepts
 
-The procedures explained in this guide deal mainly with three concepts:
+The procedures explained in this guide deal mainly with three concerns:
 
 - How to install and configure the Proxmox VE virtualization platform.
 - How to setup a small Kubernetes cluster with VMs.
 - How to deploy applications on the Kubernetes cluster.
 
-Within those main concepts, this guide also covers (up to a point) things like hardening, firewalling, optimizations, backups and a few other things that came up in the building of the  homelab set up by this guide.
+Within those main concepts, this guide also covers (up to a point) details like hardening, firewalling, optimizations, backups and a few other things that came up while working in the  homelab set up by this guide.
 
 Each chapter in the guide is detailed and explanatory, only omitting things when they have been already done in a previous step or chapter, or is understood that the reader should know about them already. Also, each chapter is usually about one main concern or procedure, and the guide's setup serves as the example scenario illustrating how to implement it.
 
 > [!NOTE]
-> **This guide has been written in Markdown GitHub format**\
-> All the chapters of this guide are Markdown documents you will visualize better rendered as HTMLs either in GitHub directly or in compatible Markdown viewers or editors.
+> **This guide has been written in GitHub Flavored Markdown format**\
+> All the chapters of this guide are [GitHub Flavored Markdown](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/about-writing-and-formatting-on-github) documents you can visualize rendered as HTMLs either in GitHub directly or in compatible Markdown viewers or editors.
 
 ## Intended audience
 
@@ -58,11 +59,11 @@ After setting up the Kubernetes cluster, the idea is to deploy in it the followi
 - Lightweight git server: [Forgejo](https://forgejo.org/).
 - Monitoring stack: set of monitoring modules including [Prometheus](https://prometheus.io/), [Grafana](https://grafana.com/grafana/) and a couple of other related services.
 
-Also, the whole system will have some backup procedures applied to it.
+Also, the resulting homelab has some backup features enabled in it.
 
 ## Table of contents
 
-All the chapters and their main sections are easily accessible through this guide's [Table Of Contents](G000%20-%20Table%20Of%20Contents.md).
+All the chapters and their main sections are directly accessible through this guide's [Table Of Contents](G000%20-%20Table%20Of%20Contents.md).
 
 ## References
 
@@ -75,6 +76,12 @@ All the chapters and their main sections are easily accessible through this guid
 - [Ghost](https://ghost.org/)
 - [Prometheus](https://prometheus.io/)
 - [Grafana](https://grafana.com/grafana/)
+
+### [GitHub Docs](https://docs.github.com/en)
+
+- [Get started. Writing on GitHub](https://docs.github.com/en/get-started/writing-on-github)
+  - [Getting started with writing and formatting on GitHub](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/)
+    - [About writing and formatting on GitHub](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/about-writing-and-formatting-on-github)
 
 ## Navigation
 
