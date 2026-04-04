@@ -91,7 +91,7 @@ Therefore, be sure of clearing those drives by using a tool like GParted or KDE 
 
 The Proxmox site has two guides explaining Proxmox VE's installation, [linked in the _References_ section at the end of this document](#proxmox). The steps below are this guide's take on the install procedure, adapted to the [reference hardware](G001%20-%20Hardware%20setup.md#the-reference-hardware-setup) used in this guide:
 
-1. Plug the USB drive containing the Proxmox VE installer ISO in your computer, then boot the ISO up. You are eventually greeted by the following screen:
+1. Plug the USB drive containing the Proxmox VE installer ISO in your computer, then boot the ISO up. You are eventually greeted by the following welcome screen:
 
     ![Proxmox VE installer welcome screen](images/g002/Installer-initial_screen.webp "Proxmox VE installer welcome screen")
 
@@ -252,7 +252,7 @@ Hopefully, these indications will save you from spending days of (almost) fruitl
 
 You have installed Proxmox VE and your server has rebooted. Proxmox VE comes with a web console which you can access through the **port 8006**. Open a browser and navigate to the URL the installer indicated you when it finished to reach Proxmox VE's web console:
 
-![Proxmox VE web console login](images/g002/proxmox_ve_web_console_login.webp "Proxmox VE web console login")
+![Proxmox VE web console login in dark mode](images/g002/proxmox_ve_web_console_login.webp "Proxmox VE web console login in dark mode")
 
 > [!NOTE]
 > **Proxmox VE's web console loads a light or dark color theme automatically**\

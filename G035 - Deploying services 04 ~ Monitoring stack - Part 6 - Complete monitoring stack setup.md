@@ -1327,7 +1327,7 @@ By default, you get redirected to the `Query` tab of the Prometheus dashboard. H
 
 ![Target health option in Status menu of Prometheus dashboard](images/g035/prometheus_dashboard_status_target_health_opt.webp "Target health option in Status menu of Prometheus dashboard")
 
-The `Target health` page lists all the Prometheus-compatible endpoints found in all the namespaces currently existing within your Kubernetes cluster, [as specified in the Prometheus scrape configuration](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%204%20-%20Prometheus%20server.md#). Remember that a number of these metrics sources are from endpoints declared in the `Service` resources you annotated with `prometheus.io` tags. This page also shows the status of each detected endpoint and their related labels:
+The `Target health` page lists all the Prometheus-compatible endpoints found in all the namespaces currently existing within your Kubernetes cluster, [as specified in the Prometheus scrape configuration](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%204%20-%20Prometheus%20server.md#configuration-file-prometheusyaml). Remember that a number of these metrics sources are from endpoints declared in the `Service` resources you annotated with `prometheus.io` tags. This page also shows the status of each detected endpoint and their related labels:
 
 ![Target health page under Status section in Prometheus dashboard](images/g035/prometheus_dashboard_status_target_health_page.webp "Target health page under Status section in Prometheus dashboard")
 

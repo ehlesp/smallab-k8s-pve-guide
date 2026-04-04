@@ -35,32 +35,32 @@ Still, there are certain metrics that you cannot observe with any of those tools
 
 The very first thing to do is identifying which components you need in your monitoring stack. In this guide, those components will be these:
 
-- **Prometheus**\
+- **Prometheus**/
   Open-source monitoring framework ready for Kubernetes. Prometheus is going to be the core of your monitoring stack, on which all the other monitoring components deployed with this guide will be centered around. Again, Prometheus is fundamental because the metrics you cannot see yet are all Prometheus-compatible ones.
 
-- **Kube State Metrics**\
+- **Kube State Metrics**/
   Service that provides details from all the Kubernetes API objects present in a Kubernetes cluster, but that are not accessible through the native Kubernetes monitoring components. In other words, is an agent that gets cluster-level metrics and exposes them in a Prometheus-compatible `/metrics` endpoint.
 
   > [!NOTE]
-  > **The Kube State Metrics is not the metrics-server!**\
+  > **The Kube State Metrics is not the metrics-server!**/
   > Do not confuse the **Kube State Metrics** service with the `metrics-server` you deployed in the [chapter **G028**](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md).
   >
   > The `metrics-server` service neither gets the same metrics nor exposes them through an endpoint reachable by Prometheus.
 
-- **Prometheus Node Exporter**\
+- **Prometheus Node Exporter**/
   Agent that captures and exposes Linux-related system-level metrics from the nodes of a Kubernetes cluster like the one described in this guide.
 
-- **Grafana**\
+- **Grafana**/
   Lightweight dashboard tool that can work with Prometheus, among many other data sources. It can also execute queries in the Prometheus query language (PromQL) on a given Prometheus server.
 
 ### Determining storage needs for the monitoring stack
 
 You need to identify which monitoring components require storage space:
 
-- **Prometheus**\
+- **Prometheus**/
   Since it  acts as a data source for metrics, it needs some storage space where to retain, temporarily, the metrics it scrapes from your K3s cluster.
 
-- **Grafana**\
+- **Grafana**/
   Requires a small storage space for configuration and user management purposes.
 
 As you see, you need to create two different storage volumes, one per each service with storage needs.
@@ -81,7 +81,8 @@ Get into your Proxmox VE web console and, in the `Hardware` tab of each K3s agen
 
 Open the `Hardware` view of the `k3sagent01` node and add a _hard disk_ with the following specification:
 
-- **SSD drive**: storage `ssd_disks`, Discard `ENABLED`, disk size `2 GiB`, SSD emulation `ENABLED`, IO thread `ENABLED`.
+- **SSD drive**\
+  Storage `ssd_disks`, Discard `ENABLED`, disk size `2 GiB`, SSD emulation `ENABLED`, IO thread `ENABLED`.
 
 This new storage unit should appear in the `Hardware` list of the `k3sagent01` VM as in this capture:
 
@@ -91,7 +92,8 @@ This new storage unit should appear in the `Hardware` list of the `k3sagent01` V
 
 Get into the `Hardware` view of the `k3sagent02` node and add a _hard disk_ with the following specification.:
 
-- **SSD drive**: storage `ssd_disks`, Discard `ENABLED`, disk size `10 GiB`, SSD emulation `ENABLED`, IO thread `ENABLED`.
+- **SSD drive**\
+  Storage `ssd_disks`, Discard `ENABLED`, disk size `10 GiB`, SSD emulation `ENABLED`, IO thread `ENABLED`.
 
 This new storage drive should be listed the `Hardware` view of the `k3sagent02` VM as shown below:
 
@@ -541,7 +543,7 @@ Get back into the remote shell connected to your `k3sagent01` VM and do this:
 5. Make the mounting permanent, by adding it to the `k3sagent01`'s  `/etc/fstab` file. First, backup the file:
 
     > [!WARNING]
-    > **You already have a backup of the `fstab` file**\
+    > **You already have a backup of the `fstab` file**/
     > At this point you should already have a backup of the `fstab` file. Rename it to something like `fstab.bkp.old` or remove it before you apply the following command.
     >
     > `$ sudo mv /etc/fstab.bkp /etc/fstab.bkp.old`
@@ -625,7 +627,7 @@ Reopen the remote shell connected to your `k3sagent02` VM to apply the following
 5. Make the mounting permanent, by adding it to the VM's  `/etc/fstab` file. First, backup the file:
 
     > [!WARNING]
-    > **You already have a backup of the `fstab` file**\
+    > **You already have a backup of the `fstab` file**/
     > At this point you should already have a backup of the `fstab` file. Rename it to something like `fstab.bkp.old` or remove it before you apply the following command.
     >
     > `$ sudo mv /etc/fstab.bkp /etc/fstab.bkp.old`
@@ -694,7 +696,7 @@ Go back to the `k3sagent02` remote shell and do this:
     Ignore the `lost+found` folder, it is automatically created by the system.
 
 > [!IMPORTANT]
-> **Remember that the `k3smnt` folders are within the already mounted LVM storage volumes**\
+> **Remember that the `k3smnt` folders are within the already mounted LVM storage volumes**/
 > You cannot create these folders without mounting the light volumes first.
 
 ### About increasing the storage volume's size

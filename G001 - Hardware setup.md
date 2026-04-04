@@ -19,7 +19,11 @@ This project's [README](README.md) talks about a small or low-end consumer-grade
 
 ## The reference hardware setup
 
-The hardware used in this guide is an upgraded [Packard Bell iMedia S2883 desktop computer](https://archive.org/details/manualzilla-id-7098831) from around 2014. This quite old and limited computer has the following specifications (after the upgrade):
+The hardware used in this guide is an upgraded [Packard Bell iMedia S2883 desktop computer](https://archive.org/details/manualzilla-id-7098831) from around 2014 that looks like this:
+
+![Close-up photo of the Packard Bell iMedia S2883 desktop computer used in this guide, with a external 2 TiB 2.5" HDD SATA drive put in an USB 3 case on top](images/g001/packard_bell_pc_closeup.webp "Close-up photo of the Packard Bell iMedia S2883 desktop computer used in this guide, with a external 2 TiB 2.5'' HDD SATA drive put in an USB 3 case on top")
+
+This quite old and limited computer has the following specifications (after the upgrade):
 
 - The BIOS firmware is UEFI (Secure Boot), but also provides a CSM mode.
 

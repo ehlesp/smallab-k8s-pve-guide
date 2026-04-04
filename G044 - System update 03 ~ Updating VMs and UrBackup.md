@@ -25,7 +25,7 @@
 - [References](#references)
   - [Debian](#debian)
   - [Other Debian or apt related contents](#other-debian-or-apt-related-contents)
-  - [Urbackup](#urbackup)
+  - [UrBackup](#urbackup)
 - [Navigation](#navigation)
 
 ## Updating the VMs means updating their OS
@@ -308,7 +308,7 @@ After applying the updates, check the versions of your server and clients [as yo
 - [Ask Ubuntu. Using dpkg to install upgrade and dist-upgrade packages](https://askubuntu.com/questions/372153/using-dpkg-to-install-upgrade-and-dist-upgrade-packages)
 - [Unix. StackExchange. Upgrading/Updating package using dpkg only](https://unix.stackexchange.com/questions/616414/upgrading-updating-package-using-dpkg-only)
 
-### [Urbackup](https://www.urbackup.org/)
+### [UrBackup](https://www.urbackup.org/)
 
 - [Download](https://www.urbackup.org/download.html)
   - [Server. Debian/Ubuntu](https://www.urbackup.org/download.html#server_debian)

@@ -15,7 +15,7 @@
 
 ## Preparing your virtual network for Kubernetes
 
-The upcoming chapters explain how to setup a small Kubernetes cluster run on virtual machines. Those VMs will need to be networked with each other and also with your LAN. Therefore, you need revise the virtual network setup you have and make it fit for the needs you will face later.
+The small Kubernetes cluster setup explained in this guide runs on virtual machines. Those VMs will need to be networked with each other and also with your LAN. Therefore, you need revise the virtual network setup you have and make it fit for the needs you will face later.
 
 ## Current virtual network setup
 

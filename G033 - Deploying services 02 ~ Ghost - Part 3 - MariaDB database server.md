@@ -185,7 +185,7 @@ For convenience, declare all of these passwords as variables in the same propert
 
 ## MariaDB persistent storage claim
 
-[As you saw when declaring Valkey's storage](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-storage), you need to declare a `PersistentVolumeClaim` to enable access to the persistent volume (to be declared in the last part of this Ghost deployment procedure) storing the MariaDB instance's data:
+[As you saw when declaring Valkey's storage](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-persistent-storage-claim), you need to declare a `PersistentVolumeClaim` to enable access to the persistent volume (to be declared in the last part of this Ghost deployment procedure) storing the MariaDB instance's data:
 
 1. Create a `db-mariadb.persistentvolumeclaim.yaml` file under the `resources` folder:
 
@@ -355,7 +355,7 @@ Since MariaDB is a program whose main purpose is to store _state_ (meaning data)
                 path: my.cnf
     ~~~
 
-    If you compare this `StatefulSet` [with Valkey's](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-statefulset-resource) you will find many similarities, but also several differences:
+    If you compare this `StatefulSet` [with Valkey's](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-statefulset) you will find many similarities, but also several differences:
 
     - `template.spec.containers`\
       Like in the Valkey case, two containers are set in the pod as sidecars.
