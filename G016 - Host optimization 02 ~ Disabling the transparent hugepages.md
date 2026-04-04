@@ -119,4 +119,4 @@ To switch the status of the transparent hugepages from `madvise` to `never`, you
 
 ## Navigation
 
-[<< Previous (**G015. Host optimization 01**)](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G017. Virtual Networking**) >>](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md)
+[<< Previous (**G015. Host optimization 01**)](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G017. Virtual network configuration**) >>](G017%20-%20Virtual%20network%20configuration.md)

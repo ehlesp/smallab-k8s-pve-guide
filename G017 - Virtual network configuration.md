@@ -1,4 +1,4 @@
-# G017 - Virtual Networking ~ Network configuration
+# G017 - Virtual network configuration
 
 - [Preparing your virtual network for Kubernetes](#preparing-your-virtual-network-for-kubernetes)
 - [Current virtual network setup](#current-virtual-network-setup)

@@ -314,7 +314,7 @@ vmgenid: 08b95c71-2feb-4338-8970-c3cfba8a6e94
 
 ### Adding an extra network device to the new VM
 
-In the VM creation wizard, Proxmox VE does not allow you to configure more than one network device. To add an extra network device in your VM, **you have to do it after you have created the VM in Proxmox VE**. And why the extra network device? To allow your future K3s cluster's nodes to communicate directly with each other through the other Linux bridge you already created in the [chapter **G017**](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md). Keep on reading to learn how to add that extra network device to your new VM:
+In the VM creation wizard, Proxmox VE does not allow you to configure more than one network device. To add an extra network device in your VM, **you have to do it after you have created the VM in Proxmox VE**. And why the extra network device? To allow your future K3s cluster's nodes to communicate directly with each other through the other Linux bridge you already created in the [chapter **G017**](G017%20-%20Virtual%20network%20configuration.md). Keep on reading to learn how to add that extra network device to your new VM:
 
 1. Go to the `Hardware` tab of your new VM:
 

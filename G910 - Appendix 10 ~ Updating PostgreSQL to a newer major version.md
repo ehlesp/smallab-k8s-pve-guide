@@ -179,7 +179,7 @@ For the containerized version `17` of PostgreSQL deployed with this appendix's F
     -rw-------  1  999 systemd-journal    87 Feb 22 14:06 postmaster.opts
     ~~~
 
-    Realize that, from the point of view of this node's Debian OS, the owner of the PostgreSQL database files is only identified by its user ID `999`, not `postgres`. This is an oddity I already explained back in the [_Shell access into your containers_ section of the chapter **G036**](G036%20-%20Host%20and%20K3s%20cluster%20~%20Monitoring%20and%20diagnosis.md#shell-access-into-your-containers).
+    Realize that, from the point of view of this node's Debian OS, the owner of the PostgreSQL database files is only identified by its user ID `999`, not `postgres`. This is an oddity I already explained back in the [_Shell access into your containers_ section of the chapter **G036**](G036%20-%20Monitoring%20and%20diagnosis%20of%20your%20host%20and%20K3s%20cluster.md#shell-access-into-your-containers).
 
 2. Since the `999` user does not exist in the `k3sagent01` system, you need a more elaborate `sudo` command to impersonate it:
 
