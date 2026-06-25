@@ -724,9 +724,9 @@ To properly enable Prometheus in your cluster, you need to create its correspond
 
     metadata:
       name: server-prometheus
-    annotations:
-      prometheus.io/scrape: 'true'
-      prometheus.io/port:   '9090'
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port:   '9090'
     spec:
       type: ClusterIP
       clusterIP: None
