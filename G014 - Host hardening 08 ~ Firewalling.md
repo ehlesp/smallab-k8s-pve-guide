@@ -882,7 +882,7 @@ The conclusion you can get from the example log lines is that this Proxmox VE se
 
 ## Connection tracking tool
 
-This chapter and [the previous one about network hardening](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md) mention a few times the connection tracking system enabled by the firewall. This is popularly known as _conntrack_ and, adding to its own particular `sysctl` parameters (identified by the `nf_conntrack_` prefix), there is also a command enabling system administrators to manage the in-kernel connection tracking state tables:
+This chapter and [the previous one about host network hardening](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md) mention a few times the connection tracking system enabled by the firewall. This is popularly known as _conntrack_ and, adding to its own particular `sysctl` parameters (identified by the `nf_conntrack_` prefix), there is also a command enabling system administrators to manage the in-kernel connection tracking state tables:
 
 1. The `conntrack` command is already installed in Proxmox VE 9.0, as `apt` warns:
 

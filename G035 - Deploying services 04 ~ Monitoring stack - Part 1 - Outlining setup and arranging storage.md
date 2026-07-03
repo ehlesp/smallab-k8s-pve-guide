@@ -42,7 +42,7 @@ The very first thing to do is identifying which components you need in your moni
   Service that provides details from all the Kubernetes API objects present in a Kubernetes cluster, but that are not accessible through the native Kubernetes monitoring components. In other words, is an agent that gets cluster-level metrics and exposes them in a Prometheus-compatible `/metrics` endpoint.
 
   > [!NOTE]
-  > **The Kube State Metrics is not the metrics-server!**/
+  > **The Kube State Metrics is not the metrics-server!**\
   > Do not confuse the **Kube State Metrics** service with the `metrics-server` you deployed in the [chapter **G028**](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md).
   >
   > The `metrics-server` service neither gets the same metrics nor exposes them through an endpoint reachable by Prometheus.

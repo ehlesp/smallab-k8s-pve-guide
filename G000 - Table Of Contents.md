@@ -126,7 +126,7 @@
 
 ### [G013 - Host hardening 07 ~ Mitigating CPU vulnerabilities](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md)
 
-- [CPUs also have security vulnerabilities](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#cpus-also-have-security-vulnerabilities)
+- [CPUs have security vulnerabilities](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#cpus-have-security-vulnerabilities)
 - [Discovering your CPU's vulnerabilities](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#discovering-your-cpus-vulnerabilities)
 - [Your Proxmox VE system already has the correct microcode package applied](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#your-proxmox-ve-system-already-has-the-correct-microcode-package-applied)
 - [Relevant system paths](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#relevant-system-paths)
@@ -134,7 +134,7 @@
 
 ### [G014 - Host hardening 08 ~ Firewalling](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md)
 
-- [[Enabling your PVE's firewall is a must](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#enabling-your-pves-firewall-is-a-must)]
+- [Enabling your PVE's firewall is a must](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#enabling-your-pves-firewall-is-a-must)
 - [Proxmox VE firewall uses iptables](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#proxmox-ve-firewall-uses-iptables)
 - [Zones in the Proxmox VE firewall](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#zones-in-the-proxmox-ve-firewall)
 - [Situation at this point](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#situation-at-this-point)
