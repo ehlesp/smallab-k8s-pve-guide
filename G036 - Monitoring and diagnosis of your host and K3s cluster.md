@@ -1,4 +1,4 @@
-# G036 - Host and K3s cluster ~ Monitoring and diagnosis
+# G036 - Monitoring and diagnosis of your host and K3s cluster
 
 - [Monitor your homelab setup with its own tools](#monitor-your-homelab-setup-with-its-own-tools)
 - [Monitoring resources usage](#monitoring-resources-usage)

@@ -37,7 +37,7 @@ Assuming your UPS unit has the required USB cable, proceed to configure it in yo
 1. First, check the following:
 
     - Your server is plugged in one of your UPS's _battery-protected_ sockets.
-    - You have your UPS connected with its USB cable to an USB plug in your server.
+    - You have your UPS connected with its USB cable to a USB plug in your server.
     - The UPS unit is _on_. If it were not, you would not be able to switch your server on.
 
 2. With your Proxmox VE server running, get into the `pve` node through a `root` shell and execute the `lsusb` command:

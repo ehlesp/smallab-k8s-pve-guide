@@ -81,7 +81,8 @@ Get into your Proxmox VE web console and, in the `Hardware` tab of each K3s agen
 
 Open the `Hardware` view of the `k3sagent01` node and add a _hard disk_ with the following specification:
 
-- **SSD drive**: storage `ssd_disks`, Discard `ENABLED`, disk size `2 GiB`, SSD emulation `ENABLED`, IO thread `ENABLED`.
+- **SSD drive**\
+  Storage `ssd_disks`, Discard `ENABLED`, disk size `2 GiB`, SSD emulation `ENABLED`, IO thread `ENABLED`.
 
 This new storage unit should appear in the `Hardware` list of the `k3sagent01` VM as in this capture:
 
@@ -91,7 +92,8 @@ This new storage unit should appear in the `Hardware` list of the `k3sagent01` V
 
 Get into the `Hardware` view of the `k3sagent02` node and add a _hard disk_ with the following specification.:
 
-- **SSD drive**: storage `ssd_disks`, Discard `ENABLED`, disk size `10 GiB`, SSD emulation `ENABLED`, IO thread `ENABLED`.
+- **SSD drive**\
+  Storage `ssd_disks`, Discard `ENABLED`, disk size `10 GiB`, SSD emulation `ENABLED`, IO thread `ENABLED`.
 
 This new storage drive should be listed the `Hardware` view of the `k3sagent02` VM as shown below:
 

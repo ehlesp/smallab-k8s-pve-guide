@@ -514,7 +514,7 @@ In the installation of the K3s cluster, which you will perform in the next [chap
 
 ## Turning the VM into a VM template
 
-With the VM tuned properly, you can turn it into a VM template. Just repeat the procedure already covered by the previous [chapter **G023**](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md#turning-the-debian-vm-into-a-vm-template), remembering that the `Convert to template` action is available as an option in the `More` list of any VM:
+With the VM tuned properly, you can turn it into a VM template. Just repeat the procedure already covered by the previous [chapter **G023**](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md#steps-for-transforming-your-debian-vm-into-a-vm-template), remembering that the `Convert to template` action is available as an option in the `More` list of any VM:
 
 > [!IMPORTANT]
 > **You cannot turn a VM currently in use into a template**\
@@ -522,11 +522,11 @@ With the VM tuned properly, you can turn it into a VM template. Just repeat the 
 
 ![Convert to template option](images/g024/pve_node_template_more_convert_to_template_option.webp "Convert to template option")
 
-Moreover, update the `Notes` text of this VM with any new or extra detail you might think relevant, and do not forget to make a full backup of the template. This backup is something you also did in the [chapter **G023**](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md#turning-the-debian-vm-into-a-vm-template), and the next snapshot is a reminder of where you can find the VM backup feature:
+Moreover, update the `Notes` text of this VM with any new or extra detail you might think relevant, and do not forget to make a full backup of the template. This backup is something you also did in the [chapter **G023**](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md#vm-templates-backup), and the next snapshot is a reminder of where you can find the VM backup feature:
 
 ![VM backup button](images/g024/pve_node_template_backup_button.webp "VM backup button")
 
-Remember that restoring backups can free some space due to the restoration process detecting and ignoring the empty blocks within the image. Therefore, consider restoring the VM template immediately after doing the backup to recover some storage space. This action is also explained in the [chapter **G023**](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md).
+Remember that restoring backups can free some space due to the restoration process detecting and ignoring the empty blocks within the image. Therefore, consider restoring the VM template immediately after doing the backup to recover some storage space. This action is also explained in the [chapter **G023**](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md#restoring-the-vm-templates-backup).
 
 ## Relevant system paths
 

@@ -77,7 +77,7 @@ By the way, notice in the `Summary` view of the VM how the `Bootdisk` size also 
 
 ### Resizing the related partitions
 
-Before you can extend the `root` LVM volume, you need to resize the partition in which it's found:
+Before you can extend the `root` LVM volume, you need to resize the partition in which it is found:
 
 1. Open a remote shell into the VM with `mgrsys` user, then check with `fdisk` if the system truly sees the full size of the disk:
 
@@ -247,7 +247,7 @@ With the real partitions updated, now you can extend the root LVM filesystem in 
 
     Above you can see that `PSize` is now 14.25 GiB, from which 5.04 GiB are free (`PFree` column).
 
-3. Now you can resize the `root` LV itself. First, check it's current status:
+3. Now you can resize the `root` LV itself. First, check its current status:
 
     ~~~sh
     $ sudo lvs
@@ -256,7 +256,7 @@ With the real partitions updated, now you can extend the root LVM filesystem in 
       swap_1 bkpserver-vg -wi-ao---- 544.00m
     ~~~
 
-    It's `LSize` is 8.69 GiB and, below it, you can see the swap volume (`swap_1`) taking up about 544 MiB.
+    Its `LSize` is 8.69 GiB and, below it, you can see the swap volume (`swap_1`) taking up about 544 MiB.
 
 4. Use the following `lvextend` command to extend the `root` volume over all the available free space in the `sda5` PV:
 
@@ -285,7 +285,7 @@ With the real partitions updated, now you can extend the root LVM filesystem in 
       swap_1 bkpserver-vg -wi-ao---- 544.00m
     ~~~
 
-    Now it's `LSize` is 13.72 GiB, and the swap volume has been unaffected by the whole procedure.
+    Now its `LSize` is 13.72 GiB, and the swap volume has been unaffected by the whole procedure.
 
 5. As a final test, reboot the VM to verify that the changes have not messed up with the system in a bad way. This is something you may detect in the VM's boot sequence, although you can see a VM's boot sequence only through a noVNC shell, never through an ssh connection:
 

@@ -441,7 +441,7 @@ $ cd /etc/ssh ; sudo cp sshd_config sshd_config.orig
 
 ## Configuring Fail2Ban for SSH connections
 
-Fail2Ban is already enabled for SSH connections in the VM, but it needs a more refined configuration, as you did back in the [chapter **G010**](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md).
+Fail2Ban is already enabled for SSH connections in the VM, but it needs a more refined configuration, as you did back in the [chapter **G010**](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md):
 
 1. As `mgrsys`, `cd` to `/etc/fail2ban/jail.d` and create an empty file called `01_sshd.conf`:
 

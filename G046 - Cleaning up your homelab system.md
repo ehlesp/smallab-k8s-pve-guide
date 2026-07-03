@@ -208,7 +208,7 @@ While the logs of the K3s service running on each node [are journaled](G025%20-%
   This is a folder with symbolic links to log files kept within the `/var/log/pods/` folder. This will never eat your storage space at all.
 
 - `/var/log/pods/`\
-  Holds [the logs of the containers running in the pods deployed in your K3s cluster](G036%20-%20Host%20and%20K3s%20cluster%20~%20Monitoring%20and%20diagnosis.md#container-logs). Since these logs are removed when the pods are removed, they should not give you much trouble in your storage. Still, a long running pod could produce a good amount of logs in one session, so be aware of them.
+  Holds [the logs of the containers running in the pods deployed in your K3s cluster](G036%20-%20Monitoring%20and%20diagnosis%20of%20your%20host%20and%20K3s%20cluster.md#container-logs). Since these logs are removed when the pods are removed, they should not give you much trouble in your storage. Still, a long running pod could produce a good amount of logs in one session, so be aware of them.
 
 #### Images of Kubernetes containers
 
