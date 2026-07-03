@@ -186,7 +186,7 @@ These persistent volumes are [like the ones declared for the Ghost platform](G03
 
 ## Forgejo platform's TLS certificate
 
-Encrypt the communications between your Forgejo platform and its clients with a TLS certificate [like others you have created before](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#forgejo-platforms-tls-certificate):
+Encrypt the communications between your Forgejo platform and its clients with a TLS certificate [like others you have created before](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%205%20-%20Complete%20Ghost%20platform.md#ghost-platforms-tls-certificate):
 
 1. Create a `forgejo.homelab.cloud-tls.certificate.cert-manager.yaml` file under `resources`:
 

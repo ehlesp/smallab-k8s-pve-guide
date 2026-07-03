@@ -276,7 +276,7 @@ You know what steps to follow when updating any app, but what is the proper orde
 
         > [!IMPORTANT]
         > **Upgrading MariaDB to a new major version implies upgrading its system and other tables**\
-        > This is not something that happens automatically. Either you do it manually following a certain procedure, or you can configure your MariaDB instance to do it automatically for you. It is explained how to do it in the second, and much more convenient, way in the [appendix chapter 11](G911%20-%20Appendix%2011%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md).
+        > This is not something that happens automatically. Either you do it manually following a certain procedure, or you can configure your MariaDB instance to do it automatically for you. It is explained how to do it in the second, and much more convenient, way in the [appendix chapter **G909**](G909%20-%20Appendix%2009%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md).
 
     3. **Ghost server**\
         Kustomize project preparation explained in [chapter **G033** - Deploying services 02 ~ Ghost - Part 4](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md).
@@ -292,7 +292,7 @@ You know what steps to follow when updating any app, but what is the proper orde
 
         > [!IMPORTANT]
         > **Updating to a new major PostgreSQL version also requires updating its system tables**\
-        > The update procedure for the system tables cannot be run in an automated way by PostgreSQL itself. Since it is rather elaborated, it is explained in the [appendix chapter 12](G912%20-%20Appendix%2012%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md).
+        > The update procedure for the system tables cannot be run in an automated way by PostgreSQL itself. Since it is rather elaborated, it is explained in the [appendix chapter **G910**](/G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md).
 
     3. **Forgejo server**\
         Kustomize project preparation explained in [chapter **G034** - Deploying services 03 ~ Forgejo - Part 4](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%204%20-%20Forgejo%20server.md).

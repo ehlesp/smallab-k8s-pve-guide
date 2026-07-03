@@ -1,6 +1,6 @@
 # G013 - Host hardening 07 ~ Mitigating CPU vulnerabilities
 
-- [CPUs also have security vulnerabilities](#cpus-also-have-security-vulnerabilities)
+- [CPUs have security vulnerabilities](#cpus-have-security-vulnerabilities)
 - [Discovering your CPU's vulnerabilities](#discovering-your-cpus-vulnerabilities)
 - [Your Proxmox VE system already has the correct microcode package applied](#your-proxmox-ve-system-already-has-the-correct-microcode-package-applied)
 - [Relevant system paths](#relevant-system-paths)
@@ -10,7 +10,7 @@
   - [About CPU vulnerabilities](#about-cpu-vulnerabilities)
 - [Navigation](#navigation)
 
-## CPUs also have security vulnerabilities
+## CPUs have security vulnerabilities
 
 CPUs also come with bugs and, in some cases, they can become security vulnerabilities. For instance, a couple of famous cases of such bugs were the meltdown and spectre vulnerabilities.
 

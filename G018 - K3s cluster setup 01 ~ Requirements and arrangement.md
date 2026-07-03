@@ -117,4 +117,4 @@ Remember that [this guide's reference hardware](G001%20-%20Hardware%20setup.md#t
 
 ## Navigation
 
-[<< Previous (**G017. Virtual Networking**)](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G019. K3s cluster setup 02**) >>](G019%20-%20K3s%20cluster%20setup%2002%20~%20Storage%20setup.md)
+[<< Previous (**G017. Virtual network configuration**)](G017%20-%20Virtual%20network%20configuration.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G019. K3s cluster setup 02**) >>](G019%20-%20K3s%20cluster%20setup%2002%20~%20Storage%20setup.md)

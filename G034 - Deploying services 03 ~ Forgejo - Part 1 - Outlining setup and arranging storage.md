@@ -21,7 +21,7 @@
 
 The next platform to deploy from the ones listed in the [chapter **G018**](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md#forgejo) is Forgejo. Forgejo is a Git-based control version system platform which, from a Kubernetes point of view, is like the Ghost platform you have deployed in the previous [chapter **G033**](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%201%20-%20Outlining%20setup%20and%20arranging%20storage.md). And what exactly makes Forgejo so similar to Ghost?
 
-Both platforms share the need for a database, a storage space for their data and the capacity of using a cache system such as Valkey. Therefore, you can expect the Forgejo deployment in your Kubernetes cluster should mirrors Ghost's. In fact, the procedure is so similar that this Forgejo procedure will not repeat the same explanations already given in the Ghost guide, except for specific particularities.
+Both platforms share the need for a database, a storage space for their data and the capacity of using a cache system such as Valkey. Therefore, you can expect the Forgejo deployment in your Kubernetes cluster should mirrors Ghost's. In fact, the procedure is so similar that this Forgejo procedure will not repeat the same explanations already given for the Ghost deployment, except for specific particularities.
 
 ## Outlining Forgejo's setup
 
@@ -50,7 +50,7 @@ The K3s agent chosen in the previous [chapter **G033**](G033%20-%20Deploying%20s
 
 ## Setting up new storage drives in the K3s agent
 
-The first thing to setup is the storage, which has to be arranged in the the `k3sagent01` agent node in a very similar way as you did for the Ghost deployment:
+The first thing to setup is the storage, which has to be arranged in the `k3sagent01` agent node in a very similar way as you did for the Ghost deployment:
 
 - One virtual SSD drive containing three LVM volumes.
 - One virtual HDD drive holding one LVM volume.
@@ -59,9 +59,11 @@ The first thing to setup is the storage, which has to be arranged in the the `k3
 
 Go to the `Hardware` tab of your `k3sagent01` VM and add two _hard disks_ with the following characteristics:
 
-- **SSD drive**: Storage `ssd_disks`, Discard `ENABLED`, Disk size `10 GiB`, SSD emulation `ENABLED`, IO thread `ENABLED`, rest of options left with their default values.
+- **SSD drive**\
+  Storage `ssd_disks`, Discard `ENABLED`, Disk size `10 GiB`, SSD emulation `ENABLED`, IO thread `ENABLED`, rest of options left with their default values.
 
-- **HDD drive**: Storage `hdd_data`, Discard `ENABLED`, Disk size `20 GiB`, SSD emulation `DISABLED`, IO thread `ENABLED`, rest of options left with their default values.
+- **HDD drive**\
+  Storage `hdd_data`, Discard `ENABLED`, Disk size `20 GiB`, SSD emulation `DISABLED`, IO thread `ENABLED`, rest of options left with their default values.
 
 These new storage drives should appear as _Hard Disks_ in the `Hardware` list of the `k3sagent01` VM.
 

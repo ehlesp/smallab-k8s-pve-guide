@@ -655,7 +655,7 @@ Since your Prometheus server will store data, you better deploy it with a `State
               claimName: server-prometheus
     ~~~
 
-    This `StatefulSet` declares a pod with a single container run with a non-root `65534` user (and group) with almost the same `securityContext` configuration specified for the [Forgejo server](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%204%20-%20Forgejo%20server.md#forgejo-server-statefulset). Beyond those similarities, the main particularities found under the `spec.template.spec` section of this `StatefulSet` for a Prometheus server are:
+    This `StatefulSet` declares a pod with a single container run by a non-root `65534` user (and group) with almost the same `securityContext` configuration specified for the [Forgejo server](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%204%20-%20Forgejo%20server.md#forgejo-server-statefulset). Beyond those similarities, the main particularities found under the `spec.template.spec` section of this `StatefulSet` for a Prometheus server are:
 
     - `serviceAccountName`\
       Specifies the name of [the service account created specifically for this Prometheus server pod](#prometheus-server-serviceaccount).

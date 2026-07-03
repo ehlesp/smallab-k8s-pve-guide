@@ -515,7 +515,7 @@ The upshot is that you need to open in your Proxmox VE firewall only the ports r
 
 ### Firewall configuration for the K3s node VMs
 
-After envisioning the ports setup visualized, you can enable them in the Proxmox VE firewall. The process is like what you did in the [chapter **G022**](G022%20-%20K3s%20cluster%20setup%2005%20~%20Connecting%20the%20VM%20to%20the%20NUT%20server.md#opening-the-upsd-port-on-the-proxmox-ve-node), where you gave your first Debian VM access to the NUT TCP port `3493` at the Proxmox VE host. The difference is that this time you have to handle more ports and IPs.
+After planning the ports setup, you can enable them in the Proxmox VE firewall. The process is like what you did in the [chapter **G022**](G022%20-%20K3s%20cluster%20setup%2005%20~%20Connecting%20the%20VM%20to%20the%20NUT%20server.md#opening-the-upsd-port-on-the-proxmox-ve-node), where you gave your first Debian VM access to the NUT TCP port `3493` at the Proxmox VE host. The difference is that this time you have to handle more ports and IPs.
 
 #### Allowing access to the host's NUT port for all K3s nodes VMs
 

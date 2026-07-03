@@ -126,7 +126,7 @@
 
 ### [G013 - Host hardening 07 ~ Mitigating CPU vulnerabilities](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md)
 
-- [CPUs also have security vulnerabilities](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#cpus-also-have-security-vulnerabilities)
+- [CPUs have security vulnerabilities](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#cpus-have-security-vulnerabilities)
 - [Discovering your CPU's vulnerabilities](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#discovering-your-cpus-vulnerabilities)
 - [Your Proxmox VE system already has the correct microcode package applied](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#your-proxmox-ve-system-already-has-the-correct-microcode-package-applied)
 - [Relevant system paths](G013%20-%20Host%20hardening%2007%20~%20Mitigating%20CPU%20vulnerabilities.md#relevant-system-paths)
@@ -134,7 +134,7 @@
 
 ### [G014 - Host hardening 08 ~ Firewalling](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md)
 
-- [[Enabling your PVE's firewall is a must](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#enabling-your-pves-firewall-is-a-must)]
+- [Enabling your PVE's firewall is a must](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#enabling-your-pves-firewall-is-a-must)
 - [Proxmox VE firewall uses iptables](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#proxmox-ve-firewall-uses-iptables)
 - [Zones in the Proxmox VE firewall](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#zones-in-the-proxmox-ve-firewall)
 - [Situation at this point](G014%20-%20Host%20hardening%2008%20~%20Firewalling.md#situation-at-this-point)
@@ -166,15 +166,15 @@
 - [Relevant system paths](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md#relevant-system-paths)
 - [References](G016%20-%20Host%20optimization%2002%20~%20Disabling%20the%20transparent%20hugepages.md#references)
 
-### [G017 - Virtual Networking ~ Network configuration](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md)
+### [G017 - Virtual network configuration](G017%20-%20Virtual%20network%20configuration.md)
 
-- [Preparing your virtual network for Kubernetes](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#preparing-your-virtual-network-for-kubernetes)
-- [Current virtual network setup](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#current-virtual-network-setup)
-- [Target network scenario](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#target-network-scenario)
-- [Creating an isolated Linux bridge](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#creating-an-isolated-linux-bridge)
-- [Bridges management](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#bridges-management)
-- [Relevant system paths](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#relevant-system-paths)
-- [References](G017%20-%20Virtual%20Networking%20~%20Network%20configuration.md#references)
+- [Preparing your virtual network for Kubernetes](G017%20-%20Virtual%20network%20configuration.md#preparing-your-virtual-network-for-kubernetes)
+- [Current virtual network setup](G017%20-%20Virtual%20network%20configuration.md#current-virtual-network-setup)
+- [Target network scenario](G017%20-%20Virtual%20network%20configuration.md#target-network-scenario)
+- [Creating an isolated Linux bridge](G017%20-%20Virtual%20network%20configuration.md#creating-an-isolated-linux-bridge)
+- [Bridges management](G017%20-%20Virtual%20network%20configuration.md#bridges-management)
+- [Relevant system paths](G017%20-%20Virtual%20network%20configuration.md#relevant-system-paths)
+- [References](G017%20-%20Virtual%20network%20configuration.md#references)
 
 ### [G018 - K3s cluster setup 01 ~ Requirements and arrangement](G018%20-%20K3s%20cluster%20setup%2001%20~%20Requirements%20and%20arrangement.md)
 
@@ -563,14 +563,14 @@
 - [Relevant system paths](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#relevant-system-paths)
 - [References](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%206%20-%20Complete%20monitoring%20stack%20setup.md#references)
 
-### [G036 - Host and K3s cluster ~ Monitoring and diagnosis](G036%20-%20Host%20and%20K3s%20cluster%20~%20Monitoring%20and%20diagnosis.md)
+### [G036 - Monitoring and diagnosis of your host and K3s cluster](G036%20-%20Monitoring%20and%20diagnosis%20of%20your%20host%20and%20K3s%20cluster.md)
 
-- [Monitor your homelab setup with its own tools](G036%20-%20Host%20and%20K3s%20cluster%20~%20Monitoring%20and%20diagnosis.md#monitor-your-homelab-setup-with-its-own-tools)
-- [Monitoring resources usage](G036%20-%20Host%20and%20K3s%20cluster%20~%20Monitoring%20and%20diagnosis.md#monitoring-resources-usage)
-- [Checking the logs](G036%20-%20Host%20and%20K3s%20cluster%20~%20Monitoring%20and%20diagnosis.md#checking-the-logs)
-- [Shell access into your containers](G036%20-%20Host%20and%20K3s%20cluster%20~%20Monitoring%20and%20diagnosis.md#shell-access-into-your-containers)
-- [Metrics from the monitoring stack](G036%20-%20Host%20and%20K3s%20cluster%20~%20Monitoring%20and%20diagnosis.md#metrics-from-the-monitoring-stack)
-- [References](G036%20-%20Host%20and%20K3s%20cluster%20~%20Monitoring%20and%20diagnosis.md#references)
+- [Monitor your homelab setup with its own tools](G036%20-%20Monitoring%20and%20diagnosis%20of%20your%20host%20and%20K3s%20cluster.md#monitor-your-homelab-setup-with-its-own-tools)
+- [Monitoring resources usage](G036%20-%20Monitoring%20and%20diagnosis%20of%20your%20host%20and%20K3s%20cluster.md#monitoring-resources-usage)
+- [Checking the logs](G036%20-%20Monitoring%20and%20diagnosis%20of%20your%20host%20and%20K3s%20cluster.md#checking-the-logs)
+- [Shell access into your containers](G036%20-%20Monitoring%20and%20diagnosis%20of%20your%20host%20and%20K3s%20cluster.md#shell-access-into-your-containers)
+- [Metrics from the monitoring stack](G036%20-%20Monitoring%20and%20diagnosis%20of%20your%20host%20and%20K3s%20cluster.md#metrics-from-the-monitoring-stack)
+- [References](G036%20-%20Monitoring%20and%20diagnosis%20of%20your%20host%20and%20K3s%20cluster.md#references)
 
 ### [G037 - Backups 01 ~ Considerations](G037%20-%20Backups%2001%20~%20Considerations.md)
 

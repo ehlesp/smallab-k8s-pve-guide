@@ -1327,7 +1327,7 @@ By default, you get redirected to the `Query` tab of the Prometheus dashboard. H
 
 ![Target health option in Status menu of Prometheus dashboard](images/g035/prometheus_dashboard_status_target_health_opt.webp "Target health option in Status menu of Prometheus dashboard")
 
-The `Target health` page lists all the Prometheus-compatible endpoints found in all the namespaces currently existing within your Kubernetes cluster, [as specified in the Prometheus scrape configuration](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%204%20-%20Prometheus%20server.md#). Remember that a number of these metrics sources are from endpoints declared in the `Service` resources you annotated with `prometheus.io` tags. This page also shows the status of each detected endpoint and their related labels:
+The `Target health` page lists all the Prometheus-compatible endpoints found in all the namespaces currently existing within your Kubernetes cluster, [as specified in the Prometheus scrape configuration](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%204%20-%20Prometheus%20server.md#configuration-file-prometheusyaml). Remember that a number of these metrics sources are from endpoints declared in the `Service` resources you annotated with `prometheus.io` tags. This page also shows the status of each detected endpoint and their related labels:
 
 ![Target health page under Status section in Prometheus dashboard](images/g035/prometheus_dashboard_status_target_health_page.webp "Target health page under Status section in Prometheus dashboard")
 
@@ -1512,4 +1512,4 @@ You can find the Kustomize project for this Monitoring stack deployment in the f
 
 ## Navigation
 
-[<< Previous (**G035. Deploying services 04. Monitoring stack Part 5**)](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana%20server.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G036. Host and K3s cluster**) >>](G036%20-%20Host%20and%20K3s%20cluster%20~%20Monitoring%20and%20diagnosis.md)
+[<< Previous (**G035. Deploying services 04. Monitoring stack Part 5**)](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana%20server.md) | [+Table Of Contents+](G000%20-%20Table%20Of%20Contents.md) | [Next (**G036. Monitoring and diagnosis of your host and K3s cluster**) >>](G036%20-%20Monitoring%20and%20diagnosis%20of%20your%20host%20and%20K3s%20cluster.md)
