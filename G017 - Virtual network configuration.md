@@ -182,8 +182,7 @@ You can handle your bridges through your Proxmox VE web console, but that is a r
 
 - There is a command with specific functionality meant for managing bridges, called `bridge`. It is already installed in your Proxmox VE system, so you can use it right away. Also, be aware that **the `bridge` command requires `sudo` to be executed**.
 
-    > [!NOTE]
-    > **To understand the bridge command, you also need to study the particularities of bridges in general**\
+    > [!NOTE] To understand the bridge command, you also need to study the particularities of bridges in general
     > Please take a look to the [references linked at the end of this chapter](#references).
 
 ## Relevant system paths

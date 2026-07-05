@@ -278,8 +278,7 @@ Now that you have the whole picture of how the storage setup is organized in a n
 
 3. Create a _physical volume_ (or PV) with each of those new partitions. Use the `pvcreate` command for this operation:
 
-    > [!WARNING]
-    > **The `pvcreate` command will fail if it finds references to a previous LVM structure in the storage drive it is trying to turn into a physical volume**\
+    > [!WARNING] The `pvcreate` command will fail if it finds references to a previous LVM structure in the storage drive it is trying to turn into a physical volume
     > If `pvcreate` returns a message like `Can't open /dev/sdb1 exclusively.  Mounted filesystem?`, you'll need to remove all the LVM structure that might be lingering in your storage device.
     >
     > [Follow this guide](https://www.thegeekdiary.com/lvm-error-cant-open-devsdx-exclusively-mounted-filesystem/) to know more about this issue.
@@ -291,8 +290,7 @@ Now that you have the whole picture of how the storage setup is organized in a n
       Physical volume "/dev/sdc1" successfully created.
     ~~~
 
-    > [!NOTE]
-    > **Do not worry about any `Wiping` lines returned by `pvcreate`**\
+    > [!NOTE] Do not worry about any `Wiping` lines returned by `pvcreate`
     > The `Wiping` lines mean that the command is removing any references, or signatures, of previous filesystems that were used in the storage devices. These lines may look like this:
     >
     > ~~~sh
@@ -620,8 +618,7 @@ What remains to do is to make usable all the still unallocated space within the 
     Command (m for help):
     ~~~
 
-    > [!IMPORTANT]
-    > **The `fdisk` command warns you about messing with the `/dev/sda` unit while in use**\
+    > [!IMPORTANT] The `fdisk` command warns you about messing with the `/dev/sda` unit while in use
     > In this particular scenario, this will not be an issue since you are going to create a new partition in the free space available.
     >
     > Still, modifying the partition table of an active storage unit is not recommended.
@@ -674,8 +671,7 @@ What remains to do is to make usable all the still unallocated space within the 
     Command (m for help):
     ~~~
 
-    > [!WARNING]
-    > **Although `fdisk` says it has created the partition, be aware that, in fact, the new partition table is only in memory**\
+    > [!WARNING] Although `fdisk` says it has created the partition, be aware that, in fact, the new partition table is only in memory
     > The change still has to be saved in the real `sda`'s partition table.
 
 7. To verify that the partition has been registered, use the command `p` to see the current partition table in `fdisk`'s memory:
@@ -710,8 +706,7 @@ What remains to do is to make usable all the still unallocated space within the 
 
 9. The next question is about what type you want to change the partition into. If you do not know the numeric code of the type you want, type `L` on this question to get a long list with all the types available. Press `q` to exit the types listing and return to the question prompt:
 
-    > [!WARNING]
-    > **The number identifying the type can change between `fdisk` versions!**\
+    > [!WARNING] The number identifying the type can change between `fdisk` versions!
     > Always check with `L` which number corresponds to the type you want to use.
 
     ~~~sh

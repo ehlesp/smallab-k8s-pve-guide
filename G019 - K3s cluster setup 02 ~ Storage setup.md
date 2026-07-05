@@ -94,8 +94,7 @@ After deciding how to organize the available free storage in your setup, you can
 
     The chunk size affects the size of the metadata pool used to manage the thinly provisioned volumes. It is also relevant from a performance point of view if those volumes are going to be provisioned at a high rate, as it can happen in a real production environment. Since the homelab setup of this guide is not meant for such a demanding scenario, you can just ignore the `lvcreate` warnings.
 
-    > [!IMPORTANT]
-    > **The LVs must not eat up the whole available space on each drive**\
+    > [!IMPORTANT] The LVs must not eat up the whole available space on each drive
     > You must leave some room available in case any of the thinpools' metadata needs to grow.
 
 3. Verify with `lsblk` that you have the storage structure you want:
@@ -156,8 +155,8 @@ Before you enable the new LV volumes and thinpools in Proxmox VE, there are a fe
 
 The new LVs are virtual partitions that still do not have a defined filesystem. You need to format each of them to have one, `ext4` in this case:
 
-> [!WARNING]
-> Next you will format and mount just the new LVs, **NOT the new thinpools**!
+> [!WARNING] This subsection only deals with the new LVs
+> Next you will format and mount **just the new LVs**, NOT the new thinpools!
 
 1. Before you format the new LVs, you need to see their `/dev/mapper/` paths with `fdisk`:
 
@@ -304,8 +303,7 @@ Next you will enable as directories the two LVs you have just created and mounte
 
     You get the whole list of storage types supported by Proxmox VE, although the small setup of this guide is limited to use just the first four.
 
-    > [!NOTE]
-    > **This guide does not considers NFS as an storage option**\
+    > [!NOTE] This guide does not considers NFS as an storage option
     > Technically, you could also use NFS but, since it is not under this guide's scope, it is not considered an option for this homelab build.
 
 2. Click on `Directory` to raise the window below:
@@ -332,8 +330,7 @@ Next you will enable as directories the two LVs you have just created and mounte
     - `Shared`\
       In a Proxmox VE cluster, this allows to indicate if a storage is already being shared among the nodes.
 
-      > [!IMPORTANT]
-      > **Not all storage types support this option**\
+      > [!IMPORTANT] Not all storage types support this option
       > Like `LVM-Thin`, for instance.
 
     The `Backup Retention` tab looks like below:
@@ -362,8 +359,7 @@ Next you will enable as directories the two LVs you have just created and mounte
 
     - In `Content` there is only one content type selected, the one related to backups, while the `Disk image` that was marked by default has been unselected.
 
-      > [!NOTE]
-      > **Proxmox VE backups are VZ dumps**\
+      > [!NOTE] Proxmox VE backups are VZ dumps
       > Although the list of content types no longer specifies it (as it was in previous major Proxmox VE versions), the `Backup` type are VZ dumps.
 
     - No other option has been touched, not even in the `Backup Retention` tab.
@@ -405,8 +401,7 @@ As you have already seen, Proxmox VE comes with one directory storage enabled by
 
     Also notice that the `local` storage is not present anymore at the tree list on the left.
 
-> [!WARNING]
-> **The PVE web console will not allow you to `Remove` the `local` directory storage**\
+> [!WARNING] The PVE web console will not allow you to `Remove` the `local` directory storage
 > If you try that, PVE will just reenable the storage and set as supported content types **all of them**.
 
 ### Enabling the thinpools within Proxmox VE
@@ -490,8 +485,7 @@ lvmthin: hddusb_bkpdata
         content rootdir,images
 ~~~
 
-> [!NOTE]
-> **Ordering in the `storage.cfg` can change**\
+> [!NOTE] Ordering in the `storage.cfg` can change
 > The ordering of the storage blocks within the `storage.cfg` file may be different in your system.
 
 ## Relevant system paths

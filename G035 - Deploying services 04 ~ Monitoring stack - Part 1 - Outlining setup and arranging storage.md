@@ -41,8 +41,7 @@ The very first thing to do is identifying which components you need in your moni
 - **Kube State Metrics**\
   Service that provides details from all the Kubernetes API objects present in a Kubernetes cluster, but that are not accessible through the native Kubernetes monitoring components. In other words, is an agent that gets cluster-level metrics and exposes them in a Prometheus-compatible `/metrics` endpoint.
 
-  > [!NOTE]
-  > **The Kube State Metrics is not the metrics-server!**\
+  > [!NOTE] The Kube State Metrics is not the metrics-server!
   > Do not confuse the **Kube State Metrics** service with the `metrics-server` you deployed in the [chapter **G028**](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md).
   >
   > The `metrics-server` service neither gets the same metrics nor exposes them through an endpoint reachable by Prometheus.
@@ -542,8 +541,7 @@ Get back into the remote shell connected to your `k3sagent01` VM and do this:
 
 5. Make the mounting permanent, by adding it to the `k3sagent01`'s  `/etc/fstab` file. First, backup the file:
 
-    > [!WARNING]
-    > **You already have a backup of the `fstab` file**\
+    > [!WARNING] You already have a backup of the `fstab` file
     > At this point you should already have a backup of the `fstab` file. Rename it to something like `fstab.bkp.old` or remove it before you apply the following command.
     >
     > `$ sudo mv /etc/fstab.bkp /etc/fstab.bkp.old`
@@ -626,8 +624,7 @@ Reopen the remote shell connected to your `k3sagent02` VM to apply the following
 
 5. Make the mounting permanent, by adding it to the VM's  `/etc/fstab` file. First, backup the file:
 
-    > [!WARNING]
-    > **You already have a backup of the `fstab` file**\
+    > [!WARNING] You already have a backup of the `fstab` file
     > At this point you should already have a backup of the `fstab` file. Rename it to something like `fstab.bkp.old` or remove it before you apply the following command.
     >
     > `$ sudo mv /etc/fstab.bkp /etc/fstab.bkp.old`
@@ -695,8 +692,7 @@ Go back to the `k3sagent02` remote shell and do this:
 
     Ignore the `lost+found` folder, it is automatically created by the system.
 
-> [!IMPORTANT]
-> **Remember that the `k3smnt` folders are within the already mounted LVM storage volumes**\
+> [!IMPORTANT] Remember that the `k3smnt` folders are within the already mounted LVM storage volumes
 > You cannot create these folders without mounting the light volumes first.
 
 ### About increasing the storage volume's size

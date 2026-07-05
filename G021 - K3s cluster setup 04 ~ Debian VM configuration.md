@@ -82,8 +82,7 @@ It might happen that you need to install `apt` packages in your VM that are _non
     deb-src http://deb.debian.org/debian trixie-updates non-free
     ~~~
 
-    > [!WARNING]
-    > This sources list is only for Debian 13 "trixie"!
+    > [!WARNING] This sources list is only for Debian 13 "trixie"!
 
 5. Save the file and update `apt`:
 
@@ -175,8 +174,7 @@ The user you created in the Debian installation process, which in this guide is 
     $ adduser mgrsys sudo
     ~~~
 
-    > [!WARNING]
-    > **You cannot execute the `adduser` command from a SSH shell with `mgrsys`**\
+    > [!WARNING] You cannot execute the `adduser` command from a SSH shell with `mgrsys`
     > I does not matter if you become `root` with `su` as you have just done in the previous section. You must be root within a **noVNC or local shell** or the `adduser` command will not work.
 
 2. Now login as the `mgrsys` user with a regular SSH shell, then test that `sudo` works with a harmless command like `ls`:
@@ -203,13 +201,12 @@ Having a TOTP code hardens the login of your administrative user:
     $ google-authenticator -t -d -f -r 3 -R 30 -w 3 -Q UTF8 -i debiantpl.homelab.cloud -l mgrsys@debiantpl
     ~~~
 
-    > [!IMPORTANT]
-    > Remember to replace the values at the `-i` (issuer) and `-l` (label) options with your own!
+    > [!IMPORTANT] Remember to replace the values at the `-i` (issuer) and `-l` (label) options with your own!
 
 2. Copy all the codes given by the `google-authenticator` command in a safe location, like a password manager:
 
-> [!NOTE]
-> The configuration for the TOTP code is saved in the administrative user's `HOME` directory, in a plain text `.google_authenticator` file.
+> [!NOTE] The configuration for the TOTP code is saved in the administrative user's `HOME` directory
+> The TOTP configuration is stored as a plain text `.google_authenticator` file.
 
 ### SSH key pair for the administrative user
 
@@ -221,8 +218,7 @@ It is much better if you login as your administrative user with a SSH key pair:
     $ ssh-keygen -t ed25519 -a 250 -C "mgrsys@debiantpl"
     ~~~
 
-    > [!NOTE]
-    > **The `ssh-keygen` command asks you for a passphrase, but you can leave it empty**\
+    > [!NOTE] The `ssh-keygen` command asks you for a passphrase, but you can leave it empty
     > Ideally, you want to set up a passphrase for your key pair. Still, take into account that you will also use TOTP codes when connecting through SSH after finishing this chapter. This means that, when you login, you will have to enter both the TOTP code and the passphrase, if you also specified it. Depending on the SSH client you use, this may be cumbersome depending on the time limit you set to enter the login credentials.
 
 2. Authorize the public key of your newly generated pair:
@@ -235,8 +231,7 @@ It is much better if you login as your administrative user with a SSH key pair:
 
 3. Export this key pair and keep it in a safe location. Remember that you need to generate the `.ppk` file from the private key for connecting from Windows clients. Check out the [appendix chapter **G901**](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md#generating-a-ppk-file-from-a-private-key) to learn how.
 
-> [!WARNING]
-> **You cannot login as the administrative user with its new SSH key pair yet!**\
+> [!WARNING] You cannot login as the administrative user with its new SSH key pair yet!
 > Since the `publickey` method is still not enabled in the `sshd` service's configuration, the SSH server in your Proxmox VE node will reject your key pair if you attempt to login with it.
 >
 > Just use the password and the TOTP code for now at this point. In the next [Hardening the `sshd` service](#hardening-the-sshd-service) section you will finally enable the `publickey` method, allowing you login remotely with your key pair.
@@ -458,8 +453,8 @@ Fail2Ban is already enabled for SSH connections in the VM, but it needs a more r
     maxretry = 3
     ~~~
 
-    > [!IMPORTANT]
-    > Remember to set the `maxretry` parameter with the same value as the `MaxAuthTries` in the `sshd` configuration!
+    > [!IMPORTANT] The number of allowed retries through SSH must be the same everywhere
+    > Remember to set the `maxretry` parameter here with the same value as the `MaxAuthTries` in the `sshd` configuration!
 
 3. Save the changes and restart the fail2ban service:
 
@@ -517,8 +512,7 @@ To check that you cannot login with the `root` user, open a noVNC terminal on th
 
 Next thing to do is to harden and improve the configuration of the VM with `sysctl` settings, as you did in the chapters [**G012**](G012%20-%20Host%20hardening%2006%20~%20Network%20hardening%20with%20sysctl.md) and [**G015**](G015%20-%20Host%20optimization%2001%20~%20Adjustments%20through%20sysctl.md) for your Proxmox VE host. Since your VM is also running a Debian system, the `sysctl` values applied here are mostly the same as the ones applied to your PVE node.
 
-> [!NOTE]
-> **This `sysctl` configuration is kind of generic but oriented to support virtualization and containers, as the Proxmox VE platform does**\
+> [!NOTE] This `sysctl` configuration is kind of generic but oriented to support virtualization and containers, as the Proxmox VE platform does
 > In later chapters of this guide, you will have to change some of these settings in the VMs you will use as nodes of your Kubernetes cluster.
 
 As `mgrsys`, `cd` to `/etc/sysctl.d/` and apply the configuration files detailed in the following subsections.

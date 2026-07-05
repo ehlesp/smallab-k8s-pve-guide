@@ -100,8 +100,7 @@ Scheduling backup jobs is rather easy on Proxmox VE. Just log in the Proxmox VE 
 
       The schedule set above is a daily one that is executed at 21:00, but you can change it to suit your needs.
 
-      > [!IMPORTANT]
-      > **Careful with the time format**\
+      > [!IMPORTANT] Mind the time format
       > The time is always set in 24H format.
 
     - `Selection mode`: default is `Include selected VMs`.\
@@ -134,8 +133,7 @@ Scheduling backup jobs is rather easy on Proxmox VE. Just log in the Proxmox VE 
       - `Stop`:\
         Executes an orderly shutdown of the VM, then makes the backup. After finishing the backup, it restarts the affected VM. This mode provides the highest data consistency in the resulting backup.
 
-        > [!IMPORTANT]
-        > **The backup modes do not work exactly the same for containers**\
+        > [!IMPORTANT] The backup modes do not work exactly the same for containers
         > The behavior of these backup modes for containers is very similar but not totally equivalent to how they work for VMs. Check the Proxmox VE help to see the differences.
 
     - `Enable`: default is checked.\
@@ -161,8 +159,7 @@ Scheduling backup jobs is rather easy on Proxmox VE. Just log in the Proxmox VE 
 
     - At the VMs list, only the VMs of the K3s Kubernetes cluster are chosen. The VM templates already have their own backup made manually, and does not make sense either to run a backup job on them since VM templates cannot be modified (well, except their Proxmox VE configuration which you usually should not touch again).
 
-    > [!WARNING]  
-    > **Do not click on `Create` just yet!**\
+    > [!WARNING] Do not click on `Create` just yet!
     > There are more tabs to review in this backup job configuration window.
 
 6. Click on the `Notifications` tab to open the window below:
@@ -186,8 +183,7 @@ Scheduling backup jobs is rather easy on Proxmox VE. Just log in the Proxmox VE 
     - `Keep Hourly/Daily/Weekly/Monthly/Yearly`\
       Keeps **only one backup** for each of the last "N" hours/days/etc. If in an hour/day/etc happened to be more than one backup present, just the most recent is kept.
 
-    > [!IMPORTANT]
-    > **Backup jobs process these retention options in a certain order**\
+    > [!IMPORTANT] Backup jobs process these retention options in a certain order
     > First goes the `Keep Last` option, then `Hourly`, `Daily`, etc. In other words, each option is a level of restriction that supersedes the previous one.
     >
     > For example, if you set the job to keep the `Last` 30 backups, but also to keep only the ones from the last 5 hours, the `Hourly` restriction will apply to the 30 backups left by the `Last` rule.

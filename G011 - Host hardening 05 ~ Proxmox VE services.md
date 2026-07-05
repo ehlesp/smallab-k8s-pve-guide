@@ -255,8 +255,7 @@ By default, `pveproxy` listens on all your system's network interfaces through t
     LISTEN_IP="10.1.0.1"
     ~~~
 
-    > [!WARNING]
-    > **Ensure you specify your PVE system's IP!**\
+    > [!WARNING] Ensure you specify your PVE system's IP!
     > Do not just blindly copy this configuration line and forget about it, or you might very well disable your access to your Proxmox VE web interface!
 
 3. Save the changes and restart the `pveproxy` service:
@@ -265,8 +264,7 @@ By default, `pveproxy` listens on all your system's network interfaces through t
     $ sudo systemctl restart pveproxy.service
     ~~~
 
-> [!NOTE]
-> **This change also affects PVE's `spiceproxy` service**\
+> [!NOTE] This change also affects PVE's `spiceproxy` service
 > Since `spiceproxy` is a service you will disable later in this chapter, it is not necessary to restart it here.
 
 ### Enforcing strong SSL/TLS ciphers
@@ -289,16 +287,14 @@ To make the `pveproxy` use strong SSL/TLS ciphers (for TLS 1.2 and below) and ci
 
 The set in the CIPHERS parameter is derived from the list of supported ciphers you can find [in Cryptcheck](https://cryptcheck.fr/ciphers). The chosen ones are the ones at the top of the list, branded with a green mark but not of the _CCM_ type. The set in `CIPHERSUITES` is the default one, which is a selection from the five cipher suites currently available for TLS 1.3.
 
-> [!WARNING]\
-> **Ciphers evolve over time**\
+> [!WARNING] Ciphers evolve over time
 > Over time, the ciphers will become outdated or deemed weak. You should check this list or a similar one from time to time to update the set of ciphers admitted in your system.
 
 ### Host based access control rules
 
 You can apply some degree of access control by specifying a list of allowed IP addresses or ranges in the `pveproxy` configuration.
 
-> [!IMPORTANT]
-> **This approach forces you to remember to what program did you apply certain rules**\
+> [!IMPORTANT] This approach forces you to remember to what program did you apply certain rules
 > The `sshd` and other services also offer this kind of access control in their configuration, but managing all those rules in this scattered way is just unnecessarily hard.
 >
 > **Better centralize all the access control rules in the Proxmox VE firewall or putting a similar solution "in front" of all your services.**
@@ -433,8 +429,7 @@ ZFS requires a lot of RAM not affordable in such a small server as the one used 
 
 4. Check with `htop` or `systemctl` that the `zfs` services are not running.
 
-> [!NOTE]
-> **The ZFS tab will remain visible in PVE's web console**\
+> [!NOTE] The ZFS tab will remain visible in PVE's web console
 > Disabling the `zfs` services **will not remove** the ZFS tab found in the PVE web console at the `pve` node level, under the `Disks` section.
 >
 > Also, Ceph was not really installed on your system, something notified by the PVE web console at the `Datacenter > Ceph` section, although Proxmox VE is installed with a couple of Ceph-related services.
@@ -449,8 +444,7 @@ The `spiceproxy` service allows SPICE clients to connect to virtual machines and
     $ sudo systemctl mask --now spiceproxy
     ~~~
 
-    > [!IMPORTANT]
-    > **The `pve-manager` service launches `spiceproxy`**\
+    > [!IMPORTANT] The `pve-manager` service launches `spiceproxy`
     > The Proxmox VE startup script called `pve-manager` starts this `spiceproxy` service, and that forces us to `mask` rather than `disable` it with `systemctl`. If you just `disable` the `spiceproxy`, it will be started again by the `pve-manager` after a reboot.
 
 2. Reboot the system:
@@ -469,8 +463,7 @@ The `spiceproxy` service allows SPICE clients to connect to virtual machines and
 
     The command above should return no result whatsoever.
 
-> [!NOTE]
-> **The `SPICE` option will remain available**\
+> [!NOTE] The `SPICE` option will remain available
 > The `SPICE` option offered by the PVE web console will still be present in the `Shell` list, although you will not be able to connect to the server through that method now.
 >
 > ![The SPICE option remains available among the web console's shell options](images/g011/pve_web_console_shell_options.webp "The SPICE option remains available among the web console's shell options")
@@ -479,8 +472,7 @@ The `spiceproxy` service allows SPICE clients to connect to virtual machines and
 
 Since you are working just with a standalone node, it does not make much sense to have cluster or high availability related services running for nothing:
 
-> [!WARNING]
-> **Do not attempt to disable the `pve-cluster` daemon**\
+> [!WARNING] Do not attempt to disable the `pve-cluster` daemon
 > [The Proxmox VE documentation explicitly says](https://pve.proxmox.com/wiki/Service_daemons#pve-cluster) that **this service is needed even when not running a cluster**.
 
 1. Open a shell with you administrator user, and with the `systemctl` command disable and stop the services as follows:
@@ -515,8 +507,7 @@ The Proxmox VE web console has a `System` view, at the PVE node level, where you
 
 For example, notice how the `corosync`, `pve-ha-crm` and `pve-ha-lrm` services are reported _dead_ with their systemd units _disabled_. Meanwhile, the `spiceproxy` service is greyed out as _disabled_ with its systemd unit _masked_.
 
-> [!IMPORTANT]
-> **The `System` view only shows PVE-related services**\
+> [!IMPORTANT] The `System` view only shows PVE-related services
 > The services shown in this `System` view are only the ones Proxmox VE is directly concerned with. Other system services running in your PVE host will not appear listed here.
 
 ## Relevant system paths

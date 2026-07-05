@@ -33,9 +33,8 @@ Within those main concepts, this guide also covers (up to a point) details like 
 
 Each chapter in the guide is detailed and explanatory, only omitting things when they have been already done in a previous step or chapter, or is understood that the reader should know about them already. Also, each chapter is usually about one main concern or procedure, and the guide's setup serves as the example scenario illustrating how to implement it.
 
-> [!NOTE]
-> **This guide has been written in GitHub Flavored Markdown format**\
-> All the chapters of this guide are [GitHub Flavored Markdown](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/about-writing-and-formatting-on-github) documents you can visualize rendered as HTMLs either in GitHub directly or in compatible Markdown viewers or editors.
+> [!NOTE] This guide is written in GitHub Flavored Markdown format
+> All the chapters of this guide are [GitHub Flavored Markdown](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/about-writing-and-formatting-on-github) documents. You can visualize them rendered as HTMLs either in GitHub directly or in compatible Markdown viewers or editors.
 
 ## Intended audience
 

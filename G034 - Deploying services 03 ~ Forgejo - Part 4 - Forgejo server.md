@@ -116,8 +116,7 @@ See here how to configure as environment variables, and in a separated propertie
     - `FORGEJO__queue__SET_NAME`\
       Suffix added specifically to the name of unique queues.
 
-    > [!WARNING]
-    > **Careful with the underscore characters**\
+    > [!WARNING] Careful with the underscore characters
     > When typing these environment variables, be very careful of not missing or misplacing their underscore characters or the Forgejo server will not be able to read them.
     >
     > The double underscore separates categories. `FORGEJO` is the root category, while those like `server`, `lfs` or `database` are subcategories (notice these are in lowercase). The third part (always in UPPERCASE) on each environment variable represents the Forgejo configuration parameter itself.
@@ -141,8 +140,7 @@ The only secret values to configure are those corresponding to [the `forgejocach
 
     These two environment variables are just custom non-Forgejo parameters used later in this part when declaring the URI for calling the Valkey server host. They are necessary because it is not possible to reuse the values from Valkey's ACL file for injecting them somewhere else.
 
-    > [!WARNING]
-    > **URL encode any special character found in these values**\
+    > [!WARNING] URL encode any special character found in these values
     > You will see later how these environment variables are inserted in the connection string for connecting with the Valkey cache server. This forces you to URL-encode any special character you might have either in the username or the password. Otherwise, the connection attempt may fail. You could also consider just using alphanumeric values to avoid such issues.
 
 ## Forgejo server persistent storage claims
@@ -436,8 +434,7 @@ Since Forgejo is a server that stores data, it is better to deploy it with a `St
 
           - The values for the user credentials are injected in the URL with the environment variables `FORGEJO_VALKEY_USERNAME` and `FORGEJO_VALKEY_PASSWORD`.
 
-            > [!IMPORTANT]
-            > **Remember to URL encode any special character you may have in these variables**\
+            > [!IMPORTANT] Remember to URL encode any special character you may have in these variables
             > Otherwise, you may end up being unable to connect your Forgejo server with your Valkey instance.
 
           - `cache-valkey.forgejo.svc.homelab.cluster.:6379` specifies the absolute FQDN and the `server` port number of [the Valkey `Service`](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%202%20-%20Valkey%20cache%20server.md#valkey-service).
@@ -446,8 +443,7 @@ Since Forgejo is a server that stores data, it is better to deploy it with a `St
 
           - The query parameters are options that affect how the client side (Forgejo in this case) connections perform.
 
-            > [!IMPORTANT]
-            > **Do not forget to URL encode any special character you may enter in the query parameters**\
+            > [!IMPORTANT] Do not forget to URL encode any special character you may enter in the query parameters
             > For instance, see how the `:` character included in the `forgejo:` value of the `prefix` query parameter has been encoded as `%3A`.
 
         - `FORGEJO__session__PROVIDER_CONFIG`\

@@ -252,8 +252,7 @@ The main configuration file for Prometheus is a YAML file for configuring the sc
 
           Notice that the address has the service's complete FQDN (better for cluster performance), which includes the custom internal domain `homelab.cluster` [configured for the K3s cluster in the server node](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#the-k3sserver01-nodes-configyaml-file).
 
-          > [!NOTE]
-          > **The last dot in the absolute FQDN is not a mistake!**\
+          > [!NOTE] The last dot in the absolute FQDN is not a mistake!
           > It explicitly brands the FQDN as absolute, which avoids doing any searches in the cluster's internal DNS service. This technique allows calling services directly, improving your Kubernetes cluster performance.
 
       - `kubernetes-pods`\
@@ -288,8 +287,7 @@ The main configuration file for Prometheus is a YAML file for configuring the sc
 
 In this guide, the `prometheus.rules.yaml` file contains a set of rules for alerts that cover the essential components of your Kubernetes cluster:
 
-> [!NOTE]
-> **Learn more about Prometheus rules in its official documentation**\
+> [!NOTE] Learn more about Prometheus rules in its official documentation
 > To know more about the Prometheus rules, remember to check out the official documentation about "_[recording](https://prometheus.io/docs/prometheus/latest/configuration/recording_rules/)_" and "_[alerting](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/)_" rules
 
 1. Create the file `prometheus.rules.yaml` file in the `configs` folder:
@@ -372,8 +370,7 @@ Enable your Prometheus' basic authentication by configuring it as indicated [in 
 
     Do not lose the `htpasswd` outputs. It is the entry you have to put in your Prometheus basic authentication configuration.
 
-    > [!IMPORTANT]
-    > **Be careful with the value you set to the `-C` option!**\
+    > [!IMPORTANT] Be careful with the value you set to the `-C` option!
     > This option indicates the computing time used by the BCrypt algorithm for hashing and, if you set it too high, the authentication into Prometheus could take too long or even not finish at all. The value you can type here must be between 4 and 17, and the default is 5.
 
 2. Generate the file `prometheus.web.yaml` file in the `secrets` folder:
@@ -395,12 +392,10 @@ Enable your Prometheus' basic authentication by configuring it as indicated [in 
 
     The user entries in the `basic_auth_users` block above are modified versions of the strings you got from the earlier `htpasswd` commands.
 
-    > [!NOTE]
-    > **It is better to use different users for different tasks or concerns**\
+    > [!NOTE] It is better to use different users for different tasks or concerns
     > You could argue that, in the case of the homelab built in this guide, using several users with exactly the same privileges could be a bit too much. Still, this configuration allows you to trace better which user accessed or did what.
 
-    > [!WARNING]
-    > **In the Prometheus configuration, always put hashed passwords between quotation marks to avoid unmarshaling issues**\
+    > [!WARNING] In the Prometheus configuration, always put hashed passwords between quotation marks to avoid unmarshaling issues
     > Otherwise, Prometheus will be unable to read the hash properly due to the special characters that will appear in it (like the `$` for instance).
 
     With this file you can enable other security options like HTTPS in your Prometheus server instance but, since your cluster already has Traefik taking care of securing web accesses with HTTPS, they are not required here.
@@ -421,8 +416,7 @@ The password required for the basic authentication of the job that will scrape t
     Pu7Y0urPr0M37hEu5JoBS3cr3tP4ssw0rdH3r3
     ~~~
 
-    > [!WARNING]
-    > **The password must be entered in `basic_auth.pwd` as plain unencrypted text**\
+    > [!WARNING] The password must be entered in `basic_auth.pwd` as plain unencrypted text
     > Be careful of who can access this `basic_auth.pwd` file.
 
 ## Prometheus server persistent storage claim
@@ -525,8 +519,7 @@ You need to assign a role to the `server-prometheus` service account to grant it
 
     Notice the list of `resources` and the particular `/metrics` url in `nonResourceURLs` this `ClusterRole` allows to reach. Also see that all the `verbs` indicated are related to read-only actions.
 
-    > [!NOTE]
-    > **`ClusterRole` resources are not namespaced**\
+    > [!NOTE] `ClusterRole` resources are not namespaced
     > As its name implies, any role of this type has a cluster-wide reach. This is why namespaces do not apply to them.
 
 ## Prometheus server ClusterRoleBinding
@@ -557,8 +550,7 @@ The `ClusterRole` you have just created before is not be enforced unless you bin
       name: server-prometheus
     ~~~
 
-    > [!NOTE]
-    > **`ClusterRoleBinding` resources are not namespaced**\
+    > [!NOTE] `ClusterRoleBinding` resources are not namespaced
     > Like the `ClusterRole`, its binding also has cluster-wide reach.
 
 ## Prometheus server StatefulSet

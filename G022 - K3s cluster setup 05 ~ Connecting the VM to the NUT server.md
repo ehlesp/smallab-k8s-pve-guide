@@ -88,8 +88,7 @@ First, you need to change the configuration of the NUT server running in your Pr
     - `ondelay`\
       Value in seconds, default is 30 seconds. Time that must pass between the `upsdrvctl` shutdown command and the moment when the UPS will react to the return of wall power and turn on the power to the system.
 
-      > [!WARNING]
-      > This `ondelay` value **must be greater** than the `offdelay` number!
+      > [!WARNING] This `ondelay` value MUST BE GREATER than the `offdelay` number!
 
     - `lowbatt`\
       Value in percentage. Percentage of battery charge remaining in the UPS unit that should be considered as "low charge".
@@ -195,21 +194,18 @@ After adding this user, your NUT system will have three different NUT users: one
     - `CMDSCRIPT`
       Points to a user script that will be executed by `upssched` in response to the UPS events notified by the `upsmon` NUT monitor service.
 
-      > [!IMPORTANT]
-      > **This script is provided by the system administrator, which is you in this case**\
+      > [!IMPORTANT] This script is provided by the system administrator, which is you in this case
       > Do not confuse this script with the `/usr/sbin/upssched` command, which is the NUT program that will call your script. On the other hand, the name `upssched-cmd` is the assumed standard in the NUT community: **do not change it**.
 
     - `PIPEFN`\
       Socket file used for communication between `upsmon` and `upssched`.
 
-      > [!IMPORTANT]
-      > The directory containing this file should be accessible only by the NUT software and nothing else.
+      > [!IMPORTANT] The directory containing this file should be accessible only by the NUT software and nothing else.
 
     - `LOCKFN`\
       File required by the upsmon NUT daemon to avoid race conditions.
 
-      > [!IMPORTANT]
-      > The directory should be the same as for the `PIPEFN` file.
+      > [!IMPORTANT] The directory should be the same as for the `PIPEFN` file.
 
     - `AT` lines\
       Declarations for actions to `EXECUTE` with the `CMDSCRIPT` only `AT` the events defined in this configuration file. These declarations follow the pattern below:
@@ -260,8 +256,7 @@ After adding this user, your NUT system will have three different NUT users: one
 
     Do not forget specifying your own UPS unit in the `UPS` parameter of this script.
 
-    > [!NOTE]
-    > **This script is just an example of what you can do**\
+    > [!NOTE] This script is just an example of what you can do
     > In this case, is just some logging and sending messages regarding a particular set of UPS events. Notice how it has one input argument (`$1`), and the options appearing in the `case` block are used in the `AT` declarations defined in the `upssched.conf` file.
 
 9. Save the `upssched-cmd` file and restart the NUT related services already running in your Proxmox VE host:
@@ -296,8 +291,7 @@ You need to make the `upsd` port (in this guide is the standard NUT `3493` port)
       - Only use alphanumerical characters plus the `_` symbol.
       - Only use letters from the English alphabet.
 
-      > [!NOTE]
-      > These particularities are not explained in the Proxmox VE official documentation.
+      > [!NOTE] These particularities are not explained in the Proxmox VE official documentation.
 
       To fill this field, better follow a criteria like `[vm_hostname]_[vm_network_device_name]`. Then, for the sole VM existing in your PVE system at this point, this value would be `debiantpl_net0`.
 
@@ -366,8 +360,7 @@ You need to make the `upsd` port (in this guide is the standard NUT `3493` port)
 
     This group will hold the firewall rules related to the NUT port, so give it a meaningful `Name` like `nut_port_accept_in`:
 
-    > [!WARNING]
-    > **Careful with the `Name` field in this form**\
+    > [!WARNING] Careful with the `Name` field in this form
     > Like the IP alias `Name` field from before, the `Name` field here can only use alphanumerical English characters plus the `_` symbol.
 
     ![Security Group form filled](images/g022/pve_datacenter_firewall_security_group_editor_filled.webp "Security Group form filled")
@@ -388,8 +381,7 @@ You need to make the `upsd` port (in this guide is the standard NUT `3493` port)
     - `Action`\
       There are three options available here, `ACCEPT`, `DROP` or `REJECT`  the connection. In this case, choose `ACCEPT`.
 
-      > [!NOTE]
-      > **Difference between the `DROP` and `REJECT` actions**\
+      > [!NOTE] Difference between the `DROP` and `REJECT` actions
       > The difference between `DROP` and `REJECT` is that `DROP` rejects connections silently, whereas `REJECT` makes the firewall answer with a rejection code. For stopping connection attempts, always use `DROP` unless you really need to make the rejection noticeable.
 
     - `Enable`\

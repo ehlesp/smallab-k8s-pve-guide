@@ -19,8 +19,7 @@ Every time you log in the Proxmox VE web console, or when you get into the updat
 
 This is bothersome, but there is a way to make the web console stop showing it.
 
-> [!WARNING]
-> **Disabling this warning has side effects on the Proxmox VE web console**\
+> [!WARNING] Disabling this warning has side effects on the Proxmox VE web console
 > When you disable this warning, certain features of the Proxmox VE web console may not work anymore. You will need to restore the warning to be able to use them.
 
 ## Removing the subscription warning

@@ -101,8 +101,7 @@ In this guide, the VM has the IP `10.4.3.1`, and notice how the `4.3.1` part cor
 
 Boot up your `bkpserver` VM, then connect to it through remote SSH shell and login as `mgrsys`.
 
-> [!WARNING]
-> **Use the Debian template credentials to access this new VM**\
+> [!WARNING] Use the Debian template credentials to access this new VM
 > At this point, to access your `bkpserver` VM you have to use the same credentials set up in the Debian VM template.
 
 #### Setting a proper hostname string
@@ -136,8 +135,7 @@ The LVM filesystem structure of this VM retains the same names as the VM templat
     RESUME=/dev/mapper/bkpserver--vg-swap_1
     ~~~
 
-    > [!WARNING]
-    > **Careful when doing a backup of this `resume` file**\
+    > [!WARNING] Careful when doing a backup of this `resume` file
     > Do not make a `.orig` backup of this `resume` file, or not in the very same directory the original is. **Debian reads all files within the directory!**
 
 #### Setting up the second network card
@@ -165,8 +163,7 @@ As you have done with the `mgrsys` password, now you must change its TOTP to mak
 $ google-authenticator -t -d -f -r 3 -R 30 -w 3 -Q UTF8 -i bkpserver.homelab.cloud -l mgrsys@bkpserver
 ~~~
 
-> [!IMPORTANT]
-> **Save your TOTP codes**\
+> [!IMPORTANT] Save your TOTP codes
 > Export and save all the codes and even the `.google_authenticator` file in a password manager or by any other secure method.
 
 #### Changing the SSH key pair of mgrsys
@@ -297,8 +294,7 @@ With the tools available, now you can turn your `/dev/sdb` drive into a btrfs fi
       - The metadata will be mirrored in all the devices in the volume.
       - The data is allocated in "linear" fashion all along the devices in the volume.
 
-    > [!WARNING]
-    > **Never build a multidevice volume with drives of different capabilities**\
+    > [!WARNING] Never build a multidevice volume with drives of different capabilities
     > So do not put in the same volume SSD devices with HDD ones, for instance. Always be sure that they all are of the same kind and have the same I/O capabilities.
 
     With the btrfs volume configured this way, when you are running out of space in it, you can add another storage device to it. [Check out how in the official btrfs wiki](https://btrfs.wiki.kernel.org/index.php/Using_Btrfs_with_Multiple_Devices#Adding_new_devices).
@@ -516,8 +512,7 @@ At this point, your UrBackup server allows anonymous access to anyone browsing i
 
     See that it only asks you for the password, not the username.
 
-    > [!WARNING]
-    > **UrBackup's web interface does not have a logout or disconnect button**\
+    > [!IMPORTANT] UrBackup's web interface does not have a logout or disconnect button
     > To force the logout, manually refresh the page in your browser to get back to this password page.
 
 ### Enabling SSL access to the UrBackup server
@@ -580,14 +575,12 @@ UrBackup server does not come with SSL/TLS support so, to secure the connections
     }
     ~~~
 
-    > [!IMPORTANT]
-    > **Notice the `server_name` parameter with the domain for the UrBackup server**\
+    > [!IMPORTANT] Notice the `server_name` parameter with the domain for the UrBackup server
     > Do not forget to switch it with the one you are using in your homelab setup.
 
     With this configuration, nginx listens for HTTPS requests on the standard HTTPS port `443` to redirect them towards the UrBackup server which is listening in the `55413` port.
 
-    > [!WARNING]
-    > **Careful of not specifying UrBackup server's web console `55414` port**\
+    > [!WARNING] Mind NOT specifying UrBackup server's web console `55414` port instead
     > For the redirection to work, ensure to point it towards the `55413` port where UrBackup is also listening. Otherwise, the access to the web console will not work properly.
 
 5. You need to enable the UrBackup configuration in nginx:
@@ -636,8 +629,7 @@ As you did for your K3s node VMs [in the chapter **G025**](G025%20-%20K3s%20clus
 
     ![PVE Datacenter Firewall Security Group bkpserver](images/g040/pve_dc_fw_secgroup_bkpserver.webp "PVE Datacenter Firewall Security Group bkpserver")
 
-    > [!IMPORTANT]
-    > **Do not forget to enable these rules when you create them**\
+    > [!IMPORTANT] Do not forget to enable these rules when you create them
     > Revise the `On` column and check the ones you may have left disabled.
 
 4. Browse to the `Firewall` page of the `bkpserver` VM. Here you must press the `Insert: Security Group` to apply the new security group on this VM:
@@ -666,8 +658,7 @@ As you did for your K3s node VMs [in the chapter **G025**](G025%20-%20K3s%20clus
 
     - The `IP filter` is enabled, which helps to avoid IP spoofing.
 
-      > [!NOTE]
-      > **Remember that enabling this option is not enough**\
+      > [!NOTE] Enabling the `IP filter` option is not enough
       > You need to specify the concrete IPs allowed on the network interface in which you want to apply this security measure, something you have just done in the previous step.
 
     - The `log_level_in` and `log_level_out` options are set to `info`, enabling the logging of the firewall on the VM. This allows you to see, in the `Firewall > Log` view of the VM, any incoming or outgoing traffic that gets dropped or rejected by the firewall.

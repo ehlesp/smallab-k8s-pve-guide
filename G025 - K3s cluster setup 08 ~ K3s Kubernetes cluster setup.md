@@ -94,16 +94,14 @@ Another thing you must know is the two types of nodes that exist in a K3s cluste
 - The **server** node, specialized in running the control plane of the Kubernetes cluster.
 - The **agent** node, where K3s runs the workloads in the cluster.
 
-> [!NOTE]
-> **Kubernetes no longer distinguishes between nodes**\
+> [!NOTE] Kubernetes no longer distinguishes between nodes
 > In older versions of Kubernetes, control plane nodes were called _master_ and the rest _workers_. In modern Kubernetes clusters, this distinction is no longer relevant since the control plane's workloads can be run in any node.
 >
 > Still, Kubernetes maintains some sort of default behavior that makes all [control plane components start in the same node](https://kubernetes.io/docs/concepts/architecture/#control-plane-components), and also avoids running any user container in that node.
 
 A server can also act as an agent at the same time, but this chapter only explains the scenario using one "pure" server node.
 
-> [!NOTE]
-> **This chapter shows you how to create a single-server K3s cluster that uses an embedded sqlite database as data storage**\
+> [!NOTE] This chapter shows you how to create a single-server K3s cluster that uses an embedded sqlite database as data storage
 > If you want a multiserver/multimaster cluster setup, you need to combine the instructions given here with the indications summarized in the [appendix chapter **G906**](G906%20-%20Appendix%2006%20~%20K3s%20cluster%20with%20two%20or%20more%20server%20nodes.md).  
 > Also be aware that a sqlite-based cluster can only have one server node and cannot be converted to a multiserver one.
 
@@ -111,8 +109,7 @@ A server can also act as an agent at the same time, but this chapter only explai
 
 This guide assumes the most simple scenario, which is a single local network behind one router. This means that everything falls within a [private network IPv4 range](https://en.wikipedia.org/wiki/Reserved_IP_addresses#IPv4) such as `10.0.0.0/8`, and no other subnets are present.
 
-> [!NOTE]
-> **This guide uses big private network IP range to minimize conflicts**\
+> [!NOTE] This guide uses big private network IP range to minimize conflicts
 > Nowadays, is a common hardening feature to make devices use randomized MACs to connect to networks. This makes those devices get a new random IP from the router every time they connect to a network. Depending on how well the router is able to handle the IP assignments, this could lead to IP conflicts with devices that have statically assigned IPs. These conflicts emerge when a device with a static IP happens to be temporarily unavailable in the network, then other device gets the same IP through dynamic assignment because the router has not been programmed to take this situation into account. When the device with a static IP, usually a server, comes back and tries to claim its IP it sees that it has been assigned already to other device and is forced to get a different one.
 >
 > To help minimize this problem, this guide considers better to use the widest valid network range available for private LANs: `10.0.0.0/8`. This range provides up to 16.777.216 addresses, a big enough number to avoid having conflicts of IPs between devices in a small network like a home LAN.
@@ -189,14 +186,12 @@ In the snapshot you see that the VM has been assigned the ID `411`, since the pr
 
 The second VM is going to be an agent, so its name should be `k3sagent01`. The main IP for this VM is going to be `10.4.2.1`, so a good `ID` for it would be `421`.
 
-> [!NOTE]
-> **The VM IDs are important for configuring their automatic starting and shutting down by Proxmox VE**\
+> [!NOTE] The VM IDs are important for configuring their automatic starting and shutting down by Proxmox VE
 > This chapter explains more about it later, but you can check how the VM IDs are important in such process [in the Proxmox VE official documentation](https://pve.proxmox.com/pve-docs/chapter-qm.html#qm_startup_and_shutdown).
 
 Again, the proposed hostname schema, static IP and ID assignments are just suggestions. Put the names, IPs and IDs you find suitable for your particular preferences or requirements.
 
-> [!NOTE]
-> **Remember that linked clones are attached to their VM template**\
+> [!NOTE] Remember that linked clones are attached to their VM template
 > Proxmox VE will not allow you to remove the template unless you delete its linked clones first.
 
 ### VM as K3s server node
@@ -210,8 +205,7 @@ Those are really low hardware capabilities. Do not go lower than those or it wil
 
 ![Hardware tab of the K3s server node VM](images/g025/pve_vm_hardware_tab.webp "Hardware tab of the K3s server node VM")
 
-> [!NOTE]
-> **Remember that this guide is based on a low end computer**\
+> [!NOTE] Remember that this guide is based on a low end computer
 > If your hardware setup happens to be more powerful, do not hesitate to assign more resources to the VMs if you want or need to. Just be careful of not overloading your hardware.
 
 ### VM as K3s agent node
@@ -243,8 +237,7 @@ As it happened when you set up the k3s node VM template, these two new VMs you h
 
 With the naming scheme decided, you can change the hostname **to each VM** in the same way you did when you configured the K3s node VM template:
 
-> [!WARNING]
-> **At this point, your two new VMs will have the same credentials**\
+> [!WARNING] At this point, your two new VMs will have the same credentials
 > This means having the same certificates, password and TFA TOTP code for the `mgrsys` user as the ones set in the K3s node VM template those VMs are clones of.
 >
 > Remember this when you try to connect remotely to those VMs through SSH.
@@ -348,8 +341,7 @@ And the command for the agent node should be as shown next:
 $ google-authenticator -t -d -f -r 3 -R 30 -w 3 -Q UTF8 -i k3sagentxx.homelab.cloud -l mgrsys@k3sagentxx
 ~~~
 
-> [!IMPORTANT]
-> **Save your TOTP codes**\
+> [!IMPORTANT] Save your TOTP codes
 > Export and save all the codes and even the `.google_authenticator` file in a password manager or by any other secure method.
 
 ### Changing the SSH key-pair
@@ -369,8 +361,7 @@ As with the TOTP code, the SSH key-pair files are the same ones you created for 
     $ ssh-keygen -t ed25519 -a 250 -C "k3sserverxx.homelab.cloud@mgrsys"
     ~~~
 
-    > [!NOTE]
-    > **The comment (`-C`) in the command above is just an example**\
+    > [!NOTE] The comment (`-C`) in the command above is just an example
     > Replace that comment with whatever string suits your requirements.
 
 3. Enable the public part of the key-pair:
@@ -381,8 +372,7 @@ As with the TOTP code, the SSH key-pair files are the same ones you created for 
 
 Careful now, you have to export the new private key (the `id_ed25519` file) so you can remotely connect through your ssh client. Do not close your current connection so you can use it to export the private key.
 
-> [!IMPORTANT]
-> **Save your ssh key-pairs**\
+> [!IMPORTANT] Save your ssh key-pairs
 > Do not forget to export and save the new ssh key-pairs in a password manager or by any other secure method.
 
 ### Changing the administrative user's password
@@ -400,8 +390,7 @@ Retype new password:
 passwd: password updated successfully
 ~~~
 
-> [!IMPORTANT]
-> Save the password somewhere safe, like in a password manager.
+> [!IMPORTANT] Save the password somewhere safe, like in a password manager.
 
 ### Creating the pending K3s agent node VM
 
@@ -577,8 +566,7 @@ The connection of your K3s nodes with the NUT server should be enabled now. Chec
 
     ![Security group rules for K3s agent nodes net0 NIC](images/g025/pve_datacenter_firewall_security_group_k3s_agents_accept_in_net0.webp "Security group rules for K3s agent nodes net0 NIC")
 
-    > [!IMPORTANT]
-    > **Do not forget to enable the rules when you create them**\
+    > [!IMPORTANT] Do not forget to enable the rules when you create them
     > Revise the `On` column and check the ones you may have left disabled.
 
     The security groups do not work just as they are, **you have to apply them on each of your K3s node VMs**:
@@ -608,8 +596,7 @@ The connection of your K3s nodes with the NUT server should be enabled now. Chec
 
     - The `IP filter` is enabled, which helps to avoid IP spoofing.
 
-      > [!NOTE]
-      > **Enabling the `IP filter` option is not enough**\
+      > [!NOTE] Enabling the `IP filter` option is not enough
       > You need to specify the concrete IPs allowed in the network interface on which you want to apply this security measure, something you have just done in the previous step.
 
     - The `log_level_in` and `log_level_out` options are set to `info`, enabling the logging of the firewall on the VM. This allows you to see, in the `Firewall > Log` view of the VM, any incoming or outgoing traffic that gets dropped or rejected by the firewall.
@@ -778,8 +765,7 @@ The configuration file you need to enable the graceful node shutdown can be call
     - `shutdownGracePeriodCriticalPods`\
       Default value is `0`. This is the grace period conceded only to pods marked as critical. This value has to be lower than the `shutdownGracePeriod`.
 
-      > [!IMPORTANT]
-      > **The two `shutdownGracePeriod` parameters must have a non-zero value**\
+      > [!IMPORTANT] The two `shutdownGracePeriod` parameters must have a non-zero value
       > Both the `shutdownGracePeriod` and the `shutdownGracePeriodCriticalPods` configuration options [must be set to **non-zero** values to enable the graceful shutdown functionality](https://kubernetes.io/docs/concepts/cluster-administration/node-shutdown/#configuring-graceful-node-shutdown).
 
     With the values set in the YAML above, the node will have `20` seconds to terminate all regular pods running in it, and `10` to end the critical ones.
@@ -893,18 +879,16 @@ As indicated before, the `/etc/rancher/k3s/config.yaml` file is the one the K3s 
 
       Put here the VM's full hostname and also the external IP of this server node to ensure that both values get included as Subject Alternative Names in its autogenerated TLS certificate. Otherwise, you will not be able to connect to your K3s cluster remotely with the official Kubernetes client using either the external IP or the full server node's hostname. Both will be rejected as not being "recognized" by the TLS certificate.
 
-      > [!NOTE]
-      > How to configure and use the Kubernetes client is explained [in the next chapter **G026**](G026%20-%20K3s%20cluster%20setup%2009%20~%20Setting%20up%20a%20kubectl%20client%20for%20remote%20access.md).
+      > [!NOTE] This guide also covers the Kubernetes client
+      > How to configure and use the Kubernetes client gets explained [in the next chapter **G026**](G026%20-%20K3s%20cluster%20setup%2009%20~%20Setting%20up%20a%20kubectl%20client%20for%20remote%20access.md).
 
     - `flannel-backend`\
       [Flannel](https://github.com/coreos/flannel) is a plugin for handling the cluster's internal networking. Flannel supports four different network backend methods, being `vxlan` the default one. The `host-gw` backend set in the `config.yaml` above has better performance than `vxlan` for this guide's setup, something you really want to have when running a K3s cluster in a resources-constrained environment.
 
-      > [!NOTE]
-      > **Know more about the Flannel backend options**\
+      > [!NOTE] Know more about the Flannel backend options
       > [In this related K3s documentation](https://docs.k3s.io/networking/basic-network-options#flannel-options) and [also here](https://stackoverflow.com/questions/45293321/why-host-gw-of-flannel-requires-direct-layer2-connectivity-between-hosts).
 
-      > [!IMPORTANT]
-      > **The backend you choose for your cluster will affect its performance, sometimes in a big way**\
+      > [!IMPORTANT] The backend you choose for your cluster will affect its performance, sometimes in a big way
       > For instance, the default `vxlan` proved to be an awful backend for this guide's setup, making services respond not just slowly but erratically even. The solution was to use `host-gw`, which offered a very noticeable good performance. Therefore, be aware that you might need to run some tests to choose the right backend which suits your requirements and your cluster setup.
 
     - `flannel-iface`\
@@ -955,8 +939,7 @@ As indicated before, the `/etc/rancher/k3s/config.yaml` file is the one the K3s 
     - `agent-token`\
       Alternative shared password to be used only by agents to join the cluster.
 
-      > [!IMPORTANT]
-      > **The `agent-token` value is a shared key among all server nodes of the cluster**\
+      > [!IMPORTANT] The `agent-token` value is a shared key among all server nodes of the cluster
       > This password can be any string, but **all the server nodes of a cluster must have configured the same value**.
 
       Mind that this value is **just the password part** of what shall become the full agent token. The complete pattern of an agent token is as follows.
@@ -986,8 +969,7 @@ The command will find the `config.yaml` file in the default path on the VM, and 
 - `wget`\
   Command for downloading the K3s installer. Instead of saving the executable into a file, `wget` dumps it into the shell output (option `-O` followed by `-`) to be consumed by the following pipe (`|`) command.
 
-  > [!NOTE]
-  > **The official K3s installation method uses `curl` for downloading the installer**\
+  > [!NOTE] The official K3s installation method uses `curl` for downloading the installer
   > Debian does not come with the `curl` command included by default, but `wget`.
 
 - `INSTALL_K3S_VERSION`\
@@ -1012,8 +994,7 @@ The command will find the `config.yaml` file in the default path on the VM, and 
     k3sserver01   NotReady   control-plane,master   14s   v1.33.4+k3s1
     ~~~
 
-    > [!IMPORTANT]
-    > **The AGE column means how old the node is since it was created**\
+    > [!IMPORTANT] The AGE column means how old the node is since it was created
     > It is NOT about how long the node has been running in the current session.
 
     At first, it will probably show the `NotReady` status for a moment. This depends on the capabilities given to your VM, so wait a bit and then execute again the `kubectl` command. But this time, use `kubectl` with a couple of extra options to get more information about the cluster:
@@ -1142,8 +1123,7 @@ The procedure to setup your two remaining VMs as K3s agent nodes is mostly the s
     k3sserver01   Ready    control-plane,master   25m   v1.33.4+k3s1   172.16.1.1    10.4.1.1      Debian GNU/Linux 13 (trixie)   6.12.41+deb13-amd64   containerd://2.0.5-k3s2
     ~~~
 
-    > [!NOTE]
-    > The new nodes need some time to appear in the list and reach the `Ready` status.
+    > [!NOTE] The new nodes need some time to appear in the list and reach the `Ready` status.
 
     The `watch` command executes a command every two seconds by default, and constantly displays its newest output. To get out of this command, use `Ctrl+C`.
 
@@ -1167,8 +1147,7 @@ Congratulations, your K3s cluster is up and running! Now you would like to know 
 - `kubectl api-resources`\
   Lists the resources supported in the K3s cluster, like nodes or pods.
 
-> [!NOTE]
-> **Use `less` to paginate long outputs**\
+> [!NOTE] Use `less` to paginate long outputs
 > Since the help texts can be lenghty, use a `| less` after any of the commands listed above to get a paginated output, rather than having the text directly dumped in your shell.
 
 In particular, the main command for retrieving information about what is going on in your cluster is `kubectl get`. You have already used it to see the nodes, but you can also obtain information from other resources like pods, services and many other. Next are listed a few examples to give you an idea of how to use this command:
@@ -1526,8 +1505,7 @@ The question now is, do you have to start and shutdown the VMs of your K3s clust
     - `Shutdown timeout`\
       Number of seconds that Proxmox VE concedes to the VM to shutdown gracefully. If the VM has not shutdown by the time this countdown reaches 0, Proxmox VE will halt the VM forcefully. The default value is 180 seconds.
 
-    > [!IMPORTANT]
-    > **The `Start/Shutdown order` option only works with VMs hosted in the same Proxmox VE node**\
+    > [!IMPORTANT] The `Start/Shutdown order` option only works with VMs hosted in the same Proxmox VE node
     > If you have a Proxmox VE cluster of two or more nodes (instead of the standalone node setup used in this guide), this option would not be shared cluster wide. This feature just works in a node-per-node basis. To have cluster-wide ordering, you have to use the HA (High Availability) manager, which offers its own ways to do such things. Furthermore, VMs managed by HA ignore this `Start/Shutdown order` option altogether.
 
 4. Set your server node with a `Start/Shutdown order` of 1, a `Startup delay` of 10 seconds, and leave the `Shutdown timeout` with the `default` value. Press `OK` and return to the VM's `Options` page:

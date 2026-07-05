@@ -75,14 +75,13 @@ Since in this new VM you are going to modify its filesystem structure, start by 
     - `VM ID`\
       The numerical ID that Proxmox VE uses to identify this VM. Notice how the form already assigns the next available number, in this case `101`.
 
-      > [!NOTE]
+      > [!NOTE] There is a lower limit for VM IDs
       > Proxmox VE does not allow IDs lower than `100`.
 
     - `Name`\
       This string must be a valid FQDN, like `k3snodetpl.homelab.cloud`.
 
-      > [!IMPORTANT]
-      > **The official Proxmox VE documentation is misleading about this field**\
+      > [!IMPORTANT] The official Proxmox VE documentation is misleading about this field
       > The official Proxmox VE documentation says that this name is `a free form text string you can use to describe the VM`, which contradicts what the web console actually validates as correct.
 
     - `Resource Pool`\
@@ -94,8 +93,7 @@ Since in this new VM you are going to modify its filesystem structure, start by 
       - `Linked Clone`\
         This creates a clone that still refers to the original VM, therefore is _linked_ to it. This option can only be used with read-only VMs, or templates, since the linked clone uses the original VM's volume to run, saving in its own image only the differences. Also, linked clones must be stored in the same `Target Storage` where the original VM's storage is.
 
-        > [!WARNING]
-        > **VM templates with attached linked clones are not removable**\
+        > [!WARNING] VM templates with attached linked clones are not removable
         > Templates cannot be removed as long as they have linked clones attached to them.
 
       - `Full Clone`\
@@ -190,8 +188,7 @@ Follow the next steps to remove the swap completely from your VM:
     #RESUME=/dev/mapper/debiantpl--vg-swap_1
     ~~~
 
-    > [!IMPORTANT]
-    > **Notice that you have not been told to make a backup of this `resume` file**\
+    > [!IMPORTANT] Notice that you have not been told to make a backup of this `resume` file
     > This is because the `update-initramfs` command would also read the backup file regardless of it having a different name, and that would lead to an error.
     >
     > Of course, you could consider making the backup in some other folder, but that forces you to employ a particular (and probably forgettable) backup procedure only for this specific file. To sum it up, just be extra careful when modifying this particular file.
@@ -284,8 +281,7 @@ Follow the next steps to remove the swap completely from your VM:
 
 The VG you have in your VM's LVM structure is the same one defined in your Debian VM template, meaning that it was made correlative to the hostname of the original system. This is not an issue per se, but it is better to give the VG's name a string that correlates with the VM. Since this VM is going to be the template for all the VMs you will use as K3s nodes, lets give the VG the name `k3snode-vg`. It is generic but still more meaningful than the `debiantpl-vg` string  for all the K3s nodes you have to create later.
 
-> [!WARNING]
-> **This procedure affects your VM's filesystem**\
+> [!WARNING] This procedure affects your VM's filesystem
 > Although this is not a difficult procedure, follow all the next steps carefully, or you may end messing up your VM's filesystem!
 
 1. Using the `vgrename` command, rename the VG with the suggested name `k3snode-vg`:
@@ -313,8 +309,7 @@ The VG you have in your VM's LVM structure is the same one defined in your Debia
     ...
     ~~~
 
-    > [!WARNING]
-    > **Careful of NOT reducing the double dash ('`--`') to just one (`-`)**\
+    > [!WARNING] Take care of NOT reducing the double dash ('`--`') to just one (`-`)
     > Only replace the `debiantpl` part with the new `k3snode` string.
 
 3. Next, you must find and change all the `debiantpl` strings present in the `/boot/grub/grub.cfg` file. But before that, do not forget to make a backup of `grub.cfg`:
@@ -367,8 +362,7 @@ The VG you have in your VM's LVM structure is the same one defined in your Debia
     $ sudo dpkg-reconfigure linux-image-6.12.41+deb13-amd64
     ~~~
 
-    > [!NOTE]
-    > **The current Kernel is informed in the shell login**\
+    > [!NOTE] The current Kernel is informed in the shell login
     > Right after you log in the VM, the very first line that Debian prints already informs you of its current Kernel among other details. For instance:
     >
     > ~~~sh
@@ -427,8 +421,7 @@ The VM has a second network card that is yet to be configured and enabled, and w
 
     Notice that I have set an IP address within the valid private network range I decided to use (`172.16.0.0` to `172.31.255.255`, or `172.16.0.0/12` with netmask `255.240.0.0`) for the secondary NICs of the K3s nodes.
 
-    > [!IMPORTANT]
-    > **Do not just blindly copy the configuration above!**\
+    > [!IMPORTANT] Do not just blindly copy the configuration above!
     > Ensure you are putting the correct name of the network interface as it appears in your VM when you copy the configuration above!
 
 3. You can enable the interface with the following `ifup` command:
@@ -501,8 +494,9 @@ In the installation of the K3s cluster, which you will perform in the next [chap
     kernel.panic_on_oops = 1
     ~~~
 
-    > [!WARNING]
-    > **If you skipped the [_memory optimizations_ step of the chapter **G021**](G021%20-%20K3s%20cluster%20setup%2004%20~%20Debian%20VM%20configuration.md#memory-optimizations), you need to adjust the `vm.overcommit_memory` flag here!**\
+    > [!WARNING] Set here the `vm.overcommit_memory` flag if you have not done it yet
+    > If you skipped the [_memory optimizations_ step of the chapter **G021**](G021%20-%20K3s%20cluster%20setup%2004%20~%20Debian%20VM%20configuration.md#memory-optimizations), you need to adjust the `vm.overcommit_memory` flag here!
+    >
     > Otherwise, the K3s service you will set up later in the next [chapter **G025**](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#k3s-installation-of-the-server-node-k3sserver01) will not be able to start.
 
 3. Save the `90_k3s_kubelet_demands.conf` file and apply the changes, then reboot the VM:
@@ -516,8 +510,7 @@ In the installation of the K3s cluster, which you will perform in the next [chap
 
 With the VM tuned properly, you can turn it into a VM template. Just repeat the procedure already covered by the previous [chapter **G023**](G023%20-%20K3s%20cluster%20setup%2006%20~%20Debian%20VM%20template%20and%20backup.md#steps-for-transforming-your-debian-vm-into-a-vm-template), remembering that the `Convert to template` action is available as an option in the `More` list of any VM:
 
-> [!IMPORTANT]
-> **You cannot turn a VM currently in use into a template**\
+> [!IMPORTANT] You cannot turn a VM currently in use into a template
 > Before executing the conversion, **first shut down the VM you are converting**.
 
 ![Convert to template option](images/g024/pve_node_template_more_convert_to_template_option.webp "Convert to template option")

@@ -122,8 +122,7 @@ Now you can browse to the `Updates` screen and see what is pending:
 
     ![apt upgrade in noVNC shell](images/g003/pve_node_updates_noVNC_shell.webp "apt upgrade in noVNC shell")
 
-    > [!IMPORTANT]
-    > **Pay attention to when the `apt` command requests your confirmation to proceed!**\
+    > [!IMPORTANT] Pay attention to when the `apt` command requests your confirmation to proceed!
     > Also, be aware that some packages may require your input for some reason or other.
 
 4. When the `apt` command finishes, it returns the control to the prompt within the shell console:
@@ -162,8 +161,7 @@ Since you only have one standalone node, before you apply such updates, you shou
 
 Instead of using the `Updates` screen in the web console, you can use the `apt` command directly through an SSH shell or by opening a shell directly from the web console.
 
-> [!NOTE]
-> **Check the appendix G901 about connecting with the PuTTY client**\
+> [!NOTE] Check the appendix G901 about connecting with the PuTTY client
 > If you want to connect through a SSH client to your servers, you can do it with a client like PuTTY as it is explained by the [appendix chapter **G901**](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md).
 
 If you prefer to open the shell from the Proxmox VE web console, know that it offers three different options:
@@ -205,8 +203,7 @@ Any modern computer comes with a bunch of integrated sensors, usually ones that 
 
 The `lm_sensors` package provides a `sensors` command that allows you to see the values returned by the sensors integrated in a Linux host like your PVE server.
 
-> [!NOTE]
-> **The `lm_sensors` package is no longer updated**\
+> [!NOTE] The `lm_sensors` package is no longer updated
 > It still works, in particular with old hardware like the one used in this guide, but do not be surprised if it stops working in the future.
 
 To be able to use the `sensors` command, you need to install and configure the `lm_sensors` package as follows:
@@ -219,8 +216,7 @@ To be able to use the `sensors` command, you need to install and configure the `
 
 2. Execute `sensors-detect`. This launches a scan on your system looking for all the sensors available in it, so it can determine which kernel modules `lm_sensors` has to use. This scan is automatic, but the command asks you on every step of the procedure:
 
-    > [!WARNING]
-    > **Some steps might give trouble if executed in your system!**\
+    > [!WARNING] Some steps might give trouble if executed in your system!
     > Read the question asked on each step and, in case of doubt, answer `no` to the step you feel unsure of.
 
     ~~~sh
@@ -331,8 +327,7 @@ To be able to use the `sensors` command, you need to install and configure the `
     it87
     ~~~
 
-    > [!NOTE]
-    > **The `/etc/modules` file has been replaced by the `/etc/modules-load.d/` directory**\
+    > [!NOTE] The `/etc/modules` file has been replaced by the `/etc/modules-load.d/` directory
     > Notice the related warning about this change at the beginning of the `/etc/modules` file. If you check inside the `/etc/modules-load.d/` directory, you will find a `modules.conf` symlink file pointing to the `/etc/modules` file ensuring backwards compatibility with packages that still have not adapted to this change like `lm_sensors`.
 
 3. To ensure that all the modules configured by `sensors-detect` are loaded, reboot your system:
@@ -398,8 +393,7 @@ $ apt install -y s-tui
 
 With the package installed, just execute the `s-tui` command:
 
-> [!IMPORTANT]
-> **Execute s-tui with `sudo` when using a regular user**\
+> [!IMPORTANT] Execute s-tui with `sudo` when using a regular user
 > When using a **non-root** user, execute this command with `sudo` so it can access all the system sensors.
 
 ~~~sh

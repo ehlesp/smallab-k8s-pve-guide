@@ -55,8 +55,7 @@ Proxmox VE needs that ISO image saved in the proper storage space it has availab
 
     ![ISO image upload dialog](images/g020/pve_templates_storage_iso_upload_dialog.webp "ISO image upload dialog")
 
-    > [!NOTE]
-    > **Ensure having enough free storage available in your Proxmox VE's `root` filesystem before uploading files**\
+    > [!NOTE] Ensure having enough free storage available in your Proxmox VE's `root` filesystem before uploading files
     > Notice the warning about where Proxmox VE temporarily stores the file you upload before moving it to its definitive place. The `/var/tmp/` path lays in the `root` filesystem of your PVE server, so be sure of having enough room in it or the upload will fail.
 
 4. Click on `Select File`, find and select your `debian-13.0.0-amd64-netinst.iso` file in your computer, then click on `Upload`. The same dialog will show the upload progress:
@@ -103,14 +102,13 @@ First, you need to create and configure a new VM:
     - `VM ID`\
       A numerical identifier for the VM.
 
-      > [!NOTE]
+      > [!NOTE] There is a lower limit for VM IDs
       > Proxmox VE does not allow IDs lower than `100`.
 
     - `Name`\
       This field must be a valid DNS name, like `debiantpl` or something longer such as `debiantpl.homelab.cloud`.
 
-      > [!NOTE]
-      > **This `Name` field is not properly described by the official documentation**\
+      > [!NOTE] This `Name` field is not properly described by the official documentation
       > The official Proxmox VE says that this name is `a free form text string you can use to describe the VM`, which contradicts what the web console actually validates as correct.
 
     - `Resource Pool`\
@@ -146,8 +144,7 @@ First, you need to create and configure a new VM:
 
     In this step you have a form in which you can add several storage drives to your VM, but there are certain parameters that you need to see to create a virtual SSD drive. Enable the `Advanced` checkbox at the bottom of this window to see some extra parameters shown highlighted in the next snapshot:
 
-    > [!NOTE]
-    > **Not all tabs of the `Create: Virtual Machine` window have advanced options**\
+    > [!NOTE] Not all tabs of the `Create: Virtual Machine` window have advanced options
     > Although the `Advanced` checkbox appears in all the steps of this wizard, not all of those steps have advanced parameters to offer.
 
     ![Disks tab unfilled advanced options](images/g020/debian_vm_create_vm_disk_unfilled_advanced.webp "Disks tab unfilled advanced options")
@@ -172,11 +169,10 @@ First, you need to create and configure a new VM:
     - `Async IO`\
       The official documentation does not explain this value, but it can be summarized as the way to choose which method to use for asynchronous IO.
 
-      > [!NOTE]
+      > [!NOTE] Find more details about async IO in the Proxmox Forum
       > [Know more about the async IO property in this Proxmox Forum thread](https://forum.proxmox.com/threads/async-io-settings-for-virtual-disks-documentation-how-to-set.114932/).
 
-    > [!IMPORTANT]
-    > **The `Bandwidth` tab allows you to adjust the read/write capabilities of the storage drive**\
+    > [!IMPORTANT] The `Bandwidth` tab allows you to adjust the read/write capabilities of the storage drive
     > Only adjust the bandwidth options if you are really sure about how to set them up.
 
     Knowing all this, choose the `ssd_disks` thinpool as `Storage`, put a small number as `Disk Size` (such as 10 GiB), and ensure to enable the `Discard` and `SSD emulation` options. Leave the `IO thread` option enabled (as it is by default), and do not change the default value already set in the `Async IO` parameter. Do not change any of the remaining parameters in this dialog:
@@ -197,8 +193,7 @@ First, you need to create and configure a new VM:
     - `Cores`\
       How many cores you want to give to this VM. When unsure on how many to assign, just put `2` here.
 
-      > [!IMPORTANT]
-      > **Never enter here a number greater than the real cores count in your CPU**\
+      > [!IMPORTANT] Never enter here a number greater than the real cores count in your CPU
       > Otherwise, Proxmox VE will not start your VM.
 
     - `Type`\
@@ -558,8 +553,7 @@ At this point, your new VM has the minimal virtual hardware setup you need for i
 
 38. After the installation has finished, the installer warns you about removing the media you used to launch the whole procedure:
 
-    > [!WARNING]
-    > **Keep calm, _DO NOT_ press `Enter` yet and read the next steps**\
+    > [!WARNING] Keep calm, DO NOT press `Enter` yet and read the next steps
     > If you `Continue`, the VM will reboot and, if the installer media is still in place, the installer will boot up again.
 
     ![Remove installer media screen](images/g020/debian_vm_install_os_installer_remove_media.webp "Remove installer media screen")
@@ -580,9 +574,8 @@ At this point, your new VM has the minimal virtual hardware setup you need for i
 
     ![CD/DVD Drive empty on VM's Hardware tab](images/g020/debian_vm_install_os_vm_hardware_tab_cdrom_updated.webp "CD/DVD Drive empty on VM's Hardware tab")
 
-    > [!IMPORTANT]
-    > **This does not mean that the change has been applied to the still running VM**\
-    > Usually, changes like these will require a reboot of the VM.
+    > [!IMPORTANT] This does not mean that the change has been applied to the still running VM
+    > Usually, changes like these will require a reboot of the affected VM.
 
 42. Now that the VM's CD/DVD drive is configured to be empty, you can go back to the noVNC shell and press on `Enter` to finish the Debian installation. If everything goes as it should, the VM should reboot into the GRUB screen of your newly installed Debian system:
 
@@ -606,8 +599,7 @@ In the capture above, you can see highlighted the `Boot Order` list currently en
 
 Notice how PVE has already enabled the bootable hardware devices (hard disk, CD/DVD drive and network device) that were configured in the VM creation process. Also see how the network device added later, `net1`, **is NOT enabled by default**.
 
-> [!IMPORTANT]
-> **New bootable devices in VMs are not enabled by default**\
+> [!IMPORTANT] New bootable devices in VMs are not enabled by default
 > When you modify the bootable hardware devices of a VM, **Proxmox VE WILL NOT enable automatically** any new bootable device in the `Boot Order` list. You must revise or modify it whenever you make changes to the hardware devices available in a VM.
 
 ## Relevant system paths

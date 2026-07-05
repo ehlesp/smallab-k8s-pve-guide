@@ -188,8 +188,7 @@ The whole configuration of Ghost goes into a single JSON file. Among other param
     - `url`\
       Ghost instance's base url. Remember to enable the domain specified here in your local network.
 
-      > [!NOTE]
-      > **Remember to associate the hostname of this URL to the Traefik service's IP**\
+      > [!NOTE] Remember to associate the hostname of this URL to the Traefik service's IP
       > As you could have done for accessing the Traefik dashboard or Headlamp, you can add in the `hosts` file of your client system another entry right below the one you may have setup already:
       >
       > ~~~txt
@@ -212,8 +211,7 @@ The whole configuration of Ghost goes into a single JSON file. Among other param
 
       - You have to enter the user and password of your email service of choice in the `options.auth` section.
 
-        > [!NOTE]
-        > **A regular email user might not be enough**\
+        > [!NOTE] A regular email user might not be enough
         > Certain email services like the one provided by Google do not allow using a regular user for sending emails from an app or service like Ghost. They require configuring something like an "app password" ([as Google requires](https://support.google.com/accounts/answer/185833)) associated to the regular user, or they may demand you to employ some other type of email account.
 
     - `adapters.cache`\
@@ -229,8 +227,7 @@ The whole configuration of Ghost goes into a single JSON file. Among other param
       - `gscan`, `imageSizes`, `linkRedirectsPublic`, `postsPublic`, `stats`, `tagsPublic`\
         These blocks enable adapters for caching particular contents that Ghost can handle. Notice that all of them inherit the configuration from the `Redis` adapter, but have their own particular settings in some specific parameters like the `keyPrefix` (although while keeping the `ghost:` prefix).
 
-      > [!NOTE]
-      > **The cache configuration is not properly explained in Ghost's official documentation**\
+      > [!NOTE] The cache configuration is not properly explained in Ghost's official documentation
       > [The official documentation of Ghost gives a very incomplete explanation about the configuration of its Redis cache adapter](https://docs.ghost.org/config#ghost%E2%80%99s-built-in-redis-cache-adapter). Therefore, the setup shown here is the result of combining what is said in the following sources:
       >
       > - [The thread "Redis set up with ghost" in the Ghost Forum](https://forum.ghost.org/t/redis-set-up-with-ghost/56051).
@@ -248,8 +245,7 @@ The whole configuration of Ghost goes into a single JSON file. Among other param
     - `paths.contentPath`\
       This path is where Ghost keeps contents like data, images, logs and adapters. The path specified here correlates to the ones you are going to see configured in the custom rootless Ghost container image specified in the `StateFulSet` declared later in this part.
 
-    > [!WARNING]
-    > **The passwords are put in `secrets/config.production.json` as plain unencrypted text**\
+    > [!WARNING] The passwords are put in `secrets/config.production.json` as plain unencrypted text
     > Be careful of who can access this `config.production.json` file.
 
 ## Ghost server environment variables
@@ -452,8 +448,7 @@ The Ghost server stores content, making necessary to deploy it as a `StatefulSet
 
     First thing you must know about this particular `StatefulSet` declaration is that it is based on [the one included in the _Ghost on Kubernetes_ project](https://github.com/sredevopsorg/ghost-on-kubernetes/blob/main/deploy/06-ghost-deployment.yaml).
 
-    > [!NOTE]
-    > **_Ghost on Kubernetes_ is a project maintained by the people at SREDevOps**\
+    > [!NOTE] "Ghost on Kubernetes" is a project maintained by the people at SREDevOps
     > The _Ghost on Kubernetes_ project is freely available [in its own GitHub repository](https://github.com/sredevopsorg/ghost-on-kubernetes).
     >
     > [Check out this SREDevOps article to better understand it](https://www.sredevops.org/en/how-to-deploy-ghost-cms-on-kubernetes/).
@@ -483,7 +478,7 @@ The Ghost server stores content, making necessary to deploy it as a `StatefulSet
           - Blocking-file capabilities from taking effect.
           - Ptrace-based privilege escalation.
 
-          > [!IMPORTANT]
+          > [!IMPORTANT] Learn more about disabling the `allowPrivilegeEscalation` option
           > To better understand how disabling the `allowPrivilegeEscalation` option affects the security of a Kubernetes setup, [check this detailed explainer by Harsha Koushik](https://medium.com/kernel-space/allowprivilegeescalation-false-the-kubernetes-security-flag-with-a-hidden-catch-e81292a0f43c).
 
       - The `command` parameter contains the script that creates the folder structure for storing the Ghost server contents under the path indicated by the `GHOST_CONTENT` environment variable. Within the script there is a DIR environment variable that specifies the names of the folders to be created in the `GHOST_CONTENT` path.
@@ -497,8 +492,8 @@ The Ghost server stores content, making necessary to deploy it as a `StatefulSet
 
       - This container has two probes enabled, one to check if the Ghost server is ready (the `readinessProbe` section) and the other to test if the server is live (the `livenessProbe` section). Both probes have a similar configuration, where they make an HTTP Get request every `periodSeconds` to a specific [Ghost Admin API `/site/` endpoint](https://docs.ghost.org/admin-api#endpoints) to see if it responds within `timeoutSeconds`.
 
-        > [!NOTE]
-        > [Learn more about how to configure these probes in this official Kubernetes documentation](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes).
+        > [!NOTE] Learn more about how to configure these probes
+        > [This official Kubernetes documentation explains the configuration of liveness and readiness startup probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes).
 
       - The `envFrom` block loads the environment variables configured in the file declared earlier to be handled by a `ConfigMap` resource you are going to enable in the Kustomize declaration for this Ghost server subproject.
 
@@ -510,8 +505,7 @@ The Ghost server stores content, making necessary to deploy it as a `StatefulSet
 
         - An ephemeral in-memory storage that provides the Ghost server with a `tmp` folder where to put temporary data. This temporary storage is necessary since the Ghost server container's filesystem is set up as read-only in the `securityContext` and the server needs a place where it can write temporary data while running.
 
-        > [!NOTE]
-        > **Using an ephemeral path outside of the container's filesystem for temporary operations is a hardening action**
+        > [!NOTE] Using an ephemeral path outside of the container's filesystem for temporary operations is a hardening action
         > By using this type of storage, you avoid modifying the container's filesystem which should be kept as-is since it only has to be executed by the Kubernetes cluster. Since read-only containers cannot be written, you need to use this type of ephemeral storage to enable writing operations in the pod.
         >
         > [Learn more about the need for ephemeral storages when using read-only filesystems in this article by Thorsten Hans](https://www.thorsten-hans.com/read-only-filesystems-in-docker-and-kubernetes/).
@@ -522,8 +516,7 @@ The Ghost server stores content, making necessary to deploy it as a `StatefulSet
 
         - The `runAsUser` parameter is where you specify which user the container is going to run under. In this case, it is the unnamed non-root user `65532`.
 
-        > [!WARNING]
-        > **The container image must be prepared to be run by a non-root user**\
+        > [!WARNING] The container image must be prepared to be run by a non-root user
         > To be able to run a container with a non-root user, its image must have been prepared explicitly to be run with such user. Before running a container with a non-root user, investigate if its image has been already prepared for it, and which user is using to configure the pod accordingly.
 
     - The `automountServiceAccountToken` is another security option related to how Kubernetes gives access to its control plane API. For pods that are not supposed to use the control plane API, you can block their access to that API by not linking them with [the security token of the default `ServiceAccount` existing in their namespace](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/). This essentially disables the capacity of the pod to authenticate with the Kubernetes control plane, effectively blocking its access to such API.

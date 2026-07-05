@@ -45,18 +45,15 @@ $ sudo iptables -V
 iptables v1.8.11 (legacy)
 ~~~
 
-> [!NOTE]
-> **You can enable in your Proxmox VE system a nftables-based version of its firewall**\
+> [!NOTE] You can enable in your Proxmox VE system a nftables-based version of its firewall
 > At the time of writing this, [the new nftables-based `proxmox-firewall` service it is still in the _tech-preview_ stage](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#pve_firewall_nft). Therefore, this guide sticks to the legacy iptables-based firewall, which is the one that comes enabled by default in a Proxmox VE 9.0 server.
 >
 > If you want to try using the nftables firewall, know that the configuration explained here is compatible with the new firewall since it uses the same files and configuration format.
 
-> [!IMPORTANT]
-> **Fail2Ban uses nftables!**\
+> [!IMPORTANT] Fail2Ban uses nftables!
 > Remember that the Fail2Ban service you enabled [back in chapter **G010** already uses nftables to ban IPs](G010%20-%20Host%20hardening%2004%20~%20Enabling%20Fail2Ban.md#fail2ban-uses-nftables-to-enforce-the-bans). Both iptables and nftables can coexist, but you must remember which one is used to ban suspicious IPs (nftables) and which one is used by Proxmox VE as its main firewall (iptables).
 
-> [!NOTE]
-> **Careful of not confusing nftables commands with iptables ones**\
+> [!NOTE] Careful of not confusing nftables commands with iptables ones
 > There are several iptables commands available in the system, but some of them are meant to be used with the nftables firewall. So, when you specifically execute iptables commands, avoid using the ones that have the `-nft` string in their names (unless you have switched to the new nftables firewall).
 
 ## Zones in the Proxmox VE firewall
@@ -147,8 +144,7 @@ If you have followed this guide closely up to this chapter, you should get a lis
 
 Just by enabling the PVE firewall at the `Datacenter` tier you get a much stronger set of rules enforced in your firewall. But, before you do this...
 
-> [!WARNING]
-> **Read this warning before enabling the firewall at the `Datacenter` tier**\
+> [!WARNING] Read this warning before enabling the firewall at the `Datacenter` tier
 > After enabling the firewall at the `Datacenter` tier, your Proxmox VE platform will block incoming traffic from all hosts towards your datacenter, except the traffic coming from your LAN towards the 8006 (web console) and 22 (ssh) ports.
 >
 > If you plan to access your PVE platform **from IPs outside your LAN**, you need to **add first** the rules in the PVE firewall to allow such access. But this guide does not cover that scenario, it just assumes a "pure" LAN scenario (meaning a Proxmox VE server **not accessible** from internet).
@@ -354,16 +350,14 @@ When you enabled the firewall at the datacenter level, you may have noticed the 
 
 This option refers to the ebtables program that works as a firewall for bridges, like the one you have in your PVE virtual network. This firewall is mainly for filtering packets at the network's link layer, in which MACs (not IPs) and VLAN tags are what matter to route packets. On the other hand, ebtables is also capable of some packet filtering on upper network layers. The problem is that Proxmox VE does not have a page where you can manage ebtables rules, forcing you to handle them with the corresponding `ebtables` shell command.
 
-> [!WARNING]
-> **The ebtables firewall is a legacy program**\
+> [!WARNING] The ebtables firewall is a legacy program
 > As it happens with iptables, ebtables is also a legacy package that has an alternative version meant for nftables. Therefore, in a Proxmox VE setup based on this guide, only use the ebtables commands that do not include the `-nft` string in their names.
 
 ### Setting up ebtables
 
 The `ebtables` command handles rules but is unable to make them persist, meaning that any rules you may add to the ebtables will not survive a reboot. But there is a way to persist these rules in your system:
 
-> [!WARNING]
-> **This configuration may not work with the nftables version of ebtables**\
+> [!WARNING] This configuration may not work with the nftables version of ebtables
 > Keep this in mind if you want to try the nftables-based firewall of Proxmox VE.
 
 1. Open a shell as `mgrsys` on your Proxmox VE host, then install the package `netfilter-persistent`:
@@ -503,18 +497,16 @@ The `ebtables` command handles rules but is unable to make them persist, meaning
 
     You should see three different rule files, as in the output above.
 
-    > [!NOTE]
-    > **Do not open the ebtables rule files with a text editor**\
-    > The files are in binary format. Do not manipulate them in any way.
-  
+    > [!WARNING] Do not open the ebtables rule files with a text editor
+    > The ebtables rule files are in binary format. **Do not manipulate them in any way**.
+
     Each file corresponds to one of the tables ebtables uses to separate its functionality into different sets of rules. The `filter` table is the default one on which the ebtables command works.
 
 ### Example of ebtables usage
 
 Next, see an example about when and how to use ebtables.
 
-> [!NOTE]
-> **The example shown here is based on the original hardware setup used for the first version of this guide**\
+> [!NOTE] This example is based on the original hardware setup used for the first version of this guide
 > Therefore you will notice small differences with the hardware used in this newer version of the guide. Still, the commands used in this example are still valid.
 
 While working in the first version of this guide, it was detected that incoming (`RX`) packets were being dropped only by the `vmbr0` bridge for some unknown reason. This was noticed in the output of the following `ip` command:
@@ -734,8 +726,7 @@ These three parameters have not been made directly available from the PVE web co
 
 1. Open a remote shell with your `mgrsys` user, then edit the `/etc/pve/nodes/pve/host.fw` file:
 
-    > [!NOTE]
-    > **Remember, this file only appears if you change the node's firewall configuration**\
+    > [!NOTE] This file only appears if you change the node's firewall configuration
     > Modify something to make Proxmox VE generate the `/etc/pve/nodes/pve/host.fw` file.
 
     ~~~properties

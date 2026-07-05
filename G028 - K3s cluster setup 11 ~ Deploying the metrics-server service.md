@@ -29,8 +29,7 @@ In particular, the embedded metrics-server comes with a default configuration th
 
 First you would need to check out the manifest used for deploying the metrics-server and see where you have to apply the required change. This also means that you have to be aware of which version you are going to deploy in your cluster. K3s `v1.33.4+k3s1` comes with the `v0.8.0` release of metrics-server which, at the time of writing this, happens to be the latest version available.
 
-> [!IMPORTANT]
-> **Ensure the service's version is compatible with your cluster's Kubernetes version**\
+> [!IMPORTANT] Ensure the service's version is compatible with your cluster's Kubernetes version
 > Each release of any service comes with their own particularities regarding compatibilities, in particular with your cluster's Kubernetes engine. Always check that the release of any software you want to deploy in your cluster is compatible with the Kubernetes version running your cluster. This detail is more important in particular with applications that work with the Kubernetes API.
 
 Download the `components.yaml` manifest for metrics-server `v0.8.0` from the _Assets_ section found [at this Github release page](https://github.com/kubernetes-sigs/metrics-server/releases/tag/v0.8.0). Open it and look for the `Deployment` object declared in it:
@@ -201,11 +200,10 @@ The patch to apply to the metrics-server deployment is some sort of "partial" ma
       - `tls-cipher-suites`\
         Comma-separated list of cipher suites admitted for the server. The list specified in the yaml snippet is the one K3s applies to deploy its embedded metric-server service.
 
-      > [!NOTE]
+      > [!NOTE] Take a look to the metrics-server's help document
       > [These and other metric-server flags are explained in this help document](https://github.com/kubernetes-sigs/metrics-server/blob/master/docs/command-line-flags.txt).
 
-    > [!IMPORTANT]
-    > **Review this patch whenever you update the metrics-server!**\
+    > [!IMPORTANT] Review this patch whenever you update the metrics-server!
     > Every time you update the metrics-server service in your setup, do not forget to see how the patched values look in the official deployment declaration of the newer version you deploy. Otherwise, you could end up having errors due to using deprecated arguments or incorrect values.
 
 ### Kustomize manifest for the metrics-server project

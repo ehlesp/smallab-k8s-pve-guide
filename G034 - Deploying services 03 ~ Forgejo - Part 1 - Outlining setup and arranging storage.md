@@ -212,8 +212,7 @@ Since the two new storage drives are already active in your `k3sagent01` VM, you
     $ sudo lvcreate -l 100%FREE -n git forgejo-hdd
     ~~~
 
-    > [!IMPORTANT]
-    > **Remember what the `%FREE` percentage in the `lvcreate` command means**\
+    > [!IMPORTANT] Remember what the `%FREE` percentage in the `lvcreate` command means
     > The `%FREE` number indicates the percentage the `lvcreate` command takes from what is currently free (unassigned) in the volume group to create the light volume.
     >
     > In the shell snippet above:
@@ -374,8 +373,7 @@ With the LVs mounted, you can create within them the `k3smnt` folders that will 
 
     Ignore the `lost+found` folders, they are created by the system automatically.
 
-> [!WARNING]
-> **The `k3smnt` folders exist within the already mounted LVM storage volumes!**\
+> [!WARNING] The `k3smnt` folders exist within the already mounted LVM storage volumes!
 > You cannot create those folders without mounting the light volumes first.
 
 ### About increasing the size of volumes

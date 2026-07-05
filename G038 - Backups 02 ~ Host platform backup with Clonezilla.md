@@ -75,8 +75,7 @@ Next are enumerated the steps required to clone the storage drives of your homel
 
 2. Prepare an external USB storage drive where you can keep the Clonezilla images. If you want the storage be compatible with Windows, you can format it to NTFS which is a filesystem Clonezilla is also able to use.
 
-    > [!WARNING]
-    > **Careful when sharing the same storage drive for different backups**\
+    > [!WARNING] Careful when sharing the same storage drive for different backups
     > If you are storing backups from different systems or devices in one storage drive, clearly differentiate the backups in folders or partitions.
 
 3. Shutdown your Proxmox VE system.
@@ -107,8 +106,7 @@ Suppose you need to restore your Proxmox VE system because of a botched update, 
 
 5. Follow the [instructions of this official Clonezilla guide for **restoring a disk image**](https://clonezilla.org/fine-print-live-doc.php?path=clonezilla-live/doc/02_Restore_disk_image).
 
-    > [!WARNING]
-    > **Be very careful when you choose the storage drive or partition where you restore a clone image**\
+    > [!WARNING] Be very careful when you choose the storage drive or partition where you restore a clone image
     > Always double-check you are choosing the drive or partition where you really want to restore an image, and that it has enough room for all the data held by the image.
 
 6. After finishing the restoration, shutdown the system and unplug both the Clonezilla Live USB and the external storage drive holding your Clonezilla backups.

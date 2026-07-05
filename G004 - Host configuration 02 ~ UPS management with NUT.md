@@ -20,16 +20,14 @@ You really need to protect your server from electrical surges, power cuts or out
 
 This chapter explains how to make your Proxmox VE host monitor the UPS unit with a generic package called **NUT (Network UPS Tool)**. However, be aware that your UPS unit's brand may already have its own particular software for UPS management.
 
-> [!IMPORTANT]
-> **NUT may not support your concrete UPS unit**\
+> [!IMPORTANT] NUT may not support your concrete UPS unit
 > Still, it may have compatible drivers for your UPS unit's brand. Check in the [NUT hardware compatibility list](https://networkupstools.org/stable-hcl.html) to verify if your brand or model line has compatible drivers there.
 
 ## Connecting your UPS with your PVE node using NUT
 
 This chapter works with the _Eaton 3S700D_ UPS unit listed in the [the chapter **G001**](G001%20-%20Hardware%20setup.md#the-reference-hardware-setup). This model (and similar ones) comes with a **USB 2.0 cable** to connect the UPS unit with any computer.
 
-> [!WARNING]
-> **This procedure is for UPS units connected through USB**\
+> [!WARNING] This procedure is for UPS units connected through USB
 > If your UPS unit does not come with a USB cable, **you cannot proceed with the instructions explained below**.
 
 Assuming your UPS unit has the required USB cable, proceed to configure it in your Proxmox VE server:
@@ -82,8 +80,7 @@ Assuming your UPS unit has the required USB cable, proceed to configure it in yo
 
     By setting the `standalone` mode you're enabling NUT to work in local mode or, in other words, it will "worry" only about your `pve` node.
 
-    > [!NOTE]
-    > **The `nut.conf` file has comments explaining configuration details**\
+    > [!NOTE] The `nut.conf` file has comments explaining configuration details
     > Check the comments in the `nut.conf` to have a better idea of which are the modes that NUT supports.
 
 5. You need to tell NUT about the UPS unit connected to your system. To do that, you must edit the file `/etc/nut/ups.conf`, so make a backup of it:
@@ -139,8 +136,7 @@ Assuming your UPS unit has the required USB cable, proceed to configure it in yo
 
     Just reboot your Proxmox VE server and try the `upsdrvctl start` command again, it should run fine this time.
 
-    > [!NOTE]
-    > **Do not worry if you get a "Duplicate driver" warning**\
+    > [!NOTE] Do not worry if you get a "Duplicate driver" warning
     > In the output of the `upsdrvctl start` command you may get a warning like this one:
     >
     > `Duplicate driver instance detected (PID file /run/nut/usbhid-ups-eaton.pid exists)! Terminating other driver!`
@@ -198,8 +194,7 @@ Assuming your UPS unit has the required USB cable, proceed to configure it in yo
     - `upsmon primary`\
       Roughly speaking, this line means that the NUT user is from a machine directly connected to the UPS unit, and that NUT should be run with high privileges there.
   
-      > [!NOTE]
-      > **Learn more about UPS primary and secondary types in the NUT official documentation**\
+      > [!NOTE] Learn more about UPS primary and secondary types in the NUT official documentation
       > The UPS primary and secondary types are further explained [in the NUT `upsmon` man documentation](https://networkupstools.org/docs/man/upsmon.html), in the **UPS types** section.
 
     - `actions = SET`\
@@ -436,8 +431,7 @@ You can also execute the whole `upscmd` command in just one line:
 $ upscmd -u upsadm -p D1Ff3rEnT_s3c4R3_p4sSw0rD! eaton beeper.disable
 ~~~
 
-> [!WARNING]
-> **Use this one-line format only for task automation with shell scripts**\
+> [!WARNING] Use this one-line format only for task automation with shell scripts
 > Do not execute the `upscmd` with the password in your normal shell, to avoid exposing your password in your user's shell history (the `.bash_history` text file in bash shells).
 
 Also, remember that:

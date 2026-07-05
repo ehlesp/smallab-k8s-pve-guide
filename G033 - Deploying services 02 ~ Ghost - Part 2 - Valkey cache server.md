@@ -77,8 +77,7 @@ You need to fit Valkey to your needs, and the best way is by setting its paramet
     - `bind`\
       To make the Valkey server listen in specific interfaces. With `0.0.0.0` it listens to all available ones.
 
-      > [!NOTE]
-      > **Do not specify here the cluster IP you chose for the Valkey service**\
+      > [!NOTE] Do not specify here the cluster IP you chose for the Valkey service
       > It is better to leave this parameter with a "flexible" value to avoid worrying about putting a particular IP in several places.
 
     - `protected-mode`\
@@ -101,16 +100,14 @@ You need to fit Valkey to your needs, and the best way is by setting its paramet
     - `dir`\
       This is the working directory of Valkey where it stores its own database and logs (if configured to be stored). The `/data` path is the one already set in the container image of Valkey. It is specified in this configuration as a reminder of where this working directory is.
 
-    > [!NOTE]
-    > **The Valkey configuration parameters are described in the official example configuration file**\
+    > [!NOTE] The Valkey configuration parameters are described in the official example configuration file
     > Each Valkey release has its own example `valkey.conf` file, and [the version this guide deploys is the 9.0 one](https://raw.githubusercontent.com/valkey-io/valkey/9.0/valkey.conf).
 
 ## Valkey secrets
 
 To secure the access to this Valkey instance, you need to create a couple of users stored in a secret resource of your Kubernetes cluster.
 
-> [!NOTE]
-> **Your K3s Kubernetes cluster encrypts secrets automatically**\
+> [!NOTE] Your K3s Kubernetes cluster encrypts secrets automatically
 > Remember that [your K3s cluster's server node has the option for encrypting secrets at rest(`secrets-encryption`) enabled already](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#the-k3sserver01-nodes-configyaml-file), avoiding having them stored as clear text within the cluster.
 
 ### Valkey ACL user list
@@ -172,8 +169,7 @@ Valkey comes with a `default` user that you could use, but it is better to decla
 
         **Remember that the initial `>` character is not part of the password**, it is just indicating that the following string is the user's password within the rule.
 
-    > [!WARNING]
-    > **The passwords in this `secrets/users.acl` file are plain unencrypted strings**\
+    > [!WARNING] The passwords in this `secrets/users.acl` file are plain unencrypted strings
     > Be careful of who can access this `users.acl` file.
 
 ### User for Prometheus metrics exporter
@@ -201,8 +197,7 @@ Running in the same pod as the Valkey server, there is going to be a Prometheus 
     - `REDIS_PASSWORD`\
       The user's password string, in this case it must be the same one previously specified for the `default` user in the ACL file.
 
-    > [!WARNING]
-    > **The password in this `secrets/default_user_env.properties` file is a plain unencrypted string**\
+    > [!WARNING] The password in this `secrets/default_user_env.properties` file is a plain unencrypted string
     > Be careful of who can access this `default_user_env.properties` file.
 
 ## Valkey persistent storage claim
@@ -338,8 +333,7 @@ The next thing to do is setting up the `StatefulSet` declaration for deploying V
     - `serviceName`\
       Links the pod deployed by this `StatefulSet` to the specified headless `Service`.
 
-      > [!IMPORTANT]
-      > **The pod gets a predictable hostname within the cluster**\
+      > [!IMPORTANT] The pod gets a predictable hostname within the cluster
       > Check out the [section about the corresponding `Service` resource](#valkey-service) for more information. In particular, read about the `spec.clusterIP` parameter to understand how the pod's predictable hostname looks like.
 
     - `template`\
@@ -357,16 +351,14 @@ The next thing to do is setting up the `StatefulSet` declaration for deploying V
 
           - The `containerPort` is the same as the `port` set in the `valkey.conf` file. This `containerPort` has a `name` that allows invoking it by name rather than by port number directly.
 
-            > [!NOTE]
-            > **The `containerPort` declaration is mostly informative**\
+            > [!NOTE] The `containerPort` declaration is mostly informative
             > The `containerPort` declarations do not actually determine what ports are opened in a pod. That's up to the applications or services running within the pod. The optional `name` attribute is what makes the `containerPort` useful, because it allows you to call the port by name rather than by number. This enables changing the port number when necessary without affecting the `Service` resource that calls the port by name.
             >
             > [Check this thread](https://stackoverflow.com/questions/57197095/why-do-we-need-a-port-containerport-in-a-kuberntes-deployment-container-definiti) to know more about this technicality.
 
           - The `resources.requests` declares a minimum requirement of CPU and memory resources to grant to the container when it starts. If the container needs more resources, the Kubernetes control plane takes care of assigning them if they are available.
 
-          > [!NOTE]
-          > **It is better to set minimum requirements, not upper limits**\
+          > [!NOTE] It is better to set minimum requirements, not upper limits
           > [According to this article](https://dev.to/naveens16/kubernetes-cpu-limits-the-silent-killer-of-performance-and-how-to-fix-it-20d1), setting upper usage limits affects negatively the performance of apps or services and leads to a waste of unused resources. It is better to leave the Kubernetes control plane to handle the bursts of activity that may happen in the cluster.
 
           - The `volumeMounts` indicate which volumes are to be mounted in the Valkey container:
@@ -482,8 +474,7 @@ cache-valkey.ghost.svc.homelab.cluster.
 
 You will use this absolute FQDN to make the Ghost platform connect with its Valkey server.
 
-> [!NOTE]
-> **An absolute FQDN is one with the final dot at its end, indicating that it is the complete DNS record and there is no need to initiate a DNS search**\
+> [!NOTE] An absolute FQDN is one with the final dot at its end, indicating that it is the complete DNS record and there is no need to initiate a DNS search
 > Using absolute FQDNs improves the cluster's performance by avoiding DNS searches when connecting with pods or services.
 
 ## Valkey Kustomize project
@@ -749,8 +740,7 @@ With everything in place, you can check out the YAML resulting from the Ghost Va
 
     Notice the `-summary` option in the shell command above. It is what makes the `kubeconform` command print a results summary when it finishes.
 
-    > [!NOTE]
-    > **`kubeconform` does not produce an output when it considers the input valid**\
+    > [!NOTE] `kubeconform` does not produce an output when it considers the input valid
     > With a completely valid input as in this case and no option specified, `kubeconform` does not print anything in the shell.
     >
     > On the other hand, `kubeconform` (at least, in the version `0.7.0` installed with this guide) is not yet able to understand Kustomize projects and ends up finding errors in them.

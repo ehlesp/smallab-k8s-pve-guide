@@ -163,8 +163,7 @@ $ kubectl exec -it -n forgejo db-postgresql-0 -c server -- bash
 root@db-postgresql-0:/#
 ~~~
 
-> [!WARNING]
-> **You log as the `root` user in containers that are not rootless**\
+> [!WARNING] You log as the `root` user in containers that are not rootless
 > Be careful when you get into containers that are not rootless since you sign in into them as the `root` user.
 
 Understand the previous `kubectl` command:
@@ -188,8 +187,7 @@ root@db-postgresql-0:/# ls -al /etc/postgresql/postgresql.conf
 
 The `ls` command proofs that the file exists where it is expected to be. You could also read its content with the `cat` or `less` commands.
 
-> [!NOTE]
-> **Do not expect to find the same commands available on every container image**\
+> [!NOTE] Do not expect to find the same commands available on every container image
 > For security reasons or to save storage space, some container images may lack many commonly used commands. In other words, do not expect to have the same usual commands on every container you deal with.
 
 On the other hand, you can also see how the Forgejo's PostgreSQL `server` container has produced a bunch of files in the K3s agent node where is running. So, open a shell on the node itself (in the guide is the `k3sagent01` one) and just `ls` the folder where the database's volume is mounted on (`/mnt/forgejo-ssd/db/k3smnt/`):

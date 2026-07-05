@@ -87,8 +87,7 @@ First, locate and learn about a VM or VM template hard disk volume with the tool
     - `z` indicates that newly-allocated data blocks are overwritten with blocks of (z)eroes before use.
     - `k` is a flag to make the system skip this volume during activation.
 
-    > [!NOTE]
-    > **The `Attr` column has more values**\
+    > [!NOTE] The `Attr` column has more values
     > The values in the `Attr` column are called `lv_attr` bits. Check them out in the _Notes_ section of the `lvs` manual (command `man lvs`).
 
     Next to the `Attr` column, you can see the size assigned to the volume, 10 GiB in this case, although this number is just logical.
@@ -159,8 +158,7 @@ You have seen the LVM side of the story, but you can get more information about 
                                             8.5G       1.1G       6.9G   13%
     ~~~
 
-    > [!NOTE]
-    > **The `virt-df` command takes a moment to return its output**\
+    > [!NOTE] The `virt-df` command takes a moment to return its output
     > Give the command a few seconds so it can read the volume and return its information.
 
     This `virt-df` command is very similar to the `df`, and gives you a view of how the storage space is used in the filesystem contained in the volume. Remember that this is the filesystem of your Debian VM template, and it also has a swap volume although the `virt-df` command does not show it.
@@ -183,8 +181,7 @@ You have seen the LVM side of the story, but you can get more information about 
     /dev/sda                 device     -    -     -   10G  -                 -
     ~~~
 
-    > [!NOTE]
-    > **The `virt-filesystems` command takes a moment to return its output**\
+    > [!NOTE] The `virt-filesystems` command takes a moment to return its output
     > Give the command a few seconds so it can read the volume and return its information.
 
     See how not only this command returns info about the two LVM light volumes (root and swap_1), but also shows the `sda` partitions and the LVM physical volume `sda5`.

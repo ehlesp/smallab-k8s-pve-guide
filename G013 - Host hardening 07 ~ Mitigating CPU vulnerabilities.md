@@ -77,8 +77,7 @@ The `apt` command warns that the package is already installed in the system and 
     $ sudo reboot
     ~~~
 
-> [!WARNING]
-> **The microcode package can affect your CPU's performance**\
+> [!WARNING] The microcode package can affect your CPU's performance
 > Furthermore, the microcode applied may just mitigate rather than completely fix the vulnerabilities on your CPU.
 
 ## Relevant system paths

@@ -73,8 +73,9 @@ Installing Proxmox VE in your computer is not complicated, but requires some pre
 
 Proxmox VE is provided as an ISO image file, which you have to either burn in a DVD or write in a USB drive. Get the ISO for Proxmox VE 9.0 from the [_Proxmox Virtual Environment_ section](https://www.proxmox.com/en/downloads/proxmox-virtual-environment) of the [Proxmox site's Downloads page](https://www.proxmox.com/en/downloads). Then, use a tool like [Ventoy](https://www.ventoy.net/en/doc_start.html) to put the ISO in an USB drive and boot it in your computer from there.
 
-> [!NOTE]
-> [**Proxmox also provides some instructions about how to write the ISO image from a Linux, MacOS or Windows environment**](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#installation_prepare_media)\
+> [!NOTE] Proxmox also provides instructions about writing the ISO image from a Linux, MacOS or Windows environment
+> [Check those instructions for the Proxmox VE ISO here](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#installation_prepare_media).
+>
 > Still, using a tool like [Ventoy](https://www.ventoy.net/en/index.html) is much easier and straightforward.
 
 ### Clear your storage drives
@@ -83,8 +84,7 @@ Remember to completely erase the storage drives of your Proxmox VE server-to-be 
 
 Therefore, be sure of clearing those drives by using a tool like GParted or KDE Partition Manager from a Linux distribution that can be run in Live mode, such as the official Debian one or any of the Ubuntu-based ones.
 
-> [!NOTE]
-> **Use a tool like Ventoy to be able to boot several ISOs from same USB drive**\
+> [!NOTE] Use a tool like Ventoy to be able to boot several ISOs from same USB drive
 > By taking advantage of [Ventoy](https://www.ventoy.net/en/index.html) or a similar tool, you can first boot a Linux Mint ISO, clear your storage drives with GParted in the Live environment, reboot, and then launch the Proxmox VE installer ISO.
 
 ### Installing Proxmox VE
@@ -107,8 +107,7 @@ The Proxmox site has two guides explaining Proxmox VE's installation, [linked in
 
     If you see this warning, **abort the installation** and boot in your server's BIOS to check if your CPU's virtualization technology support is disabled. If so, enable it and reboot back into the installer again.
 
-    > [!IMPORTANT]
-    > **If your computer's CPU does not support virtualization, you still can install Proxmox VE in it**\
+    > [!IMPORTANT] If your computer's CPU does not support virtualization, you still can install Proxmox VE in it
     > The official Proxmox VE documentation does not explicitly forbid it. Still, bear in mind that the performance of the virtualized systems you could create inside Proxmox VE could end being sluggish or too demanding on your hardware. Or just not work at all.
 
 4. At this point, the first thing the installer presents you with is with the `EULA` screen:
@@ -139,8 +138,7 @@ The Proxmox site has two guides explaining Proxmox VE's installation, [linked in
     - `hdsize`\
       By default, the installer assigns the entire space available in the chosen storage drive to the Proxmox VE system. This is not optimal since Proxmox VE does not need that much space by itself (remember, the reference hardware's SSD has 1 TiB), so it is better to adjust this parameter to a much lower value. Leaving it at something like 63 GiB should be more than enough. The rest of the space in the storage drive will be left unpartitioned, something you will worry about in a later chapter.
 
-      > [!WARNING]
-      > **The `hdsize` is the total size of the filesystem assigned to Proxmox VE**\
+      > [!WARNING] The `hdsize` is the total size of the filesystem assigned to Proxmox VE
       > The other parameters are contained within this `hdsize` value.
 
     - `swapsize`\
@@ -167,8 +165,7 @@ The Proxmox site has two guides explaining Proxmox VE's installation, [linked in
 
     Be aware that this screen runs a validation both over the password and the email values when you click on `Next`. You cannot advance in the installation unless you comply with the restrictions imposed by the installer in this step.
 
-    > [!NOTE]
-    > **The email value can be a ficticious one**\
+    > [!NOTE] The email value can be a fake address
     > The email must look realistic, but it does not have to be a real one because the installer only cares about the string itself. The installer does not try to send anything to the specified email.
     >
     > A Proxmox VE server can send notifications to that email, but that is a feature not enabled by default.
@@ -179,8 +176,7 @@ The Proxmox site has two guides explaining Proxmox VE's installation, [linked in
 
     What you configure here is through which network controller and network you want to reach the Proxmox VE management console. The installer tries to autodetect and fill the values (although it does not always work well), but some adjustment may be required. In particular, you always have to specify the hostname FQDN you want for your Proxmox VE server.
 
-    > [!NOTE]
-    > In this guide, the Proxmox VE hostname's FQDN is `pve.homelab.cloud`.
+    > [!NOTE] In this guide, the Proxmox VE hostname's FQDN is `pve.homelab.cloud`.
 
 10. The `Summary` screen shows you the configuration you have set:
 
@@ -188,16 +184,14 @@ The Proxmox site has two guides explaining Proxmox VE's installation, [linked in
 
     Notice, at the bottom of the screen, the check about `Automatically reboot after successful installation`. If you prefer to reboot manually, uncheck it. Then, if you're happy with the setup, click on `Install`.
 
-    > [!NOTE]
-    > **The email shown in the screenshot is just an example**\
-    > The `pveroot@homelab.cloud` value is a fake email with an obvious name for illustrative purposes. If you use a real one, Proxmox VE can be configured to send notifications to it.
+    > [!NOTE] The email shown in the screenshot is just an example
+    > The `pveroot@homelab.cloud` value is a fake email with an obvious name for illustrative purposes. If you use a real adddress, Proxmox VE can be configured to send notifications to it.
 
 11. The next screen shows you a progress bar and some information about the ongoing installation:
 
     ![Proxmox VE installer progress screen partitioning](images/g002/Installer-progress_screen.webp "Proxmox VE installer progress screen partitioning")
 
-    > [!NOTE]
-    > **After the configuration, the installer takes care of everything**\
+    > [!NOTE] After the configuration, the installer takes care of everything
     > The installer, on its own, downloads and install a more recent version of the Proxmox VE platform, instead of just putting the one included in the Proxmox VE ISO.
 
 12. The installation should be over after a few minutes. If you disable the automatic reboot, you get to see the `Installation successful!` screen:
@@ -212,8 +206,7 @@ It might happen that the Proxmox VE installer fails at the very end, right when 
 
 ![Proxmox VE installer EFI bootloader setup error](images/g002/Installer-EFI_boot_setup_error.webp "Proxmox VE installer EFI bootloader setup error")
 
-> [!NOTE]
-> **This error message was captured by someone not related to this guide**\
+> [!NOTE] This error message was captured by someone not related to this guide
 > This snapshot comes from an old [reddit thread](https://www.reddit.com/r/homelab/comments/s9d2yg/proxmox_ve_install_failed_on_r720_due_to_efi_boot/) by [MattTheHuman](https://www.reddit.com/user/MattTheHuman/) dealing with this issue although in a different hardware setup.
 
 Just know that, if you face this issue, you will be forced to retry the installation of Proxmox VE but doing the following first:
@@ -222,8 +215,7 @@ Just know that, if you face this issue, you will be forced to retry the installa
 
 2. Turn on your computer and get into its BIOS.
 
-    > [!WARNING]
-    > **The next steps done within the BIOS are just orientative**\
+    > [!WARNING] The next steps done within the BIOS are just illustrative
     > The options available in your computer's firmware may differ significantly, although they should be somewhat similar.
 
 3. Go to the screen where you can configure the Secure Boot mode and:
@@ -254,8 +246,7 @@ You have installed Proxmox VE and your server has rebooted. Proxmox VE comes wit
 
 ![Proxmox VE web console login in dark mode](images/g002/proxmox_ve_web_console_login.webp "Proxmox VE web console login in dark mode")
 
-> [!NOTE]
-> **Proxmox VE's web console loads a light or dark color theme automatically**\
+> [!NOTE] Proxmox VE's web console loads a light or dark color theme automatically
 > By default, the login screen will use the theme that corresponds to your browser's aspect configuration.
 >
 > Going forward, any other Proxmox VE web console snapshot present in the upcoming chapters will be shown using the light color theme.
