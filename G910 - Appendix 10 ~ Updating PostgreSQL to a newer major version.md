@@ -439,8 +439,7 @@ All the changes required are listed in these steps:
 
     This is exactly the same file as [in the original PostgreSQL deployment](G034%20-%20Deploying%20services%2003%20~%20forgejo%20-%20Part%203%20-%20PostgreSQL%20database%20server.md#configuration-file-postgresqlconf).
 
-    > [|WARNING]
-    > **Between major versions, options can change or be removed altogether**\
+    > [!WARNING] Between major versions, options can change or be removed altogether
     > Always check if the options set for your software remain valid in the newer major version. An easy way to do so for PostgreSQL is by using [this page that offers a configuration comparator between versions](https://pgconfig.rustprooflabs.com/param/change/17/18).
 
 3. Modify the file `$HOME/k8sprjs/postgres-upgrade/resources/postgres-upgrade.namespace.yaml`:
@@ -704,8 +703,7 @@ To proceed with the update, open a terminal in your `kubectl` client system, the
     $ kubectl apply -k $HOME/k8sprjs/postgres-upgrade
     ~~~
 
-    > [|WARNING]
-    > **The PostgreSQL upgrade process starts automatically**\
+    > [!WARNING] The PostgreSQL upgrade process starts automatically
     > Keep in mind that the `postgres-upgrade-0` pod will start to execute the update on its own as soon as its able to.
 
     Remember to check the logs of the `postgres-upgrade-0` pod through Headlamp (which is more convenient that through `kubectl`). It is in that log where you will be able to monitor the upgrade's progress.
