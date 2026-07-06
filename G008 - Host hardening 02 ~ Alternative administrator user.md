@@ -45,8 +45,7 @@ In conclusion, creating a `pam` realm's user in Proxmox VE always implies two ba
 
 2. **Enabling it in the Proxmox VE user management**, either through the web console or by the shell commands Proxmox VE also provides for this and other administrative tasks.
 
-> [!NOTE]
-> **With just one standalone node, creating one or two very particular system users is no big deal**\
+> [!NOTE] With just one standalone node, creating one or two very particular system users is no big deal
 > However, in a cluster you would need to automate this via shell scripting or some other tools.
 
 ## Creating a new system administrator user for a Proxmox VE node
@@ -67,8 +66,7 @@ Open a remote terminal as `root` connected to your Proxmox VE server, and then:
     $ adduser mgrsys
     ~~~
 
-    > [!IMPORTANT]
-    > **Stick to a naming criteria for your users!**\
+    > [!IMPORTANT] Stick to a naming criteria for your users!
     > Use a criteria for naming your users, and make those names individualized. This way you have a better chance to detect any strange behavior related to your users in the system's logs. For instance, you could follow a pattern like `[role][initials]` or `[role][name][surname]`.
 
     The `adduser` command first asks the password twice for the new user, and then a few informative details like the user's full name. The whole output should be something like this:
@@ -89,8 +87,7 @@ Open a remote terminal as `root` connected to your Proxmox VE server, and then:
 
 2. Add the new user to the `sudo` group:
 
-    > [!WARNING]
-    > **Ensure you have `sudo` installed in your PVE node**\
+    > [!WARNING] Ensure you have `sudo` installed in your PVE node
     > Before you proceed with this step, be sure of having the `sudo` package installed in your PVE node:
     >
     > ~~~sh
@@ -121,8 +118,7 @@ Remaining in the same remote terminal session you opened with `root` on your Pro
     $ google-authenticator -t -d -f -r 3 -R 30 -w 3 -Q utf8 -i pve.homelab.cloud -l mgrsys@pam
     ~~~
 
-    > [!NOTE]
-    > **Do not forget the `@pam` suffix in your TOTP token's label!**\
+    > [!NOTE] Do not forget the `@pam` suffix in your TOTP token's label!
     > Notice how the label (`-l`) has an `@pam` suffix after the username, like it is with `root`.
 
 3. Copy all the codes given by the `google-authenticator` command in a safe location, like a password manager.
@@ -145,8 +141,7 @@ The most convenient way of assigning roles and privileges to users within the Pr
     $ pveum groupadd pvemgrs -comment "PVE system's managers"
     ~~~
 
-    > [!NOTE]
-    > **Do not set confusing names to your groups**\
+    > [!NOTE] Do not set confusing names to your groups
     > Avoid using a name too similar or equal to the ones already used for **existing groups in the underlying Debian OS**, like `sys` or `adm`, to avoid possible confusions.
     >
     > You can check the existing Debian groups in the `/etc/group` file.
@@ -179,8 +174,7 @@ The most convenient way of assigning roles and privileges to users within the Pr
 
     ![New PVE managers group seen through web console](images/g008/new_pve_platform_managers_group_on_web_console.webp "New PVE managers group seen through web console")
 
-    > [!IMPORTANT]
-    > **The new group you've just created is just a Proxmox VE one**\
+    > [!IMPORTANT] The new group created here is just a Proxmox VE one
     > The `pvemgrs` **is not part of the underlying Debian's groups**. Therefore, it is not listed in the `/etc/group` file.
 
 ### Enabling the new administrator user in Proxmox VE
@@ -189,8 +183,7 @@ The `mgrsys` user you created earlier exists within the Debian OS, but not in th
 
 1. To create the user in just one line, type a command line (as `root`) like the following:
 
-    > [!IMPORTANT]
-    > **Specify an email useful to you in the command below**\
+    > [!IMPORTANT] Specify an email useful to you in the command below
     > Do not forget replacing the `-email` example value shown here with the one you want!
 
     ~~~sh
@@ -209,14 +202,12 @@ The `mgrsys` user you created earlier exists within the Debian OS, but not in th
 
     ![TOTP form filled for the new mgrsys user](images/g008/new_user_totp_screen.webp "TOTP form filled for the new mgrsys user")
 
-    > [!WARNING]
-    > **Be always careful with your secret codes, even expendable ones**\
+    > [!WARNING] Be always careful with your secret codes, even expendable ones
     > Remember to never share TOTP codes at all!
 
 4. With the TOTP set up correctly, you can try to log with your new `mgrsys` user in the Proxmox VE web console:
 
-    > [!IMPORTANT]
-    > The `mgrsys` user's password is the one specified at the Debian OS level with the `adduser` command.
+    > [!IMPORTANT] The `mgrsys` user's password is the one specified at the Debian OS level with the `adduser` command.
 
     ![New mgrsys user has logged in PVE web console](images/g008/pve_new_user_login_web_console.webp "New mgrsys user has logged in PVE web console")
 

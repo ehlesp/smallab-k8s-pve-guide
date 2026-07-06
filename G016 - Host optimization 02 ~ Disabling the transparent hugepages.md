@@ -15,8 +15,7 @@
 
 **Transparent hugepages** is a Linux kernel feature intended to improve performance by making more efficient use of your processor’s memory-mapping hardware. This feature gives some applications a small performance boost, but can cause significant latency issues (to database engines for instance) or even apparent memory leaks at worst.
 
-> [!NOTE]
-> **Do not confuse transparent hugepages with explicit hugepages**\
+> [!NOTE] Do not confuse transparent hugepages with explicit hugepages
 > While transparent hugepages are dynamically reassigned by the kernel to be reused by any compatible application, explicit hugepages are reserved for specific services and render inaccessible to other workloads in the system.
 
 This chapter shows you how to disable the transparent hugepages because:
@@ -25,8 +24,7 @@ This chapter shows you how to disable the transparent hugepages because:
 - It may not be worth having it enabled in a small server setup (specially on the RAM side) like the one used in this guide.
 - Can provoke serious latency issues in a system when it kicks in to compact fragmented RAM.
 
-> [!IMPORTANT]
-> **Do not completely dismiss using transparent hugepages!**\
+> [!IMPORTANT] Do not completely dismiss using transparent hugepages!
 > Remember that some applications may benefit from this feature, although they have to be built for it specifically.
 >
 > Therefore, research the [references found at the end of this chapter](#references) and carefully evaluate if your system's workload can benefit from having transparent hugepages enabled.

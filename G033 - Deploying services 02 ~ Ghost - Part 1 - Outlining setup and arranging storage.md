@@ -334,8 +334,7 @@ Your new LVs need to be formatted as ext4 filesystems and then mounted in the K3
 
 ### Storage mount points for the Ghost pods
 
-> [!WARNING]
-> **Create an inner mount point for pods**\
+> [!WARNING] Create an inner mount point for pods
 > Do not use the directories where you have mounted the new storage volumes as mount points for the persistent volumes you will enable later for the Ghost deployment.
 
 Kubernetes pods can change the owner user and group, and also the permissions, applied to those folders. This can cause a failure when, after a reboot, your K3s agent node tries to mount again its storage volumes. The issue happens because it no longer has the right user or permissions to access the mount point folders. The best thing to do then is to create another folder within each storage volume that can be used safely as mount point by the Ghost pods:
@@ -370,8 +369,7 @@ Kubernetes pods can change the owner user and group, and also the permissions, a
 
     Do not mind the `lost+found` folders, they are created by the Linux system automatically.
 
-> [!WARNING]
-> **The `k3smnt` folders exist within the already mounted LVM storage volumes!**\
+> [!WARNING] The `k3smnt` folders exist within the already mounted LVM storage volumes!
 > You cannot create those folders without mounting the light volumes first.
 
 ### About increasing the size of volumes

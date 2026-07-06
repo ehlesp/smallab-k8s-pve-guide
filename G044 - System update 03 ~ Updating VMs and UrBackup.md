@@ -36,8 +36,7 @@ This chapter covers how to update the virtual machines and the UrBackup software
 
 Like you did with Proxmox VE, you need to know which version of Debian is currently running **on each VM**. Also, you have to check which version is the latest one of the Debian distribution used on your VMs and what changes brings.
 
-> [!NOTE]
-> **All the VMs in your homelab setup should be in the same Debian release version**\
+> [!NOTE] All the VMs in your homelab setup should be in the same Debian release version
 > All the virtual machines created in the Proxmox VE system are clones from the same template. Therefore, at this point, you can safely assume that they are running the same Debian OS.
 >
 > Still, it is good practice to be sure that your VMs are still aligned. This specially important when doing administrative tasks such as updates manually, it could happen that something gets forgotten.

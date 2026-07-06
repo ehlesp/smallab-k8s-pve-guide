@@ -27,8 +27,7 @@
 
 To monitor what is going on in your K3s cluster in a more visual manner, [Kubernetes offers its own native web-based dashboard](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/). That one is fine, but there is an interesting alternative dashboard called [Headlamp](https://headlamp.dev/) also worth trying out.
 
-> [!WARNING]
-> **Ensure having the metrics-server service running in your cluster first!**\
+> [!WARNING] Ensure having the metrics-server service running in your cluster first!
 > To be able to show stats from your K3s cluster, Headlamp (like the Kubernetes Dashboard) requires having [the **metrics-server** service already running in your cluster](G028%20-%20K3s%20cluster%20setup%2011%20~%20Deploying%20the%20metrics-server%20service.md).
 
 ## Components required for deploying Headlamp
@@ -74,8 +73,7 @@ Prepare a `ServiceAccount` for Headlamp like this:
 
     - This declaration only creates the `headlamp-admin` service account without any special privileges in the cluster. The account needs to be bound to a cluster role to be authorized to access your K3s cluster information, something you will declare in the next section.
 
-    > [!IMPORTANT]
-    > **Service accounts are not meant for regular users**\
+    > [!IMPORTANT] Service accounts are not meant for regular users
     > For Kubernetes, [user accounts are for humans and service accounts are for application processes](https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#user-accounts-versus-service-accounts). Still, [Headlamp's official installation documentation explicitly **recommends** (at the time of writing this) using a service account](https://headlamp.dev/docs/latest/installation/).
 
 ## Headlamp ClusterRoleBinding
@@ -201,8 +199,7 @@ To enable ingress access into Headlamp, use a Traefik `IngressRoute`:
 
     - The `spec.routes.match` enables the URL to reach Headlamp through Traefik.
 
-      > [!NOTE]
-      > **The domain name must be enabled in your local network**\
+      > [!NOTE] The domain name must be enabled in your local network
       > Your equivalent of the hostname seen in the YAML above will not be reachable unless you enable it from a DNS service (your local network's router could provide it), or specify it in the `hosts` file of the clients you want to access from.
 
     - The `spec.routes.services` only has an entry for the Headlamp service, linking it to this IngressRoute.
@@ -409,8 +406,7 @@ You may want to take a look at how the resources you declared appear in the Kust
         - `env`\
           These are environment variables that get imported in the Headlamp's pod, affecting the behavior of the Headlamp server.
 
-          > [!NOTE]
-          > **These variables are not explained in the official Headlamp documentation**\
+          > [!NOTE] These variables are not explained in the official Headlamp documentation
           > At the time of writing this note, they are not found even by the search tool [of the Headlamp documentation site](https://headlamp.dev/docs/latest/).
 
         - `image`\
@@ -469,16 +465,14 @@ Be aware that:
 - The `--duration=8760h` makes this token last for 365 days, although you may prefer it to expire sooner for security reasons. [By default, a service account token
   expires after one hour, but it can also expire when the associated pod is deleted](https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#bound-service-account-token-volume). By setting a specific duration, the token will last for the time period set with `--duration`, regardless of what happens to the pod.
 
-  > [!IMPORTANT]
-  > **Use the `kubectl create token` command again for refreshing the service account token**\
+  > [!IMPORTANT] Use the `kubectl create token` command again for refreshing the service account token
   > Whenever your current secret token for your `headlamp-admin` service account becomes invalid, generate a new service account token with the same `kubectl` command.
 
 ## Testing Headlamp
 
 Now that you have Headlamp deployed, you can test it if you have enabled its DNS name or hostname in your LAN. In this guide, Headlamp has the hostname `headlamp.homelab.cloud`:
 
-> [!NOTE]
-> **Associate the Headlamp's DNS name or hostname to your Traefik service's IP**\
+> [!NOTE] Associate the Headlamp's DNS name or hostname to your Traefik service's IP
 > Since Headlamp is served through Traefik, you have to associate its DNS name to the Traefik service's IP. In your client system's `hosts` file, you would do it like this with the values used in this guide:
 >
 > ~~~txt

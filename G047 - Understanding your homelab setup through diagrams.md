@@ -56,8 +56,7 @@ Regarding the software installed, the diagram indicates how the Proxmox VE serve
 - **The NUT tooling deployed to monitor and react to the events coming from the UPS unit protecting the whole homelab setup**\
   All the VMs and the templates they are based on have the NUT client installed, while the NUT server is running in the Proxmox VE host. This implies that the NUT clients communicate with the NUT server through the firewalled red network.
 
-  > [!NOTE]
-  > **The NUT communications do not go outside the homelab's virtual network**\
+  > [!NOTE] The NUT communications do not go outside the homelab's virtual network
   > The NUT clients reach their NUT server directly through the `vmbr0` Linux bridge connecting the VMs with their Proxmox VE host.
 
 ## Kubernetes cluster

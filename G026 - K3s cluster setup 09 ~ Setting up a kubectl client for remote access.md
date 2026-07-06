@@ -161,8 +161,7 @@ This is the moment for opening the `6443` port on the external IP of your K3s se
 
     ![Rule added to security group](images/g026/pve_datacenter_firewall_security_group_rule_added.webp "Rule added to security group")
 
-    > [!NOTE]
-    > **Consider a more restrictive access to the `6443` port by using static IPs in your local network**\
+    > [!NOTE] Consider a more restrictive access to the `6443` port by using static IPs in your local network
     > If you only want a specific set of devices to be able to act as `kubectl` clients, you will have to assign them static IPs in your LAN. Then, in your Proxmox VE system you should make an alias for each of those static IPs and put those alias all in the same IP set. Then, set that IP set as the source of the rule you have stablished in this step.
 
 2. To verify that you can connect to the cluster, try the `kubectl cluster-info` command from your client:

@@ -84,8 +84,7 @@ The trick of this upgrade procedure is the use of a particular Docker image that
 
 1. In the Forgejo's setup, PostgreSQL is deployed as a `StatefulSet`. To get its current version you can use `kubectl` as follows:
 
-    > [!IMPORTANT]
-    > **This appendix's Forgejo setup uses an older major PostgreSQL version than the one deployed in the main content**\
+    > [!IMPORTANT] This appendix's Forgejo setup uses an older major PostgreSQL version than the one deployed in the main content
     > The Forgejo setup has been redeployed from scratch with the previous major version of PostgreSQL instead to demonstrate the upgrade process. The exact differences between this "downgraded" deployment and [the one in the chapter **G034**](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%203%20-%20PostgreSQL%20database%20server.md) are:
     >
     > - This appendix starts with a Forgejo platform running a PostgreSQL `17.8-trixie` container. This is the one to be upgraded in this appendix to PostgreSQL `18.2-trixie`.
@@ -126,8 +125,7 @@ You need to undeploy your whole Forgejo setup before you can start tinkering wit
     $ kubectl delete -k $HOME/k8sprjs/forgejo/
     ~~~
 
-    > [!IMPORTANT]
-    > **Undeploying the Forgejo setup does not remove its data**\
+    > [!IMPORTANT] Undeploying the Forgejo setup does not remove its data
     > Remember that, **in this scenario**, this `delete` action does not affect the data itself in the PostgreSQL database nor its files. This operation only removes from your K8s cluster the Kubernetes objects created in the deployment of the Forgejo platform.
 
 2. Check with `kubectl` that there are no resources left in the `forgejo` namespace, not even the namespace itself:
@@ -143,8 +141,7 @@ With the filesystem arrangement prepared for the Forgejo's PostgreSQL database i
 
 For the containerized version `17` of PostgreSQL deployed with this appendix's Forgejo platform, that path corresponds to the `/var/lib/postgresql/data/` directory. In it, PostgreSQL has all its data and configuration files, and you will have to move them to another more convenient directory:
 
-> [!WARNING]
-> **The `mgrsys` user will not be able to manage the PostgreSQL files**\
+> [!WARNING] The `mgrsys` user will not be able to manage the PostgreSQL files
 > The `/mnt/forgejo-ssd/db/k3smnt/` path and all the files inside it are owned by the `postgres` user that runs the PostgreSQL service in the corresponding Kubernetes pod. Not even `sudo` privileges will be enough: you will need to impersonate that user to handle those files.
 
 1. Open a shell as `mgrsys` directly into the agent node VM (`k3sagent01`) having the PostgreSQL storage mounted. Check out with `ls` the permissions on the `/mnt/forgejo-ssd/db/k3smnt/` folder:
@@ -442,8 +439,7 @@ All the changes required are listed in these steps:
 
     This is exactly the same file as [in the original PostgreSQL deployment](G034%20-%20Deploying%20services%2003%20~%20forgejo%20-%20Part%203%20-%20PostgreSQL%20database%20server.md#configuration-file-postgresqlconf).
 
-    > [|WARNING]
-    > **Between major versions, options can change or be removed altogether**\
+    > [!WARNING] Between major versions, options can change or be removed altogether
     > Always check if the options set for your software remain valid in the newer major version. An easy way to do so for PostgreSQL is by using [this page that offers a configuration comparator between versions](https://pgconfig.rustprooflabs.com/param/change/17/18).
 
 3. Modify the file `$HOME/k8sprjs/postgres-upgrade/resources/postgres-upgrade.namespace.yaml`:
@@ -592,8 +588,7 @@ All the changes required are listed in these steps:
 
       In this case, the checksums are applied with the `pg_checksums` command **from the version 17 of PostgreSQL**. This is possible because the `tianon/postgres-upgrade` container image includes the binaries of both the version 17 and 18 of PostgreSQL. The relevant thing to notice here is, to invoke the binaries from the version 17, you need to specify their full path because they are not loaded in the container's $PATH (only the binaries of the latest version 18 are).
 
-      > [!WARNING]
-      > **You cannot reapply the checksums**\
+      > [!WARNING] You cannot reapply the checksums
       > If you need to rerun the upgrade process, **comment out or remove the whole `initContainers` block**. Otherwise, the init container will fail.
 
       Alternatively, you can disable the checksums and leave them to applied by the newer PostrgreSQL server instance. To disable the checksums, replace the `pg_checksums` command in the init container with the following one instead:
@@ -708,8 +703,7 @@ To proceed with the update, open a terminal in your `kubectl` client system, the
     $ kubectl apply -k $HOME/k8sprjs/postgres-upgrade
     ~~~
 
-    > [|WARNING]
-    > **The PostgreSQL upgrade process starts automatically**\
+    > [!WARNING] The PostgreSQL upgrade process starts automatically
     > Keep in mind that the `postgres-upgrade-0` pod will start to execute the update on its own as soon as its able to.
 
     Remember to check the logs of the `postgres-upgrade-0` pod through Headlamp (which is more convenient that through `kubectl`). It is in that log where you will be able to monitor the upgrade's progress.
@@ -832,8 +826,7 @@ To proceed with the update, open a terminal in your `kubectl` client system, the
 
 3. When the upgrade process finishes, the `postgres-upgrade-0` pod will end up in a state of error and will try to restart (something you can safely ignore since it will fail harmlessly). If you see the `Upgrade Complete` log line from the `pg-upgrade` container as shown before, you can consider the upgrade done:
 
-    > [!IMPORTANT]
-    > **Pay attention to the commands indicated below the `Upgrade Complete` log**\
+    > [!IMPORTANT] Pay attention to the commands indicated below the `Upgrade Complete` log
     > Notice the recommendation right below the `Upgrade Complete` message printed in the `pg-upgrade` container's log. It is a command you would have to run from within the PostgreSQL `server` container while it is running. Also, you would have to impersonate the `postgres` service user to execute it:
     >
     > To do all this, remember the following:
@@ -877,8 +870,7 @@ The upgrade process only migrates the old database into new datafiles that run i
 
 Some of them will present differences due to particularities of the respective PostgreSQL releases they come from. Those changes should not worry you much, although you might investigate them to be sure they will not mean you trouble later. The differences you should take care to validate are those that may appear in the newer version's `pg_hba.conf` file, since this file controls the access to the PostgreSQL instance:
 
-> [!IMPORTANT]
-> **A bad `pg_hba.conf` configuration can cripple access to your PostgreSQL database**\
+> [!IMPORTANT] A bad `pg_hba.conf` configuration can cripple access to your PostgreSQL database
 > If the `pg_hba.conf` file is not properly configured, your Forgejo server instance will not be able to access its own PostgreSQL database later.
 
 To check out and amend any relevant difference in the new `pg_hba.conf` file, do this:

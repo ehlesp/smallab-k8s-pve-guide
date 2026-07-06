@@ -179,8 +179,7 @@ For convenience, declare all of these passwords as variables in the same propert
     prometheus-exporter-password=l0nG.Pl4in_T3xt_sEkRet_p4s5wORD-FoR_3xP0rTeR_uZ3r!
     ~~~
 
-    > [!WARNING]
-    > **The passwords have to be put in `dbusers.pwd` as plain unencrypted text**\
+    > [!WARNING] The passwords have to be put in `dbusers.pwd` as plain unencrypted text
     > Be careful of who can access this `dbusers.pwd` file.
 
 ## MariaDB persistent storage claim

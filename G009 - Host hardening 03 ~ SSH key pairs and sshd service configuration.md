@@ -148,14 +148,12 @@ As you can see in the output above, the key pair's length is `4096` bits, which 
     $ cat id_ed25519.pub >> authorized_keys
     ~~~
 
-    > [!WARNING]
-    > **Proxmox VE shares the public keys of the `root` users present in a PVE cluster among the nodes of that cluster**\
+    > [!WARNING] Proxmox VE shares the public keys of the `root` users present in a PVE cluster among the nodes of that cluster
     > In a Proxmox VE system, the `root`'s `authorized_keys` is a symlink to `/etc/pve/priv/authorized_keys`, which is used by Proxmox VE to allow nodes in a cluster to communicate with each other through SSH. So, in case of a clustered PVE environment, is expected to see the public keys of other nodes' `root` users authorized in this file.
 
 7. As a final consideration, you could also remove (with `rm`) the `.orig` backup of the original RSA-based SSH key pair since you do not need it anymore:
 
-> [!WARNING]
-> **You cannot login as `root` with its new SSH key pair yet!**\
+> [!WARNING] You cannot login as `root` with its new SSH key pair yet!
 > Since the `publickey` method is still not enabled in the `sshd` service configuration, the SSH server in your Proxmox VE node will reject your key pair if you attempt to login with it.
 >
 > Just use the password and the TOTP code for now at this point. In the section [Hardening the `sshd` service](#hardening-the-sshd-service) you will finally enable the `publickey` method, allowing you login remotely with your key pair.
@@ -239,8 +237,7 @@ At this point, you just have another user apart from the `root` one: your admini
 
     This `config` file was generated for `root` by the Proxmox VE installer with a predefined set of admitted ciphers for OpenSSH. Copying it to any other user it is just an extra hardening measure.
 
-> [!WARNING]
-> **You will not be able to login as `mgrsys` with its new SSH key pair yet!**\
+> [!WARNING] You will not be able to login as `mgrsys` with its new SSH key pair yet!
 > Since the `publickey` method is still not enabled in the `sshd` service's configuration, the SSH server in your Proxmox VE node will reject your key pair if you attempt to login with it.
 >
 > Just use the password and the TOTP code for now at this point. In the section [Hardening the `sshd` service](#hardening-the-sshd-service) you will finally enable the `publickey` method, allowing you login remotely with your key pair.
@@ -249,8 +246,7 @@ At this point, you just have another user apart from the `root` one: your admini
 
 Do not forget to export those new key pairs so you can use them to connect to your standalone PVE node. Also remember that you need to generate the `.ppk` file from each private key to connect from Windows clients.
 
-> [!NOTE]
-> **Use PuTTY to generate the `.ppk` file**\
+> [!NOTE] Use PuTTY to generate the `.ppk` file
 > Check out the [appendix chapter **G901** to see how to generate a `.ppk` file with the tool provided by PuTTY](G901%20-%20Appendix%2001%20~%20Connecting%20through%20SSH%20with%20PuTTY.md#generating-a-ppk-file-from-a-private-key).
 
 ## Hardening the `sshd` service
@@ -331,8 +327,7 @@ By default, the sshd daemon gives any user two full minutes to authenticate. Wit
     $ sudo systemctl restart sshd.service
     ~~~
 
-> [!WARNING]
-> **Do not set this timer with a too low value in your system**\
+> [!WARNING] Do not set this timer with a too low value in your system
 > Be aware that, when your server receives several concurrent unauthenticated requests, it will need some time to process them. Also, a human user will need some time to get and enter their **TOTP code**.
 
 #### Disabling the `root` user on SSH
@@ -503,8 +498,7 @@ Hence, it is better to do the following:
 
 You cannot log as `root` through SSH, because you have disabled that possibility but, if that were still possible, you would see how the server does not ask you the TFA verification code anymore. On the other hand, you can try to open a new non-shared SSH connection with `mgrsys` and check out that it is still asking you for the TFA code.
 
-> [!IMPORTANT]
-> **Use `pam` groups when managing many SSH users**\
+> [!IMPORTANT] Use `pam` groups when managing many SSH users
 > Managing SSH access with `Match` rules using `pam` groups is a more practical approach when handling many users.
 
 #### Other possible changes in SSH configuration
@@ -523,8 +517,7 @@ There are many other possible adjustments that can be done in the `sshd` service
 - **Changing the port number**\
     This is a common hardening-wise change, but not without its own share of potential problems. Changing the port means that you also have to change the configuration of other systems and clients that may communicate with your Proxmox VE server through SSH.
 
-    > [!NOTE]
-    > **Rule of thumb regarding the SSH port change**\
+    > [!NOTE] Rule of thumb regarding the SSH port change
     > Change the SSH port only if you are going to expose it directly to the public internet and you will not (_although you **absolutely** should_) put a firewall, reverse proxy or any other security solution between your SSH port and the wild.
 
 #### Consideration about hardening the `sshd` service
@@ -568,8 +561,7 @@ Be aware of the services or tasks in your server that require SSH connections to
   - [Proxmox VE: Installation and configuration](https://forum.proxmox.com/forums/proxmox-ve-installation-and-configuration.16/)
     - [Proxmox v6 default ssh key in authorized_keys file](https://forum.proxmox.com/threads/proxmox-v6-default-ssh-key-in-authorized_keys-file.57898/#post-266842)
 
-      > [!NOTE]
-      > **Regarding ssh in Proxmox VE clusters**\
+      > [!NOTE] Regarding ssh in Proxmox VE clusters
       > In a cluster of several nodes, PVE relies on ssh to perform certain tasks, a working communication in-between the nodes is therefore essential. This is why we share `/etc/pve/priv/known_hosts` as well as the keys via the `pmxcfs [0]` between the hosts.
       >
       > The `/etc/ssh/ssh_known_hosts` is setup to symlink to `/etc/pve/priv/known_hosts`.

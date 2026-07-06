@@ -48,9 +48,8 @@ At this point, be aware that the Google Authenticator program offers two ways of
 
 The interactive process is a step-by-step execution that asks the user to define some parameters for generating a new TFA token. Since those steps do not cover all the possible parameters handled by the command, this interactive method should be used only for a first-contact with the command.
 
-> [!IMPORTANT]\
-> **Better use the [automated execution method](#22-automated-execution-of-google-authenticator-program) over this interactive one**\
-> The automated method enables you to use all the options available for generating TFA tokens with the `google-authenticator` program, specially for shell scripting.
+> [!IMPORTANT] Better use the automated execution method over this interactive one
+> The [automated execution method](#22-automated-execution-of-google-authenticator-program) enables you to use all the options available for generating TFA tokens with the `google-authenticator` program, specially for shell scripting.
 
 To start the interactive process, launch the google authenticator program like this:
 
@@ -81,12 +80,10 @@ The program will ask for your input in the following steps:
 3. `Do you want me to update your "/root/.google_authenticator" file? (y/n)`\
     Answer `y` so the command writes this authentication token's configuration in a `.google_authenticator` plain text file. By default, the command saves this file at the home directory of your current user (in this case, `root`).
 
-    > [!IMPORTANT]
-    > **Answering `n` to this question finishes the interactive procedure**\
+    > [!IMPORTANT] Answering `n` to this question finishes the interactive procedure
     > If you answer `n` here, the `google-authenticator` command will not ask with the questions shown in the next steps and will return you to the shell prompt.
 
-    > [!NOTE]
-    > **It is possible to use other paths and other file names**\
+    > [!NOTE] It is possible to use other paths and other file names
     > You can change the path and the file name, allowing you to generate and save different TFA tokens on different files or in different paths.
     >
     > This possibility will neither be shown nor used in this guide.
@@ -130,16 +127,14 @@ google-authenticator [<options>]
  -e, --emergency-codes=N        Number of emergency codes to generate
 ~~~
 
-> [!WARNING]
-> **If you have already executed the `google-authenticator` command in the interactive mode, you will have a configured TOTP token**\
+> [!WARNING] If you have already executed the `google-authenticator` command in the interactive mode, you will have a configured TOTP token
 > This TOTP token's setup will be stored in a `.google_authenticator` file within your user's home directory.
 >
 > **The file `.google_authenticator` will be overwritten when you execute the `google-authenticator` command again for the same user and location!**.
 
 After discovering all the options available in the `google-authenticator` command, you can build a command line to replicate and enhance the TOTP token configuration made in the previously explained interactive method:
 
-> [!IMPORTANT]
-> **The following command line is just an example, DO NOT execute it as is**\
+> [!IMPORTANT] The following command line is just an example, DO NOT execute it as is
 > Among its many options, there are two, `-l` and `-i` , you must always edit to fit your requirements.
 
 ~~~sh
@@ -233,8 +228,7 @@ HPDSSXPJ5BFJIXIIZD7EYTMJVM
 - `68904426`\
   This number and all the ones listed below it are _scratch recovery codes_. If you lose access to your TFA authentication app, you can use any of these recovery codes as TOTP codes.
 
-  > [!WARNING]
-  > **Scratch recovery codes are one-use only**\
+  > [!WARNING] Scratch recovery codes are one-use only
   > When used once, a scratch recovery code cannot be used again (hence, it has to be _scratched_ from the list of available recovery codes).
 
 ### 4. Enforcing TFA on remote ssh access
@@ -280,8 +274,7 @@ With the TOTP token configured for your `root` user (the only user you have at t
 
       This parameter tells ssh which authentication methods are required. In this case, it will ask for a password and the verification code.
 
-      > [!WARNING]
-      > **The keyboard interactive method already asks for all the required authentication inputs**\
+      > [!WARNING] The keyboard interactive method already asks for all the required authentication inputs
       > With `keyboard-interactive`, the authentication procedure asks for all the inputs it requires to validate the login. In this case, the user password and the verification (TOTP) code. Therefore, **do not add the `password` method before the `keyboard-interactive` one** or the login procedure will not work properly (the `password` method will require the TOTP code, **NOT the user password**).
 
 5. With all the previous changes done, restart the `sshd` daemon to apply the changes:
@@ -306,13 +299,12 @@ You have enabled TFA authentication when connecting through SSH to your server f
 
 The Proxmox VE web console offers the option of enabling TFA for its users.
 
-> [!IMPORTANT]
-> **This TFA configuration is only about the Proxmox VE web console login**\
+> [!IMPORTANT] This TFA configuration is only about the Proxmox VE web console login
 > Proxmox VE's TFA configuration **has nothing to do** with the local or remote SSH shell terminal access.
 
 To increase the security of your Proxmox VE setup, enable the _Two-Factor Authentication_ (_TFA_) of the main `root` user on the Proxmox VE's web console. Also, you will reuse the TOTP token already generated with the `google-authenticator` command:
 
-> [!WARNING]
+> [!WARNING] Here you have to reuse your TOTP token!
 > [Generate your TOTP token with the `google-authenticator` procedure first!](#2-configuration-of-a-google-authenticator-totp-token)
 
 1. Go to the `TFA` option available in the `root@pam` menu:
@@ -345,9 +337,8 @@ To increase the security of your Proxmox VE setup, enable the _Two-Factor Authen
     - `Issuer Name`\
       The name identifying the issuer of this TOTP. This field is equivalent to the issuer value specified to the `google-authenticator` command (`-i` option).
 
-    > [!WARNING]
-    > **The autogenerated QR in this TOTP window _will not be the same_ as the one you got previously with the `google-authenticator` command**\
-    > If you scan it, it may generate a new entry in your authenticator app, but **it will generate the same codes** as the TOTP token you generated first.
+    > [!WARNING] The autogenerated QR in this TOTP window WILL NOT BE THE SAME as the one you got previously with the `google-authenticator` command
+    > If you scan it, it may produce a new entry in your authenticator app, but **it will generate the same codes** as the TOTP token you generated first.
 
 6. To enable the `Add` button, **you must validate the TOTP token**. Enter the `Verify Code` given by your TOTP app, then click `Add`. Your new TOTP login factor will appear listed in the `Two Factor` page:
 
@@ -355,8 +346,7 @@ To increase the security of your Proxmox VE setup, enable the _Two-Factor Authen
 
 After all these steps, you obtain the TFA TOTP mode enabled in the `root` account for the web console with the **same TOTP token** you enabled for the remote ssh access.
 
-> [!IMPORTANT]
-> **This TFA is valid for the web console only**\
+> [!IMPORTANT] This TFA is valid for the web console only
 > This procedure only enables the TFA method for login through Proxmox VE's web console, **not for accessing through a shell terminal**.
 
 ## Enforcing TFA TOTP as a default requirement for the `pam` realm
@@ -413,8 +403,7 @@ Since this issue is not documented anywhere, this chapter illustrates the proble
     auth required pam_google_authenticator.so
     ~~~
 
-    > [!WARNING]
-    > **Do not close the remote session**\
+    > [!WARNING] Do not close the remote session
     > Also, leave the `common-auth` file open but be sure to save the change above.
 
 4. Now try to log in the Proxmox VE web console and see how the login takes longer than usual:
@@ -435,9 +424,8 @@ This conflict is not really that surprising. Proxmox VE web console needs some p
 
 This is probably just a problem of limiting the TFA restriction to the users and groups that should have it enforced. Still, this problem is not explicitly documented anywhere and messing with the system's PAM configuration is risky. Therefore better leave it as it is, although being aware that the local access to the physical Proxmox VE server **does not have TFA enabled**.
 
-> [!IMPORTANT]
-> **This problem not only happens in the 9.0 releases of Proxmox Virtual Environment**\
-> This problem happens in previous versions too.
+> [!IMPORTANT] This problem not only happens in the 9.0 releases of Proxmox Virtual Environment
+> This issue happens in previous versions too.
 
 ## Relevant system paths
 

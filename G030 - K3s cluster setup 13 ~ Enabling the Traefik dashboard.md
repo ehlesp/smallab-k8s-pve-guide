@@ -72,8 +72,7 @@ Traefik demands passwords hashed using MD5, SHA1, or BCrypt, and recommends usin
     tfkuser:$2y$17$0mdP4WLdbj8BWj1lIJMDb.bXyYK75qR5AfRNzuunZuCamvAlqDlo.
     ~~~
 
-    > [!IMPORTANT]
-    > **Be careful with the value you set to the `-C` option!**\
+    > [!IMPORTANT] Be careful with the value you set to the `-C` option!
     > This option indicates the computing time used by the BCrypt algorithm for hashing and, if you set it too high, the Traefik dashboard could end not loading at all. The value you can type here must be between 4 and 17, and the default is 5.
 
     Keep the `htpasswd`'s output at hand, you will use that encrypted string in the next procedure.
@@ -94,8 +93,7 @@ Copy the user string returned by `htpasswd` in a text file. Later, you will put 
     tfkuser:$2y$17$0mdP4WLdbj8BWj1lIJMDb.bXyYK75qR5AfRNzuunZuCamvAlqDlo.
     ~~~
 
-    > [!WARNING]
-    > **Be careful of who can access this `users` file**\
+    > [!WARNING] Be careful of who can access this `users` file
     > Regardless of the password being hashed, the hash itself is also secret information you do not want to get exposed to anyone.
 
 ## Traefik dashboard Middleware
@@ -156,8 +154,7 @@ To enable access into your Traefik dashboard, you need to declare an HTTPS ingre
 
     This is a Traefik `IngressRoute` object specifying the route and the authentication method to access your Traefik dashboard:
 
-    > [!IMPORTANT]
-    > **The `IngressRoute` is NOT a standard Kubernetes resource**\
+    > [!IMPORTANT] The `IngressRoute` is NOT a standard Kubernetes resource
     > It is a custom alternative to the standard `Ingress` Kubernetes object **offered only by Traefik**. Other ingress controllers may have their own alternatives to the standard Kubernetes Ingress object.
 
     - In the `spec.entryPoints` there is only the `websecure` option enabled. This means that only the `443` port is enabled as entry point to this route.
@@ -168,16 +165,14 @@ To enable access into your Traefik dashboard, you need to declare an HTTPS ingre
 
         Notice the logic operators `&&` (and) and `||` (or) that allow connecting the hostname with the available paths in the service.
 
-        > [!NOTE]
-        > **The domains or subdomains you set up as `Host` values will not work just by being put there**\
+        > [!NOTE] The domains or subdomains you set up as `Host` values will not work just by being put there
         > You have to enable them in your network's router or gateway, local DNS or associate them with their corresponding IP in the `hosts` file of any client systems connected to your network that require to know the correct IP for those domains or subdomains.
 
       - Do not forget any of the backticks characters ( \` ) enclosing the strings in the `Host` directives.
 
       - The `spec.routes.services` links the `IngressRoute` with the `TraefikService` (a custom Traefik-specific type of Kubernetes `Service`) called `api@internal` through which you can access the Traefik dashboard. Also notice that no service port is specified.
 
-        > [!NOTE]
-        > **There is no official proper explanation for this `api@internal` `TraefikService`**\
+        > [!NOTE] There is no official proper explanation for this `api@internal` `TraefikService`
         > This `api@internal` could be some sort of alias or wrapper of the real `traefik` `Service` running in the K3s cluster. This may also explain why it is not necessary to specify which port to connect to in the service.
 
       - The `spec.routes.match.middlewares` only invokes the basic authentication middleware.
@@ -223,8 +218,7 @@ Put together all the resources making up your Traefik dashboard ingress in a Kus
 
     - The `disableNameSuffixHash` option is required to be `true`. Otherwise, Kustomize will add a hash suffix to the secret's name and your `Middleware` will not be able to find it in the cluster.
 
-      > [!NOTE]
-      > **This is an issue between Traefik and Kubernetes Kustomize**\
+      > [!NOTE] This is an issue between Traefik and Kubernetes Kustomize
       > The suffix problem happens because [the `Middleware` object](#traefik-dashboard-middleware) declares the secret's name in a non-Kubernetes-standard parameter which Kustomize does not recognize. Therefore, Kustomize cannot replace the name with its hashed version in the `spec.basicAuth.secret` parameter.
 
 ### Validating the Kustomize YAML output
@@ -277,8 +271,7 @@ $ kubectl apply -k $HOME/k8sprjs/traefik-dashboard
 
 Assuming you have enabled the DNS name or hostname for the Traefik service as `traefik.homelab.cloud` in your LAN, try to access the URL `https://traefik.homelab.cloud/dashboard`:
 
-> [!NOTE]
-> **Remember to associate your Traefik service's IP to the DNS name or hostname you have chosen for it**\
+> [!NOTE] Remember to associate your Traefik service's IP to the DNS name or hostname you have chosen for it
 > The fastest way is usually adding an entry in the `hosts` file of the client system you are using. For the Traefik service's IP and DNS name used in this guide, that entry would look like this:
 >
 > ~~~txt

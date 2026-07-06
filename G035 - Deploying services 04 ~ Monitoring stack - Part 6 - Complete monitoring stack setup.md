@@ -1460,8 +1460,7 @@ Now you have an active Prometheus data source, but you still need a dashboard to
 
     Notice that this dashboard only shows you the metrics scraped by the `prometheus-self` job, meaning that it is centered on the Prometheus server metrics alone.
 
-> [!NOTE]
-> **You need other dashboards to show different sets of metrics**\
+> [!NOTE] You need other dashboards to monitor different metric sets
 > A good starting point to find new dashboards is the [official Grafana "marketplace"](https://grafana.com/grafana/dashboards/).
 
 ### Users management

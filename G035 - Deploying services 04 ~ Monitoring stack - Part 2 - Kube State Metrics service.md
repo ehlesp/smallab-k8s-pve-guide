@@ -67,8 +67,7 @@ Prepare one service account for your Kube State Metrics service like this:
 
     In this case, it has the parameter `automountServiceAccountToken` set explicitly to `false` as a security hardening measure, as you have seen applied already in the [Ghost server](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%204%20-%20Ghost%20server.md#ghost-server-statefulset) or [Forgejo server](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%204%20-%20Forgejo%20server.md#forgejo-server-statefulset) respective stateful sets.
 
-    > [!NOTE]
-    > **Setting to `false` the `automountServiceAccountToken` parameter helps in protecting the cluster's Kubernetes API**\
+    > [!NOTE] Setting the `automountServiceAccountToken` parameter to `false` helps in protecting the cluster's Kubernetes API
     > [The need for this measure is well explained in this article](https://hackersvanguard.com/abuse-kubernetes-with-the-automountserviceaccounttoken/). It has to do with how pods get their ability to interact with the Kubernetes API server and the API bearer token used to connect with it.
 
 ## Kube State Metrics ClusterRole
@@ -199,8 +198,7 @@ For the previous service account to be able to do anything in your cluster, you 
 
     On the other hand, the sensitive security-related resources usually you do not want to leave exposed in metrics (or in any way in general) have been commented out. Uncomment them only if you need to do something like running a security audit on them and, when you are done, **do not forget to block their access again in this cluster role**.
 
-    > [!NOTE]
-    > **`ClusterRole` resources are not namespaced**\
+    > [!NOTE] `ClusterRole` resources are not namespaced
     > As its name implies, any role of this type has a cluster-wide reach. This is why namespaces do not apply to them.
 
 ## Kube State Metrics ClusterRoleBinding
@@ -233,8 +231,7 @@ To link the [cluster role](#kube-state-metrics-clusterrole) with the [service ac
 
     Cluster role bindings specify in `roleRef` what is the role to bind. In `subjects` is the list of resources to bind with the role. In this case, the only subject is the `agent-kube-state-metrics` service account. Notice how the `kind` of the resource being bound also has to be specified.
 
-    > [!NOTE]
-    > **`ClusterRoleBinding` resources are not namespaced**\
+    > [!NOTE] `ClusterRoleBinding` resources are not namespaced
     > Like the `ClusterRole`, its binding also has cluster-wide reach.
 
 ## Kube State Metrics Deployment

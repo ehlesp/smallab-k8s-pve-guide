@@ -18,8 +18,7 @@ You can resize a VM's bootdisk through the Proxmox VE web console, then extend t
 
 As an example, this appendix will show you how to give 5 GiB more to the root filesystem of the UrBackup server created [in the chapter **G040**](G040%20-%20Backups%2004%20~%20UrBackup%2001%20-%20Server%20setup.md).
 
-> [!IMPORTANT]
-> **Do a backup of the VM where you will resize the root filesystem**\
+> [!IMPORTANT] Backup the VM whose root filesystem you will resize
 > The procedure explained here has a non-trivial amount of danger for the root filesystem involved.
 >
 > Play it safe and make a backup of the VM before you start resizing its bootdisk.
@@ -46,8 +45,7 @@ You can expand any hard disk attached to a VM easily on Proxmox VE:
 
     The `Disk` field identifies the hard disk you are about to resize which, in this case, is the `bkpserver`'s `scsi0` unit. The `Size Increment (GiB)` field is where you indicate by how many gibibytes you want to increase the size of this particular hard disk.
 
-    > [!IMPORTANT]
-    > Proxmox VE's web console only supports INCREASING hard disks sizes, not reducing them.
+    > [!IMPORTANT] Proxmox VE's web console only supports INCREASING hard disks sizes, not reducing them.
 
 4. Type the size increment, in gibibytes, to apply to the hard disk and click on `Resize Disk`:
 
@@ -69,8 +67,7 @@ The hard disk is bigger now, but the VM's root filesystem is not using that extr
 
 By the way, notice in the `Summary` view of the VM how the `Bootdisk` size also reflects the new size of the hard disk `scsi0`.
 
-> [!WARNING]
-> **Applying this procedure is dangerous!**\
+> [!WARNING] Applying this procedure is dangerous!
 > The following procedure could make your VM's filesystem (and the VM itself) unusable if you are not careful!
 >
 > If you have not done a backup of the VM yet, this is the moment to do so.
@@ -159,8 +156,7 @@ Before you can extend the `root` LVM volume, you need to resize the partition in
 
 5. Resize the partition `2` with the following `resize` command:
 
-    > [!WARNING]
-    > **Using `parted` on a live root filesystem is dangerous!**\
+    > [!WARNING] Using `parted` on a live root filesystem is dangerous!
     > The `parted` program applies the changes in the partition table immediately, unlike `fdisk` that works first on a temporal table on memory.
 
     ~~~sh

@@ -74,8 +74,7 @@ Prepare the `valkey.conf` file specifying the configuration values for your Forg
 
 As in the Ghost case, securing the access to this Valkey instance requires setting up two users stored in a secret resource within your Kubernetes cluster.
 
-> [!NOTE]
-> **Your K3s Kubernetes cluster encrypts secrets automatically**\
+> [!NOTE] Your K3s Kubernetes cluster encrypts secrets automatically
 > Remember that [your K3s cluster's server node has the option for encrypting secrets at rest(`secrets-encryption`) enabled already](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md#the-k3sserver01-nodes-configyaml-file), avoiding having them stored as clear text within the cluster.
 
 ### Valkey ACL user list
@@ -95,8 +94,7 @@ The [Access Control List](https://valkey.io/topics/acl/) declared here configure
     user forgejocache on ~forgejo:* &* allcommands >pAS2wOrD_f0r_The_F0rgEJ0_Us3R
     ~~~
 
-    > [!WARNING]
-    > **The passwords in this `secrets/users.acl` file are plain unencrypted strings**\
+    > [!WARNING] The passwords in this `secrets/users.acl` file are plain unencrypted strings
     > Be careful of who can access this `users.acl` file.
 
 ### User for Prometheus metrics exporter
@@ -116,8 +114,7 @@ The Valkey instance for Forgejo will have its own Prometheus metrics exporter mo
     REDIS_PASSWORD=P4s5W0rd_FOr_7h3_DeF4u1t_uSEr
     ~~~
 
-    > [!WARNING]
-    > **The password in this `secrets/default_user_env.properties` file is a plain unencrypted string**\
+    > [!WARNING] The password in this `secrets/default_user_env.properties` file is a plain unencrypted string
     > Be careful of who can access this `default_user_env.properties` file.
 
 ## Valkey persistent storage claim

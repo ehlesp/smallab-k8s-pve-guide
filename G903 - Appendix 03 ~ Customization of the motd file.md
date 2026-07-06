@@ -20,8 +20,7 @@ $ sudo cp /etc/motd /etc/motd.orig
 $ sudo vim /etc/motd
 ~~~
 
-> [!IMPORTANT]
-> **Careful with the `PrintMotd` feature of the SSH daemon configuration**\
+> [!IMPORTANT] Careful with the `PrintMotd` feature of the SSH daemon configuration
 > In the `sshd` configuration (found in `/etc/ssh/sshd_config`) there is a `PrintMotd` parameter set to `no`. **Do not change it** to `yes` or you will see the `motd` content printed **twice** when you connect to the motd's system.
 
 ## References

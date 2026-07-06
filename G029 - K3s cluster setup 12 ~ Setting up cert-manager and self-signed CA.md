@@ -55,8 +55,9 @@ At the time of writing this, there is no official Kustomize way for deploying ce
     - https://github.com/cert-manager/cert-manager/releases/download/v1.19.0/cert-manager.yaml
     ~~~
 
-    > [!NOTE]
-    > **Find the URL for the newest cert-manager version [in its official installation procedure with `kubectl`](https://cert-manager.io/docs/installation/kubectl/)**\
+    > [!NOTE] Where to find the manifest for the latest cert-manager version?
+    > Find the URL for the newest cert-manager version's manifest [in its official installation procedure with `kubectl`](https://cert-manager.io/docs/installation/kubectl/).
+    >
     > You can also find the YAML file in the assets list of [each release](https://github.com/jetstack/cert-manager/releases).
 
 4. Deploy cert-manager with `kubectl`:
@@ -81,8 +82,7 @@ cert-manager-webhook-58f4cff74d-v6chb      1/1     Running   0          63s
 
 Notice the namespace `cert-manager` specified with the `-n` option in the `kubectl` command. The cert-manager service deploys itself in its own `cert-manager` namespace.
 
-> [!NOTE]
-> **Use `kubectl` to discover the namespaces existing in your cluster**\
+> [!NOTE] Use `kubectl` to discover the namespaces existing in your cluster
 > Get a list of all the existing namespaces within your K3s cluster with `kubectl` like this:
 >
 > ~~~sh
@@ -154,8 +154,7 @@ You can install this cert-manager command line tool in a `kubectl` client system
     The cert-manager API is ready
     ~~~
 
-> [!NOTE]
-> **The cert-manager's `kubectl` plugin has other commands available**\
+> [!NOTE] The cert-manager's `kubectl` plugin has other commands available
 > Check them all out [in its official page](https://cert-manager.io/docs/reference/cmctl/).
 
 ## Setting up self-signed CAs for your cluster
@@ -325,8 +324,7 @@ Prepare here the intermediate CA that will certify the apps or services you depl
 
     This is the intermediate CA cluster issuer you will use to issue and sign the "leaf" certificates for the apps and services you will deploy in later chapters. In this case, this issuer uses the corresponding secret of the intermediate CA 01's certificate declared in the previous step.
 
-    > [!NOTE]
-    > **Cluster issuers can issue certificates in any namespace**\
+    > [!NOTE] Cluster issuers can issue certificates in any namespace
     > The apps and services you will deploy in later chapters of this guide are going to run in other namespaces than `cert-manager`. This makes necessary the use of a cluster issuer to issue the certificates and their corresponding secrets, since **secrets in Kubernetes are not shared among namespaces**.
 
 ### Kustomize manifest for the self-signed CAs project

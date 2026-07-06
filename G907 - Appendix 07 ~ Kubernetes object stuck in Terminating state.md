@@ -10,8 +10,7 @@
 
 While undeploying a service or app from your Kubernetes cluster, it may happen that an object from that service or app gets stuck in a `Terminating` state. It is possible to unstuck such a `Terminating` object by tinkering a bit with its effective configuration deployed in the cluster.This chapter uses an older cert-manager installation to exemplify this issue and it possible solution.
 
-> [!NOTE]
-> **This solution has not been tested for the current version of this guide**\
+> [!NOTE] This solution has not been tested for the current version of this guide
 > Since this issue was detected when working with an older version of K3s (`v1.22.3+k3s1`), it might be possible that this is issue no longer happens in modern K3s or Kubernetes clusters.
 
 ## Scenario
@@ -103,8 +102,7 @@ The procedure explained next has been taken [from this article by Craig Newton](
 
 This procedure will effectively unstick the namespace and allow the `kubectl delete` process to end, returning the control to the prompt after a few seconds.
 
-> [!NOTE]
-> **This procedure is valid for **all kind** of Kubernetes objects or resources, not just namespaces**\
+> [!NOTE] This procedure is valid for ALL KIND of Kubernetes objects or resources, not just namespaces
 > Just be aware that you will need to find the correct API path for the Kubernetes (or non-Kubernetes) object or resource you are trying to fix with this solution.
 
 ## References

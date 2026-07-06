@@ -52,8 +52,7 @@ This command gives you not only the version of the K3s Kubernetes distribution u
 - K3s Kubernetes distribution: `v1.33.4+k3s1`.
 - Container engine: `containerd://2.0.5-k3s2`.
 
-> [!IMPORTANT]
-> **The K3s software goes in parallel with the Kubernetes versions**\
+> [!IMPORTANT] The K3s software correlates with the Kubernetes versions
 > The `v1.33.4+k3s1` value seen before implies that this K3s software is the K3s equivalent to the `v1.33.4` version of the standard Kubernetes distribution.
 
 You can also get into each of your K3s nodes through a remote shell and execute the following command:
@@ -233,8 +232,7 @@ Here you have the general indications to go through when updating the apps deplo
 
 4. Modify the Kustomize project used to deploy the app so it applies the necessary changes. Most of the times, you will not have to do more than updating the link to the new version's manifest in the main `kustomization.yaml` file, or just changing the version number of the image used. Still, be mindful of the possibility detecting changes in the app's latest documentation.
 
-    > [!NOTE]
-    > **The Docker Hub is not the only container repository**\
+    > [!NOTE] There are other container repositories beyond Docker Hub
     > The container images for any containerized app are usually found in [dockerhub](https://hub.docker.com/), but know that other container registries exist like [Quay.io](https://quay.io/).
     >
     > Remember this because, sometimes, a project may change where they store their container images. When this happens, you will have to reflect that change in your Kustomize project.
@@ -274,8 +272,7 @@ You know what steps to follow when updating any app, but what is the proper orde
     2. **MariaDB server**\
         Kustomize project preparation explained in [chapter **G033** - Deploying services 02 ~ Ghost - Part 3](G033%20-%20Deploying%20services%2002%20~%20Ghost%20-%20Part%203%20-%20MariaDB%20database%20server.md).
 
-        > [!IMPORTANT]
-        > **Upgrading MariaDB to a new major version implies upgrading its system and other tables**\
+        > [!IMPORTANT] Upgrading MariaDB to a new major version implies upgrading its system and other tables
         > This is not something that happens automatically. Either you do it manually following a certain procedure, or you can configure your MariaDB instance to do it automatically for you. It is explained how to do it in the second, and much more convenient, way in the [appendix chapter **G909**](G909%20-%20Appendix%2009%20~%20Updating%20MariaDB%20to%20a%20newer%20major%20version.md).
 
     3. **Ghost server**\
@@ -290,8 +287,7 @@ You know what steps to follow when updating any app, but what is the proper orde
     2. **PostgreSQL server**\
         Kustomize project preparation explained in [chapter **G034** - Deploying services 03 ~ Forgejo - Part 3](G034%20-%20Deploying%20services%2003%20~%20Forgejo%20-%20Part%203%20-%20PostgreSQL%20database%20server.md).
 
-        > [!IMPORTANT]
-        > **Updating to a new major PostgreSQL version also requires updating its system tables**\
+        > [!IMPORTANT] Updating to a new major PostgreSQL version also requires updating its system tables
         > The update procedure for the system tables cannot be run in an automated way by PostgreSQL itself. Since it is rather elaborated, it is explained in the [appendix chapter **G910**](/G910%20-%20Appendix%2010%20~%20Updating%20PostgreSQL%20to%20a%20newer%20major%20version.md).
 
     3. **Forgejo server**\
@@ -303,8 +299,7 @@ You know what steps to follow when updating any app, but what is the proper orde
     1. **Kube State Metrics**\
         Kustomize project preparation explained in [chapter **G035** - Deploying services 04 ~ Monitoring stack - Part 2](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%202%20-%20Kube%20State%20Metrics%20service.md).
 
-        > [!NOTE]
-        > **This service is correlated with the Kubernetes runtime version**\
+        > [!NOTE] Kube State Metrics' version correlates with the Kubernetes runtime version
         > Updating to a newer Kubernetes runtime may force you to update this service in particular.
 
     2. **Prometheus Node Exporter**\
@@ -316,8 +311,7 @@ You know what steps to follow when updating any app, but what is the proper orde
     4. **Grafana**\
         Kustomize project preparation explained in [chapter **G035** - Deploying services 04 ~ Monitoring stack - Part 5](G035%20-%20Deploying%20services%2004%20~%20Monitoring%20stack%20-%20Part%205%20-%20Grafana%20server.md).
 
-> [!IMPORTANT]
-> **Remember to update the Prometheus metric exporters deployed as sidecar containers**\
+> [!IMPORTANT] Remember to update the Prometheus metric exporters deployed as sidecar containers
 > In the Ghost, Forgejo and Monitoring stack platforms, apps like Valkey or the database servers are deployed with Prometheus exporters which need to keep their compatibility. Therefore, when you update the main component in a sidecar setup, do not forget to check if the associated Prometheus metrics exporter also has to be updated to keep compatibility.
 
 The key thing here is to update first the critical apps, while the rest can be done in any order. Also realize that, usually, the only thing you have to do is just update the image's version number in the `kustomization.yaml` file in the Kustomize project of the app you are updating, unless the update breaks with previous versions in some way.
@@ -347,8 +341,7 @@ This basic procedure is just about applying the same installer command you used 
 
     - Remember that, in all your cluster nodes, the K3s configuration is found under the `/etc/rancher` folder. In particular, you should check the file `/etc/rancher/k3s/config.yaml`.
 
-    > [!IMPORTANT]
-    > **Beware of breaking changes between K3s releases**\
+    > [!IMPORTANT] Beware of breaking changes between K3s releases
     > You have to check the release information of all the releases between your current version and the latest one.
 
 3. Also related to the K3s configuration, consult the K3s documentation to see if any option you are using in the configuration has been deprecated or changed:

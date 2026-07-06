@@ -28,14 +28,12 @@ You need to convert the private key of your `root` or `mgrsys` user into a `.ppk
 
     ![Saving private key as .ppk file](images/g901/puttygen_private_key_as_ppk.webp "Saving private key as .ppk file")
 
-    > [!IMPORTANT]
-    > **The key-pair changes if you add a passphrase**\
+    > [!IMPORTANT] The key-pair changes if you add a passphrase
     > When you save the private key, PuTTYgen will raise a warning if the private key does not have a key passphrase. Careful with this, since if you added a passphrase now, the private key and its public counterpart would change!
 
     Save the file with the name `id_ed25519.ppk` in the same folder you have the other keys already stored in your system. This way you keep everything together in the same place.
 
-    > [!NOTE]
-    > **Saving the public key makes little difference**\
+    > [!NOTE] Saving the public key makes little difference
     > You could also use the `Save public key` button, but this will store the same public key you got from the pve node. The only difference will be in the content format and in the `Newline` character used (it will be the _Windows_ one).
 
 ## Configuring the connection to the PVE node

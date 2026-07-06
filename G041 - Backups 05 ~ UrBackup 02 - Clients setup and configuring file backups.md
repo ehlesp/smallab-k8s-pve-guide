@@ -49,8 +49,8 @@ In this case, since the UrBackup server used is a 2.5.z version (`2.5.35` is the
 
     Be aware that this client installation asks you a couple of questions for setting up its configuration, and maybe also your permission to install some packages through `apt`:
 
-    > [!WARNING]
-    > **Give the same answers to these questions in all of your VMs.**
+    > [!WARNING] Give the same answers to these questions in all of your VMs
+    > This ensures you of having the same UrBackup client configuration in all your VMs.
 
     ~~~sh
     Verifying archive integrity... All good.
@@ -111,8 +111,7 @@ In this case, since the UrBackup server used is a 2.5.z version (`2.5.35` is the
 
     ![PVE VM Reboot button](images/g041/pve_vm_reboot_button.webp "PVE VM Reboot button")
 
-    > [!WARNING]
-    > **Press `Reboot`, not `Reset`**\
+    > [!WARNING] Press `Reboot`, not `Reset`
     > Click on the `Reboot` button, not the `Reset` one! And only on the K3s node VMs.
 
     If you prefer, you can execute the `reboot` command through a remote terminal opened on each K3s node VM:
@@ -286,9 +285,8 @@ This section shows you how to do this by scheduling the backup of the relevant p
 
 2. Use the command `urbackupclientctl` for adding the relevant paths to the list of locations UrBackup client monitors:
 
-    > [!NOTE]
-    > **There is no official documentation about the `urbackupclientctl` command**\
-    > There is not have even a `man` page for this command. The only detailed information you can get about it is from its integrated textual help, which you can see by executing `urbackupclientctl --help`.
+    > [!NOTE] There is no official documentation about the `urbackupclientctl` command
+    > There is not even a `man` page for this command. The only detailed information you can get about it is from its integrated textual help, which you can see by executing `urbackupclientctl --help`.
 
     ~~~sh
     $ sudo urbackupclientctl add-backupdir -n forgejo-git -f -x -d /mnt/forgejo-hdd/git

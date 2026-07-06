@@ -25,8 +25,7 @@ You can get performance improvements in your Proxmox VE system just by setting s
 
 The changes explained in the following sections are focused on improving the performance of your system on different concerns. For the sake of clarity, each concern will have its own `sysctl` file with their own particular parameter set. This is to avoid two problems: having the same parameter defined twice on different configuration files, and worrying about the order in which the parameters are being read (`sysctl` only keeps the last value read for each parameter).
 
-> [!IMPORTANT]
-> **Do not apply this configuration blindly in your PVE system**\
+> [!IMPORTANT] Do not apply this configuration blindly in your PVE system
 > Revise and adjust the values set in the following sections to suit your own system setup and presumed load.
 
 ## First go the `sysctl` directory
@@ -39,8 +38,7 @@ $ cd /etc/sysctl.d/
 
 Staying in this directory, apply the configurations specified in the following sections.
 
-> [!NOTE]
-> **These configurations are self-explanatory**\
+> [!NOTE] These configurations are self-explanatory
 > All the configurations included in this chapter have comments explaining each of their parameters.
 
 ## Network optimizations

@@ -61,8 +61,7 @@ To do this conversion, browse into your Proxmox VE web console and follow the st
 
     - For instance, you could type something like the following there:
 
-      > [!NOTE]
-      > **The text snippet below is formatted in Markdown**\
+      > [!NOTE] The text snippet below is formatted in Markdown
       > If you use it as a template for your notes, be mindful of, among other things, the `\` character used at the end of each line. Double spacing and `\` in Markdown [forces a hard line break](https://spec.commonmark.org/0.31.2/#hard-line-breaks), equivalent to a `<br />` tag in html.
 
       ~~~markdown
@@ -111,8 +110,7 @@ It is convenient to have a backup of your VM template, just in case anything hap
     - `Mode`\
       Indicates how you want to execute the backup on your VM. In case of running VMs, you have to consider if you want to execute the backup in parallel with the VM still running (`Snapshot` and `Suspend` modes, which also use the QEMU guest agent if available in the VM) or stopping it while the backup is being done (`Stop` mode). For a VM template backup, it should not matter which mode you choose, although the only one that truly makes sense to use in this case is `Stop` mode.
 
-      > [!NOTE]
-      > **The behavior of these backup modes for containers is similar but not equivalent to how they work for VMs**\
+      > [!NOTE] The behavior of these backup modes for containers is similar but not equivalent to how they work for VMs
       > Check the Proxmox VE help to see the differences.
 
     - `Compression`\
@@ -198,8 +196,7 @@ Restoring the backup of a VM or VM template is not much more complex than creati
     - `Unique`\
       This is a feature that generates new values to certain attributes of the restored VM, like its network interface MACs.
 
-      > [!WARNING]
-      > **Careful when using this attribute**\
+      > [!WARNING] Careful when using this attribute
       > If you happen to have some configuration that relies on the attributes that get regenerated, like a router assigning static IPs to specific MACs, the new values may not fit and could "break" your setup.
 
     - `Start after restore`\
@@ -212,8 +209,7 @@ Restoring the backup of a VM or VM template is not much more complex than creati
 
     ![Confirmation of backup's restore](images/g023/pve_vm_template_backup_view_bkp_restore_vm_confirmation.webp "Confirmation of backup's restore")
 
-    > [!WARNING]
-    > **Restoring the VM removes its existing hard disk**\
+    > [!WARNING] Restoring the VM removes its existing hard disk
     > The restoration process **replaces the hard disk** you currently have linked to the VM template with the one stored within the backup.
 
 5. After accepting the confirmation, the progress window of the `Restore` process appears:
@@ -247,8 +243,7 @@ Restoring the backup of a VM or VM template is not much more complex than creati
 - **Hardware setup is saved in the backup**\
   The hardware configuration of a VM that you see in the Proxmox VE web console is also stored in its backup. So, when you recover the backup of a VM, the hardware configuration will also be recovered, although the PVE web console may ask you about the differences it finds between the current VM configuration and the one stored in the backup.
 
-  > [!NOTE]
-  > This point is directly related with the previous one.
+  > [!NOTE] This point is directly related with the previous one.
 
 ## Other considerations regarding VM templates
 

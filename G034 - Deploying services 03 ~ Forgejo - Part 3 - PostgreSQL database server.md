@@ -141,8 +141,7 @@ The `postgresql.conf` is where you can set the parameters for PostgreSQL.
     - `pg_stat_statements.track`\
       Controls which statements are counted by the `pg_stat_statements` module.
 
-    > [!NOTE]
-    > **Learn more about these parameters in the PostgreSQL official documentation**\
+    > [!NOTE] Learn more about these parameters in the PostgreSQL official documentation
     > To know more about the parameters above and many others available in PostgreSQL, check the [official documentation about Server Configuration](https://www.postgresql.org/docs/current/runtime-config.html) and [the `pg_stat_statements` module](https://www.postgresql.org/docs/current/pgstatstatements.html).
 
 ### Properties file `dbnames.properties`
@@ -178,9 +177,8 @@ You need to load in your PostgreSQL container some names as variables. Better ke
     - `prometheus-exporter-username`\
       Name for the Prometheus metrics exporter user.
 
-    > [!IMPORTANT]
-    > **Careful with the characters you use in these names**\
-    > Stick to lowercase alphanumeric characters plus the underscore (`_`)  to avoid issues, [in particular with the `initdb.sh` shell script explained next](#initializer-shell-script-initdbsh).
+    > [!IMPORTANT] Careful with the characters you use in these names
+    > Stick to lowercase alphanumeric characters plus the underscore (`_`) to avoid issues, [in particular with the `initdb.sh` shell script explained next](#initializer-shell-script-initdbsh).
 
 ### Initializer shell script `initdb.sh`
 
@@ -232,8 +230,7 @@ You can do it all in one initializer shell script:
     EOSQL
     ~~~
 
-    > [!NOTE]
-    > **This custom `initdb.sh` script is based on a few others**\
+    > [!NOTE] This custom `initdb.sh` script is based on a few others
     > These are the scripts used as references to build the `initdb.sh` script shown above:
     >
     > - The one shown at the [Initialization scripts section](https://github.com/docker-library/docs/blob/master/postgres/README.md#initialization-scripts) of the PostgreSQL Docker image README.
@@ -284,8 +281,7 @@ Put them all as variables in the same properties file, to be loaded later as var
     prometheus-exporter-password=l0nG.Pl4in_T3xt_sEkRet_p4s5wORD-FoR_3xP0rTeR_uZ3r!
     ~~~
 
-    > [!WARNING]
-    > **The passwords in this `secrets/dbusers.pwd` file are unencrypted strings**\
+    > [!WARNING] The passwords in this `secrets/dbusers.pwd` file are unencrypted strings
     > Be careful of who can access this `dbusers.pwd` file.
 
 ## PostgreSQL persistent storage claim
@@ -463,8 +459,7 @@ Since you already know that databases are better deployed as `StatefulSet` objec
           - `"config_file=/etc/postgresql/postgresql.conf"`\
             The `config_file` option is for setting an alternative custom configuration file for the PostgreSQL server. In this case, it is the `postgresql.conf` file configured previously that has to be put in the `/etc/postgresql` path.
 
-            > [!IMPORTANT]
-            > **It is not possible to directly change the default `postgresql.conf` file that exists under the default data path `/var/lib/postgresql`**\
+            > [!IMPORTANT] It is not possible to directly change the default `postgresql.conf` file that exists under the default data path `/var/lib/postgresql`
             > Trying to do so provokes a `Read-only file system` error that does not allow the container to start. The same happens with any other configuration file you might consider customize within that `/var/lib/postgresql` path.
 
         - At the `env` section:
@@ -473,8 +468,7 @@ Since you already know that databases are better deployed as `StatefulSet` objec
 
           - The `POSTGRES_DB` is the name of the database you want to create initially in your PostgreSQL. This variable is also used in the initialization script.
 
-            > [!NOTE]
-            > No matter what, there will be always a `postgres` database created in your PostgreSQL server.
+            > [!NOTE] No matter what, there will be always a `postgres` database created in your PostgreSQL server.
 
           - The `POSTGRESQL_FORGEJO_USERNAME`, `POSTGRESQL_FORGEJO_PASSWORD`, `POSTGRESQL_PROMETHEUS_EXPORTER_USERNAME` and `POSTGRESQL_PROMETHEUS_EXPORTER_PASSWORD` variables are for the `initdb.sh` script.
 
@@ -500,8 +494,7 @@ Since you already know that databases are better deployed as `StatefulSet` objec
 
           - `DATA_SOURCE_URI` defines the URI to connect to the database identified by the `DATA_SOURCE_DB` present in the PostgreSQL server.
 
-            > [!NOTE]
-            > **Notice how the URI in this setup points to a localhost address**\
+            > [!NOTE] Notice how the URI in this setup points to a localhost address
             > This is appropriate because the `metrics` container is running in the same PostgreSQL pod as the `server` container.
 
           - `DATA_SOURCE_USER` and `DATA_SOURCE_PASS` specify the user and password in the PostgreSQL server for this exporter.

@@ -19,9 +19,8 @@ In the [chapter **G025**](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kube
 
 This appendix chapter summarizes what to add or just do differently on the procedures explained in the [chapter **G025**](G025%20-%20K3s%20cluster%20setup%2008%20~%20K3s%20Kubernetes%20cluster%20setup.md), with the goal of creating a K3s cluster with two server nodes.
 
-> [!IMPORTANT]
-> **You cannot reuse the single-node cluster built with this guide**\
-> You cannot convert a single-node cluster setup that uses the embedded SQLite database into a multiserver one. You have to do a clean new install of the K3s software, although you can reuse the VMs you already have.
+> [!IMPORTANT] You cannot turn this guide's single-node Proxmox VE cluster into a multiserver one
+> It is not possible to convert a single-node Proxmox VE cluster setup that uses the embedded SQLite database into a multiserver one. You have to do a clean new install of the K3s software, although you can reuse the VMs you already have.
 
 ## Add a new VM to act as the second server node
 
@@ -128,8 +127,8 @@ This `config.yaml` file is essentially the same as it is set for the `K3sserver0
 - `cluster-init`\
   Using this option will initialize a new cluster that will run with an embedded Etcd data source.
 
-    > [!IMPORTANT]
-    > **A K3s cluster with several server nodes will not work just with a sqlite data source**\ > "Fully fledged" K3s clusters require more advanced database engines to run, such as Etcd.
+    > [!IMPORTANT] A K3s cluster with several server nodes will not work just with a sqlite data source
+    > "Fully fledged" K3s clusters require more advanced database engines to run, such as Etcd.
 
 With the `config.yaml` file ready, execute the K3s installer.
 

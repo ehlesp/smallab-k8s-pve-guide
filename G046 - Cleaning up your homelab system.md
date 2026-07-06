@@ -142,8 +142,7 @@ drwxr-sr-x+ 3 root systemd-journal 4.0K Aug 15  2025 ..
 
 The `ls` command reports the total size of this folder as 200 MB, and notice how the journal files start by weighting 8 MB and grow in multiples of 8.
 
-> [!IMPORTANT]
-> **The `.journal` files are binaries, not regular text-based log files**\
+> [!IMPORTANT] The `.journal` files are binaries, not regular text-based log files
 > Do not try to open them with `less`, `vim` or any other text editor.
 
 The proper way to manage your journal logs is with the `journalctl` command. To see how much your journal logs weight you can do the following:
@@ -189,8 +188,7 @@ Feb 18 13:31:13 pve systemd[47655]: Startup finished in 933ms.
 ...
 ~~~
 
-> [!NOTE]
-> **Use `sudo` with `journalctl` to see all your system's journal logs**\
+> [!NOTE] Use `sudo` with `journalctl` to see all your system's journal logs
 > To see all the journal logs produced by your system, execute the `journalctl` command with `sudo` (or `root` privileges). Otherwise, you will only see the journal logs relative **to your current user**.
 
 ### Storage space status on the K3s Kubernetes nodes
@@ -245,8 +243,7 @@ The list above tells you about all the images currently stored in the node and, 
 
 In general, all the elements mentioned before (logs, temporal files and container images) are all already automatically managed by your system in some way. Still, you could find the default configuration for rotation or pruning of any of those elements too lenient. Then, you may want to either adjust the rotation or pruning configuration, or know how to execute a proper cleaning manually. In this section you can learn how to do manual cleanings.
 
-> [!IMPORTANT]
-> **Be sure you do not need the elements you prune from your homelab**\
+> [!IMPORTANT] Be sure you do not need the elements you prune from your homelab
 > Always be sure that you really do not need the element you are removing from your system, most in particular logs. Remember that logs are usually the only piece of information you have to identify the root of any problem you might have in your system.
 
 ### Procedures for cleaning up logs
@@ -415,8 +412,7 @@ Alternatively, you can just readjust your systemd journal's configuration, makin
 
 This way, systemd cleans up its journals automatically more frequently.
 
-> [!NOTE]
-> **Learn more about systemd journaling**\
+> [!NOTE] Learn more about systemd journaling
 > To know some more about clearing the journals of systemd, [check out this article](https://linuxhandbook.com/clear-systemd-journal-logs/).
 
 ### Procedures for pruning container images
@@ -513,8 +509,7 @@ As indicated earlier, the Kubernetes engine handles automatically the pruning of
 
 In other words, the Kubernetes engine can only launch (when it deems necessary) the image garbage collector if disk usage has reached or gone over the `imageGCLowThresholdPercent` limit, and when the usage hits or surpasses the `imageGCHighThresholdPercent` threshold the Kubernetes engine always execute this cleaning process. The garbage collector always starts deleting from the oldest images and keeps going on until it hits the `imageGCLowThresholdPercent` limit.
 
-> [!NOTE]
-> **The official Kubernetes documentation is not clear about the _disk usage_ notion regarding garbage collection**\
+> [!NOTE] The official Kubernetes documentation is not clear about the "disk usage" notion regarding garbage collection
 > When the official Kubernetes documentation talks about _disk usage_, it is not specified if they mean "total disk usage as reported by the filesystem" or something more nuanced as "disk usage of container images from the filesystem's storage total capacity". This guide assumes the former.
 
 To estimate a new value for the parameters, also take into account the other reasons that increase disk usage, such as logs or temporal files being written in the system. From this point of view, the defaults look very reasonable. Yet, if you are sure you want to change the values, do the following.
@@ -565,8 +560,7 @@ To estimate a new value for the parameters, also take into account the other rea
     $ sudo systemctl restart k3s-agent.service
     ~~~
 
-    > [!IMPORTANT]
-    > **Restarting the K3s service does not affect your containers**\
+    > [!IMPORTANT] Restarting the K3s service does not affect your containers
     > The apps and services deployed in your cluster keep on running while the K3s service restarts.
 
 ## Reminder about the `apt` updates

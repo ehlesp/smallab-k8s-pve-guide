@@ -63,14 +63,13 @@ Rather than executing the update (or upgrade) process yourself, just enable it s
 
       - The upgrade procedure creates first a backup saved as a file named `system_mysql_backup_*.sql.zst`, which you will find at the root of your MariaDB instance's data directory (in the Ghost setup it is found at `/var/lib/mysql`).
 
-        > [!IMPORTANT]
-        > **Check the storage space available in your MariaDB instance**\
+        > [!IMPORTANT] Check the storage space available in your MariaDB instance
         > On every update, check first that you have enough space in the associated storage volume for that backup!
 
     - `MARIADB_DISABLE_UPGRADE_BACKUP`\
       Disables the backup the upgrade process executes by default before doing the upgrade itself.
 
-    > [!NOTE]
+    > [!NOTE] Learn more about these MariaDB's environment variables
     > [MariaDB's official documentation of these environment variables is here](https://mariadb.com/docs/server/server-management/automated-mariadb-deployment-and-administration/docker-and-mariadb/mariadb-server-docker-official-image-environment-variables#mariadb_auto_upgrade-mariadb_disable_upgrade_backup).
 
 2. After modifying the MariaDB deployment, redeploy the whole Kustomize project (of Ghost in this case) as usual:

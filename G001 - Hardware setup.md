@@ -11,8 +11,7 @@
 
 This project's [README](README.md) talks about a small or low-end consumer-grade computer, meaning that you do not need the latest and fastest machine available in the market. Any relatively modern small tower or mini PC, or even a normal laptop, could be adequate. Still, your computer must meet certain minimum requirements, or it will not be able to run the Kubernetes cluster in the way explained by this guide.
 
-> [!NOTE]
-> **Virtualizing the Proxmox VE setup is problematic**\
+> [!NOTE] Virtualizing the Proxmox VE setup is problematic
 > It is possible to run the Proxmox VE platform in a VM but, with VirtualBox at least, configuring the networking to enable access to the VMs run from within Proxmox VE is not straightforward. Depending on the virtualization platform you use, you may be forced to try different configurations and, even then, you might not be able to reach the VMs running in your Proxmox VE server.
 >
 > In short, it is better if you use real hardware to avoid extra pains with the networking aspects of this guide's setup.
@@ -57,8 +56,7 @@ Let me explain why you should consider a hardware configuration like this as you
 
 - The CPU must have virtualization technology embedded or the virtual machines' performance could be awful. Proxmox VE also expects the CPU to have this capability available.
 
-  > [!IMPORTANT]
-  > **Ensure your CPU's virtualization technology is active**\
+  > [!IMPORTANT] Ensure your CPU's virtualization technology is active
   > Check in your computer's UEFI or BIOS to ensure that the virtualization instructions are enabled.
   >
   > On the other hand, if you are considering installing Proxmox VE in a virtual machine, do not forget to give that virtual machine access to the virtualization technology of your host's CPU. For instance, in VirtualBox there is an option named `Enable Nested VT-x/AMD-V` that allows you just that (although its activation is not straightforward).

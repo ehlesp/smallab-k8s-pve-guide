@@ -77,8 +77,7 @@ You have to choose an IP range on the external or public network your K3s cluste
 
 In this chapter, the chosen IP subrange "reserved" for MetalLB is `10.7.0.1-10.7.0.20`. It only has twenty IPs, and you may be wondering why so few. The reason is that this guide will show you how to access the services you deploy not by assigning them a specific static IP, but through the Traefik ingress service already running in your K3s cluster. The main exception to this is the Traefik service itself, which needs its own public static IP to be reachable to do its job. In general, you either expose services directly through an external IP assigned by the load balancer or make them reachable through the ingress service, **never in both ways at the same time**.
 
-> [!IMPORTANT]
-> **The bigger the reserved IP range, the greater the risk of having IP conflicts**\
+> [!IMPORTANT] The bigger the reserved IP range, the greater the risk of having IP conflicts
 > In a private network where IPs are dynamically assigned to devices, you want to keep the MetalLB IP range as small as possible to reduce the chance of IP conflicts.
 
 Also notice that the IP range starts with the `10.7.0.1` address rather than with the `10.7.0.0` one. Although `10.7.0.0` is a perfectly valid IP for a device within the `10.0.0.0/8` network, in testing this guide's setup there were connectivity issues that went away when the next IP `10.7.0.1` was used instead. This may be an issue in the router used, which could be considering any IP ending in `.0` only as an address identifying a network and not some device. Be aware of this issue if you face connectivity issues when using IPs ending in `.0`, your router or access point may not be able to handle them properly.
@@ -301,8 +300,7 @@ validatingwebhookconfiguration.admissionregistration.k8s.io/metallb-webhook-conf
 
 The lines inform about the resources created by your deployment. They could also show sporadic warnings about deprecated apis being used in the application's deployment.
 
-> [!IMPORTANT]
-> **The deployment in the cluster may be successful, but the deployed service may have issues**\
+> [!IMPORTANT] The deployment in the cluster may be successful, but the deployed service may have issues
 > Even if you do not get a lot of warnings or, worse, errors, the deployment may not have been truly successful due to issues that go beyond what Kubernetes can detect, like configuration problems specific to the deployed service.
 
 Give MetalLB a couple of minutes to get ready, then check with `kubectl` that it has been deployed in your cluster:
@@ -342,8 +340,7 @@ metallb-system   metallb-webhook-service   ClusterIP      10.43.126.18   <none> 
 
 From all the services you have running at this point in your K3s cluster, the `traefik` service is the one set with the `LoadBalancer` type. Now it has an `EXTERNAL-IP` address assigned from MetalLB's `default-pool`. In particular, it has got the very first available IP (`10.7.0.1`) from the `default-pool`.
 
-> [!NOTE]
-> **Traefik makes services available through its own external IP**\
+> [!NOTE] Traefik makes services available through its own external IP
 > All services configured to be accessed with a Traefik-based ingress, will be reachable only through the same Traefik external IP.
 >
 > In other words, you will need to associate the DNS name or hostname of any service served through Traefik to the Traefik service's IP. Do this in your client systems' host file or in your LAN DNS system.

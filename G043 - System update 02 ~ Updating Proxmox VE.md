@@ -50,8 +50,7 @@ On the other hand, the Proxmox VE software is a collection of packages, each of 
 
 Click on this `Package versions` button, and first you are greeted by the warning about not having a "valid subscription" (a paid one) for enterprise updates:
 
-> [!IMPORTANT]
-> **The `Package versions` button does not work when the `No valid subscription` is disabled**\
+> [!IMPORTANT] The `Package versions` button does not work when the `No valid subscription` is disabled
 > Be aware of this if you disabled the warning as indicated [in the instructions from chapter **G006**](G006%20-%20Host%20configuration%2004%20~%20Removing%20Proxmox's%20subscription%20warning.md).
 
 ![PVE node Summary tab Package versions License warning](images/g043/pve_summary_pkg_versions_license_warning.webp "PVE node Summary tab Package versions License warning")
@@ -147,8 +146,7 @@ Since in this case there are a lot of packages to update, it takes some minutes 
 
 Notice that now the version is `9.1.5` both in the name at the top bar and in the `Manager Version` field, and that also the `Kernel Version` is newer. Still, check if there are more updates pending and apply them. Remember that you can see this directly in the web console, in the `Updates` page of your `pve` node.
 
-> [!NOTE]
-> **Some updates cannot be applied immediately**\
+> [!NOTE] Some updates cannot be applied immediately
 > Although you can see certain updates as available, `apt` can hold them back. Do not worry about them, it means that some other update must arrive at a later date to allow them to be installed in the system.
 
 On the other hand, open a remote terminal with `mgrsys` on your Proxmox VE host and execute the following `apt` command:

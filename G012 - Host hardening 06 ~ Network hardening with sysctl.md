@@ -47,8 +47,7 @@ See how Proxmox VE already has its own files, the ones with the `pve` string in 
 
 On the other hand, there is the directory `/lib/sysctl.d/`. This path is correponds to the `/usr/lib/sysctl.d/` directory since `/lib` is just a symlink to `/usr/lib/`.
 
-> [!IMPORTANT]
-> **The `sysctl` configuration files get sorted in memory by their names**\
+> [!IMPORTANT] The `sysctl` configuration files get sorted in memory by their names
 > All configuration files are sorted (after being loaded) in memory by their filename in lexicographic order, **regardless of the directories they are in**.
 >
 > If multiple files specify the same option, the entry in the file with the **lexicographically last name** will take precedence. Thus, the configuration in a certain file may either be replaced completely (by placing a file with the same name in a directory with higher priority), or individual settings might be changed (by specifying additional settings in a file with a different name that is ordered later).
@@ -144,8 +143,7 @@ None of the parameters controlled by Proxmox VE is present there, nor [any of th
 
 To avoid messing with the `.conf` files already present, better make a new one filled with parameters just for hardening the TCP/IP stack of your system.
 
-> [!IMPORTANT]
-> **Give your sysctl `.conf` files unique names**\
+> [!IMPORTANT] Give unique names to your sysctl `.conf` files
 > The `.conf` files can have any name but, once a file of a given filename is loaded, `sysctl` **will ignore any other file of the same name in subsequent directories**.
 
 1. Open a shell as `mgrsys` and `cd` to `/etc/sysctl.d/`:
@@ -234,8 +232,7 @@ To avoid messing with the `.conf` files already present, better make a new one f
 
     The command will output a list of all the parameters it has read and applied to the system.
 
-    > [!NOTE]
-    > **Do not forget to specify the file to read to the `sysctl -p` command**\
+    > [!NOTE] Do not forget to specify the file to read to the `sysctl -p` command
     > When executing `sysctl -p` without specifying any file, the command will load only the values found in the `/etc/sysctl.conf` file (if it exists), and will not read anything inside the `/etc/sysctl.d` folder.
 
 5. Reboot your system:
